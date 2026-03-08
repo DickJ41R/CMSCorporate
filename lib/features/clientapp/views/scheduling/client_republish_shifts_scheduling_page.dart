@@ -1,0 +1,886 @@
+//Client Republish Shifts Scheduling Page
+import 'package:flutter/material.dart';
+import 'package:cms_web/features/clientapp/services/client_work_order_campaign_service.dart';
+import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cms_web/features/hcpapp/services/hcp_timecard_service.dart';
+import 'package:cms_web/features/shared/services/dropdown_codes.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/authentication/services/auth_service.dart';
+import 'package:cms_web/features/shared/utils/routerconstants.dart';
+
+class RepublishShift {
+  final String shiftDate;
+  final String shiftCode;
+  final String disciplineName;
+  final String shiftName;
+  final int hcpId;
+  final String id;
+  // final String payRate;
+  RepublishShift(this.shiftDate, this.shiftCode, this.disciplineName,
+      this.shiftName, this.hcpId, this.id);
+
+  RepublishShift.fromJson(Map<String, dynamic> json)
+      : shiftDate = json['shiftDate'] as String,
+        shiftCode = json['shiftCode'] as String,
+        disciplineName = json['disciplineName'] as String,
+        shiftName = json['shiftName'] == null ? 0 : json['shiftName'],
+        hcpId = int.parse(json['hcpId'].toString()),
+        id = json['id'] as String;
+//        payRate = json['payRate'] as String;,
+
+  Map<String, dynamic> toJson() => {
+        'shiftDate': shiftDate,
+        'shiftCode': shiftCode,
+        'disciplineName': disciplineName,
+        'shiftName': shiftName,
+        'hcpId': hcpId.toString(),
+        'id': id
+      };
+  RepublishShift copyWith(
+      {String? shiftDate,
+      String? shiftCode,
+      String? disciplineName,
+      String? shiftName,
+      int? hcpId,
+      String? id}) {
+    return RepublishShift(
+        shiftDate ?? this.shiftDate,
+        shiftCode ?? this.shiftCode,
+        disciplineName ?? this.disciplineName,
+        shiftName ?? this.shiftName,
+        hcpId ?? this.hcpId,
+        id ?? this.id);
+  }
+}
+
+class ClientRepublishShiftsSchedulingPage extends StatefulWidget {
+  final Map<String, dynamic> args;
+  const ClientRepublishShiftsSchedulingPage({super.key, required this.args});
+
+  @override
+  State<ClientRepublishShiftsSchedulingPage> createState() =>
+      _ClientRepublishShiftsSchedulingPageState();
+}
+
+class _ClientRepublishShiftsSchedulingPageState
+    extends State<ClientRepublishShiftsSchedulingPage> {
+  final _formKey = GlobalKey<FormState>();
+
+  late int clientId;
+  late BuildContext? ctx;
+  DropDownCodes dropDownCodes = DropDownCodes();
+
+  List<RepublishShift> shiftRepublishes = <RepublishShift>[];
+  HCPTimeCardService hts = HCPTimeCardService();
+  UtilitiesServices utilitiesServices = UtilitiesServices();
+  AuthService authServices = AuthService();
+  late RepublishShiftDataSource shiftRepublishDataSource;
+  bool flagWaitDisabled = false;
+  dynamic currentSelection = SelectionMode.single;
+  Color disabledTextColor = Colors.white;
+  Color disabledColor = Colors.orange;
+  bool flagPublishedButtonDisabled = true;
+  double smallFontSize = 14;
+  double smallerFontSize = 12;
+  ClientWorkOrderCampaignService clw = ClientWorkOrderCampaignService();
+
+  //late ShiftClassDataSource _shiftClassDataSource;
+  List<dynamic> listOfRepublishShiftData = [];
+  DataGridController _dataGridController = DataGridController();
+  List<Map<String, dynamic>>? allItemsTemp;
+  late Map<String, double> columnWidths = {
+    'shiftDate': 100 * multiplicativeFactor,
+    'shiftCode': 70 * multiplicativeFactor,
+    'disciplineName': 70 * multiplicativeFactor,
+    'shiftName': 120 * multiplicativeFactor
+  };
+
+  String getFormattedDate(DateTime dte) {
+    DateFormat formatter = DateFormat('MM-dd-yy');
+    final String formatted = formatter.format(dte);
+    return formatted;
+  }
+
+  String _convertFromTimestamp(Timestamp? t) {
+    print('line 75: $t');
+    if (t == null) {
+      DateTime d = new DateTime(1970, 1, 1);
+      int itt = d.millisecondsSinceEpoch;
+      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(itt);
+      String ss = getFormattedDate(dateTime);
+      print('line 81 null date: $ss');
+      return ss;
+    }
+    DateTime date = t.toDate();
+    String s = getFormattedDate(date);
+    print('line 85: $s');
+    return s;
+  }
+
+  Future<List<dynamic>> getAllItems() async {
+    try {
+      List<dynamic> lms = [];
+      allItemsTemp = await clw.getWorkOrderRepublishShifts(clientId);
+      print('line 105 ${allItemsTemp!.length} $clientId');
+      if (allItemsTemp == null) {
+        flagPublishedButtonDisabled = true;
+        flagWaitDisabled = false;
+        print('line 109 check');
+        return lms;
+        // throw Exception("No available shifts to cancel");
+      }
+      if (allItemsTemp!.length == 0) {
+        flagPublishedButtonDisabled = true;
+        flagWaitDisabled = false;
+        // throw Exception("No available shifts to cancel");
+        print('line 117 check');
+        return lms;
+      }
+      List<Map<String, dynamic>> listXbj = [];
+      if (selectedList.length > 0) {
+        for (int i = 0; i < selectedList.length; i++) {
+          print('line 322: ${selectedList[i]}');
+          DataGridRow row = selectedList[i];
+          List<DataGridCell> cells = row.getCells();
+          Map<String, dynamic> xbj = {};
+          for (int j = 0; j < cells.length; j++) {
+            DataGridCell cell = cells[j];
+            switch (j) {
+              case 0:
+                {
+                  xbj['shiftDate'] = cell.value;
+                }
+                break;
+              case 1:
+                {
+                  xbj['shiftCode'] = cell.value;
+                }
+                break;
+              case 2:
+                {
+                  xbj['disciplineName'] = cell.value;
+                }
+                break;
+              case 3:
+                {
+                  xbj['shiftName'] = cell.value;
+                }
+              case 4:
+                {
+                  xbj['hcpId'] = cell.value;
+                }
+              case 5:
+                {
+                  xbj['id'] = cell.value;
+                }
+                break;
+              default:
+                break;
+            }
+          }
+          listXbj.add(xbj);
+        }
+      }
+      print('line 190: xbj len: ${listXbj.length} ${selectedList.length}');
+      bool flagSkip = false;
+      for (int i = 0; i < allItemsTemp!.length; i++) {
+        allItemsTemp![i]['cancel'] = false;
+        dynamic obj = allItemsTemp![i];
+        print('line 124: ${obj}');
+        flagSkip = false;
+        if (listXbj.length > 0) {
+          for (int j = 0; j < listXbj.length; j++) {
+            Map<String, dynamic> xbj = listXbj[j];
+            print('line 199: $xbj');
+            print('line 200: $obj');
+            if (xbj['id'] == obj['id']) {
+              flagSkip = true;
+              break;
+            }
+          }
+        }
+
+        if (flagSkip == true) {
+          selectedList = [];
+          continue;
+        }
+        lms.add(obj);
+      }
+      if (lms.length == 0) {
+        return [];
+      }
+      print('line 126: ${lms.length} ${lms[0]}');
+      listOfRepublishShiftData = lms;
+      shiftRepublishes = getRepublishShiftData();
+      shiftRepublishDataSource = RepublishShiftDataSource(
+          shiftRepublishData: shiftRepublishes, fontS: fts);
+      print('line 131: ${allItemsTemp!.length} ${lms.length}');
+      return lms;
+    } catch (e) {
+      print('line 134 error: $e');
+      // //    _showDialog(context, 'Shift Cancellation', 'No shifts to cancel.');
+      //   final navigator = Navigator.of(context);
+      //   navigator.pushReplacement(
+      //       MaterialPageRoute(builder: (BuildContext context) {
+      //         return ClientSchedulingMenu(ctx:context,clientId:clientId!);
+      //       }));
+      return [];
+    }
+  }
+
+  double fts = 14;
+  Map<String, dynamic>? arguments;
+
+  @override
+  void initState() {
+    super.initState();
+    arguments = widget.args;
+    clientId = arguments!['clientId'];
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    // for (int i=0; i < rows.length; i++) {
+    //   RowWidgetModel row = rows[i];
+    //
+    // }
+
+    super.dispose();
+  }
+
+  List<RepublishShift> getRepublishShiftData() {
+    List<RepublishShift> listC = [];
+    for (int i = 0; i < listOfRepublishShiftData.length; i++) {
+      dynamic obj = listOfRepublishShiftData[i];
+
+      String shiftName = '';
+      int hcpId = 0;
+      String shiftDate =
+          _convertFromTimestamp(obj['dates']['shiftDateInfo']['shiftDate']);
+      if (obj['hcpId'] == 0) {
+        shiftName = "Open";
+      } else {
+        shiftName = obj['hcpName'];
+      }
+
+      Map<String, dynamic> jst = {
+        "shiftDate": shiftDate,
+        "shiftCode": obj['dates']['shiftDateInfo']['shiftCode'],
+        'disciplineName': obj['disciplineName'],
+        "shiftName": shiftName,
+        'hcpId': obj['hcpId'],
+        'id': obj['id']
+      };
+
+      RepublishShift shift = RepublishShift.fromJson(jst);
+      print('line 206: ${shift.id} ${shift.hcpId}');
+      listC.add(shift);
+    }
+    return listC;
+  }
+
+  Future<dynamic> _showDialog(
+      BuildContext context, String title, String? description) async {
+    print('line 398 showdialog');
+    // Future.delayed(Duration(seconds: 3), () {
+    //   Navigator.of(context).pop(); // Close the dialog
+    // });
+    await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(title),
+              content: Text(description!),
+              contentTextStyle: TextStyle(
+                color: color1,
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+              ),
+              titleTextStyle: TextStyle(
+                  color: Colors.black87,
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold),
+              actions: <Widget>[
+                // TextButton(
+                //   onPressed: () => Navigator.pop(context, 'Cancel'),
+                //   child: const Text('Cancel'),
+                // ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'OK'),
+                  child: Text(
+                    'OK',
+                    style: TextStyle(
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                        color: color2),
+                  ),
+                )
+              ],
+            ));
+    return;
+  }
+
+  Future<void> processRepublishShiftsList(
+      List<DataGridRow> selList, BuildContext ctx) async {
+    print('line 302 process republished shifts: ${selList.length}');
+    if (selList.length == 0) {
+      _showDialog(context, "Process Republish Shifts",
+          "You have not selected any shifts to republish.");
+      return;
+    }
+
+    try {
+      List<Map<String, dynamic>> republishShifts = [];
+      for (int i = 0; i < selList.length; i++) {
+        print('line 322: ${selList[i]}');
+        DataGridRow row = selList[i];
+        List<DataGridCell> cells = row.getCells();
+        Map<String, dynamic> obj = {};
+        for (int j = 0; j < cells.length; j++) {
+          DataGridCell cell = cells[j];
+          switch (j) {
+            case 0:
+              {
+                obj['shiftDate'] = cell.value;
+              }
+              break;
+            case 1:
+              {
+                obj['shiftCode'] = cell.value;
+              }
+              break;
+            case 2:
+              {
+                obj['disciplineName'] = cell.value;
+              }
+              break;
+            case 3:
+              {
+                obj['shiftName'] = cell.value;
+              }
+            case 4:
+              {
+                obj['hcpId'] = cell.value;
+              }
+            case 5:
+              {
+                obj['id'] = cell.value;
+              }
+              break;
+            default:
+              break;
+          }
+        }
+        republishShifts.add(obj);
+      }
+      print(
+          'line 365 check ${republishShifts[0]['id']} ${republishShifts.length}');
+      List<Map<String, dynamic>> workOrders = [];
+      List<Map<String, dynamic>> clientWorkOrders = [];
+      List<String> lsw = [];
+      List<String> listWorkOrderIds = [];
+      for (int j = 0; j < republishShifts.length; j++) {
+        Map<String, dynamic> csf = republishShifts[j];
+        String dts = csf['shiftDate'];
+        List<String> ldts = dts.split('-');
+        ldts[2] = '20' + ldts[2];
+        dts = ldts[2] + '-' + ldts[0] + '-' + ldts[1];
+        print('line 376 $dts ${csf['shiftCode']}');
+        DateTime tsm = DateTime.parse(dts);
+        for (int i = 0; i < allItemsTemp!.length; i++) {
+          Map<String, dynamic> obj = allItemsTemp![i];
+          print('line 380: ${obj['id']} ${csf['id']}');
+          if (obj['id'] != csf['id']) {
+            continue;
+          }
+          listWorkOrderIds.add(obj['workOrderId']);
+          Timestamp tsf = obj['dates']['shiftDateInfo']['shiftDate'];
+          DateTime sft = tsf.toDate();
+          print('line 423: ${obj['id']} ${csf['id']}');
+          print('line 387" $tsf $sft');
+          sft = sft.subtract(Duration(
+              hours: sft.hour,
+              minutes: sft.minute,
+              seconds: sft.second,
+              microseconds: sft.microsecond,
+              milliseconds: sft.millisecond));
+          print('line 394 $tsm $sft');
+          if (tsm.millisecondsSinceEpoch != sft.millisecondsSinceEpoch) {
+            print('line  396 not = $tsm $sft');
+            continue;
+          }
+          print(
+              'line 400: ${csf['shiftCode']} ${obj['dates']['shiftDateInfo']['shiftCode']}');
+          if (csf['shiftCode'] != obj['dates']['shiftDateInfo']['shiftCode']) {
+            print(
+                'line 400 shift not = ${csf['shiftCode']} ${obj['dates']['shiftDateInfo']['shiftCode']}');
+            continue;
+          }
+          print('line 406: ${obj['hcpId']} ${csf['hcpId']}');
+
+          workOrders.add(obj);
+        }
+      }
+      print('line 418 check: ${clientWorkOrders.length} ${workOrders.length}');
+
+      print('line 432: ${workOrders.length}');
+      if (workOrders.length > 0) {
+        String? msg2 =
+            await hts.republishWorkOrdersByClient(workOrders, "Client", ctx);
+        if (msg2 != 'Success') {
+          String title = 'Republish Shift';
+          String description = 'You have not republished any shifts ' + msg2!;
+          await _showDialog(ctx, title, description);
+        }
+      }
+      workOrders = [];
+      clientWorkOrders = [];
+      setState(() {
+        largeFontSize = 20;
+        flagPublishedButtonDisabled = false;
+        flagWaitDisabled = false;
+      });
+      _showDialog(context, "Process Republish Shifts",
+          "You have successfully republished the shift");
+      return;
+    } catch (e) {
+      print('line 449 error: $e');
+      throw Exception('line 450 error: ${e.toString()}');
+    }
+  }
+
+  List<GridColumn> columnList = [];
+
+  List<GridColumn> getColumnList() {
+    columnList = [
+      GridColumn(
+          width: columnWidths['shiftDate']!,
+          columnName: "shiftDate",
+          label: Container(
+              //padding: EdgeInsets.all(3.0),
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(left: 2, right: 2),
+              child: Text('Shift Date',
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold)))),
+      GridColumn(
+          width: columnWidths['shiftCode']!,
+          columnName: "shiftCode",
+          label: Container(
+              //   padding: EdgeInsets.all(3.0),
+              padding: EdgeInsets.only(left: 2, right: 2),
+              alignment: Alignment.center,
+              child: Text('Shift',
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold)))),
+      GridColumn(
+          width: columnWidths['disciplineName']!,
+          columnName: "disciplineName",
+          label: Container(
+              //   padding: EdgeInsets.all(3.0),
+              padding: EdgeInsets.only(left: 2, right: 2),
+              alignment: Alignment.center,
+              child: Text('Disp',
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold)))),
+      GridColumn(
+          width: columnWidths['shiftName']!,
+          columnName: "shiftName",
+          label: Container(
+              // padding: EdgeInsets.all(3.0),
+              padding: EdgeInsets.only(left: 2, right: 2),
+              alignment: Alignment.centerLeft,
+              child: Text('Name',
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold)))),
+      GridColumn(
+          visible: false,
+          columnName: "hcpId",
+          label: Container(
+              // padding: EdgeInsets.all(3.0),
+              padding: EdgeInsets.only(left: 2, right: 2),
+              alignment: Alignment.centerLeft,
+              child: Text('hcpId',
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold)))),
+      GridColumn(
+          visible: false,
+          columnName: "id",
+          label: Container(
+              // padding: EdgeInsets.all(3.0),
+              padding: EdgeInsets.only(left: 2, right: 2),
+              alignment: Alignment.centerLeft,
+              child: Text('id',
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold)))),
+    ];
+    return columnList;
+  }
+
+  bool showCheckboxHeader = false;
+
+  Color color4 = Colors.black87;
+  Color color5 = Colors.red;
+  double tableHeight = 800;
+  double count = 0;
+  int? selectedIndex;
+  Map<String, List<DataGridRow>> selectedRowsCollection = {};
+  double multiplicativeFactor = 1;
+  double fontSize = 18;
+  //final CustomSelectionManager _customSelectionManager = CustomSelectionManager();
+  List<DataGridRow> selectedList = <DataGridRow>[];
+
+  Color color1 = Color.fromARGB(255, 134, 219, 197); //green from website
+  Color color2 = Color.fromARGB(255, 19, 125, 103); //green from logo
+  Color color3 = Colors.grey.shade200;
+  double? screenWidth;
+  double? screenHeight;
+
+  double largeFontSize = 22;
+  double? h;
+  bool flagShowRed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+    tableHeight = screenHeight! - 250;
+    double appWidth = screenWidth! / 2;
+    if (screenWidth! < 400) {
+      multiplicativeFactor = 1.0;
+    } else {
+      multiplicativeFactor = screenWidth! / 400;
+    }
+    h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
+    if (h! < 1.0) {
+      h = 1.0;
+    }
+    fontSize = 18;
+    fontSize /= h!;
+    largeFontSize /= h!;
+    // double smallFontSize = 14;
+    smallFontSize /= h!;
+    print('line 296: $h! $fontSize');
+
+    return Scaffold(
+      backgroundColor: color1,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text("Republish Shifts",
+            style: TextStyle(
+                fontSize:
+                    Theme.of(context).textTheme.headlineLarge!.fontSize! / h!,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87)),
+        leading: GestureDetector(
+          child: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new_outlined,
+                size: Theme.of(context).textTheme.headlineLarge!.fontSize! / h!,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamed(clientSchedulingMenu, arguments: arguments!);
+              }),
+        ),
+      ),
+      body: Column(children: [
+        Center(
+          child: Container(
+              height: tableHeight,
+              width: appWidth! - 10,
+              child: FutureBuilder<dynamic>(
+                  future: Future.wait([
+                    getAllItems(),
+                  ]),
+                  builder: (context, snapshot) {
+                    print(
+                        'line 129: ${snapshot.data}  ${snapshot.connectionState} ${snapshot.hasData}');
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Container(
+                          height: 100,
+                          child: Text('Error: ${snapshot.error}',
+                              overflow: TextOverflow.visible,
+                              style: TextStyle(
+                                  fontSize: fontSize,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      );
+                    } else if (snapshot.data == [[]] &&
+                        snapshot.connectionState == ConnectionState.done) {
+                      return Center(
+                        child: Container(
+                          height: 100,
+                          width: screenWidth! - 10,
+                          child: Text('There are no shifts to be cancelled.',
+                              style: TextStyle(
+                                  fontSize: fontSize,
+                                  color: color2,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      );
+                    } else {
+                      // dynamic ccl = snapshot.data; // cast to List<Marker>
+                      // print('line 147: $ccl');
+                      List<dynamic> allItems =
+                          snapshot.data[0]; // cast to List<Marker>
+                      print('line 111 ${allItems.length}');
+                      if (allItems.length == 0) {
+                        return Center(
+                          child: Container(
+                            height: 100,
+                            child: Text(
+                                'There are no shifts to be republished.',
+                                style: TextStyle(
+                                    fontSize: fontSize,
+                                    color: color2,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                        );
+                      } else {
+                        return Center(
+                          child: Container(
+                              width: appWidth! - 10,
+                              height: 450,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      color: Color.fromARGB(255, 19, 125, 103),
+                                      width: 4),
+                                  borderRadius: BorderRadius.circular(12)),
+                              padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 10),
+                                  Container(
+                                    height: 300,
+                                    width: appWidth! - 10,
+                                    child: SfDataGrid(
+                                      allowColumnsResizing: true,
+                                      onColumnResizeUpdate:
+                                          (ColumnResizeUpdateDetails details) {
+                                        setState(() {
+                                          columnWidths[details.column
+                                              .columnName] = details.width;
+                                        });
+                                        return true;
+                                      },
+                                      source: shiftRepublishDataSource,
+                                      columns: getColumnList(),
+                                      allowEditing: false,
+                                      onQueryRowHeight: (details) {
+                                        // Set the row height as 70.0 to the column header row.
+                                        return details.rowIndex == 0
+                                            ? 70.0
+                                            : 40.0;
+                                      },
+                                      gridLinesVisibility:
+                                          GridLinesVisibility.horizontal,
+                                      selectionMode: SelectionMode.multiple,
+                                      onSelectionChanged:
+                                          (addedRows, removedRows) {
+                                        // Add newly selected rows to the flag variable.
+                                        if (addedRows.isNotEmpty) {
+                                          selectedList.addAll(addedRows);
+                                        }
+                                        print('line 641: $selectedList');
+                                        // Remove deselected rows from the flag variable.
+                                        if (removedRows.isNotEmpty) {
+                                          selectedList.removeWhere((row) =>
+                                              removedRows.contains(row));
+                                        }
+                                      },
+                                      showCheckboxColumn: true,
+                                      checkboxColumnSettings:
+                                          DataGridCheckboxColumnSettings(
+                                              label: Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 3),
+                                                child: Text(
+                                                  'Repbsh',
+                                                  style: TextStyle(
+                                                      fontSize: fontSize,
+                                                      color: Colors.black87,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                              showCheckboxOnHeader: false),
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Center(
+                                    child: Container(
+                                        height: 50,
+                                        width: appWidth! - 10,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(color: color2),
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            // backgroundColor:
+                                            //     flagPublishedButtonDisabled == false
+                                            //         ? Colors.white
+                                            //         : disabledColor),
+                                            backgroundColor: Colors.white,
+                                          ),
+                                          child: Text(
+                                            'Republish Selected Shifts',
+                                            style: TextStyle(
+                                              color: color2,
+                                              fontSize: fontSize,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          //
+                                          onPressed: () async {
+                                            // print(
+                                            //     'line 753: $flagPublishedButtonDisabled');
+                                            // if (flagPublishedButtonDisabled == true) {
+                                            //   flagShowRed = true;
+                                            //   return;
+                                            // }
+                                            print('line 656: ${selectedList}');
+                                            if (selectedList.isEmpty) {
+                                              return;
+                                            }
+                                            await processRepublishShiftsList(
+                                                selectedList, context);
+                                          },
+                                        )),
+                                  ),
+                                  SizedBox(height: 10),
+                                  Container(
+                                      height: 50,
+                                      width: appWidth! - 10,
+                                      decoration: BoxDecoration(
+                                          // color: flagPublishedButtonDisabled == false ? Colors.white
+                                          //     : disabledColor,
+                                          border: Border.all(color: color2),
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              flagWaitDisabled == false
+                                                  ? Colors.white
+                                                  : disabledColor,
+                                        ),
+                                        child: flagWaitDisabled == false
+                                            ? Text(
+                                                'Clear Republish Shifts and Exit',
+                                                style: TextStyle(
+                                                  color: color2,
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              )
+                                            : Text(
+                                                'Wait ...',
+                                                style: TextStyle(
+                                                  color: disabledTextColor,
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                        onPressed: () async {
+                                          print(
+                                              'line 651: $flagPublishedButtonDisabled');
+                                          if (flagPublishedButtonDisabled ==
+                                              true) {
+                                            return;
+                                          }
+                                          Navigator.of(context).pop();
+                                        },
+                                      )),
+                                ],
+                              )),
+                        );
+                      }
+                    }
+                  })),
+        )
+      ]),
+    );
+  }
+}
+
+/// An object to set the employee collection data source to the datagrid. This
+/// is used to map the employee data to the datagrid widget.
+class RepublishShiftDataSource extends DataGridSource {
+  /// Creates the employee data source class with required details.
+  RepublishShiftDataSource(
+      {required List<RepublishShift> shiftRepublishData, required fontS}) {
+    //  print('line 501 in constructor shiftcanceldatasource');
+    _shiftRepublishData = shiftRepublishData
+        .map<DataGridRow>((e) => DataGridRow(cells: [
+              DataGridCell<String>(columnName: 'shiftDate', value: e.shiftDate),
+              DataGridCell<String>(columnName: 'shiftCode', value: e.shiftCode),
+              DataGridCell<String>(
+                  columnName: 'disciplineName', value: e.disciplineName),
+              DataGridCell<String>(columnName: 'shiftName', value: e.shiftName),
+              DataGridCell<int>(columnName: 'hcpId', value: e.hcpId),
+              DataGridCell<String>(columnName: 'id', value: e.id),
+            ]))
+        .toList();
+    fontSize = fontS;
+  }
+
+  List<DataGridRow> _shiftRepublishData = [];
+  double fontSize = 8;
+  @override
+  List<DataGridRow> get rows => _shiftRepublishData;
+
+  @override
+  DataGridRowAdapter buildRow(DataGridRow row) {
+    return DataGridRowAdapter(
+        cells: row.getCells().map<Widget>((e) {
+      return Container(
+        alignment: e.columnName == 'shiftName'
+            ? Alignment.centerLeft
+            : Alignment.center,
+        padding: const EdgeInsets.all(1.0),
+        child: Text(e.value.toString(),
+            style: TextStyle(
+              overflow: TextOverflow.ellipsis,
+              fontSize: fontSize,
+              color: Colors.black87,
+              fontWeight: FontWeight.bold,
+            )),
+      );
+    }).toList());
+  }
+
+  void updateDataGridSource({required RowColumnIndex rowColumnIndex}) {
+    // print('line 759: $rowColumnIndex');
+    notifyDataSourceListeners(rowColumnIndex: rowColumnIndex);
+  }
+}

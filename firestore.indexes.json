@@ -1,0 +1,1405 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "Client",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientName",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Client",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "Client",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "statusId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientASMWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientASMWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientASMWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "statusId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientASMWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "statusId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientASMWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "statusId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientDepartment",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "departmentId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientHCPWordOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "statusId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientHCPWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientHCPWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "statusId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientHCPWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "statusId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientHCPWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientHCPWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "statusId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientHCPWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientHCPWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "statusId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientInvoice",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "invoiceDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientInvoice",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "invoiceDate",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientInvoice",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "invoiceDate",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "balance",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientUser",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "clientUserId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientUser",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientUserId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dates.shiftDateInfo.shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dates.shiftDateInfo.shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dates.shiftDateInfo.shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dates.shiftDateInfo.shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dates.shiftDateInfo.shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "disciplineName",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dates.shiftDateInfo.shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "departments.departmentId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDateInfo.shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDateInfo.shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDateInfo.shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDateInfo.shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dates.shiftDateInfo.shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dates.shiftDateInfo.shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dates.shiftDateInfo.shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDateInfo.shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrder",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDateInfo.shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDateInfo.shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "branchId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "disciplineName",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "disciplineName",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "disciplineName",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "disciplineName",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ShiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientWorkOrderId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientWorkOrderUuid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftAccepted",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "disciplineName",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftstatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "ClientWorkOrderCampaign",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "shiftAccepted",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "uuid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCPAddress",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "addressTypeCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCPCredential",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "credentialId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCProfessional",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "branchId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "disciplineId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCProfessional",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "branchId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "disciplineName",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fullName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCProfessional",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "branchId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "disciplineId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCProfessional",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "disciplineName",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCProfessional",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "Status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "disciplineId",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCProfessionalRate",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCPTimeCard",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hasInitialVerification",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCPTimeCard",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftCode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCPTimeCard",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "hcpId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCPTimeCard",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCPTimeCard",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCPTimeCard",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "signedOutHasInitialVerification",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCPTimeCard",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "signedOutHasInitialVerification",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "HCPTimeCard",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "shiftStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "shiftDate",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
