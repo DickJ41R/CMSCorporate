@@ -28,8 +28,8 @@ const defaultFirebaseOptions = FirebaseOptions(
 final dio = Dio();
 
 class HCProfessionalStreamScreen extends StatefulWidget {
-  final int branchId;
-  const HCProfessionalStreamScreen({super.key, required this.branchId});
+  final Map<String, dynamic> args;
+  const HCProfessionalStreamScreen({super.key, required this.args});
 
   @override
   State<HCProfessionalStreamScreen> createState() =>
@@ -69,7 +69,7 @@ class _HCProfessionalStreamScreenState
   Color color2 = Color.fromARGB(255, 19, 125, 103); //green from logo
   Color color3 = Colors.grey.shade200;
   String? documentId;
-  int? branchId;
+  Map<String, dynamic>? arguments;
   List<HCPClass> getHCPData() {
     List<HCPClass> hcp = hcpClasses;
     return hcp;
@@ -84,7 +84,7 @@ class _HCProfessionalStreamScreenState
   Future<List<Map<String, dynamic>>> _getAllHCPsData() async {
     try {
       List<Map<String, dynamic>>? hcpm =
-          await hcpServices.getHCProfessionalsByBranchId(branchId!);
+          await hcpServices.getHCProfessionalsByArgument(arguments!);
       listOfHCPs = hcpm!;
       final rowsCount = listOfHCPs.length as double;
       pageCount = (rowsCount / _rowsPerPage).floorToDouble();
@@ -98,8 +98,8 @@ class _HCProfessionalStreamScreenState
   @override
   void initState() {
     super.initState();
-    branchId = widget.branchId;
-    print('line 272: $branchId');
+    arguments = widget.args;
+    print('line 272: $arguments!');
     fontSize = 18;
     // clientClasses = getClientData();
 

@@ -254,6 +254,155 @@ class HCPServices {
     }
   }
 
+  Query buildDynamicQuery(Map<String, dynamic> arg) {
+    CollectionReference contentsRef =
+        FirebaseFirestore.instance.collection(arg['searchCollection']);
+    Query query = contentsRef;
+
+    //check search criteria
+    //all
+    if (arg['searchCriteria'] == 'All') {
+      return query;
+    }
+    //isequalto
+    if (arg['searchCriteria'] == 'Is Equal To') {
+      if (arg['searchField'].indexOf('Id') != -1) {
+        int value = int.parse(arg['searchValue']);
+        query = query.where(arg['searchField'], isEqualTo: value);
+        return query;
+      } else {
+        query = query.where(arg['searchField'], isEqualTo: arg['searchValue']);
+        return query;
+      }
+    }
+    //less than
+    if (arg['searchCriteria'] == 'Is Less Than') {
+      if (arg['searchField'].indexOf('Id') != -1) {
+        int value = int.parse(arg['searchValue']);
+        query = query.where(arg['searchField'], isLessThan: value);
+        return query;
+      } else {
+        query = query.where(arg['searchField'], isLessThan: arg['searchValue']);
+        return query;
+      }
+    }
+    //greater than
+    if (arg['searchCriteria'] == 'Is Greater Than') {
+      if (arg['searchField'].indexOf('Id') != -1) {
+        int value = int.parse(arg['searchValue']);
+        query = query.where(arg['searchField'], isGreaterThan: value);
+        return query;
+      } else {
+        query =
+            query.where(arg['searchField'], isGreaterThan: arg['searchValue']);
+        return query;
+      }
+    }
+    // Is greater Than or Equal To,
+    if (arg['searchCriteria'] == 'Is Greater Than Or Equal To') {
+      if (arg['searchField'].indexOf('Id') != -1) {
+        int value = int.parse(arg['searchValue']);
+        query = query.where(arg['searchField'], isGreaterThanOrEqualTo: value);
+        return query;
+      } else {
+        query = query.where(arg['searchField'],
+            isGreaterThanOrEqualTo: arg['searchValue']);
+        return query;
+      }
+    }
+
+    //Is less Than or Equal To",
+    if (arg['searchCriteria'] == 'Is Less Than Or Equal To') {
+      if (arg['searchField'].indexOf('Id') != -1) {
+        int value = int.parse(arg['searchValue']);
+        query = query.where(arg['searchField'], isLessThanOrEqualTo: value);
+      } else {
+        query = query.where(arg['searchField'],
+            isLessThanOrEqualTo: arg['searchValue']);
+      }
+    }
+    //Is Between (Include Edges)",
+    if (arg['searchCriteria'] == 'Is Between (Include Edges)') {
+      if (arg['searchField'].indexOf('Id') != -1) {
+        int value = int.parse(arg['searchValue']);
+        query = query.where(arg['searchField'], isGreaterThanOrEqualTo: value);
+        query = query.where(arg['searchField'], isLessThanOrEqualTo: value);
+      } else {
+        query = query.where(arg['searchField'],
+            isGreaterThanOrEqualTo: arg['searchValue']);
+        query = query.where(arg['searchField'],
+            isLessThanOrEqualTo: arg['searchValue']);
+      }
+    }
+    // Is Between (Do not Include Edges)",
+    if (arg['searchCriteria'] == 'Is Between (Do not Include Edges)') {
+      if (arg['searchField'].indexOf('Id') != -1) {
+        int value = int.parse(arg['searchValue']);
+        query = query.where(arg['searchField'], isGreaterThan: value);
+        query = query.where(arg['searchField'], isLessThan: value);
+      } else {
+        query =
+            query.where(arg['searchField'], isGreaterThan: arg['searchValue']);
+        query = query.where(arg['searchField'], isLessThan: arg['searchValue']);
+      }
+    }
+
+    if (arg['searchCriteria'] == 'Is In (colon separated list)') {
+      String sx = arg['searchCriteria'].replaceAll(',', ':');
+      List<String> lsx = sx.split(':');
+      if (arg['searchField'].indexOf('Id') != -1) {
+        List<int> lvalues = [];
+        for (int i = 0; i < lsx.length; i++) {
+          String sv = lsx[i];
+          lvalues.add(int.parse(sv));
+        }
+        query = query.where(arg['searchField'], whereIn: lvalues);
+      } else {
+        List<String> svalues = [];
+        for (int i = 0; i < lsx.length; i++) {
+          String sv = lsx[i];
+          svalues.add(sv);
+        }
+        query = query.where(arg['searchField'], whereIn: svalues);
+      }
+    }
+    return query;
+  }
+
+  Future<List<Map<String, dynamic>>>? getHCProfessionalsByArgument(
+      Map<String, dynamic> arguments) async {
+    print('line 9 get all hcps: $arguments');
+    try {
+      //  return realm.all<ClientWorkOrderCampaign>();
+      List<Map<String, dynamic>> mph = [];
+      Query query = buildDynamicQuery(arguments!);
+      print('line 182: $query');
+      query.get().then(((querySnapshot) async {
+        for (var docSnapShot in querySnapshot.docs) {
+          print('line 198 in querysnapshot');
+          Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
+          obj['id'] = docSnapShot.id;
+          Timestamp ts = obj['credsWillWarnDate'];
+          DateTime date = ts.toDate();
+          var formattedDate = DateFormat('MM/dd/yyyy').format(date);
+          obj['credsWillWarnDate'] = formattedDate;
+          ts = obj['lastWorked'];
+          date = ts.toDate();
+          formattedDate = DateFormat('MM/dd/yyyy').format(date);
+          obj['lastWorked'] = formattedDate;
+
+          //    print('line 184: $formattedDate  ${obj['credsWillWarnDate']}');
+
+          mph.add(obj);
+        }
+      }));
+      return mph;
+    } catch (e) {
+      print('line 217 error: $e');
+      throw Exception(e.toString());
+    }
+  }
+
   Future<List<Map<String, dynamic>>>? getHCProfessionalsByBranchId(
       int branchId) async {
     print('line 9 get all hcps: $branchId');

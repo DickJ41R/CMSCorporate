@@ -27,6 +27,23 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     localTitle = 'CMS Primary Menu';
     listOfCurrentUserBranches = authServices.listOfCMSUserBranches;
     _setBranches();
+    _setSearchCriteria();
+    _setClientFields();
+    _setHCPFields();
+    _setWorkOrderFields();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchCriteriaController.dispose();
+    searchClientController.dispose();
+    searchHCPController.dispose();
+    searchWorkOrderController.dispose();
+    searchTermsController.dispose();
+    branchController.dispose();
+    menuOptionController.dispose();
+    searchFieldsController.dispose();
   }
 
   DropDownCodes dropDownCodes = DropDownCodes();
@@ -36,13 +53,29 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   double? screenWidth;
   double? fontSize;
   String? selectedBranch;
+  String? selectedSearchField;
+  String? selectedSearchCriteria;
   String? selectedMenuOption;
+  String? selectedSearchCriteriaMenuOption;
+  bool isCheckedClient = false;
+  bool isCheckedHCP = false;
+  bool isCheckedWorkSchedule = false;
   int? selectedBranchNumber;
   bool flagHaveData = false;
+  TextEditingController searchCriteriaController = TextEditingController();
+  TextEditingController searchClientController = TextEditingController();
+  TextEditingController searchHCPController = TextEditingController();
+  TextEditingController searchWorkOrderController = TextEditingController();
+  TextEditingController searchTermsController = TextEditingController();
   TextEditingController branchController = TextEditingController();
   TextEditingController menuOptionController = TextEditingController();
+  TextEditingController searchFieldsController = TextEditingController();
+
   List<DropdownMenuEntry<dynamic>> dropDownBranchEntries = [];
+  List<DropdownMenuEntry<dynamic>> dropDownSearchCriteriaEntries = [];
   List<DropdownMenuEntry<dynamic>> dropDownMenuOptionEntries = [];
+  List<DropdownMenuEntry<dynamic>> dropDownSearchFieldsEntries = [];
+
   String? _value;
   Color color1 = Color.fromARGB(255, 134, 219, 197); //green from website
   Color color2 = Color.fromARGB(255, 19, 125, 103); //green from logo
@@ -52,6 +85,105 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     fontWeight: FontWeight.bold,
   );
   bool flagHaveCalled = false;
+
+  void _setSearchFields(int index) {
+    dropDownSearchFieldsEntries = [];
+
+    switch (index) {
+      case 0:
+        {
+          print('line 96: ${clientFields!.length}');
+          for (int i = 0; i < clientFields!.length; i++) {
+            DropdownMenuEntry me = DropdownMenuEntry(
+                value: clientFields![i], label: clientFields![i]);
+            dropDownSearchFieldsEntries.add(me);
+          }
+        }
+        break;
+      case 1:
+        {
+          for (int i = 0; i < hcpFields!.length; i++) {
+            DropdownMenuEntry me =
+                DropdownMenuEntry(value: hcpFields![i], label: hcpFields![i]);
+            dropDownSearchFieldsEntries.add(me);
+          }
+        }
+        break;
+      case 2:
+        {
+          for (int i = 0; i < workOrderFields!.length; i++) {
+            DropdownMenuEntry me = DropdownMenuEntry(
+                value: workOrderFields![i], label: workOrderFields![i]);
+            dropDownSearchFieldsEntries.add(me);
+          }
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  bool haveFields = false;
+  List<dynamic>? searchCriteria;
+  List<dynamic>? clientFields;
+  List<dynamic>? workOrderFields;
+  List<dynamic>? hcpFields;
+
+  void _setClientFields() {
+    clientFields = [
+      'Client Id',
+      'Client Name',
+      'Status',
+      'Branch Id',
+      'Branch Name'
+    ];
+  }
+
+  void _setHCPFields() {
+    hcpFields = [
+      'Hcp Id',
+      'Hcp Name (LastName, FirstName',
+      'Status',
+      'Branch Id',
+      'Branch Name'
+    ];
+  }
+
+  void _setWorkOrderFields() {
+    hcpFields = [
+      'Hcp Id',
+      'Hcp Name (LastName, FirstName',
+      'Status',
+      'Branch Id',
+      'Branch Name'
+    ];
+  }
+
+  Map<String, dynamic> argumentContainer = {
+    'searchCriteria': 'All',
+    'searchValue': 0,
+    'searchCollection': 'None',
+    'searchField': 'None',
+  };
+  void _setSearchCriteria() {
+    searchCriteria = [
+      "All",
+      'Is Equal To',
+      "Is Less Than",
+      "Is Less Than or Equal To",
+      "Is Greater Than",
+      "Is Greater Than or Equal To",
+      "Is Between (Include Edges)",
+      "Is Between (Do not Include Edges)",
+      "Is In (colon separated list)",
+    ];
+    for (int i = 0; i < searchCriteria!.length; i++) {
+      DropdownMenuEntry me = DropdownMenuEntry(
+          value: searchCriteria![i], label: searchCriteria![i]);
+      dropDownSearchCriteriaEntries.add(me);
+    }
+  }
+
   List<Map<String, dynamic>>? userBranches;
 
   void _setBranches() {
@@ -125,7 +257,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       h = 1.0;
     }
     fontSize = 18 / h;
-    print('line 406: $fontSize $h');
+    print('line 406: $screenWidth $screenHeight $fontSize $h');
 
     return Scaffold(
       appBar: AppBar(
@@ -139,109 +271,365 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       body: Padding(
         padding: const EdgeInsets.all(4.0),
         child: VerticalSplitView(
-          left: Container(
-              decoration: BoxDecoration(
-                color: color1,
-                border: Border.all(color: Colors.black),
-              ),
-              child: Column(
-                children: [
-                  // SizedBox(width: screenWidth! - 10, height: 5),
-                  Row(
-                    children: [
-                      Container(
-                        height: 500,
-                        width: 295,
-                        padding: EdgeInsets.only(left: 10, top: 35),
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2),
-                              child: DropdownMenu<dynamic>(
-                                initialSelection: null,
-                                //    "Corporate",
-                                controller: branchController,
-                                //  requestFocusOnTap is enabled/disabled by platforms when it is null.
-                                //  On mobile platforms, this is false by default. Setting this to true will
-                                // trigger focus request on the text field and virtual keyboard will appear
-                                //   afterward. On desktop platforms however, this defaults to true.
-                                requestFocusOnTap: true,
-                                label: Container(
-                                    height: 80,
-                                    width: 285,
-                                    child: Text('Branch')),
-                                onSelected: (dynamic value) {
-                                  setState(() {
-                                    selectedBranch = value;
-                                    selectedBranchIndex =
-                                        getSelectedBranchIndex(value);
-                                    int idx = value.indexOf(')');
-                                    if (idx != -1) {
-                                      String st = value.substring(0, idx);
-                                      st = st.replaceAll('(', '');
-                                      st = st.trim();
-                                      selectedBranchNumber = int.parse(st);
-                                    }
-                                    // selectedBranchNumber =
-                                    //     userBranches![selectedBranchIndex]
-                                    //         ['branchId'];
-                                    print('line 165: ${selectedBranchNumber}');
-                                  });
-
-                                  if (selectedMenuOption != null &&
-                                      flagHaveCalled == false) {
-                                    print(
-                                        'line 404 in show circular progress indicator');
-                                    flagHaveData == false
-                                        ? Center(
-                                            child: Container(
-                                              height: 50,
-                                              width: 50,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                      color: Color.fromARGB(
-                                                          255, 19, 125, 103),
-                                                      width: 4),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          12)),
-                                              child: CircularProgressIndicator(
-                                                backgroundColor: color1,
-                                              ),
-                                            ),
-                                          )
-                                        : Container();
-                                    print('line 424 just before get rows');
+          left: SingleChildScrollView(
+            child: Column(
+              children: [
+                // SizedBox(width: screenWidth! - 10, height: 5),
+                Row(
+                  children: [
+                    Container(
+                      height: 200,
+                      width: 295,
+                      padding: EdgeInsets.only(left: 10, top: 5),
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: DropdownMenu<dynamic>(
+                              initialSelection: null,
+                              //    "Corporate",
+                              controller: branchController,
+                              //  requestFocusOnTap is enabled/disabled by platforms when it is null.
+                              //  On mobile platforms, this is false by default. Setting this to true will
+                              // trigger focus request on the text field and virtual keyboard will appear
+                              //   afterward. On desktop platforms however, this defaults to true.
+                              requestFocusOnTap: true,
+                              label: Container(
+                                  height: 50,
+                                  width: 285,
+                                  child: Text('Branch')),
+                              onSelected: (dynamic value) {
+                                setState(() {
+                                  selectedBranch = value;
+                                  argumentContainer['searchValue'] = value;
+                                  selectedBranchIndex =
+                                      getSelectedBranchIndex(value);
+                                  int idx = value.indexOf(')');
+                                  if (idx != -1) {
+                                    String st = value.substring(0, idx);
+                                    st = st.replaceAll('(', '');
+                                    st = st.trim();
+                                    selectedBranchNumber = int.parse(st);
                                   }
-                                },
+                                  // selectedBranchNumber =
+                                  //     userBranches![selectedBranchIndex]
+                                  //         ['branchId'];
+                                  print('line 165: ${selectedBranchNumber}');
+                                });
 
-                                dropdownMenuEntries: dropDownBranchEntries,
-                              ),
+                                if (selectedMenuOption != null &&
+                                    flagHaveCalled == false) {
+                                  print(
+                                      'line 404 in show circular progress indicator');
+                                  flagHaveData == false
+                                      ? Center(
+                                          child: Container(
+                                            height: 50,
+                                            width: 50,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                    color: Color.fromARGB(
+                                                        255, 19, 125, 103),
+                                                    width: 4),
+                                                borderRadius:
+                                                    BorderRadius.circular(12)),
+                                            child: CircularProgressIndicator(
+                                              backgroundColor: color1,
+                                            ),
+                                          ),
+                                        )
+                                      : Container();
+                                  print('line 424 just before get rows');
+                                }
+                              },
+
+                              dropdownMenuEntries: dropDownBranchEntries,
                             ),
-                            selectedBranch != null
-                                ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Container(
-                                          height: 50,
-                                          width: 285,
-                                          child: Text(
-                                              'Selected: ${selectedBranch}')),
-                                    ],
-                                  )
-                                : Container(
-                                    height: 50,
-                                    width: 285,
-                                    child: Text('Please select a branch.'),
-                                  ),
-                          ],
+                          ),
+                          selectedBranch != null
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                        height: 50,
+                                        width: 285,
+                                        child: Text(
+                                            'Selected: ${selectedBranch}')),
+                                  ],
+                                )
+                              : Container(
+                                  height: 30,
+                                  width: 285,
+                                  child: Text('Please select a branch.'),
+                                ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Container(
+                      height: 200,
+                      width: 295,
+                      padding: EdgeInsets.only(left: 10, top: 5),
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: DropdownMenu<dynamic>(
+                              initialSelection: null,
+                              //    "Corporate",
+                              controller: searchCriteriaController,
+                              //  requestFocusOnTap is enabled/disabled by platforms when it is null.
+                              //  On mobile platforms, this is false by default. Setting this to true will
+                              // trigger focus request on the text field and virtual keyboard will appear
+                              //   afterward. On desktop platforms however, this defaults to true.
+                              requestFocusOnTap: true,
+                              label: Container(
+                                  height: 50,
+                                  width: 290,
+                                  child: Text('Search Criteria')),
+                              onSelected: (dynamic value) {
+                                setState(() {
+                                  selectedSearchCriteria = value;
+                                  argumentContainer['searchCriteria'] = value;
+
+                                  print('line 165: ${selectedSearchCriteria}');
+                                });
+                              },
+
+                              dropdownMenuEntries:
+                                  dropDownSearchCriteriaEntries,
+                            ),
+                          ),
+                          selectedSearchCriteria != null
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                        height: 50,
+                                        width: 2,
+                                        child: Text(
+                                            'Selected: ${selectedSearchCriteria}')),
+                                  ],
+                                )
+                              : Container(
+                                  height: 50,
+                                  width: 285,
+                                  child: Text('Please select search criteria.'),
+                                ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Container(
+                  padding: EdgeInsets.only(left: 10),
+                  height: 50,
+                  width: 285,
+                  child: TextFormField(
+                      controller: searchClientController,
+                      style: TextStyle(
+                          decoration: isCheckedClient
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none),
+                      decoration: InputDecoration(
+                        label: Text('Search For Clients'),
+                        suffixIcon: Checkbox(
+                          value: isCheckedClient,
+                          onChanged: (value) {
+                            setState(() {
+                              _setSearchFields(0);
+
+                              isCheckedClient = value!;
+                              haveFields = true;
+                              if (value == false) {
+                                dropDownSearchFieldsEntries = [];
+                                isCheckedHCP = false;
+                                isCheckedWorkSchedule = false;
+                              } else {
+                                argumentContainer['searchCollection'] =
+                                    'Client';
+                                isCheckedHCP = !value;
+                                isCheckedWorkSchedule = !value;
+                              }
+                            });
+                          },
                         ),
                       ),
-                    ],
-                  )
-                ],
-              )),
+                      maxLength: 280,
+                      validator: (value) {
+                        return null;
+                      }),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  padding: EdgeInsets.only(left: 10),
+                  height: 50,
+                  width: 285,
+                  child: TextFormField(
+                      controller: searchHCPController,
+                      style: TextStyle(
+                          decoration: isCheckedHCP
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none),
+                      decoration: InputDecoration(
+                        label: Text('Search For HCPs'),
+                        suffixIcon: Checkbox(
+                          value: isCheckedHCP,
+                          onChanged: (value) {
+                            print('line 389: $value');
+                            setState(() {
+                              isCheckedHCP = value!;
+                              haveFields = true;
+                              _setSearchFields(1);
+
+                              if (value == false) {
+                                dropDownSearchFieldsEntries = [];
+                                isCheckedClient = false;
+                                isCheckedWorkSchedule = false;
+                              } else {
+                                argumentContainer['searchCollection'] =
+                                    'HCProfessional';
+
+                                isCheckedClient = !value;
+                                isCheckedWorkSchedule = !value;
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                      maxLength: 280,
+                      validator: (value) {
+                        return null;
+                      }),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  padding: EdgeInsets.only(left: 10),
+                  height: 50,
+                  width: 285,
+                  child: TextFormField(
+                      controller: searchHCPController,
+                      style: TextStyle(
+                          decoration: isCheckedWorkSchedule
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none),
+                      decoration: InputDecoration(
+                        label: Text('Search For HCPs'),
+                        suffixIcon: Checkbox(
+                          value: isCheckedWorkSchedule,
+                          onChanged: (value) {
+                            setState(() {
+                              isCheckedWorkSchedule = value!;
+                              _setSearchFields(2);
+                              haveFields = true;
+                              if (value == false) {
+                                dropDownSearchFieldsEntries = [];
+                                isCheckedHCP = false;
+                                isCheckedClient = false;
+                              } else {
+                                argumentContainer['searchCollection'] =
+                                    'ClientWorkOrder';
+                                isCheckedHCP = !value;
+                                isCheckedClient = !value;
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                      maxLength: 280,
+                      validator: (value) {
+                        return null;
+                      }),
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Container(
+                      height: 150,
+                      width: 295,
+                      padding: EdgeInsets.only(left: 10, top: 20),
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: DropdownMenu<dynamic>(
+                              initialSelection: null,
+                              //    "Corporate",
+                              controller: searchFieldsController,
+                              //  requestFocusOnTap is enabled/disabled by platforms when it is null.
+                              //  On mobile platforms, this is false by default. Setting this to true will
+                              // trigger focus request on the text field and virtual keyboard will appear
+                              //   afterward. On desktop platforms however, this defaults to true.
+                              requestFocusOnTap: true,
+                              label: Container(
+                                  height: 50,
+                                  width: 290,
+                                  child: Text('Search Fields')),
+                              onSelected: (dynamic value) {
+                                setState(() {
+                                  selectedSearchField = value;
+                                  argumentContainer['searchField'] = value;
+
+                                  print('line 165: ${selectedSearchField}');
+                                });
+                              },
+
+                              dropdownMenuEntries: dropDownSearchFieldsEntries,
+                            ),
+                          ),
+                          selectedSearchField != null
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                        height: 50,
+                                        width: 285,
+                                        child: Text(
+                                            'Selected: ${selectedSearchField}')),
+                                  ],
+                                )
+                              : Container(
+                                  height: 50,
+                                  width: 285,
+                                  child: Text('Please select search Field'),
+                                ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 10),
+                Container(
+                  padding: EdgeInsets.only(left: 10),
+                  height: 150,
+                  width: 285,
+                  child: TextFormField(
+                      onChanged: (value) {
+                        argumentContainer['searchValue'] = value;
+                      },
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                      controller: searchTermsController,
+                      maxLength: 280,
+                      minLines: 1,
+                      maxLines: 3,
+                      decoration:
+                          InputDecoration(label: Text('Search Term(s)')),
+                      validator: (value) {
+                        return null;
+                      }),
+                ),
+              ],
+            ),
+          ),
           right: Container(
             width: screenWidth! - 310,
             height: screenHeight,
@@ -258,19 +646,23 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                     TabsWeb(title: 'Home', route: homePage, argumentId: null),
                     Spacer(),
                     TabsWeb(
-                        title: 'Work Order',
-                        route: workOrderPage,
-                        argumentId: 0),
+                      title: 'Work Order',
+                      route: workOrderPage,
+                      argumentId: -1,
+                      argumentMap: argumentContainer,
+                    ),
                     Spacer(),
                     TabsWeb(
                         title: 'Clients',
                         route: clientPage,
-                        argumentId: selectedBranchNumber),
+                        argumentId: -1,
+                        argumentMap: argumentContainer),
                     Spacer(),
                     TabsWeb(
                         title: 'HC Professionals',
                         route: hcprofessionalPage,
-                        argumentId: selectedBranchNumber),
+                        argumentId: -1,
+                        argumentMap: argumentContainer),
                     Spacer(),
                   ],
                 ),

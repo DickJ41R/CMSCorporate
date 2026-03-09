@@ -7,7 +7,7 @@ import 'package:cms_web/features/shared/services/routes.dart';
 class TabsWeb extends StatefulWidget {
   final title;
   final route;
-  final int? argumentId;
+  final argumentId;
   final Map<String, dynamic>? argumentMap;
   const TabsWeb(
       {Key? key, this.title, this.route, this.argumentId, this.argumentMap})

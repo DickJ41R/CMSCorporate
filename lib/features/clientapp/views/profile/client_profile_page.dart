@@ -621,6 +621,7 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
       h = 1.0;
     }
     fontSize = 16 / h;
+    double smallFontSize = 12 / h;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -718,6 +719,9 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
+                            style: TextStyle(
+                              fontSize: smallFontSize,
+                            ),
                             controller: clientNameController,
                             maxLength: 100,
                             decoration:
@@ -1728,6 +1732,9 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
+                            style: TextStyle(
+                              fontSize: smallFontSize,
+                            ),
                             controller: branchNameController,
                             maxLength: 100,
                             decoration:

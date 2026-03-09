@@ -64,14 +64,13 @@ class MyRoutes {
       case workOrderPage:
         return MaterialPageRoute(builder: (context) => WorkOrderStreamScreen());
       case clientPage:
-        var branchId = settings.arguments as int;
+        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-            builder: (context) => ClientStreamScreen(branchId: branchId));
+            builder: (context) => ClientStreamScreen(args: mp));
       case hcprofessionalPage:
-        var branchId = settings.arguments as int;
+        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-            builder: (context) =>
-                HCProfessionalStreamScreen(branchId: branchId));
+            builder: (context) => HCProfessionalStreamScreen(args: mp));
       case clientMenu:
         print('line 67 client menu');
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
