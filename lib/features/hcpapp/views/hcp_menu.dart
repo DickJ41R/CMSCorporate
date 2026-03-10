@@ -195,7 +195,7 @@ class _HCPMenuState extends State<HCPMenu> {
   bool isLoading = false;
 //
   int selectedMenuIndex = -1;
-
+  String? description;
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -208,7 +208,15 @@ class _HCPMenuState extends State<HCPMenu> {
     }
     fontSize = 18 / h;
     print('line 406: $fontSize $h');
-
+    bool flagHasSnackbar = false;
+    if (screenWidth < 1220) {
+      double dif = 1220 - screenWidth;
+      String title = 'Screen Width';
+      String sdif = dif.toStringAsFixed(0);
+      description =
+          'Extend the width of your screen until menu appears on left.';
+      flagHasSnackbar = true;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -230,179 +238,182 @@ class _HCPMenuState extends State<HCPMenu> {
               }),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: VerticalSplitView(
-            left: Container(
-                decoration: BoxDecoration(
-                  color: color1,
-                  border: Border.all(color: Colors.black),
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(width: screenWidth - 10, height: 5),
-                    Row(
-                      children: [
-                        Container(
-                          height: 100,
-                          width: 295,
-                          padding: EdgeInsets.only(top: 5),
+      body: flagHasSnackbar == true
+          ? Center(
+              heightFactor: 50,
+              widthFactor: 50,
+              child: Text(description!),
+            )
+          : VerticalSplitView(
+              left: Container(
+                  decoration: BoxDecoration(
+                    color: color1,
+                    border: Border.all(color: Colors.black),
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(width: screenWidth - 10, height: 5),
+                      Row(
+                        children: [
+                          Container(
+                            height: 100,
+                            width: 295,
+                            padding: EdgeInsets.only(top: 5),
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 2),
+                                  child: DropdownMenu<dynamic>(
+                                    initialSelection: null,
+                                    //    "Corporate",
+                                    controller: menuController,
+                                    //  requestFocusOnTap is enabled/disabled by platforms when it is null.
+                                    //  On mobile platforms, this is false by default. Setting this to true will
+                                    // trigger focus request on the text field and virtual keyboard will appear
+                                    //   afterward. On desktop platforms however, this defaults to true.
+                                    requestFocusOnTap: true,
+                                    label: const Text('HCP Menu'),
+                                    onSelected: (dynamic value) {
+                                      print('line 258 on selected $value');
+                                      selectedMenu = value;
+                                      selectedMenuIndex =
+                                          getSelectedMenuIndex(value);
+                                      print('line 262: $selectedMenuIndex');
+                                      selectedMenuName =
+                                          hcpMenus[selectedMenuIndex]
+                                              ['clientRouteName'];
+                                      setState(() {
+                                        if (selectedMenuIndex == 0) {
+                                          //    dropDownMenuOptionEntries = [];
+                                          showRightSide = 0;
+
+                                          // genericMenu = clientProfileMenus;
+                                          genericTitle = 'HCP Profile Menu';
+                                        } else {
+                                          // dropDownMenuOptionEntries = [];
+                                          showRightSide = 1;
+
+                                          //genericMenu = clientSchedulingMenus;
+                                          genericTitle = 'HCP Scheduling Menu';
+                                        }
+                                      });
+                                    },
+                                    dropdownMenuEntries: dropDownMenuEntries,
+                                  ),
+                                ),
+                                if (selectedMenu != null)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text('Selected: ${selectedMenu}'),
+                                    ],
+                                  )
+                                else
+                                  const Text('Please select an HCP Menu.'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  )),
+              right: showRightSide == -1
+                  ? Container()
+                  : showRightSide == 0
+                      ? Container(
+                          height: screenHeight! - 100,
+                          width: screenWidth - 295,
                           child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 2),
-                                child: DropdownMenu<dynamic>(
-                                  initialSelection: null,
-                                  //    "Corporate",
-                                  controller: menuController,
-                                  //  requestFocusOnTap is enabled/disabled by platforms when it is null.
-                                  //  On mobile platforms, this is false by default. Setting this to true will
-                                  // trigger focus request on the text field and virtual keyboard will appear
-                                  //   afterward. On desktop platforms however, this defaults to true.
-                                  requestFocusOnTap: true,
-                                  label: const Text('HCP Menu'),
-                                  onSelected: (dynamic value) {
-                                    print('line 258 on selected $value');
-                                    selectedMenu = value;
-                                    selectedMenuIndex =
-                                        getSelectedMenuIndex(value);
-                                    print('line 262: $selectedMenuIndex');
-                                    selectedMenuName =
-                                        hcpMenus[selectedMenuIndex]
-                                            ['clientRouteName'];
-                                    setState(() {
-                                      if (selectedMenuIndex == 0) {
-                                        //    dropDownMenuOptionEntries = [];
-                                        showRightSide = 0;
-
-                                        // genericMenu = clientProfileMenus;
-                                        genericTitle = 'HCP Profile Menu';
-                                      } else {
-                                        // dropDownMenuOptionEntries = [];
-                                        showRightSide = 1;
-
-                                        //genericMenu = clientSchedulingMenus;
-                                        genericTitle = 'HCP Scheduling Menu';
-                                      }
-                                    });
-                                  },
-                                  dropdownMenuEntries: dropDownMenuEntries,
+                            children: [
+                              Container(
+                                height: 40,
+                                width: 295,
+                                child: Center(
+                                  child: Text(
+                                    '$genericTitle',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87),
+                                  ),
                                 ),
                               ),
-                              if (selectedMenu != null)
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text('Selected: ${selectedMenu}'),
-                                  ],
-                                )
-                              else
-                                const Text('Please select an HCP Menu.'),
+                              SizedBox(height: 10),
+                              Center(
+                                child: Container(
+                                  width: screenWidth - 295,
+                                  height: screenHeight! - 200,
+                                  decoration: BoxDecoration(
+                                    color: color1,
+                                    border: Border.all(color: Colors.black),
+                                  ),
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    restorationId: 'HCPListView',
+                                    itemCount: hcpProfileMenus.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      final item = hcpProfileMenus[index];
+                                      print('line 243: $index ${item}');
+                                      return VerticalTile(
+                                        menuItem: hcpProfileMenus[index],
+                                        arguments: arguments!,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
-                        ),
-                      ],
-                    )
-                  ],
-                )),
-            right: showRightSide == -1
-                ? Container()
-                : showRightSide == 0
-                    ? Container(
-                        height: screenHeight! - 100,
-                        width: screenWidth - 295,
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 40,
-                              width: 295,
-                              child: Center(
-                                child: Text(
-                                  '$genericTitle',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87),
+                        )
+                      : Container(
+                          height: screenHeight! - 100,
+                          width: screenWidth - 295,
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 40,
+                                width: 295,
+                                child: Center(
+                                  child: Text(
+                                    '$genericTitle',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87),
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 10),
-                            Center(
-                              child: Container(
-                                width: screenWidth - 295,
-                                height: screenHeight! - 200,
-                                decoration: BoxDecoration(
-                                  color: color1,
-                                  border: Border.all(color: Colors.black),
-                                ),
-                                child: ListView.builder(
-                                  scrollDirection: Axis.vertical,
-                                  restorationId: 'HCPListView',
-                                  itemCount: hcpProfileMenus.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    final item = hcpProfileMenus[index];
-                                    print('line 243: $index ${item}');
-                                    return VerticalTile(
-                                      menuItem: hcpProfileMenus[index],
-                                      arguments: arguments!,
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(
-                        height: screenHeight! - 100,
-                        width: screenWidth - 295,
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 40,
-                              width: 295,
-                              child: Center(
-                                child: Text(
-                                  '$genericTitle',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Center(
-                              child: Container(
-                                width: screenWidth - 295,
-                                height: screenHeight! - 200,
-                                decoration: BoxDecoration(
-                                  color: color1,
-                                  border: Border.all(color: Colors.black),
-                                ),
-                                child: ListView.builder(
-                                  scrollDirection: Axis.vertical,
-                                  restorationId: 'HcpListView1',
-                                  itemCount: hcpSchedulingMenus.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    final item = hcpSchedulingMenus[index];
-                                    print('line 402: $index ${item}');
+                              SizedBox(height: 10),
+                              Center(
+                                child: Container(
+                                  width: screenWidth - 295,
+                                  height: screenHeight! - 200,
+                                  decoration: BoxDecoration(
+                                    color: color1,
+                                    border: Border.all(color: Colors.black),
+                                  ),
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    restorationId: 'HcpListView1',
+                                    itemCount: hcpSchedulingMenus.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      final item = hcpSchedulingMenus[index];
+                                      print('line 402: $index ${item}');
 
-                                    return VerticalTile1(
-                                      menuItem: hcpSchedulingMenus[index],
-                                      arguments: arguments!,
-                                    );
-                                  },
+                                      return VerticalTile1(
+                                        menuItem: hcpSchedulingMenus[index],
+                                        arguments: arguments!,
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      )),
-      ),
+                            ],
+                          ),
+                        )),
     );
   }
 }

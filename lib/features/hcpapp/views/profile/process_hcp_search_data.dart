@@ -10,9 +10,8 @@ import 'package:cms_web/features/hcpapp/models/hcprofessional_data_model.dart';
 //import 'package:hcp_app/pages/login/login.dart';
 
 class ProcessSearchHCPsScreen extends StatefulWidget {
-  final String hcpRecordData;
-  final BuildContext ctx;
-  ProcessSearchHCPsScreen({required this.ctx, required this.hcpRecordData});
+  final List<Map<String, String>> args;
+  ProcessSearchHCPsScreen({super.key, required this.args});
 
   @override
   _ProcessSearchHCPsScreenState createState() =>
@@ -20,11 +19,6 @@ class ProcessSearchHCPsScreen extends StatefulWidget {
 }
 
 class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
-  static String hcpRecordData = '';
-  late Future dataRetrievalAndFiltering;
-
-  dynamic selectedBranchValue;
-
   bool hasSelectionData = false;
   List<HCProfessionalDataModel>? hcpDataSource;
   final searchController = TextEditingController();
@@ -34,14 +28,14 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
   var _selectedIndex;
   HCPServices hcpServices = HCPServices();
   late DataGridSource hcpDataClassSource;
-
+  List<Map<String, String>>? arguments;
   Future<List<HCProfessionalDataModel>> getAllHCPs() async {
-    print('line 40: $hcpRecordData');
+    print('line 40: $arguments!');
 
     try {
       List<HCProfessionalDataModel>? hcpData =
-          await hcpServices.getHCPDataFromSearch(hcpRecordData);
-      print('line 46: $hcpRecordData $hcpData');
+          await hcpServices.getHCPDataFromSearch(arguments!);
+      print('line 46: $arguments! $hcpData');
       //_clients = clients;
       if (hcpData.isEmpty || hcpData == []) {
         print('line 48:');
@@ -74,8 +68,8 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
   @override
   void initState() {
     super.initState();
-    hcpRecordData = widget.hcpRecordData;
-    print('line 75 in initstate $hcpRecordData');
+    arguments = widget.args;
+    print('line 75 in initstate ${arguments!}');
     // getClientsX(context);
 
     //dataRetrievalAndFiltering = getHCPList();
@@ -221,7 +215,7 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
                     (snapshot.hasData == false || snapshot.data == [[]])) {
                   // Run a task after the first frame is displayed
                   SchedulerBinding.instance.addPostFrameCallback((_) {
-                    Navigator.of(widget.ctx).pop(null);
+                    Navigator.of(context).pop(null);
                   });
                 } else if (snapshot.connectionState ==
                     ConnectionState.waiting) {
@@ -356,14 +350,14 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
                           ),
                           onPressed: () {
                             print('line 265 exit button');
-                            Navigator.of(widget.ctx).pop(null);
+                            Navigator.of(context).pop(null);
                           });
                       Widget cancelButton = TextButton(
                         child: const Text("Cancel",
                             style: TextStyle(
                                 color: Color.fromARGB(255, 19, 125, 103))),
                         onPressed: () {
-                          Navigator.of(widget.ctx).pop(null);
+                          Navigator.of(context).pop(null);
                         },
                       );
                       AlertDialog alert = AlertDialog(
@@ -407,7 +401,7 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
                       if (fnr != null) {
                         print('line 403 $fnr ${fnr.hcpName}');
                       }
-                      Navigator.of(widget.ctx).pop(fnr);
+                      Navigator.of(context).pop(fnr);
                     }
                   }),
             ),

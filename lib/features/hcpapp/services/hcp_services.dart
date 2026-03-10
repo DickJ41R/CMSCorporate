@@ -5,13 +5,15 @@ import 'dart:io';
 import 'package:cms_web/features/hcpapp/models/hcprofessional_data_model.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:cms_web/features/hcpapp/services/utilities.dart';
+import 'package:cms_web/features/hcpapp/services/hcp_utilities.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:cms_web/features/shared/services/utility_services.dart';
 
 class HCPServices {
   HCPServices();
 
+  HCPUtilitiesServices hcpUtil = HCPUtilitiesServices();
   UtilitiesServices util = UtilitiesServices();
 
   Future<List<Map<String, dynamic>>>? getHCPAddresses(int hcpId) async {
@@ -524,236 +526,82 @@ class HCPServices {
   // }
 
   Future<List<HCProfessionalDataModel>> getHCPDataFromSearch(
-      String hcpRecordName) async {
-    print('line 379: $hcpRecordName');
-    hcpRecordName = hcpRecordName.trim();
-    String branchName = hcpRecordName.toLowerCase();
+      List<Map<String, String>> arguments) async {
+    print('line 379: $arguments');
     try {
-      int idx2 = hcpRecordName.indexOf(':');
-      int branchNumber = 0;
-      List<Map<String, dynamic>> dupIds = [];
-      List<String> disciplines = [];
-      if (idx2 == -1) {
-        if (int.tryParse(hcpRecordName) != null) {
-          branchNumber = int.parse(hcpRecordName);
-        } else {
-          branchName = hcpRecordName;
-          branchName = branchName.toLowerCase();
-        }
-        print('line 394 $branchName');
-        disciplines.add('*');
-      } else {
-        print('line  397: $hcpRecordName $branchName');
-        branchName = hcpRecordName.substring(idx2 + 1);
-        branchName = branchName.toString().trim();
-        print('line 400: $branchName');
-        List<String> listC = hcpRecordName.split(':');
-        List<String> listD = listC[1].split(',');
-        print('line 403: $listD');
-        if (listD.length == 1) {
-          disciplines.add('*');
-        } else if (listD.length > 1) {
-          for (int n = 0; n < listD.length; n++) {
-            disciplines.add(listD[n].toUpperCase());
-          }
-        } else {
-          disciplines.add('*');
-        }
-        if (int.tryParse(branchName) != null) {
-          branchNumber = int.parse(branchName);
-        }
-      }
-      String? branchN = null;
-      branchNumber = -1;
-      print('line 419: $disciplines, $branchName');
-      await FirebaseFirestore.instance
-          .collection('CMSBranch')
-          .get()
-          .then((querySnapshot) {
-        print('line 424: ${querySnapshot.docs.length}');
-        for (var docSnapshot in querySnapshot.docs) {
-          final obj = docSnapshot.data();
-          String bn = obj['branchName'].toLowerCase();
-          if (bn.contains(branchName)) {
-            branchN = bn;
-            branchNumber = obj['branchId'];
-            break;
-          }
-        }
-      });
-      if (branchN == null) {
-        return [];
-      }
-      branchName = branchN!;
       List<HCProfessionalDataModel> hcpms = [];
-      HCProfessionalDataModel? htp;
-      DateTime dte = DateTime.now();
-      DateTime todayDate = dte;
-      dte = dte.subtract(Duration(
-          hours: dte.hour,
-          minutes: dte.minute,
-          seconds: dte.second,
-          microseconds: dte.microsecond,
-          milliseconds: dte.millisecond));
-      Timestamp dtms = Timestamp.fromDate(dte);
-      int counter = 0;
-      print('line 451: $disciplines $branchName $branchNumber');
-      // FirebaseFirestore.instance
-      //     .collection('ClientWorkOrderCampaign')
-      //     .where(Filter.or(
-      //         Filter("clientName", : clientName),
-      //         Filter("clientName", isLessThanOrEqualTo: clientName)))
-      DateTime dns = DateTime.now();
-      Duration duration = dns.timeZoneOffset;
-      DateTime today = dns;
-      int cDay = today.day;
-      int cYear = today.year;
-      int cMonth = today.month;
-      dns = dns.subtract(Duration(
-          hours: dns.hour,
-          minutes: dns.minute,
-          seconds: dns.second,
-          microseconds: dns.microsecond,
-          milliseconds: dns.millisecond));
-      //  dns = dns.subtract(Duration(days: 1));
-      Timestamp dnt = Timestamp.fromDate(dns);
-      List<int> sTimes = [];
-      List<int> eTimes = [];
-      print(
-          'line 474: $dns $dnt $duration ${dns.timeZoneName} ${duration.inHours}');
+      Query query = util.buildDynamicQuery(arguments!);
+      print('line 182: $query');
+      QuerySnapshot querySnapshot = await query.get();
+      for (var docSnapShot in querySnapshot.docs) {
+        print('line 206: ${querySnapshot.docs.length}');
+        Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
+        String bn = obj['branchName'].toLowerCase();
+        int hcpId = obj['hcpId'];
 
-      await FirebaseFirestore.instance
-          .collection('ClientWorkOrderCampaign')
-          .where("branchId", isEqualTo: branchNumber)
-          .where('shiftStatus', whereIn: [
-            'Open',
-            'Accepted',
-            'Approved',
-            'Confirmed',
-            'SignedIn',
-          ])
-          //  .where('shiftStatus', whereNotIn: ['Closed', 'Canceled', 'SignedOut'])
-          .orderBy("branchId", descending: false)
-          .orderBy('disciplineName', descending: false)
-          .orderBy('shiftStatus', descending: false)
-          .orderBy("shiftDate", descending: false)
-          .orderBy("shiftCode", descending: false)
-          .orderBy('hcpName', descending: false)
-          .get()
-          .then((querySnapshot) {
-            print('line 493: ${querySnapshot.docs.length}');
+        HCProfessionalDataModel? htp;
+        DateTime dte = DateTime.now();
+        DateTime todayDate = dte;
+        dte = dte.subtract(Duration(
+            hours: dte.hour,
+            minutes: dte.minute,
+            seconds: dte.second,
+            microseconds: dte.microsecond,
+            milliseconds: dte.millisecond));
+        Timestamp dtms = Timestamp.fromDate(dte);
+        int counter = 0;
+        DateTime dns = DateTime.now();
+        Duration duration = dns.timeZoneOffset;
+        DateTime today = dns;
+        int cDay = today.day;
+        int cYear = today.year;
+        int cMonth = today.month;
+        dns = dns.subtract(Duration(
+            hours: dns.hour,
+            minutes: dns.minute,
+            seconds: dns.second,
+            microseconds: dns.microsecond,
+            milliseconds: dns.millisecond));
+        //  dns = dns.subtract(Duration(days: 1));
+        Timestamp dnt = Timestamp.fromDate(dns);
+        List<int> sTimes = [];
+        List<int> eTimes = [];
+        print(
+            'line 474: $dns $dnt $duration ${dns.timeZoneName} ${duration.inHours}');
 
-            for (var docSnapshot in querySnapshot.docs) {
-              final obj = docSnapshot.data();
+        await FirebaseFirestore.instance
+            .collection('ClientWorkOrderCampaign')
+            .where("hcpId", isEqualTo: hcpId)
+            .where('shiftStatus', whereIn: [
+              'Open',
+              'Accepted',
+              'Approved',
+              'Confirmed',
+              'SignedIn',
+            ])
+            .where('shiftDate', isGreaterThanOrEqualTo: dns)
+            //  .where('shiftStatus', whereNotIn: ['Closed', 'Canceled', 'SignedOut'])
+            .orderBy("branchId", descending: false)
+            .orderBy('disciplineName', descending: false)
+            .orderBy('shiftStatus', descending: false)
+            .orderBy("shiftDate", descending: false)
+            .orderBy("shiftCode", descending: false)
+            .orderBy('hcpName', descending: false)
+            .get()
+            .then((querySnapshot) {
+              print('line 493: ${querySnapshot.docs.length}');
 
-              Timestamp ts = obj['shiftDate'];
-              DateTime dte = ts.toDate();
-              int year = dte.year;
-              int month = dte.month;
-              int day = dte.day;
+              for (var docSnapshot in querySnapshot.docs) {
+                final obj = docSnapshot.data();
 
-              print('line 495: $year, $cYear, $month $cMonth, $day $cDay');
-              // if (obj['shiftStatus'] == 'Closed' ||
-              //     //  obj['shiftStatus'] == 'Confirmed' ||
-              //     obj['shiftStatus'] == 'Canceled' ||
-              //     //   obj['shiftStatus'] == 'SignedIn' ||
-              //     obj['shiftStatus'] == 'SignedOut') {
-              //   continue;
-              // }
-              print(
-                  'line 502 dates for skipping: ${obj['hcpId']} ${obj['hcpName']} ${obj['shiftStatus']} ${ts.millisecondsSinceEpoch} ${dnt.millisecondsSinceEpoch}');
-              if (year == cYear && month == cMonth) {
-                if (day < cDay) {
-                  print(
-                      'line 506: ${obj['hcpId']} ${obj['shiftStatus']} skipping because of dates');
-                  print(
-                      'line 509 ${ts.millisecondsSinceEpoch} ${dnt.millisecondsSinceEpoch}');
-                  continue;
-                }
-              }
+                Timestamp ts = obj['shiftDate'];
+                DateTime dte = ts.toDate();
 
-              DateTime tdy = ts.toDate();
-              sTimes = util.getHoursAndMinutes(obj['startTime']);
-              eTimes = util.getHoursAndMinutes(obj['endTime']);
-              int startMinutes = util.getMinutes(obj['startTime']);
-              int endMinutes = util.getMinutes(obj['endTime']);
-              if (startMinutes > 720 && startMinutes > endMinutes) {
-                eTimes[0] += 24;
-                tdy = tdy.add(Duration(hours: eTimes[0], minutes: eTimes[1]));
-                if (tdy.millisecondsSinceEpoch <
-                    todayDate.millisecondsSinceEpoch) {
-                  print(
-                      'line 530 skipping late shift ${tdy.millisecondsSinceEpoch} ${tdy.millisecondsSinceEpoch}');
-                  continue;
-                }
-              } else {
-                if (tdy.millisecondsSinceEpoch < dnt.millisecondsSinceEpoch) {
-                  print(
-                      'line 536 skipping shift: ${tdy.millisecondsSinceEpoch} ${dnt.millisecondsSinceEpoch}');
-                  continue;
-                }
-              }
-              print(
-                  'line 541: ${obj['branchId']} ${obj['branchName']} $branchName $branchNumber');
-              // if (clientNumber != 0) {
-              //   if (clientNumber != obj['clientId']) {
-              //     print('line 382: $clientNumber ${obj['clientNumber']}');
-              //     continue;
-              //   }
-              // } else {
-              print('line 548: ${obj['branchName']} $branchName');
-              print(
-                  'line 550 ${obj['branchName'].toLowerCase().indexOf(branchName)}');
-              if (obj['branchName']
-                      .toLowerCase()
-                      .contains(branchName.toLowerCase()) ==
-                  false) {
+                print('line 548: ${obj['branchName']}');
+
+                print('line 574 ${obj['shiftDate']}');
                 print(
-                    'line 556 skipping because of name: ${obj['branchName']} $branchName');
-                continue;
-              }
-              //  }
-              Timestamp tms = ts;
-              print(
-                  'line 562 ${tms.millisecondsSinceEpoch} ${dtms.millisecondsSinceEpoch}');
-
-              // int txs = dtms.millisecondsSinceEpoch - 60 * 60 * 24 * 1000;
-              // print('line 440:  $txs');
-              // if (tms.millisecondsSinceEpoch <= txs) {
-              //   print(
-              //       'line 443 skipping because of dates ${obj['hcpId']} ${obj['hcpName']} ${obj['disciplineCodes']}');
-              //   continue;
-              // }
-
-              bool flagIsDup = false;
-              Map<String, dynamic> dup = {};
-              print('line 574 ${obj['shiftDate']}');
-              if (dupIds.length > 0) {
-                flagIsDup = false;
-                for (int q = 0; q < dupIds.length; q++) {
-                  dup = dupIds[q];
-                  if (dup['hcpId'] == obj['hcpId'] &&
-                      dup['branchId'] == obj['branchId']) {
-                    flagIsDup = true;
-                    break;
-                  }
-                }
-              }
-              if (flagIsDup == true) {
-                continue;
-              }
-              dup = {"hcpId": obj['hcpId'], "branchId": obj['branchId']};
-              dupIds.add(dup);
-              print(
-                  'line 592 ${obj['hcpName']} ${obj['disciplineName']} ${obj['branchName']}');
-
-              if (disciplines[0] == '*' ||
-                  disciplines.indexOf(obj['disciplineName']) != -1) {
-                var dt = DateTime.fromMillisecondsSinceEpoch(
-                    tms.millisecondsSinceEpoch);
-                String date = DateFormat('MM/dd/yyyy').format(dt);
-                date += '-' + obj['shiftCode'];
-                print('line 600: $date');
+                    'line 592 ${obj['hcpName']} ${obj['disciplineName']} ${obj['branchName']}');
                 var shft = '';
                 if (obj['shiftStatus'] == 'Open') {
                   shft = 'Opn';
@@ -780,21 +628,19 @@ class HCPServices {
                     hcpName: obj['hcpName'],
                     branchId: obj['branchId'],
                     branchName: obj['branchName'],
-                    shiftDateString: date,
+                    shiftDateString: dte.toString(),
                     shiftStatus: shft,
                     shiftCode: obj['shiftCode'],
                     startTime: obj['startTime'],
                     endTime: obj['endTime'],
                     disciplineName: obj['disciplineName']);
-              } else {
-                print(
-                    'line 634 skipping on discipline name: ${obj['disciplineName']}');
-                continue;
+
+                hcpms.add(htp!);
+                break;
               }
-              hcpms.add(htp!);
-            }
-            return;
-          });
+            });
+        break;
+      }
       print('line 641: ${hcpms.length}');
       return hcpms;
     } catch (e) {

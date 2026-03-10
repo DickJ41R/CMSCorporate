@@ -16,8 +16,8 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:intl/intl.dart';
 
-class UtilitiesServices {
-  UtilitiesServices();
+class HCPUtilitiesServices {
+  HCPUtilitiesServices();
 
   // AuthService authServices = AuthService();
   Future<List<dynamic>> getClientCancelReasons() async {

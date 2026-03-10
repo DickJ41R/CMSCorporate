@@ -13,6 +13,7 @@ import 'package:cms_web/features/clientapp/models/client_class.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
 import 'package:cms_web/features/clientapp/services/client_services.dart';
+import 'package:cms_web/features/shared/services/utility_services.dart';
 
 // Replace the defaultFirebaseOptions with your own Firebase options.
 const defaultFirebaseOptions = FirebaseOptions(
@@ -27,7 +28,7 @@ const defaultFirebaseOptions = FirebaseOptions(
 final dio = Dio();
 
 class ClientStreamScreen extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final List<Map<String, String>> args;
   ClientStreamScreen({super.key, required this.args});
 
   @override
@@ -40,6 +41,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
   late ClientClassDataSource clientClassDataSource;
   AuthService authServices = AuthService();
   ClientServices clientServices = ClientServices();
+  UtilitiesServices util = UtilitiesServices();
   late String formatted;
   late double fontSize;
   late List<Map<String, dynamic>> listOfClientClassData;
@@ -57,217 +59,85 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
 
   List<ClientClass> clientClassData = [];
   Stream<QuerySnapshot>? _clientStream;
-  Map<String, dynamic>? arguments;
+  List<Map<String, dynamic>>? arguments;
   List<Map<String, dynamic>> listOfClients = [];
-  Query buildDynamicQuery(Map<String, dynamic> arg) {
-    CollectionReference contentsRef =
-        FirebaseFirestore.instance.collection(arg['searchCollection']);
-    Query query = contentsRef;
-
-    //check search criteria
-    //all
-    print('line 69');
-    try {
-      if (arg['searchCriteria'] == 'All') {
-        return query;
-      }
-      //isequalto
-      print('line 75');
-      if (arg['searchCriteria'] == 'Is Equal To') {
-        if (arg['searchField'].indexOf('Id') != -1) {
-          int value = int.parse(arg['searchValue']);
-          const q  = query(collection(.where(arg['searchField'], isEqualTo: value);
-          return query;
-        } else {
-          query =
-              query.where(arg['searchField'], isEqualTo: arg['searchValue']);
-          return query;
-        }
-      }
-      //less than
-      print('line 88');
-      if (arg['searchCriteria'] == 'Is Less Than') {
-        if (arg['searchField'].indexOf('Id') != -1) {
-          int value = int.parse(arg['searchValue']);
-          query = query.where(arg['searchField'], isLessThan: value);
-          return query;
-        } else {
-          query =
-              query.where(arg['searchField'], isLessThan: arg['searchValue']);
-          return query;
-        }
-      }
-      //greater than
-      print('line 101');
-      if (arg['searchCriteria'] == 'Is Greater Than') {
-        if (arg['searchField'].indexOf('Id') != -1) {
-          int value = int.parse(arg['searchValue']);
-          query = query.where(arg['searchField'], isGreaterThan: value);
-          return query;
-        } else {
-          query = query.where(arg['searchField'],
-              isGreaterThan: arg['searchValue']);
-          return query;
-        }
-      }
-      // Is greater Than or Equal To,
-      print('line 115');
-      if (arg['searchCriteria'] == 'Is Greater Than Or Equal To') {
-        if (arg['searchField'].indexOf('Id') != -1) {
-          int value = int.parse(arg['searchValue']);
-          query =
-              query.where(arg['searchField'], isGreaterThanOrEqualTo: value);
-          return query;
-        } else {
-          query = query.where(arg['searchField'],
-              isGreaterThanOrEqualTo: arg['searchValue']);
-          return query;
-        }
-      }
-
-      //Is less Than or Equal To",
-      if (arg['searchCriteria'] == 'Is Less Than Or Equal To') {
-        if (arg['searchField'].indexOf('Id') != -1) {
-          int value = int.parse(arg['searchValue']);
-          query = query.where(arg['searchField'], isLessThanOrEqualTo: value);
-        } else {
-          query = query.where(arg['searchField'],
-              isLessThanOrEqualTo: arg['searchValue']);
-        }
-      }
-      //Is Between (Include Edges)",
-      if (arg['searchCriteria'] == 'Is Between (Include Edges)') {
-        if (arg['searchField'].indexOf('Id') != -1) {
-          int value = int.parse(arg['searchValue']);
-          query =
-              query.where(arg['searchField'], isGreaterThanOrEqualTo: value);
-          query = query.where(arg['searchField'], isLessThanOrEqualTo: value);
-        } else {
-          query = query.where(arg['searchField'],
-              isGreaterThanOrEqualTo: arg['searchValue']);
-          query = query.where(arg['searchField'],
-              isLessThanOrEqualTo: arg['searchValue']);
-        }
-      }
-      // Is Between (Do not Include Edges)",
-      if (arg['searchCriteria'] == 'Is Between (Do not Include Edges)') {
-        if (arg['searchField'].indexOf('Id') != -1) {
-          int value = int.parse(arg['searchValue']);
-          query = query.where(arg['searchField'], isGreaterThan: value);
-          query = query.where(arg['searchField'], isLessThan: value);
-        } else {
-          query = query.where(arg['searchField'],
-              isGreaterThan: arg['searchValue']);
-          query =
-              query.where(arg['searchField'], isLessThan: arg['searchValue']);
-        }
-      }
-
-      if (arg['searchCriteria'] == 'Is In (colon separated list)') {
-        String sx = arg['searchCriteria'].replaceAll(',', ':');
-        List<String> lsx = sx.split(':');
-        if (arg['searchField'].indexOf('Id') != -1) {
-          List<int> lvalues = [];
-          for (int i = 0; i < lsx.length; i++) {
-            String sv = lsx[i];
-            lvalues.add(int.parse(sv));
-          }
-          query = query.where(arg['searchField'], whereIn: lvalues);
-        } else {
-          List<String> svalues = [];
-          for (int i = 0; i < lsx.length; i++) {
-            String sv = lsx[i];
-            svalues.add(sv);
-          }
-          query = query.where(arg['searchField'], whereIn: svalues);
-        }
-      }
-      return query;
-    } catch (e) {
-      print('line 186: ${e.toString()}');
-      throw Exception(e.toString());
-    }
-  }
 
   Future<List<Map<String, dynamic>>> _getAllClientData() async {
     print('line 178 in _getallclientdata: $arguments');
     List<Map<String, dynamic>>? clm;
     try {
       clm = [];
-      Query query = buildDynamicQuery(arguments!);
+      Query query = util.buildDynamicQuery(arguments!);
       print('line 182: $query');
-      query.get().then(
-        ((querySnapshot) async {
-          for (var docSnapShot in querySnapshot.docs) {
-            print('line 198 in querysnapshot');
-            Map<String, dynamic> obj =
-                docSnapShot.data() as Map<String, dynamic>;
-            obj['id'] = docSnapShot.id;
-            listOfClients.add(obj);
-            await FirebaseFirestore.instance
-                .collection('ClientAddress')
-                .where('clientId', isEqualTo: obj['clientId'])
-                .where('addressType', isEqualTo: 'Physical')
-                .get()
-                .then((QuerySnapshot) async {
-              for (var docSnapshot in QuerySnapshot.docs) {
-                Map<String, dynamic> tobj = docSnapshot.data();
-                //        print('line 100: $tobj');
-                obj['city'] = tobj['city'];
-                obj['state'] = tobj['state'];
-                break;
-              }
-            });
-            await FirebaseFirestore.instance
-                .collection('ClientCredit')
-                .where('clientId', isEqualTo: obj['clientId'])
-                .get()
-                .then((QuerySnapshot) async {
-              for (var docSnapshot in QuerySnapshot.docs) {
-                Map<String, dynamic> cobj = docSnapshot.data();
-                //     print('line 113: $cobj');
-                obj['balance'] = '0.00';
-                obj['openCredit'] =
-                    cobj['creditLimit'] == null ? 0.0 : cobj['creditLimit'];
-                break;
-              }
-            });
-            //   print('line 116: $obj');
-            Map<String, dynamic> xbj = {
-              'clientId': obj['clientId'].toString().length < 4
-                  ? "    ".substring(0, 4 - obj['clientId'].toString().length) +
-                      obj['clientId'].toString()
-                  : obj['clientId'].toString(),
-              'statusId': obj['statusId'] == null ? 'U' : obj['statusId'],
-              'clientName':
-                  obj['clientName'] == null ? 'Unknown' : obj['clientName'],
-              'branchName':
-                  obj['branchName'] == null ? 'Unknown' : obj['branchName'],
-              'clientType':
-                  obj['clientType'] == null ? 'Unknown' : obj['clientType'],
-              'disciplinesServiced': obj['disciplinesServiced'] == null
-                  ? "Unknown"
-                  : obj['disciplinesServiced'].indexOf('CNA') == -1
-                      ? "Unknown"
-                      : obj['disciplinesServiced'].indexOf('LPN') == -1
-                          ? "Unknown"
-                          : obj['disciplinesServiced'].indexOf('RN') == -1
-                              ? "Unknown"
-                              : obj['disciplinesServiced'],
-              'city': obj['city'] == null ? "Unknown" : obj['city'],
-              'state': obj['state'] == null ? "Unk" : obj['state'],
-              'balance':
-                  obj['balance'] == null ? "0.00" : obj['balance'].toString(),
-              'openCredit': obj['openCredit'] == null
-                  ? "0.00"
-                  : obj['openCredit'].toString()
-            };
-            //   print('line 138: $xbj');
-            clm!.add(xbj);
+      QuerySnapshot querySnapshot = await query.get();
+      for (var docSnapShot in querySnapshot.docs) {
+        print('line 206: ${querySnapshot.docs.length}');
+        Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
+        obj['id'] = docSnapShot.id;
+        print('line 210 in querysnapshot: $obj');
+
+        listOfClients.add(obj);
+        await FirebaseFirestore.instance
+            .collection('ClientAddress')
+            .where('clientId', isEqualTo: obj['clientId'])
+            .where('addressType', isEqualTo: 'Physical')
+            .get()
+            .then((QuerySnapshot) async {
+          for (var docSnapshot in QuerySnapshot.docs) {
+            Map<String, dynamic> tobj = docSnapshot.data();
+            //        print('line 100: $tobj');
+            obj['city'] = tobj['city'];
+            obj['state'] = tobj['state'];
+            break;
           }
-          ;
-        }),
-      );
+        });
+        print('line 222 $obj');
+        await FirebaseFirestore.instance
+            .collection('ClientCredit')
+            .where('clientId', isEqualTo: obj['clientId'])
+            .get()
+            .then((QuerySnapshot) async {
+          for (var docSnapshot in QuerySnapshot.docs) {
+            Map<String, dynamic> cobj = docSnapshot.data();
+            //     print('line 113: $cobj');
+            obj['balance'] = '0.00';
+            obj['openCredit'] =
+                cobj['creditLimit'] == null ? 0.0 : cobj['creditLimit'];
+            break;
+          }
+        });
+        print('line 237: $obj');
+        Map<String, dynamic> xbj = {
+          'clientId': obj['clientId'].toString().length < 4
+              ? "    ".substring(0, 4 - obj['clientId'].toString().length) +
+                  obj['clientId'].toString()
+              : obj['clientId'].toString(),
+          'statusId': obj['statusId'] == null ? 'U' : obj['statusId'],
+          'clientName':
+              obj['clientName'] == null ? 'Unknown' : obj['clientName'],
+          'branchName':
+              obj['branchName'] == null ? 'Unknown' : obj['branchName'],
+          'clientType':
+              obj['clientType'] == null ? 'Unknown' : obj['clientType'],
+          'disciplinesServiced': obj['disciplinesServiced'] == null
+              ? "Unknown"
+              : obj['disciplinesServiced'].indexOf('CNA') == -1
+                  ? "Unknown"
+                  : obj['disciplinesServiced'].indexOf('LPN') == -1
+                      ? "Unknown"
+                      : obj['disciplinesServiced'].indexOf('RN') == -1
+                          ? "Unknown"
+                          : obj['disciplinesServiced'],
+          'city': obj['city'] == null ? "Unknown" : obj['city'],
+          'state': obj['state'] == null ? "Unk" : obj['state'],
+          'balance':
+              obj['balance'] == null ? "0.00" : obj['balance'].toString(),
+          'openCredit':
+              obj['openCredit'] == null ? "0.00" : obj['openCredit'].toString()
+        };
+        //   print('line 138: $xbj');
+        clm!.add(xbj);
+      }
       clm.sort((a, b) {
         int cmp = a['clientId'].compareTo(b['clientId']);
         if (cmp != 0) return cmp;
@@ -300,6 +170,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
     super.initState();
     arguments = widget.args;
     print('line 272: $arguments!');
+
     // String? docId;
 //     if (branchId == 0) {
 //       _clientStream = FirebaseFirestore.instance

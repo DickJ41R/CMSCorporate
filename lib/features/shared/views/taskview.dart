@@ -8,9 +8,9 @@ class TabsWeb extends StatefulWidget {
   final title;
   final route;
   final argumentId;
-  final Map<String, dynamic>? argumentMap;
+  final List<Map<String, String>>? argumentsList;
   const TabsWeb(
-      {Key? key, this.title, this.route, this.argumentId, this.argumentMap})
+      {Key? key, this.title, this.route, this.argumentId, this.argumentsList})
       : super(key: key);
 
   @override
@@ -28,7 +28,7 @@ class _TabsWebState extends State<TabsWeb> {
         Navigator.of(context).pushNamed(widget.route,
             arguments: widget.argumentId != -1
                 ? widget.argumentId
-                : widget.argumentMap);
+                : widget.argumentsList!);
       },
       child: MouseRegion(
         onEnter: (_) {

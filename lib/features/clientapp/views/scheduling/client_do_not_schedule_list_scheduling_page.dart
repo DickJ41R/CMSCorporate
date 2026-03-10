@@ -322,7 +322,7 @@ class ClientDNUTileState extends State<ClientDNUTile> {
               ),
               SizedBox(width: 5),
               Expanded(
-                child: Text('Client DNU ${item['flagClientDNU']}',
+                child: Text('Client DNU ${item['flagDNU']}',
                     style: TextStyle(
                       color: Colors.black87,
                       fontWeight: FontWeight.bold,

@@ -47,7 +47,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   }
 
   DropDownCodes dropDownCodes = DropDownCodes();
-
+  bool flagHaveQueryData = false;
   bool isLoggedIn = true;
   double? screenHeight;
   double? screenWidth;
@@ -85,6 +85,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     fontWeight: FontWeight.bold,
   );
   bool flagHaveCalled = false;
+  List<Map<String, String>>? argumentsContainer;
 
   void _setSearchFields(int index) {
     dropDownSearchFieldsEntries = [];
@@ -94,8 +95,9 @@ class _LandingPageWebState extends State<LandingPageWeb> {
         {
           print('line 96: ${clientFields!.length}');
           for (int i = 0; i < clientFields!.length; i++) {
-            DropdownMenuEntry me = DropdownMenuEntry(
-                value: clientFields![i], label: clientFields![i]);
+            Map<String, String> obj = clientFields![i];
+            DropdownMenuEntry me =
+                DropdownMenuEntry(value: obj['value']!, label: obj['label']!);
             dropDownSearchFieldsEntries.add(me);
           }
         }
@@ -125,27 +127,27 @@ class _LandingPageWebState extends State<LandingPageWeb> {
 
   bool haveFields = false;
   List<dynamic>? searchCriteria;
-  List<dynamic>? clientFields;
+  List<Map<String, String>>? clientFields;
   List<dynamic>? workOrderFields;
   List<dynamic>? hcpFields;
 
   void _setClientFields() {
     clientFields = [
-      'Client Id',
-      'Client Name',
-      'Status',
-      'Branch Id',
-      'Branch Name'
+      {"value": 'clientId', "label": 'Client Id'},
+      {'value': 'clientName', 'label': 'Client Name'},
+      {"value": 'active', 'label': 'Status'},
+      {'value': 'branchId', 'label': 'Branch Id'},
+      {'value': 'branchName', 'label': 'Branch Name'}
     ];
   }
 
   void _setHCPFields() {
     hcpFields = [
-      'Hcp Id',
-      'Hcp Name (LastName, FirstName',
-      'Status',
-      'Branch Id',
-      'Branch Name'
+      {"value": "hcpId", "label": 'Hcp Id'},
+      {'value": "fullName","label": "Hcp Name (LastName, FirstName'},
+      {"value": "status", "label": 'Status'},
+      {'value': "branchId", "label": 'Branch Id'},
+      {'value': 'branchName', 'label': 'Branch Name'}
     ];
   }
 
@@ -159,12 +161,8 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     ];
   }
 
-  Map<String, dynamic> argumentContainer = {
-    'searchCriteria': 'All',
-    'searchValue': 0,
-    'searchCollection': 'None',
-    'searchField': 'None',
-  };
+  Map<String, String>? currentArgument;
+  Map<String, String>? branchArgument;
   void _setSearchCriteria() {
     searchCriteria = [
       "All",
@@ -173,8 +171,8 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       "Is Less Than or Equal To",
       "Is Greater Than",
       "Is Greater Than or Equal To",
-      "Is Between (Include Edges)",
-      "Is Between (Do not Include Edges)",
+      "Is Between (Edges, colon separated fields)",
+      "Is Between (No Edges, colon separated fields)",
       "Is In (colon separated list)",
     ];
     for (int i = 0; i < searchCriteria!.length; i++) {
@@ -240,12 +238,26 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     return -1;
   }
 
+  String _getSelectedSearchFieldIndex(int index, dynamic value) {
+    String ivv = '';
+    if (index == 0) {
+      ivv = clientFields![index]['value']!;
+    } else if (index == 1) {
+      ivv = hcpFields![index]['value'];
+    } else if (index == 2) {
+      ivv = workOrderFields![index]['value'];
+    }
+    print('line 253 $ivv');
+    return ivv;
+  }
+
   bool showLoadingIndicator = true;
   bool isLoading = false;
 //
+  bool haveSomeQuery = false;
   int selectedBranchIndex = -1;
   int selectedMenuOptionIndex = -1;
-
+  bool flagHasTopLevelBranch = false;
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
@@ -301,9 +313,14 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                               onSelected: (dynamic value) {
                                 setState(() {
                                   selectedBranch = value;
-                                  argumentContainer['searchValue'] = value;
-                                  selectedBranchIndex =
-                                      getSelectedBranchIndex(value);
+                                  branchArgument!['searchField'] = 'branchId';
+                                  branchArgument!['searchCriteria'] =
+                                      'Is Equal To';
+                                  branchArgument!['searchCollection'] =
+                                      'Unknown';
+                                  flagHasTopLevelBranch = true;
+
+                                  getSelectedBranchIndex(value);
                                   int idx = value.indexOf(')');
                                   if (idx != -1) {
                                     String st = value.substring(0, idx);
@@ -314,7 +331,15 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                   // selectedBranchNumber =
                                   //     userBranches![selectedBranchIndex]
                                   //         ['branchId'];
-                                  print('line 165: ${selectedBranchNumber}');
+                                  //
+                                  flagHasTopLevelBranch = true;
+                                  branchArgument!['searchValue'] =
+                                      selectedBranchNumber.toString();
+                                  argumentsContainer!.add(currentArgument!);
+                                  currentArgument = null;
+
+                                  print(
+                                      'line 341: ${currentArgument!} ${selectedBranchNumber}');
                                 });
 
                                 if (selectedMenuOption != null &&
@@ -395,9 +420,10 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                               onSelected: (dynamic value) {
                                 setState(() {
                                   selectedSearchCriteria = value;
-                                  argumentContainer['searchCriteria'] = value;
+                                  currentArgument!['searchCriteria'] = value;
 
-                                  print('line 165: ${selectedSearchCriteria}');
+                                  print(
+                                      'line 165: $currentArgument ${selectedSearchCriteria}');
                                 });
                               },
 
@@ -449,14 +475,18 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                               haveFields = true;
                               if (value == false) {
                                 dropDownSearchFieldsEntries = [];
+                                currentArgument!['searchCollection'] = 'None';
                                 isCheckedHCP = false;
                                 isCheckedWorkSchedule = false;
                               } else {
-                                argumentContainer['searchCollection'] =
-                                    'Client';
-                                isCheckedHCP = !value;
-                                isCheckedWorkSchedule = !value;
+                                currentArgument!['searchCollection'] = 'Client';
+                                if (flagHasTopLevelBranch == true) {
+                                  branchArgument!['searchCollection'] =
+                                      'Client';
+                                }
                               }
+                              isCheckedHCP = !value;
+                              isCheckedWorkSchedule = !value;
                             });
                           },
                         ),
@@ -492,10 +522,14 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                 dropDownSearchFieldsEntries = [];
                                 isCheckedClient = false;
                                 isCheckedWorkSchedule = false;
+                                currentArgument!['searchCollection'] = 'None';
                               } else {
-                                argumentContainer['searchCollection'] =
+                                currentArgument!['searchCollection'] =
                                     'HCProfessional';
-
+                                if (flagHasTopLevelBranch == true) {
+                                  branchArgument!['searchCollection'] =
+                                      'HCProfessional';
+                                }
                                 isCheckedClient = !value;
                                 isCheckedWorkSchedule = !value;
                               }
@@ -532,9 +566,14 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                 dropDownSearchFieldsEntries = [];
                                 isCheckedHCP = false;
                                 isCheckedClient = false;
+                                currentArgument!['searchCollection'] = 'None';
                               } else {
-                                argumentContainer['searchCollection'] =
+                                currentArgument!['searchCollection'] =
                                     'ClientWorkOrder';
+                                if (flagHasTopLevelBranch == true) {
+                                  branchArgument!['searchCollection'] =
+                                      'ClientWorkOrder';
+                                }
                                 isCheckedHCP = !value;
                                 isCheckedClient = !value;
                               }
@@ -573,10 +612,19 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                   child: Text('Search Fields')),
                               onSelected: (dynamic value) {
                                 setState(() {
+                                  int index = 0;
+                                  if (isCheckedHCP) {
+                                    index = 1;
+                                  } else if (isCheckedWorkSchedule) {
+                                    index = 2;
+                                  }
+                                  String ivv = _getSelectedSearchFieldIndex(
+                                      index, value);
                                   selectedSearchField = value;
-                                  argumentContainer['searchField'] = value;
+                                  currentArgument!['searchField'] = ivv;
 
-                                  print('line 165: ${selectedSearchField}');
+                                  print(
+                                      'line 165: $ivv ${selectedSearchField}');
                                 });
                               },
 
@@ -612,7 +660,10 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                   width: 285,
                   child: TextFormField(
                       onChanged: (value) {
-                        argumentContainer['searchValue'] = value;
+                        currentArgument!['searchValue'] = value;
+                        argumentsContainer!.add(currentArgument!);
+                        flagHaveQueryData = true;
+                        flagHasTopLevelBranch = true;
                       },
                       style: TextStyle(
                         fontSize: 18,
@@ -630,57 +681,59 @@ class _LandingPageWebState extends State<LandingPageWeb> {
               ],
             ),
           ),
-          right: Container(
-            width: screenWidth! - 310,
-            height: screenHeight,
-            decoration: BoxDecoration(
-              color: color1,
-              border: Border.all(color: Colors.black),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(padding: EdgeInsets.only(top: 10.0)),
-                Row(
-                  children: [
-                    TabsWeb(title: 'Home', route: homePage, argumentId: null),
-                    Spacer(),
-                    TabsWeb(
-                      title: 'Work Order',
-                      route: workOrderPage,
-                      argumentId: -1,
-                      argumentMap: argumentContainer,
-                    ),
-                    Spacer(),
-                    TabsWeb(
-                        title: 'Clients',
-                        route: clientPage,
-                        argumentId: -1,
-                        argumentMap: argumentContainer),
-                    Spacer(),
-                    TabsWeb(
-                        title: 'HC Professionals',
-                        route: hcprofessionalPage,
-                        argumentId: -1,
-                        argumentMap: argumentContainer),
-                    Spacer(),
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 30),
-                ),
-                Center(
-                  child: Text(
-                      "This application has been developed to provide both Corporate and Branch users the capabilities of view and modifying data elements.  Any changes made to the data presented in this applications will be replicated in the StafferLink's primary database as well as the database for the target mobile devices.",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: color2,
-                      )),
-                ),
-              ],
-            ),
-          ),
+          right: flagHasTopLevelBranch == true && flagHaveQueryData == true
+              ? Container(
+                  width: screenWidth! - 310,
+                  height: screenHeight,
+                  decoration: BoxDecoration(
+                    color: color1,
+                    border: Border.all(color: Colors.black),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(padding: EdgeInsets.only(top: 10.0)),
+                      Row(
+                        children: [
+                          TabsWeb(
+                              title: 'Home', route: homePage, argumentId: null),
+                          Spacer(),
+                          TabsWeb(
+                              title: 'Work Order',
+                              route: workOrderPage,
+                              argumentId: -1,
+                              argumentsList: [argumentsContainer!]),
+                          Spacer(),
+                          TabsWeb(
+                              title: 'Clients',
+                              route: clientPage,
+                              argumentId: -1,
+                              argumentsList: [argumentsContainer!]),
+                          Spacer(),
+                          TabsWeb(
+                              title: 'HC Professionals',
+                              route: hcprofessionalPage,
+                              argumentId: -1,
+                              argumentsList: [argumentsContainer!]),
+                          Spacer(),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 30),
+                      ),
+                      Center(
+                        child: Text(
+                            "This application has been developed to provide both Corporate and Branch users the capabilities of view and modifying data elements.  Any changes made to the data presented in this applications will be replicated in the StafferLink's primary database as well as the database for the target mobile devices.",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: color2,
+                            )),
+                      ),
+                    ],
+                  ),
+                )
+              : SizedBox.shrink(),
         ),
       ),
     );
@@ -713,6 +766,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
   @override
   void initState() {
     super.initState();
+
     _ratio = widget.ratio;
     _ratio = 0.25;
     print('line 99:  $_ratio');
