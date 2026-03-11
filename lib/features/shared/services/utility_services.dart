@@ -919,36 +919,33 @@ class UtilitiesServices {
     }
   }
 
-  Query buildDynamicQuery(List<Map<String, dynamic>> args) {
+  Query buildDynamicQuery(Map<String, dynamic> arg) {
     Query? query;
     //check search criteria
     //all
-    print('line 69');
+    print('line 926 $arg');
     try {
       Map<String, String>? baseArg;
-      Map<String, String>? arg;
-      bool flagHaveBaseArgument = false;
-      if (args.length > 1) {
-        baseArg = args[0] as Map<String, String>;
-        arg = args[1] as Map<String, String>;
-      } else {
-        arg = args[0] as Map<String, String>;
+      bool flagHaveBaseArgument = true;
+      String stringBranchId = arg['branchValue'];
+      if (stringBranchId == '0') {
+        flagHaveBaseArgument = false;
       }
       CollectionReference contentsRef =
           FirebaseFirestore.instance.collection(arg['searchCollection']!);
 
       if (arg['searchCriteria'] == 'All') {
-        print('line 72');
+        print('line 938');
         return contentsRef;
       }
       //isequalto
-      print('line 75');
+      print('line 942');
       if (arg['searchCriteria'] == 'Is Equal To') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
           print('line 84: $value ${arg['searchField']}');
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isEqualTo: value);
@@ -957,7 +954,7 @@ class UtilitiesServices {
           }
         } else {
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isEqualTo: arg['searchValue']);
@@ -968,12 +965,13 @@ class UtilitiesServices {
         }
       }
       //less than
-      print('line 88');
+      print('line 968');
       if (arg['searchCriteria'] == 'Is Less Than') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
+            ;
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isLessThan: value);
@@ -982,7 +980,7 @@ class UtilitiesServices {
           }
         } else {
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isLessThan: arg['searchValue']!);
@@ -993,12 +991,12 @@ class UtilitiesServices {
         }
       }
       //greater than
-      print('line 101');
+      print('line 994');
       if (arg['searchCriteria'] == 'Is Greater Than') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThan: value);
@@ -1008,7 +1006,7 @@ class UtilitiesServices {
           }
         } else {
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThan: arg['searchValue']);
@@ -1019,12 +1017,12 @@ class UtilitiesServices {
         }
       }
       // Is greater Than or Equal To,
-      print('line 115');
+      print('line 1020');
       if (arg['searchCriteria'] == 'Is Greater Than Or Equal To') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThanOrEqualTo: value);
@@ -1034,7 +1032,7 @@ class UtilitiesServices {
           }
         } else {
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef.where('branchId', isEqualTo: branchId).where(
                 arg['searchField']!,
                 isGreaterThanOrEqualTo: arg['searchValue']);
@@ -1049,8 +1047,9 @@ class UtilitiesServices {
       if (arg['searchCriteria'] == 'Is Less Than Or Equal To') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
+          int branchId = int.parse(stringBranchId);
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isLessThanOrEqualTo: value);
@@ -1060,7 +1059,7 @@ class UtilitiesServices {
           }
         } else {
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef.where('branchId', isEqualTo: branchId).where(
                 arg['searchField']!,
                 isLessThanOrEqualTo: arg['searchValue']);
@@ -1081,7 +1080,7 @@ class UtilitiesServices {
           }
           print('line 143: $values');
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
@@ -1099,7 +1098,7 @@ class UtilitiesServices {
             values.add(lst[i]);
           }
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
@@ -1121,7 +1120,7 @@ class UtilitiesServices {
             values.add(int.parse(lst[i]));
           }
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThan: values[0])
@@ -1138,7 +1137,7 @@ class UtilitiesServices {
             values.add(lst[i]);
           }
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThan: values[0])
@@ -1158,7 +1157,7 @@ class UtilitiesServices {
             lvalues.add(int.parse(sv));
           }
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg!['searchField']!, whereIn: lvalues);
@@ -1172,7 +1171,7 @@ class UtilitiesServices {
             svalues.add(sv);
           }
           if (flagHaveBaseArgument == true) {
-            int branchId = int.parse(baseArg!['searchValue']!);
+            int branchId = int.parse(stringBranchId);
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg!['searchField']!, whereIn: svalues);
@@ -1181,10 +1180,10 @@ class UtilitiesServices {
           }
         }
       }
-      print('line 188 $query');
+      print('line 1183 $query');
       return query!;
     } catch (e) {
-      print('line 186: ${e.toString()}');
+      print('line 1186: ${e.toString()}');
       throw Exception(e.toString());
     }
   }

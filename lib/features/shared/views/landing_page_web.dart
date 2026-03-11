@@ -31,6 +31,13 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     _setClientFields();
     _setHCPFields();
     _setWorkOrderFields();
+    currentArgument = {
+      'searchCollection': 'Unknown',
+      'searchField': 'Unknown',
+      'searchCriteria': 'Unknown',
+      'searchValue': 'Unknown',
+      'branchValue': 'Unknown'
+    };
   }
 
   @override
@@ -130,7 +137,6 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   List<Map<String, String>>? clientFields;
   List<dynamic>? workOrderFields;
   List<dynamic>? hcpFields;
-
   void _setClientFields() {
     clientFields = [
       {"value": 'clientId', "label": 'Client Id'},
@@ -161,8 +167,9 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     ];
   }
 
+  dynamic currentTermsValue;
   Map<String, String>? currentArgument;
-  Map<String, String>? branchArgument;
+
   void _setSearchCriteria() {
     searchCriteria = [
       "All",
@@ -251,6 +258,56 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     return ivv;
   }
 
+  bool _validateCurrentArguments() {
+    bool bl = true;
+
+    print('line 263: ${currentArgument}');
+    if (currentArgument!['searchValue'] == null ||
+        currentArgument!['searchValue'] == 'Unknown') {
+      bl = false;
+    }
+    if (currentArgument!['branchValue'] == null ||
+        currentArgument!['branchValue'] == 'Unknown') {
+      bl = false;
+    }
+    if (currentArgument!['searchValue'] == null ||
+        currentArgument!['searchValue'] == 'Unknown') {
+      bl = false;
+    }
+    if (currentArgument!['searchField'] == null ||
+        currentArgument!['searchField'] == 'Unknown') {
+      bl = false;
+    }
+    if (currentArgument!['searchCollection'] == null ||
+        currentArgument!['searchCollection'] == 'Unknown') {
+      bl = false;
+    }
+    if (currentArgument!['searchCriteria'] == null ||
+        currentArgument!['searchCriteria'] == 'Unknown') {
+      bl = false;
+    }
+    return bl;
+  }
+
+  void setDataElements() {
+    print("line 268 edit ${searchTermsController.text}");
+    currentArgument!['searchValue'] = currentTermsValue.toString();
+    currentArgument!['branchValue'] = selectedBranchNumber.toString();
+    print('line 271: ${currentArgument}');
+    bool bl = _validateCurrentArguments();
+    if (bl == false) {
+      print('line 283 bl == false');
+      return;
+    }
+    setState(() {
+      flagHaveQueryData = true;
+      if (selectedBranchNumber != null) {
+        flagHasTopLevelBranch = true;
+      }
+      flagHaveData = true;
+    });
+  }
+
   bool showLoadingIndicator = true;
   bool isLoading = false;
 //
@@ -313,12 +370,6 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                               onSelected: (dynamic value) {
                                 setState(() {
                                   selectedBranch = value;
-                                  branchArgument!['searchField'] = 'branchId';
-                                  branchArgument!['searchCriteria'] =
-                                      'Is Equal To';
-                                  branchArgument!['searchCollection'] =
-                                      'Unknown';
-                                  flagHasTopLevelBranch = true;
 
                                   getSelectedBranchIndex(value);
                                   int idx = value.indexOf(')');
@@ -327,19 +378,14 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                     st = st.replaceAll('(', '');
                                     st = st.trim();
                                     selectedBranchNumber = int.parse(st);
-                                  }
-                                  // selectedBranchNumber =
-                                  //     userBranches![selectedBranchIndex]
-                                  //         ['branchId'];
-                                  //
-                                  flagHasTopLevelBranch = true;
-                                  branchArgument!['searchValue'] =
-                                      selectedBranchNumber.toString();
-                                  argumentsContainer!.add(currentArgument!);
-                                  currentArgument = null;
 
-                                  print(
-                                      'line 341: ${currentArgument!} ${selectedBranchNumber}');
+                                    // selectedBranchNumber =
+                                    //     userBranches![selectedBranchIndex]
+                                    //         ['branchId'];
+                                    //
+                                    flagHasTopLevelBranch = true;
+                                    print('line 341:  ${selectedBranchNumber}');
+                                  }
                                 });
 
                                 if (selectedMenuOption != null &&
@@ -480,10 +526,6 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                 isCheckedWorkSchedule = false;
                               } else {
                                 currentArgument!['searchCollection'] = 'Client';
-                                if (flagHasTopLevelBranch == true) {
-                                  branchArgument!['searchCollection'] =
-                                      'Client';
-                                }
                               }
                               isCheckedHCP = !value;
                               isCheckedWorkSchedule = !value;
@@ -526,10 +568,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                               } else {
                                 currentArgument!['searchCollection'] =
                                     'HCProfessional';
-                                if (flagHasTopLevelBranch == true) {
-                                  branchArgument!['searchCollection'] =
-                                      'HCProfessional';
-                                }
+
                                 isCheckedClient = !value;
                                 isCheckedWorkSchedule = !value;
                               }
@@ -570,10 +609,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                               } else {
                                 currentArgument!['searchCollection'] =
                                     'ClientWorkOrder';
-                                if (flagHasTopLevelBranch == true) {
-                                  branchArgument!['searchCollection'] =
-                                      'ClientWorkOrder';
-                                }
+
                                 isCheckedHCP = !value;
                                 isCheckedClient = !value;
                               }
@@ -659,25 +695,36 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                   height: 150,
                   width: 285,
                   child: TextFormField(
-                      onChanged: (value) {
-                        currentArgument!['searchValue'] = value;
-                        argumentsContainer!.add(currentArgument!);
-                        flagHaveQueryData = true;
-                        flagHasTopLevelBranch = true;
-                      },
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                      controller: searchTermsController,
-                      maxLength: 280,
-                      minLines: 1,
-                      maxLines: 3,
-                      decoration:
-                          InputDecoration(label: Text('Search Term(s)')),
-                      validator: (value) {
-                        return null;
-                      }),
+                    autofocus: false,
+                    onChanged: (value) {
+                      currentTermsValue = value;
+                      searchTermsController.text = value;
+                    },
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                    controller: searchTermsController,
+                    maxLength: 280,
+                    minLines: 1,
+                    maxLines: 3,
+                    decoration: InputDecoration(label: Text('Search Term(s)')),
+                  ),
                 ),
+                Container(
+                    height: 50,
+                    width: 100,
+                    child: Center(
+                      child: ElevatedButton(
+                          onPressed: () {
+                            setDataElements();
+                          },
+                          child: Center(
+                            child: Text('Done',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                )),
+                          )),
+                    ))
               ],
             ),
           ),
@@ -702,19 +749,19 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                               title: 'Work Order',
                               route: workOrderPage,
                               argumentId: -1,
-                              argumentsList: [argumentsContainer!]),
+                              argumentMap: currentArgument),
                           Spacer(),
                           TabsWeb(
                               title: 'Clients',
                               route: clientPage,
                               argumentId: -1,
-                              argumentsList: [argumentsContainer!]),
+                              argumentMap: currentArgument),
                           Spacer(),
                           TabsWeb(
                               title: 'HC Professionals',
                               route: hcprofessionalPage,
                               argumentId: -1,
-                              argumentsList: [argumentsContainer!]),
+                              argumentMap: currentArgument),
                           Spacer(),
                         ],
                       ),

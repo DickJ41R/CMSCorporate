@@ -28,7 +28,7 @@ const defaultFirebaseOptions = FirebaseOptions(
 final dio = Dio();
 
 class ClientStreamScreen extends StatefulWidget {
-  final List<Map<String, String>> args;
+  final Map<String, String> args;
   ClientStreamScreen({super.key, required this.args});
 
   @override
@@ -59,7 +59,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
 
   List<ClientClass> clientClassData = [];
   Stream<QuerySnapshot>? _clientStream;
-  List<Map<String, dynamic>>? arguments;
+  Map<String, dynamic>? arguments;
   List<Map<String, dynamic>> listOfClients = [];
 
   Future<List<Map<String, dynamic>>> _getAllClientData() async {

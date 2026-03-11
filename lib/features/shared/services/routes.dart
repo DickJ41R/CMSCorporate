@@ -64,8 +64,7 @@ class MyRoutes {
       case workOrderPage:
         return MaterialPageRoute(builder: (context) => WorkOrderStreamScreen());
       case clientPage:
-        List<Map<String, String>> mp =
-            settings.arguments as List<Map<String, String>>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientStreamScreen(args: mp));
       case hcprofessionalPage:

@@ -10,7 +10,7 @@ import 'package:cms_web/features/hcpapp/models/hcprofessional_data_model.dart';
 //import 'package:hcp_app/pages/login/login.dart';
 
 class ProcessSearchHCPsScreen extends StatefulWidget {
-  final List<Map<String, String>> args;
+  final Map<String, String> args;
   ProcessSearchHCPsScreen({super.key, required this.args});
 
   @override
@@ -28,7 +28,7 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
   var _selectedIndex;
   HCPServices hcpServices = HCPServices();
   late DataGridSource hcpDataClassSource;
-  List<Map<String, String>>? arguments;
+  Map<String, String>? arguments;
   Future<List<HCProfessionalDataModel>> getAllHCPs() async {
     print('line 40: $arguments!');
 

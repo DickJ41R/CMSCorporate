@@ -526,7 +526,7 @@ class HCPServices {
   // }
 
   Future<List<HCProfessionalDataModel>> getHCPDataFromSearch(
-      List<Map<String, String>> arguments) async {
+      Map<String, String> arguments) async {
     print('line 379: $arguments');
     try {
       List<HCProfessionalDataModel> hcpms = [];
