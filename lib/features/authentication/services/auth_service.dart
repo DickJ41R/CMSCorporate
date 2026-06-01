@@ -51,6 +51,9 @@ class AuthService {
   int? clientUserId;
   CMSBranchUser? cmsBranchUser;
   Map<String, dynamic>? cmsBranchUserMap;
+  CMSUser? cmsUser;
+  Map<String, dynamic>? cmsUserMap;
+  int? cmsUserId;
   bool? flagIsTester;
   bool? flagIsCorporate;
   bool? flagIsBranch;
@@ -108,22 +111,26 @@ class AuthService {
   }
 
   Future<void> signup(Map<String, dynamic> mp, BuildContext context) async {
-    print('line 308: ${mp['email']} ${mp[']password']}');
+    print('line 113: ${mp['email']} ${mp['password']}');
     try {
       String email = mp['email'].toLowerCase();
       String password = mp['password'];
-      print('line 317 cms_auth: $email $password ');
+      print('line 117 cms_auth: $email $password ');
+      Map<String,dynamic> oId = {};
       Map<String, dynamic>? npm;
+      var errorCode;
+      var errorMessage;
+      String documentId = '';
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password)
           .then((snapshot) {
-        print('line 120 auth service: $snapshot');
+        print('line 124 auth service: $snapshot');
         userCredential = snapshot;
         currentCredentialUser = userCredential!.user;
-        print('line 123 $currentCredentialUser');
+        print('line 127 $currentCredentialUser');
       }).catchError((error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
+        errorCode = error.code;
+        errorMessage = error.message;
         // Handle errors here
         switch (errorCode) {
           case 'auth/invalid-email':
@@ -139,23 +146,90 @@ class AuthService {
             print('An error occurred during login:  $errorMessage');
         }
       });
-      print('line 142');
-      await Future.delayed(const Duration(seconds: 1));
-      if (currentUser == null) {
-        throw Exception('line 144 No current user found');
+      print('line 146');
+      if (errorCode != null) {
+        print('line 150 error: $errorMessage');
+        throw Exception(errorMessage);
       }
+      await Future.delayed(const Duration(seconds: 1));
+      print('line 154: ${currentCredentialUser}');
+      documentId = currentCredentialUser!['id'];
+
+        if (currentCredentialUser!.displayName == 'CMSUser') {
+          //   print('line 227');
+          //   oId['message'] = '10. You are not authorized to use this app.';
+          //   return oId;
+          // }
+          // documentId = usr.uid;
+          print('line 225: $currentCredentialUser ');
+          // await Future.delayed(const Duration(seconds: 1)
+          print('line 202 $email');
+
+          await FirebaseFirestore.instance
+              .collection('CMSUser')
+              .doc(documentId)
+              .get()
+              .then((querySnapshot) async {
+            print('line 208 ${querySnapshot.data()}');
+            final docSnapshot = querySnapshot.data();
+            userDocumentId = querySnapshot.id;
+
+            if (docSnapshot == null) {
+              print('line 242');
+              oId['success'] = false;
+              oId['message'] = 'Invalid find for a user.';
+              return oId;
+            }
+            if (docSnapshot['userType'] != 'CNSUser') {
+              print('line 346');
+              await FirebaseAuth.instance.signOut();
+              oId['success'] = false;
+              oId['documentId'] = null;
+              oId['message'] =
+              'Invalid user type. User must be a Client User';
+              return oId;
+            }
+            currentUser = docSnapshot;
+            if (currentUser == null) {
+              throw Exception('line 144 No current user found');
+            }
+          });
+        } else {
+          print('line 189: $currentCredentialUser ');
+          oId['documentId'] = documentId;
+          // await Future.delayed(const Duration(seconds: 1)
+          print('line 202 $email');
+          await FirebaseFirestore.instance
+              .collection('CMSBranchUser')
+              .doc(documentId)
+              .get()
+              .then((querySnapshot) async {
+            print('line 208 ${querySnapshot.data()}');
+            final docSnapshot = querySnapshot.data();
+            userDocumentId = querySnapshot.id;
+
+            if (docSnapshot == null) {
+              print('line 242');
+              oId['success'] = false;
+              oId['message'] = 'Invalid find for a user.';
+              return oId;
+            }
+            if (docSnapshot['userType'] != 'CNSUser') {
+              print('line 346');
+              await FirebaseAuth.instance.signOut();
+              oId['success'] = false;
+              oId['documentId'] = null;
+              oId['message'] = 'Invalid user type. User must be a Client User';
+              return oId;
+            }
+            currentUser = docSnapshot;
+            if (currentUser == null) {
+              throw Exception('line 144 No current user found');
+            }
+          });
+        }
       print('line 146: $currentUser ${mp['email']}');
 
-      DateTime dte = new DateTime(1970, 1, 1);
-      FirebaseFirestore.instance
-          .collection("users")
-          .where('email', isEqualTo: mp['email'])
-          .get()
-          .then((querySnapshot) {
-        print('line 154: get users ${querySnapshot.docs.length}');
-
-        currentUser = querySnapshot.docs[0].data();
-      });
       final navigator = Navigator.of(context)
           .pushNamed(AutofillHints.language, arguments: null);
     } catch (e) {
@@ -269,17 +343,17 @@ class AuthService {
     bool flagHaveUserInformation = false;
     bool flagIsAuthenticated = false;
     Map<String, dynamic>? fcmMap;
-    print('line 272: $email $password');
+    print('line 346: $email $password');
     try {
       email = email.toLowerCase();
-      print('line 275: $email $password');
+      print('line 349: $email $password');
       Map<String, dynamic>? npm;
       Map<String, dynamic>? fcmMap = null;
       List<Map<String, dynamic>> listFCMTokens = [];
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password)
           .then((snapshot) {
-        print('line 282: $snapshot');
+        print('line 356: $snapshot');
         userCredential = snapshot;
         currentCredentialUser = userCredential!.user;
       }).catchError((error) {
@@ -299,92 +373,71 @@ class AuthService {
           default:
             print('An error occurred during login:  $errorMessage');
         }
-        print('line 302: in singin');
-        throw Exception('Error signin in');
+        print('line 376: in singin $errorMessage');
+        throw Exception(errorMessage);
       });
       await Future.delayed(const Duration(seconds: 1));
-      print('line 306  $email');
+      print('line 380  $email');
       Map<String, dynamic>? obj;
-      await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', isEqualTo: email)
-          .get()
-          .then((querySnapshot) async {
-        for (var docSnapshot in querySnapshot.docs) {
-          userDocumentId = docSnapshot.id;
+      print('line 382: ${currentCredentialUser.displayName}');
+      if (currentCredentialUser == null) {
+        print('line 383 null currentCredentialUser');
+        throw Exception('No User found with the entered email.');
+      }
+      if (currentCredentialUser.displayName == 'BranchUser') {
+        await FirebaseFirestore.instance
+            .collection('CMSBranchUser')
+            .where('email', isEqualTo: email)
+            .get()
+            .then((querySnapshot) async {
+          for (var docSnapshot in querySnapshot.docs) {
+            userDocumentId = docSnapshot.id;
 
-          obj = docSnapshot.data();
-          print('line 387 checking _authservice $obj');
-          cmsBranchUserId = obj!['genId'];
-          cmsBranchUserMap = obj;
-          bool flagIsCorporate = false;
-          flagIsAuthenticated = true;
-          List<Map<String, dynamic>> listOfUserBranches = [
-            {'branchId': 0, 'branchName': 'CMS CORPORATE'},
-            {'branchId': 615, 'branchName': 'RALEIGH CMS 101'},
-            {'branchId': 624, 'branchName': 'COLUMBIA CMS 105'},
-            {'branchId': 631, 'branchName': 'NASHVILLE CMS 106'},
-            {'branchId': 632, 'branchName': 'MEMPHIS CMS 107'},
-            {'branchId': 634, 'branchName': 'AUGUSTA-GREENVILLE CMS 110'},
-            {'branchId': 635, 'branchName': 'FLORENCE CMS 111'},
-            {'branchId': 638, 'branchName': 'KNOXVILLE-TRI-CITIES CMS 114'},
-            {'branchId': 640, 'branchName': 'CHATTANOOGA CMS 116'},
-            {'branchId': 641, 'branchName': 'LEXINGTON CMS 117'}
-          ];
-          print('line 334 ${listOfUserBranches.length}');
-          if (obj!['branchIds'][0] == 0) {
-            if (obj!['branchNames'] == null) {
-              obj!['branchNames'] = [];
-              obj!['branchNames'].add('CMS CORPORATE');
+            obj = docSnapshot.data();
+            print('line 396 checking _authservice $obj');
+            cmsBranchUserId = obj!['genId'];
+            cmsBranchUserMap = obj;
+            bool flagIsCorporate = false;
+            flagIsAuthenticated = true;
+            List<Map<String, dynamic>> listBranches = [];
+            for (int i = 0; i < obj!['branchIds'].length; i++) {
+              Map<String, dynamic> ob = {
+                'branchId': obj!['branchIds'][i],
+                'branchName': obj!['branchNames'][i]
+              };
+              listBranches.add(ob);
             }
-            print('line 340');
-            for (int j = 1; j < listOfUserBranches.length; j++) {
-              Map<String, dynamic> ob = listOfUserBranches[j];
-              obj!['branchIds'].add(ob['branchId']);
-              obj!['branchNames'].add(ob['branchName']);
-            }
-          } else {
-            print('line 347');
-            if (obj!['branchNames'] == null) {
-              obj!['branchNames'] = [];
-            }
-            print('line 351: ${obj!['branchIds'].length}');
-            for (int j = 0; j < obj!['branchIds'].length; j++) {
-              for (int k = 0; k < listOfUserBranches.length; k++) {
-                Map<String, dynamic> mb = listOfUserBranches[k];
-                print('line 355: $j $k ${mb} ${obj!['branchIds']}');
-                if ((obj!['branchIds'][j] == 639 ||
-                        obj!['branchIds'][j] == 638) &&
-                    mb['branchId'] == 638) {
-                  obj!['branchIds'][j] = 638;
-                  if (obj!['branchNames'] == null) {
-                    obj!['branchNames'] = [];
-                  }
-                  print('line 363 ${obj!['branchNames']}');
-                  obj!['branchNames'].add('KNOXVILLE-TRI-CITIES CMS 114');
-                  break;
-                } else if ((obj!['branchIds'][j] == 634 ||
-                        obj!['branchIds'][j] == 637) &&
-                    (mb['branchIds'] == 634)) {
-                  obj!['branchId'][j] = 634;
-                  if (obj!['branchNames'] == null) {
-                    obj!['branchNames'] = [];
-                  }
-                  obj!['branchNames'].add('AUGUSTA-GREENVILLE CMS 110');
-                  break;
-                } else {
-                  if (mb['branchId'] == obj!['branchIds'][j]) {
-                    if (obj!['branchNames'] == null) {
-                      obj!['branchNames'] = [];
-                    }
-                    obj!['branchNames'].add(mb['branchName']);
-                    break;
-                  }
-                }
-              }
+            listOfCMSUserBranches = listBranches;
+            if (obj!['Roles'] != null) {
+              obj!['roles'] = obj!['Roles'];
             }
           }
-          print('line 373');
+
+        });
+        Timestamp ts = Timestamp.fromDate(DateTime.now());
+        await FirebaseFirestore.instance
+            .collection('CMSBranchUser')
+            .doc(userDocumentId)
+            .update({
+          "loginCounter": FieldValue.increment(1),
+          "dateOfLastLogin": ts
+        });
+      } else {
+        await FirebaseFirestore.instance
+            .collection('CMSUser')
+            .where('email', isEqualTo: email)
+            .get()
+            .then((querySnapshot) async {
+          for (var docSnapshot in querySnapshot.docs) {
+            userDocumentId = docSnapshot.id;
+
+            obj = docSnapshot.data();
+            print('line 413 checking _authservice $obj');
+            cmsUserId = obj!['genId'];
+            cmsUserMap = obj;
+            bool flagIsCorporate = false;
+            flagIsAuthenticated = true;
+          }
           List<Map<String, dynamic>> listBranches = [];
           for (int i = 0; i < obj!['branchIds'].length; i++) {
             Map<String, dynamic> ob = {
@@ -409,25 +462,38 @@ class AuthService {
             flagIsBranch = true;
             corporateOrBranch = "Branch";
           }
-          print('line 365:  $userDocumentId');
-          Timestamp ts = Timestamp.fromDate(DateTime.now());
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(userDocumentId)
-              .update({
-            "loginCounter": FieldValue.increment(1),
-            "dateOfLastLogin": ts
-          });
-        }
-        currentUser = obj;
-      });
-      print('line 412: $currentUser');
 
-      if (flagIsAuthenticated == false) {
-        throw Exception('Not Authorized');
+        });
+        Timestamp ts = Timestamp.fromDate(DateTime.now());
+        await FirebaseFirestore.instance
+            .collection('CMSUser')
+            .doc(userDocumentId)
+            .update({
+          "loginCounter": FieldValue.increment(1),
+          "dateOfLastLogin": ts
+        });
+        print('line 363 ${obj!['roles']} ${obj!['Roles']}');
+
+
       }
-      print('line 432 ${obj!['roles'].length}');
-      String? app = 'cms_web';
+      // List<Map<String, dynamic>> listOfUserBranches = [
+      //   {'branchId': 0, 'branchName': 'CMS CORPORATE'},
+      //   {'branchId': 615, 'branchName': 'RALEIGH CMS 101'},
+      //   {'branchId': 624, 'branchName': 'COLUMBIA CMS 105'},
+      //   {'branchId': 631, 'branchName': 'NASHVILLE CMS 106'},
+      //   {'branchId': 632, 'branchName': 'MEMPHIS CMS 107'},
+      //   {'branchId': 634, 'branchName': 'AUGUSTA-GREENVILLE CMS 110'},
+      //   {'branchId': 635, 'branchName': 'FLORENCE CMS 111'},
+      //   {'branchId': 638, 'branchName': 'KNOXVILLE-TRI-CITIES CMS 114'},
+      //   {'branchId': 640, 'branchName': 'CHATTANOOGA CMS 116'},
+      //   {'branchId': 641, 'branchName': 'LEXINGTON CMS 117'}
+      // ];
+      // print('line 334 ${listOfUserBranches.length}');
+      // if (obj!['branchIds'][0] == 0) {
+      //   if (obj!['branchNames'] == null) {
+      //     obj!['branchNames'] = [];
+      //     obj!['branchNames'].add('CMS CORPORATE');
+      //   }
 
       print('line  534 $fcmToken $email $flagIsAuthenticated');
 

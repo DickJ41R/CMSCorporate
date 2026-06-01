@@ -123,6 +123,7 @@ class LoginState extends State<Login> {
   bool flagHasEmail = false;
   bool flagHasPassword = false;
   bool flagHasClient = false;
+  bool isBranchUser = false;
   //Color color1 = Color.fromARGB(255, 200, 240, 201);
 // Color color2 = Color.fromARGB(255, 37, 150, 190);
   // Color color1 = Color.fromARGB(255, 172, 223, 252);
@@ -276,6 +277,23 @@ class LoginState extends State<Login> {
                           children: [
                             // const SizedBox(height: 80),
                             // _clientName(context, fontSize),
+                            // const SizedBo(height: 20)
+                            // CheckboxListTile(
+                            //  controlAffinity: ListTileControlAffinity.trailing,
+                            //   title: Text('Branch User'),
+                            //   value: isBranchUser,
+                            //   onChanged: (bool? newValue) {
+                            //     print('line 286 $newValue');
+                            //     if (newValue == false) {
+                            //      _branchUserController.text  = 'false';
+                            //      } else {
+                            //      _branchUserController.text  = 'true';
+                            //     }
+                            //     setState ( (val) {
+                            //         _isBranchUser` = newValue ?? false;
+                            //     }
+                            //   },
+                            // )
                             const SizedBox(height: 20),
                             _emailAddress(context, fontSize),
                             const SizedBox(
@@ -382,7 +400,32 @@ class LoginState extends State<Login> {
   //             )
   //           ],
   //         );
-
+// class SingleCheckboxExample extends StatefulWidget {
+//   const SingleCheckboxExample({super.key});
+//
+//   @override
+//   State<SingleCheckboxExample> createState() => _SingleCheckboxExampleState();
+// }
+//
+// class _SingleCheckboxExampleState extends State<SingleCheckboxExample> {
+//   // 1. Declare the data entry variable
+//   bool _isBranchUser = false;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return CheckboxListTile(
+//       title: const Text('Branch User'),
+//       value: _isBranchUser,
+//       // 2. Update state upon user click
+//       onChanged: (bool? newValue) {
+//         setState(() {
+//           _isBranchUser= newValue ?? false;
+//         });
+//       },
+//       controlAffinity: ListTileControlAffinity.trailing;
+//     );
+//   }
+// }
   Widget _emailAddress(BuildContext context, double fontSize) {
     return showLogOutButton == true
         ? Container()
