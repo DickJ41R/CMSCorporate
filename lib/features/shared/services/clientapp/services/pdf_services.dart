@@ -1,40 +1,44 @@
-import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
-import 'package:cms_web/features/shared/clientapp/services/client_services.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
-import 'package:cms_web/features/shared/utils/save_file_mobile_and_desktop.dart';
+import 'package:client_app/save_file_mobile_and_desktop.dart';
 //import 'package:path_provider/path_provider.dart' as path_provider;
-
+import 'package:client_app/services/auth_service.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+final storageRef = FirebaseStorage.instance.ref();
 
 class PDFService {
   //final storageRef = FirebaseStorage.instanceFor(bucket: "gs://cmsproject-8e245.appspot.com");
-  final storageRef = FirebaseStorage.instance.ref();
+   PDFService();
+
   bool isAndroid = false;
   String imageFileName = '';
-  ClientServices clientServices = ClientServices();
+
   double documentNotesLength = 0;
+
   Future<Map<String, dynamic>> createPdfAndPublishPdf(
       Map<String, dynamic> item, isAndroid) async {
-    this.isAndroid = isAndroid;
-    String pdfFileName = await _convertImageToPDF(item);
-    //read and write to storage
-    pdfFileName = pdfFileName.replaceAll('files\'', 'files');
-    File file = File.fromUri(Uri.parse(pdfFileName));
-    //  File file = await File(pdfFileName);
-    List<String> splits = pdfFileName.split('/');
-    String timesheetFilename = splits[splits.length - 1];
-
-    print('line 34: $timesheetFilename $pdfFileName');
-    print('line 35: ${file} ${file.uri}');
-
+    print('line 30 in create pdf and publish: ${item['hcpId']}');
     try {
+      this.isAndroid = isAndroid;
+      String pdfFileName = await _convertImageToPDF(item);
+      //read and write to storage
+      print('line 32: $pdfFileName');
+      pdfFileName = pdfFileName.replaceAll('files\'', 'files');
+      File file = File.fromUri(Uri.parse(pdfFileName));
+      //  File file = await File(pdfFileName);
+      print('line 36: $file');
+      List<String> splits = pdfFileName.split('/');
+      String timesheetFilename = splits[splits.length - 1];
+
+      print('line 34: $timesheetFilename $pdfFileName');
+      print('line 35: ${file} ${file.uri}');
+
       if (!file.existsSync()) {
         print('line 41: $file');
         throw 'line 42 File not found';
@@ -215,8 +219,9 @@ class PDFService {
 //Initialize PdfGrid for drawing the table
     PdfGrid grid = PdfGrid();
     PdfStringFormat format = PdfStringFormat();
-    print('line 148 $format ${layoutResult.bounds.bottom}');
+    print('line 225 $format ${layoutResult.bounds.bottom}');
     format.alignment = PdfTextAlignment.center;
+    print('line 227 check');
     format.lineAlignment = PdfVerticalAlignment.bottom;
     //Create a grid style
 
@@ -275,7 +280,14 @@ class PDFService {
         textPen: PdfPens.white,
         textBrush: PdfBrushes.darkOrange,
         font: PdfStandardFont(PdfFontFamily.helvetica, 12));
+    double otMealHour = 0.0;
 
+    // if (item['otHours'] != null && item['otHours'] > 0) {
+    //   if (item['regularHours'] == 0) {
+    //     otMealHour = .5;
+    //     item['otHours'] -= .5;
+    //   }
+    // }
     PdfGridRow row1 = grid.rows.add();
     row1.style =
         PdfGridRowStyle(font: PdfStandardFont(PdfFontFamily.helvetica, 12));
@@ -283,6 +295,7 @@ class PDFService {
       PdfGridRow row = grid.rows.add();
       if (weekDay == i) {
         DateTime std = item['signedInDeviceDateTime'].toDate();
+        print('line 302: ${std}');
         String st = DateFormat("MM-dd-yyyy hh:mm a").format(std);
         List<String> sts = st.split(' ');
         // std = item['shiftSignedOutActionDate'].toDate();
@@ -302,23 +315,25 @@ class PDFService {
           row.cells[6].value =
               item['signedOutInitialVerification'] == true ? 'Yes' : 'No';
         } else {
+          print('line 322: ${item['signedInInitialStartTimeChanged']}');
           String cStartTime = item['signedInInitialStartTimeChanged'];
+          print('line 324: ${item['signedOutInitialEndTimeChanged']}');
           String cEndTime = item['signedOutInitialEndTimeChanged'];
           PdfGridRow row1 = grid.rows.add();
-          print('line 242');
+          print('line 327: ${cStartTime} ${cEndTime}');
           row1.cells[0].value = dayValues[i];
           row1.cells[1].value = sts[0];
           row1.cells[2].value = cStartTime; //item['dateTimeSignedOutValue'];
           row1.cells[2].style = cellStyle;
           row1.cells[3].value = cEndTime; //item['dateTimeSignedOutValue'];
           row1.cells[3].style = cellStyle;
-          row1.cells[4].value = item['signedOutInitialMealsChanged'].toString();
+          row1.cells[4].value = item['meals'].toString();
           row1.cells[4].style = cellStyle;
           row1.cells[5].value =
               item['signedOutInitialDecimalHoursChanged'].toStringAsFixed(2);
           row1.cells[5].style = cellStyle;
           row1.cells[6].value =
-              item['signedOutInitialVerification'] == true ? 'Yes' : 'No';
+              item['signedOutHasInitialVerification'] == true ? 'Yes' : 'No';
         }
         // } else if (i < 7 ){
         //     row.cells[0].value = dayValues[i];
@@ -342,10 +357,17 @@ class PDFService {
           row.cells[5].value = item['decimalHours'].toStringAsFixed(2);
           row1.cells[5].style = cellStyle1;
           row.cells[6].value =
-              item['signedOutInitialVerification'] == true ? 'Yes' : 'No';
+              item['signedOutHasInitialVerification'] == true ? 'Yes' : 'No';
           print('line 272->: ${dayValues.length}');
         } else {
+          print(
+              'line 364: ${item['signedOutInitialMealsChanged']} ${item['signedOutInitialDecimalHoursChanged']} ');
           PdfGridRow row1 = grid.rows.add();
+          // double mealHours =
+          //     double.parse(item['signedOutInitialMealsChanged'].toString());
+          // mealHours = double.parse((mealHours / 60).toStringAsFixed(2));
+          // double signedOutHours = item['signedOutHours'] - mealHours;
+
           row1.cells[0].value = dayValues[i + 2];
           row1.cells[0].style = PdfGridCellStyle(
               backgroundBrush: PdfBrushes.green, textPen: PdfPens.white);
@@ -354,25 +376,37 @@ class PDFService {
           row1.cells[3].value = '';
           row1.cells[4].value = item['signedOutInitialMealsChanged'].toString();
           row1.cells[4].style = cellStyle;
-          row1.cells[5].value =
-              item['signedOutInitialDecimalHoursChanged'].toStringAsFixed(2);
+          row1.cells[5].value = item['signedOutHours'].toString();
           row1.cells[5].style = cellStyle;
           row1.cells[6].value =
-              item['signedOutInitialVerification'] == true ? 'Yes' : 'No';
+              item['signedOutHasInitialVerification'] == true ? 'Yes' : 'No';
         }
       } else if (i == 8) {
-        row.cells[0].value = dayValues[i];
-        row.cells[0].style = PdfGridCellStyle(
-            backgroundBrush: PdfBrushes.green, textPen: PdfPens.white);
-        row.cells[1].value = '';
-        row.cells[2].value = '';
-        row.cells[3].value = '';
-        row.cells[4].value = '0';
-        row.cells[5].value = '0';
-        row.cells[6].value = '';
+        print('line 381: ${item['otHours']}');
+        if (item['otHours'] != null && item['otHours'] > 0.0) {
+          row.cells[0].value = dayValues[i];
+          row.cells[0].style = PdfGridCellStyle(
+              backgroundBrush: PdfBrushes.green, textPen: PdfPens.white);
+          row.cells[1].value = '';
+          row.cells[2].value = '';
+          row.cells[3].value = '';
+          row.cells[4].value = '0';
+          row.cells[5].value = item['otHours'].toStringAsFixed(2);
+          row.cells[6].value =
+              item['signedOutHasInitialVerification'] == true ? 'Yes' : 'No';
+        } else {
+          row.cells[0].value = dayValues[i];
+          row.cells[0].style = PdfGridCellStyle(
+              backgroundBrush: PdfBrushes.green, textPen: PdfPens.white);
+          row.cells[1].value = '';
+          row.cells[2].value = '';
+          row.cells[3].value = '';
+          row.cells[4].value = '0';
+          row.cells[5].value = '0';
+          row.cells[6].value = '';
+        }
       }
     }
-
     print('line 257 ${layoutResult.bounds.bottom}');
 //Draws the grid
     layoutResult = grid.draw(
@@ -380,14 +414,14 @@ class PDFService {
         bounds: Rect.fromLTWH(0, layoutResult.bounds.bottom + 20, 0, 0))!;
     font = PdfStandardFont(PdfFontFamily.helvetica, 10);
     String elc = item['signedOutInitialVerification'] == true ? 'Yes' : 'No';
-    str = "Employee Electronically Validated Hours: $elc";
-    ssize = font.measureString(str);
-    textElement = PdfTextElement(text: str, font: font);
-    layoutResult = textElement.draw(
-        page: page,
-        bounds: Rect.fromLTWH(
-            0, layoutResult.bounds.bottom + 5, ssize.width, ssize.height))!;
-    print('line 272');
+//     str = "Employee Electronically Validated Hours: $elc";
+//     ssize = font.measureString(str);
+//     textElement = PdfTextElement(text: str, font: font);
+//     layoutResult = textElement.draw(
+//         page: page,
+//         bounds: Rect.fromLTWH(
+//             0, layoutResult.bounds.bottom + 5, ssize.width, ssize.height))!;
+     print('line 272');
     font = PdfStandardFont(PdfFontFamily.helvetica, 10);
     const String footerContent0 =
         "Client Company and Consolidated Medical Staffing, each certify that hours stated are correct.  Client Company " +
@@ -494,9 +528,11 @@ class PDFService {
           bounds: Rect.fromLTWH(0, height, ssize.width, ssize.height))!;
 
       const noBytes = 1024 * 100;
+      print('line 503: $hcpImageFileName');
       final signatureRef = storageRef.child(hcpImageFileName);
       print('line 410: $signatureRef');
       final Uint8List? data = await signatureRef.getData(noBytes);
+      signatureRef.putData(data!);
       // Data for "images/island.jpg" is returned, use this as needed.
       List<int> dta = data as List<int>;
       leftMargin = 200;

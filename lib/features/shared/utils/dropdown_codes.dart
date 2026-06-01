@@ -1,5 +1,19 @@
 class DropDownCodes {
   DropDownCodes();
+
+  Future<List<Map<String, dynamic>>> getRegistrantCancelReasons() async {
+    List<Map<String, dynamic>> lst = [
+      {"codeId": 2512, "reason": "Family Emergency"},
+      {"codeId": 2513, "reason": "Sick"},
+      {"codeId": 2514, "reason": "Transportation Issues"},
+      {"codeId": 2680, "reason": "Requested Time Off"},
+      {"codeId": 2689, "reason": "Fatigue"},
+      {"codeId": 2739, "reason": "No Call No Show"},
+      {"codeId": 2740, "reason": "Called Out"}
+    ];
+    return lst;
+  }
+
   Future<List<Map<String, dynamic>>> getClientCancelReasons() async {
     List<Map<String, dynamic>> lst = [
       {"codeId": 2088, "reason": "Census Low"},
@@ -18,19 +32,6 @@ class DropDownCodes {
       {"codeId": 2843, "reason": "Not Confirmed - CLIENT"},
       {"codeId": 2844, "reason": "Not Confirmed - REGISTRANT"},
       {"codeId": 2845, "reason": "Shift no longer available"}
-    ];
-    return lst;
-  }
-
-  Future<List<dynamic>> getRegistrantCancelReasons() async {
-    List<dynamic> lst = [
-      {"codeId": 2512, "reason": "Family Emergency"},
-      {"codeId": 2513, "reason": "Sick"},
-      {"codeId": 2514, "reason": "Transportation Issues"},
-      {"codeId": 2680, "reason": "Requested Time Off"},
-      {"codeId": 2689, "reason": "Fatigue"},
-      {"codeId": 2739, "reason": "No Call No Show"},
-      {"codeId": 2740, "reason": "Called Out"}
     ];
     return lst;
   }
@@ -4230,1351 +4231,6 @@ class DropDownCodes {
       "CodeValue": "T"
     }
   ];
-  // List<Map<String,dynamic>> credentials = [
-  //   {
-  //     "CodeID": 116,
-  //     "CodeDescription": 'ACLS Expiration Date',
-  //     "CodeValue": 'ACLS',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 117,
-  //     "CodeDescription": 'Age Specific Competency',
-  //     "CodeValue": 'AGE',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 118,
-  //     "CodeDescription": 'Professional Certification - Number',
-  //     "CodeValue": 'CERT',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 119,
-  //     "CodeDescription": 'Continuing Education Units',
-  //     "CodeValue": 'CEU - Governing Board Required',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 120,
-  //     "CodeDescription": 'CPR Certification Exp Date',
-  //     "CodeValue": 'CPR',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 121,
-  //     "CodeDescription": 'Criminal Background Check',
-  //     "CodeValue": 'CRIM',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 122,
-  //     "CodeDescription": 'Consent/Disclaimer Form Signed',
-  //     "CodeValue": 'DISCL',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 123,
-  //     "CodeDescription": 'Drug Screen',
-  //     "CodeValue": 'Drug',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 124,
-  //     "CodeDescription": 'Performance Evaluation',
-  //     "CodeValue": 'EVAL',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 125,
-  //     "CodeDescription": 'Hep B Information',
-  //     "CodeValue": 'HEPB',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 126,
-  //     "CodeDescription": 'Health Assessment',
-  //     "CodeValue": 'HLTH',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 127,
-  //     "CodeDescription": 'IV Certification',
-  //     "CodeValue": 'IV',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 128,
-  //     "CodeDescription": 'JCAHO Core Mandatory Tests (via NT)',
-  //     "CodeValue": '2009 Core Mandatory Part I - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 129,
-  //     "CodeDescription": 'Medication Administration Test',
-  //     "CodeValue": 'MED',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 130,
-  //     "CodeDescription": 'Neonatal Resusitation Provider',
-  //     "CodeValue": 'NRP',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 131,
-  //     "CodeDescription": 'OSHA Mandatory Module V4',
-  //     "CodeValue": 'OSHA Mandatory Module V4 - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 132,
-  //     "CodeDescription": 'Pediatric Advanced Life Support',
-  //     "CodeValue": 'PALS',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 133,
-  //     "CodeDescription": 'TB Test Expiration Date',
-  //     "CodeValue": 'PPD',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 134,
-  //     "CodeDescription": 'Rubella',
-  //     "CodeValue": 'RUBEL',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 135,
-  //     "CodeDescription": 'Rubeola',
-  //     "CodeValue": 'RUBEO',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 136,
-  //     "CodeDescription": 'OIG/GSA Exclusion (Contractor)',
-  //     "CodeValue": 'Sanct',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 137,
-  //     "CodeDescription": 'TB Symptoms Review Form',
-  //     "CodeValue": 'TBSR',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 138,
-  //     "CodeDescription": 'Varicella',
-  //     "CodeValue": 'VARI',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 139,
-  //     "CodeDescription": 'Chest X-Ray (Positive PPD)',
-  //     "CodeValue": 'XRAY',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 140,
-  //     "CodeDescription": 'Excluded Parties Listing Service',
-  //     "CodeValue": 'EPLS - Annually',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 141,
-  //     "CodeDescription": 'Professional License - Number',
-  //     "CodeValue": 'LIC',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 143,
-  //     "CodeDescription": 'Annual Skills Checklist',
-  //     "CodeValue": 'Skills Checklist',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 144,
-  //     "CodeDescription": 'References',
-  //     "CodeValue": 'Clinical Reference',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 145,
-  //     "CodeDescription": 'Signed Job Description',
-  //     "CodeValue": 'Job Description',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 146,
-  //     "CodeDescription": 'Board Status - Clear',
-  //     "CodeValue": 'License Status Verified - Annually',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 147,
-  //     "CodeDescription": 'Signed Application',
-  //     "CodeValue": 'Application',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 148,
-  //     "CodeDescription": 'Signed CMS Gerenal Orientation Doc',
-  //     "CodeValue": 'CMS General Orientation',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 149,
-  //     "CodeDescription": 'Abuse Registry Check',
-  //     "CodeValue": 'Abuse',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 150,
-  //     "CodeDescription": 'Non-Clinical Reference',
-  //     "CodeValue": 'Professional Reference',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 151,
-  //     "CodeDescription": 'NT Core Mandatory Part II (Nursing)',
-  //     "CodeValue": '2009 Core Mandatory Part II (Nursing) - MandatoryT',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 152,
-  //     "CodeDescription": 'LPN - Long Term Care A v1 - Clinical',
-  //     "CodeValue": 'LPN - Long Term Care A v1 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 153,
-  //     "CodeDescription": 'NT Core Mandatory Part II (Allied)',
-  //     "CodeValue": '2009 Core Mandatory Part II (Allied) - MandatoryTe',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 154,
-  //     "CodeDescription": 'NT RN Pharmacology - Test',
-  //     "CodeValue": '2010 Medical Surgical Exam A - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 155,
-  //     "CodeDescription": 'CNA - Long Term Care B V1',
-  //     "CodeValue": 'Long Term Care CNA B - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 156,
-  //     "CodeDescription": 'CNA - Long Term Care A V1',
-  //     "CodeValue": 'Long Term Care CNA A - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 157,
-  //     "CodeDescription": 'NT Core Mand Part II (Non-Licensed)',
-  //     "CodeValue": '2009 Core Mandatory Part II (Non-Licensed) - Manda',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 158,
-  //     "CodeDescription": 'NT CNA Acute',
-  //     "CodeValue": 'CNA Acute Care A  - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 159,
-  //     "CodeDescription": 'NT Medical Assist',
-  //     "CodeValue": 'Medical Assistant - AlliedList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 160,
-  //     "CodeDescription": 'NT Medical Biller/Coder',
-  //     "CodeValue": 'Medical Biller/Coder - AlliedList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 161,
-  //     "CodeDescription": 'NT OT',
-  //     "CodeValue": 'Occupational Therapist - AlliedList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 162,
-  //     "CodeDescription": 'NT Phleb',
-  //     "CodeValue": 'Phlebotomy - AlliedList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 163,
-  //     "CodeDescription": 'NT Physical Therapy',
-  //     "CodeValue": 'Physical Therapist 100108 - AlliedList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 164,
-  //     "CodeDescription": 'NT EKG/Tele Tech',
-  //     "CodeValue": 'Tele Tech/EKG Rhythms Ver 2 - AlliedList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 165,
-  //     "CodeDescription": 'NT Dietician Checklist',
-  //     "CodeValue": 'Dietician - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 166,
-  //     "CodeDescription": 'NT PTA Checkist',
-  //     "CodeValue": 'Physical Therapy Assistant - AlliedList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 167,
-  //     "CodeDescription": 'NT - ER RN',
-  //     "CodeValue": 'Emergency Room0408 - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 168,
-  //     "CodeDescription": 'NT - ER RN Med Test',
-  //     "CodeValue": 'ER Medications1008 - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 169,
-  //     "CodeDescription": 'NT - RN Telemetry Test',
-  //     "CodeValue": 'Telemetry0508 - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 170,
-  //     "CodeDescription": 'NT - RN Critical Care Test',
-  //     "CodeValue": 'Critical Care - California - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 171,
-  //     "CodeDescription": 'NT SRN NICU Pharm Test',
-  //     "CodeValue": 'NICU Pharmacology - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 172,
-  //     "CodeDescription": 'NT SRN NICU Test',
-  //     "CodeValue": 'NICU0508 - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 173,
-  //     "CodeDescription": 'NT RN NICU Checklist',
-  //     "CodeValue": 'NICU - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 174,
-  //     "CodeDescription": 'NT RN - Dialysis',
-  //     "CodeValue": 'Dialysis - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 175,
-  //     "CodeDescription": 'NT RN Dialysis',
-  //     "CodeValue": 'Dialysis - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 176,
-  //     "CodeDescription": 'NT RN Psych Test',
-  //     "CodeValue": 'Psychiatric - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 177,
-  //     "CodeDescription": 'NT Tele RN Checklist',
-  //     "CodeValue": 'Telemetry - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 178,
-  //     "CodeDescription": 'NT RN Home Health Test',
-  //     "CodeValue": 'HHC-Medication - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 179,
-  //     "CodeDescription": 'NT - CST Checklist',
-  //     "CodeValue": 'OR/Surgical Technologist - AlliedList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 180,
-  //     "CodeDescription": 'NT RN TELE Dysrhythmia Exam',
-  //     "CodeValue": 'Dysrhythmia (Basic)_Interpretation Only_A - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 181,
-  //     "CodeDescription": 'NT RN Pediatric Assessment test',
-  //     "CodeValue": 'Pediatrics - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 182,
-  //     "CodeDescription": 'NT RN Peds Pharmacology Tests',
-  //     "CodeValue": 'PEDS Pharmacology - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 183,
-  //     "CodeDescription": 'NT RN Medical Surgical Test',
-  //     "CodeValue": 'Medical Surgical B - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 184,
-  //     "CodeDescription": 'Long Term Care RN A - Clinical',
-  //     "CodeValue": 'Long Term Care RN A - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 185,
-  //     "CodeDescription": 'NT LTC Pharmacology Test',
-  //     "CodeValue": 'Geriatric LTC-Pharmacology - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 186,
-  //     "CodeDescription": 'NT Respiratory Therapist Checklist',
-  //     "CodeValue": 'Respiratory Therapist0408 - AlliedList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 187,
-  //     "CodeDescription": 'CNA - II Certificate',
-  //     "CodeValue": 'CNA - II Certification',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 188,
-  //     "CodeDescription": 'NT - CMA Checklist',
-  //     "CodeValue": 'Certified Medication Aide - AlliedList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 189,
-  //     "CodeDescription": 'NT Psych Tech Checklist',
-  //     "CodeValue": 'Psychiatric Technician/Behavioral Health Tech - Al',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 190,
-  //     "CodeDescription": '',
-  //     "CodeValue": 'HIPAA Mandatory Exam0208 - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 191,
-  //     "CodeDescription": 'NT - Geriatric test',
-  //     "CodeValue": 'Geriatric-LTC - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 192,
-  //     "CodeDescription": 'NT - RN OR Test',
-  //     "CodeValue": 'Operating Room - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 193,
-  //     "CodeDescription": 'NT Psych Tech Cheklist',
-  //     "CodeValue": 'Psych Technician/Behavioral Health Tech - CheckLis',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 194,
-  //     "CodeDescription": 'NT CNA Checklist',
-  //     "CodeValue": 'CNA-Sitter - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 195,
-  //     "CodeDescription": 'NT RN Case Manager Test',
-  //     "CodeValue": 'RN/LPN Case Manager v1 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 196,
-  //     "CodeDescription": 'NT Case Manager Checklist',
-  //     "CodeValue": 'RN/LPN Case Manager - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 197,
-  //     "CodeDescription": 'Alleging Fraud',
-  //     "CodeValue": ' Breach of Trust',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 198,
-  //     "CodeDescription": 'Theft',
-  //     "CodeValue": ' Fraud',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 199,
-  //     "CodeDescription": 'NT Cardiac Cath Lab Checklist',
-  //     "CodeValue": 'Cardiac Cath Lab - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 200,
-  //     "CodeDescription": '12 Panel Drug Test',
-  //     "CodeValue": 'Negative Drug Screen - 12 Panel',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 201,
-  //     "CodeDescription": '',
-  //     "CodeValue": 'Operating Room- Scrub 0309 - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 202,
-  //     "CodeDescription": 'NT - RN (OR Circulating) Checklist',
-  //     "CodeValue": 'Operating Room - Circulating 0309 - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 203,
-  //     "CodeDescription": 'References',
-  //     "CodeValue": 'References',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 204,
-  //     "CodeDescription": 'Release',
-  //     "CodeValue": 'SRVS Release',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 205,
-  //     "CodeDescription": 'DMRS',
-  //     "CodeValue": 'DMRS',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 206,
-  //     "CodeDescription": 'Identification',
-  //     "CodeValue": 'ID',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 207,
-  //     "CodeDescription": 'TN Fire Safety',
-  //     "CodeValue": 'TN Fire Safety',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 208,
-  //     "CodeDescription": 'NT Rad Tech Checklist',
-  //     "CodeValue": 'Rad Tech/X-Ray Tech0908 - AlliedList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 209,
-  //     "CodeDescription": 'NT MRI',
-  //     "CodeValue": 'MRI TECHNOLOGIST - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 210,
-  //     "CodeDescription": '',
-  //     "CodeValue": 'Geriatric/LTC - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 211,
-  //     "CodeDescription": '2009 JCAHO Core Mandataory III',
-  //     "CodeValue": '2009 Core Mandatory Part III - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 212,
-  //     "CodeDescription": '2 yrs Acute Care Exp',
-  //     "CodeValue": 'Two Years Hospital Experience',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 213,
-  //     "CodeDescription": 'NT Checklist Echo-Vasc Tech',
-  //     "CodeValue": 'ECHO-VASCULAR TECHNICIAN - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 214,
-  //     "CodeDescription": '',
-  //     "CodeValue": 'Critical Care - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 215,
-  //     "CodeDescription": '',
-  //     "CodeValue": 'Med-Surg/Tele Combo - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 219,
-  //     "CodeDescription": 'RN/LPN Corrections',
-  //     "CodeValue": 'Corrections-RN/LPN - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 220,
-  //     "CodeDescription": 'RN-P PACU NT Test',
-  //     "CodeValue": 'PACU0408 - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 221,
-  //     "CodeDescription": 'RN-P NT PACU Checklist',
-  //     "CodeValue": 'PACU - CheckList',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 222,
-  //     "CodeDescription": '',
-  //     "CodeValue": 'Critical Care Medications - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 223,
-  //     "CodeDescription": 'LPN - Long Term Care B v1 - Clinical',
-  //     "CodeValue": 'LPN - Long Term Care B v1 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 224,
-  //     "CodeDescription": 'Statement',
-  //     "CodeValue": 'CMS Code of Conduct',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 225,
-  //     "CodeDescription": 'RN Med/Surg Checklist',
-  //     "CodeValue": 'Medical Surgical A - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 226,
-  //     "CodeDescription": 'Proof of Immunity',
-  //     "CodeValue": 'H1N1 Flu Vaccination',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 227,
-  //     "CodeDescription": 'Long Term Care RN B - Clinical',
-  //     "CodeValue": 'Long Term Care RN B - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 228,
-  //     "CodeDescription": 'JCAHO Core Mandatory Tests (via NT)',
-  //     "CodeValue": '2010 Core Mandatory Part I - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 229,
-  //     "CodeDescription": 'NT Core Mandatory Part II (Allied)',
-  //     "CodeValue": '2010 Core Mandatory Part II (Allied) - MandatoryTe',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 230,
-  //     "CodeDescription": 'NT Core Mand Part II (Non Licensed)',
-  //     "CodeValue": '2010 Core Mandatory Part II (Non-Licensed) - Manda',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 231,
-  //     "CodeDescription": 'NT Core Mandatory Part II (Nursing)',
-  //     "CodeValue": '2010 Core Mandatory Part II (Nursing) - MandatoryT',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 232,
-  //     "CodeDescription": '2009 JCAHO Core Mandatory III',
-  //     "CodeValue": '2010 Core Mandatory Part III - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 233,
-  //     "CodeDescription": 'Confidentiality Agreement',
-  //     "CodeValue": 'Confidentiality Agreement',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 236,
-  //     "CodeDescription": 'Work Comp Procedure Policy',
-  //     "CodeValue": 'Work Comp Procedure Policy',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 238,
-  //     "CodeDescription": 'RN Pharmacology',
-  //     "CodeValue": '2010 RN Pharmacology Exam A - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 239,
-  //     "CodeDescription": 'Abuse Mandatory 0408.2',
-  //     "CodeValue": 'Abuse Mandatory0408 - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 240,
-  //     "CodeDescription": 'HIPPA Statement',
-  //     "CodeValue": 'HIPAA Statement',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 241,
-  //     "CodeDescription": '2011 Core Mandatory Part I',
-  //     "CodeValue": '2011 Core Mandatory Part I - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 242,
-  //     "CodeDescription": '2011 Core Mandatory Part II (Allied',
-  //     "CodeValue": '2011 Core Mandatory Part II (Allied) - MandatoryTe',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 243,
-  //     "CodeDescription": '2011 Core Mandatory Part II (Non-Li',
-  //     "CodeValue": '2011 Core Mandatory Part II (Non-Licensed) - Manda',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 244,
-  //     "CodeDescription": '2011 Core Mandatory Part II (Nursin',
-  //     "CodeValue": '2011 Core Mandatory Part II (Nursing) - MandatoryT',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 245,
-  //     "CodeDescription": '2011 Core Mandatory Part III',
-  //     "CodeValue": '2011 Core Mandatory Part III - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 246,
-  //     "CodeDescription": '2011 NPSG Mandatory (Allied)',
-  //     "CodeValue": '2011 NPSG Mandatory (Allied) - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 247,
-  //     "CodeDescription": '2011 NPSG Mandatory (Non-Licensed)',
-  //     "CodeValue": '2011 NPSG Mandatory (Non-Licensed Personnel) - Man',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 248,
-  //     "CodeDescription": 'Fingerprints',
-  //     "CodeValue": 'Fingerprints',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 249,
-  //     "CodeDescription": 'Sexual Abuse',
-  //     "CodeValue": 'Sexual Harassment Mandatory - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 250,
-  //     "CodeDescription": 'Violence in the Workplace',
-  //     "CodeValue": 'Workplace Violence Mandatory - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 251,
-  //     "CodeDescription": 'Backkground Verification',
-  //     "CodeValue": 'Background Verification',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 252,
-  //     "CodeDescription": 'Measels Mumps Rubella',
-  //     "CodeValue": 'MMR',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 253,
-  //     "CodeDescription": 'TN Title VI',
-  //     "CodeValue": 'TN Title VI',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 254,
-  //     "CodeDescription": 'TN Universal Precautions',
-  //     "CodeValue": 'TN Universal Precautions',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 255,
-  //     "CodeDescription": 'TN Direct Support',
-  //     "CodeValue": 'TN Direct Support',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 256,
-  //     "CodeDescription": 'TN HIPPA',
-  //     "CodeValue": 'TN HIPPA',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 257,
-  //     "CodeDescription": 'TN Incident Reporting',
-  //     "CodeValue": 'TN Incident Reporting',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 258,
-  //     "CodeDescription": 'TN Maltreatment',
-  //     "CodeValue": 'TN Maltreatment',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 259,
-  //     "CodeDescription": 'TN Safety in the Home and Community',
-  //     "CodeValue": 'TN Safety Home',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 260,
-  //     "CodeDescription": 'Staff Development',
-  //     "CodeValue": 'Staff Development',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 261,
-  //     "CodeDescription": '2012 Core Mandatory Part 2',
-  //     "CodeValue": '2012 Core Mandatory Part I - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 262,
-  //     "CodeDescription": '2012 Core Mandatory Part II (Non-Li',
-  //     "CodeValue": '2012 Core Mandatory Part II (Non-Licensed) - Manda',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 263,
-  //     "CodeDescription": '2012 Core Mandatory Part II (Nursin',
-  //     "CodeValue": '2012 Core Mandatory Part II (Nursing) - MandatoryT',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 264,
-  //     "CodeDescription": '2012 Core Mandatory Part III',
-  //     "CodeValue": '2012 Core Mandatory Part III - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 265,
-  //     "CodeDescription": 'E Verify',
-  //     "CodeValue": 'E Verify',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 266,
-  //     "CodeDescription": '2016 Core Mandatory Part I V8',
-  //     "CodeValue": '2016 Core Mandatory Part I V8 - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 267,
-  //     "CodeDescription": '2016 Core Mandatory Part II (Non-Licensed) V6',
-  //     "CodeValue": '2016 Core Mandatory Part II (Non-Licensed) V6 - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 268,
-  //     "CodeDescription": '2016 Core Mandatory Part II (Nursing) V8',
-  //     "CodeValue": '2016 Core Mandatory Part II (Nursing) V8 - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 269,
-  //     "CodeDescription": '2016 Core Mandatory Part III V6',
-  //     "CodeValue": '2016 Core Mandatory Part III V6 - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 270,
-  //     "CodeDescription": 'OIG',
-  //     "CodeValue": 'OIG',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 271,
-  //     "CodeDescription": 'Mississippi Letter',
-  //     "CodeValue": 'Mississippi Letter',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 272,
-  //     "CodeDescription": 'SCS Requirement',
-  //     "CodeValue": 'SCS Requirement',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 273,
-  //     "CodeDescription": 'Relias Training',
-  //     "CodeValue": 'Relias Training',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 274,
-  //     "CodeDescription": 'CPI Training',
-  //     "CodeValue": 'CPI Training',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 275,
-  //     "CodeDescription": 'Meritan Release Form',
-  //     "CodeValue": 'Meritan Release Form',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 276,
-  //     "CodeDescription": 'Core Mandatory Part I - MandatoryTest',
-  //     "CodeValue": '2018 Core Mandatory Part I - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 277,
-  //     "CodeDescription": '2018 Core Mandatory Part II (Non-Licensed)',
-  //     "CodeValue": '2018 Core Mandatory Part II (Non-Licensed) - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 278,
-  //     "CodeDescription": '2018 Core Mandatory Part II (Allied)',
-  //     "CodeValue": '2018 Core Mandatory Part II (Allied) - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 279,
-  //     "CodeDescription": '2018 Core Mandatory Part II (Nursing)',
-  //     "CodeValue": '2018 Core Mandatory Part II (Nursing) - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 280,
-  //     "CodeDescription": 'Tennessee Abuse Registry',
-  //     "CodeValue": 'TN Abuse Registry',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 281,
-  //     "CodeDescription": 'D & S  Consent and Authorization Form',
-  //     "CodeValue": 'D & S  Consent',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 282,
-  //     "CodeDescription": 'D & S Annual Relias Course Work',
-  //     "CodeValue": 'D & S Annual Relias',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 283,
-  //     "CodeDescription": 'CMA Checklist',
-  //     "CodeValue": 'Medical Assistant - Checklist',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 284,
-  //     "CodeDescription": 'RN Psych Test',
-  //     "CodeValue": 'RN Psychiatric / Behavioral Health V1 - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 285,
-  //     "CodeDescription": 'RN Psych - Checklist',
-  //     "CodeValue": 'RN-Psychiatric/Behavioral Health - Checklist',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 286,
-  //     "CodeDescription": '',
-  //     "CodeValue": 'Medical Surgical - Checklist',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 287,
-  //     "CodeDescription": 'Psychiatric/Behavioral Health - Checklist',
-  //     "CodeValue": 'Psychiatric/Behavioral Health - Checklist',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 288,
-  //     "CodeDescription": 'Medical Assistant A V1',
-  //     "CodeValue": 'Medical Assistant A V1',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 289,
-  //     "CodeDescription": 'CNA Certification',
-  //     "CodeValue": 'CNA CERT',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 290,
-  //     "CodeDescription": 'RN Psych Test',
-  //     "CodeValue": 'Psychiatric RN (Acute) A - Test',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 291,
-  //     "CodeDescription": '2019 Core Mandatory Part I',
-  //     "CodeValue": '2019 Core Mandatory Part I - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 292,
-  //     "CodeDescription": '2019 Core Mandatory Part II',
-  //     "CodeValue": '2019 Core Mandatory Part II (Allied) - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 293,
-  //     "CodeDescription": '2019 Core Mandatory Part II',
-  //     "CodeValue": '2019 Core Mandatory Part II (Non-Licensed) - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 294,
-  //     "CodeDescription": '2019 Core Mandatory Part II',
-  //     "CodeValue": '2019 Core Mandatory Part II (Nursing) - MandatoryTest',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 295,
-  //     "CodeDescription": 'School Nurse - Checklist',
-  //     "CodeValue": 'School Nurse - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 296,
-  //     "CodeDescription": 'SC License Only',
-  //     "CodeValue": 'SC Only',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 297,
-  //     "CodeDescription": 'GA Only License',
-  //     "CodeValue": 'GA Only',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 298,
-  //     "CodeDescription": '',
-  //     "CodeValue": 'D & S Checklist',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 299,
-  //     "CodeDescription": 'Abuse Test',
-  //     "CodeValue": 'Abuse: Child',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 300,
-  //     "CodeDescription": 'Med Tech Cert',
-  //     "CodeValue": 'Med Tech Cert',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 301,
-  //     "CodeDescription": 'Special Training for Private Homes',
-  //     "CodeValue": 'DIDDS',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 302,
-  //     "CodeDescription": 'Sex Offender Report',
-  //     "CodeValue": 'Sex Offender Report',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 303,
-  //     "CodeDescription": 'AK License',
-  //     "CodeValue": 'AK License',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 304,
-  //     "CodeDescription": 'COVID Vaccine Card',
-  //     "CodeValue": 'COVID Vaccine Card',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 305,
-  //     "CodeDescription": 'COVID Vaccine w/ Exp Date',
-  //     "CodeValue": 'COVID Vaccine w/ Exp Date',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 306,
-  //     "CodeDescription": 'General ICU - Self',
-  //     "CodeValue": 'General ICU - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 307,
-  //     "CodeDescription": 'General ICU RN A v3 - Clinical',
-  //     "CodeValue": 'General ICU RN A v3 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 308,
-  //     "CodeDescription": 'General ICU RN B v3 - Clinical',
-  //     "CodeValue": 'General ICU RN B v3 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 309,
-  //     "CodeDescription": 'ED RN A - Clinical',
-  //     "CodeValue": 'ED RN A - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 310,
-  //     "CodeDescription": 'ED RN B - Clinical',
-  //     "CodeValue": 'ED RN B - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 311,
-  //     "CodeDescription": '',
-  //     "CodeValue": 'HIPAA - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 312,
-  //     "CodeDescription": 'CNA - Self',
-  //     "CodeValue": 'CNA - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 313,
-  //     "CodeDescription": 'Charge RN - Self',
-  //     "CodeValue": 'Charge RN - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 314,
-  //     "CodeDescription": 'Home Health - Self',
-  //     "CodeValue": 'Home Health - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 315,
-  //     "CodeDescription": 'Hospice And Palliative CNA - Self',
-  //     "CodeValue": 'Hospice And Palliative CNA - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 316,
-  //     "CodeDescription": 'Hospice And Palliative LPN - Self',
-  //     "CodeValue": 'Hospice And Palliative LPN - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 317,
-  //     "CodeDescription": 'Hospice And Palliative RN - Self',
-  //     "CodeValue": 'Hospice And Palliative RN - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 318,
-  //     "CodeDescription": 'LPN/LVN Competency - Self',
-  //     "CodeValue": 'LPN/LVN Competency - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 319,
-  //     "CodeDescription": 'Medical Assistant - Self',
-  //     "CodeValue": 'Medical Assistant - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 320,
-  //     "CodeDescription": 'Medication Aide - Self',
-  //     "CodeValue": 'Medication Aide - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 321,
-  //     "CodeDescription": 'Radiology Technologist - Self',
-  //     "CodeValue": 'Radiology Technologist - Self',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 322,
-  //     "CodeDescription": 'Case Manager RN A v1 - Clinical',
-  //     "CodeValue": 'Case Manager RN A v1 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 323,
-  //     "CodeDescription": 'Case Manager RN B - Clinical',
-  //     "CodeValue": 'Case Manager RN B - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 324,
-  //     "CodeDescription": 'CNA Acute Care A  v1 - Clinical',
-  //     "CodeValue": 'CNA Acute Care A  v1 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 325,
-  //     "CodeDescription": 'CNA Acute Care B  v1 - Clinical',
-  //     "CodeValue": 'CNA Acute Care B  v1 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 326,
-  //     "CodeDescription": 'CNA Sitter A - Clinical',
-  //     "CodeValue": 'CNA Sitter A - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 327,
-  //     "CodeDescription": 'CNA Sitter B - Clinical',
-  //     "CodeValue": 'CNA Sitter B - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 328,
-  //     "CodeDescription": 'Home Health Aide A - Clinical',
-  //     "CodeValue": 'Home Health Aide A - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 329,
-  //     "CodeDescription": 'Home Health Aide B - Clinical',
-  //     "CodeValue": 'Home Health Aide B - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 330,
-  //     "CodeDescription": 'Home Health RN A v2 - Clinical',
-  //     "CodeValue": 'Home Health RN A v2 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 331,
-  //     "CodeDescription": 'Home Health RN B v2 - Clinical',
-  //     "CodeValue": 'Home Health RN B v2 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 332,
-  //     "CodeDescription": 'Hospice RN AV2 - Clinical',
-  //     "CodeValue": 'Hospice RN AV2 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 333,
-  //     "CodeDescription": 'Hospice RN BV2 - Clinical',
-  //     "CodeValue": 'Hospice RN BV2 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 334,
-  //     "CodeDescription": 'LPN Pharmacology_Acute A v1 - Clinical',
-  //     "CodeValue": 'LPN Pharmacology_Acute A v1 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 335,
-  //     "CodeDescription": 'LPN Pharmacology_Acute B v1 - Clinical',
-  //     "CodeValue": 'LPN Pharmacology_Acute B v1 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 336,
-  //     "CodeDescription": 'LPN Pharmacology_Long Term Care A  v1 - Clinical',
-  //     "CodeValue": 'LPN Pharmacology_Long Term Care A  v1 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 337,
-  //     "CodeDescription": 'LPN Pharmacology_Long Term Care B v1 - Clinical',
-  //     "CodeValue": 'LPN Pharmacology_Long Term Care B v1 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 338,
-  //     "CodeDescription": 'LPN/LVN A - Clinical',
-  //     "CodeValue": 'LPN/LVN A - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 339,
-  //     "CodeDescription": 'Medical Assistant B - Clinical',
-  //     "CodeValue": 'Medical Assistant B - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 340,
-  //     "CodeDescription": 'School RN A v1 - Clinical',
-  //     "CodeValue": 'School RN A v1 - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 341,
-  //     "CodeDescription": 'School RN B - Clinical',
-  //     "CodeValue": 'School RN B - Clinical',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 342,
-  //     "CodeDescription": 'TN only License',
-  //     "CodeValue": 'TN only',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 343,
-  //     "CodeDescription": 'NC only License',
-  //     "CodeValue": 'NC Only',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 344,
-  //     "CodeDescription": 'VA only License',
-  //     "CodeValue": 'VA Only',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 345,
-  //     "CodeDescription": 'Professional License',
-  //     "CodeValue": 'Professional License',
-  //     "CodeKey": 'Credential'
-  //   },
-  //   {
-  //     "CodeID": 346,
-  //     "CodeDescription": '',
-  //     "CodeValue": 'SAMS',
-  //     "CodeKey": 'Credential'
-  //   }];
   List<Map<String, dynamic>> credentials = [
     {
       "CodeID": 116,
@@ -7683,4 +6339,749 @@ class DropDownCodes {
     }
     return o == null || false == o || "" == o || o == "System.Byte[]";
   }
+
+  List<Map<String, dynamic>> addressTypes = [
+    {
+      "CodeID": 2060,
+      "CodeName": "Emergency",
+      "CodeDesc": null,
+      "SortOrder": 0,
+      "CodeValue": null,
+      "IsDefault": false,
+      "UserTypeCodeID": null,
+      "InterfaceValue": null,
+      "HideOnlineApp": null,
+      "CodeKey": "AddressTypes"
+    },
+    {
+      "CodeID": 2061,
+      "CodeName": "Home",
+      "CodeDesc": null,
+      "SortOrder": 0,
+      "CodeValue": null,
+      "IsDefault": true,
+      "UserTypeCodeID": null,
+      "InterfaceValue": null,
+      "HideOnlineApp": null,
+      "CodeKey": "AddressTypes"
+    },
+    {
+      "CodeID": 2062,
+      "CodeName": "Work",
+      "CodeDesc": null,
+      "SortOrder": 0,
+      "CodeValue": null,
+      "IsDefault": false,
+      "UserTypeCodeID": null,
+      "InterfaceValue": null,
+      "HideOnlineApp": null,
+      "CodeKey": "AddressTypes"
+    }
+  ];
+  List<Map<String, dynamic>> genderTypes = [
+    {
+      "CodeID": 2406,
+      "CodeName": "M",
+      "CodeDesc": "Male",
+      "SortOrder": 0,
+      "CodeValue": null,
+      "IsDefault": false,
+      "UserTypeCodeID": null,
+      "InterfaceValue": "M",
+      "HideOnlineApp": null,
+      "CodeKey": "Gender"
+    },
+    {
+      "CodeID": 2405,
+      "CodeName": "F",
+      "CodeDesc": "Female",
+      "SortOrder": 1,
+      "CodeValue": null,
+      "IsDefault": false,
+      "UserTypeCodeID": null,
+      "InterfaceValue": "F",
+      "HideOnlineApp": null,
+      "CodeKey": "Gender"
+    },
+    {
+      "CodeID": 2842,
+      "CodeName": "B",
+      "CodeDesc": "Non-Binary",
+      "SortOrder": 2,
+      "CodeValue": null,
+      "IsDefault": false,
+      "UserTypeCodeID": null,
+      "InterfaceValue": "B",
+      "HideOnlineApp": null,
+      "CodeKey": "Gender"
+    },
+    {
+      "CodeID": 2841,
+      "CodeName": "N",
+      "CodeDesc": "Not Specified",
+      "SortOrder": 3,
+      "CodeValue": null,
+      "IsDefault": false,
+      "UserTypeCodeID": null,
+      "InterfaceValue": "N",
+      "HideOnlineApp": null,
+      "CodeKey": "Gender"
+    }
+  ];
+
+  Future<List<Map<String, dynamic>>> getRegistrantCancelreasons() async {
+    List<Map<String, dynamic>> lst = [
+      {"codeId": 2512, "reason": "Family Emergency"},
+      {"codeId": 2513, "reason": "Sick"},
+      {"codeId": 2514, "reason": "Transportation Issues"},
+      {"codeId": 2680, "reason": "Requested Time Off"},
+      {"codeId": 2689, "reason": "Fatigue"},
+      {"codeId": 2739, "reason": "No Call No Show"},
+      {"codeId": 2740, "reason": "Called Out"}
+    ];
+    return lst;
+  }
+
+  List<Map<String, dynamic>> userBranches = [
+    {"branchId": 0, "branchName": "CORPORATE", "index": 0},
+    {"branchId": 615, "branchName": "RALEIGH CMS 101", "index": 1},
+    {"branchId": 624, "branchName": "COLUMBIA CMS 105", "index": 2},
+    {"branchId": 631, "branchName": "NASHVILLE CMS 106", "index": 3},
+    {"branchId": 632, "branchName": "MEMPHIS CMS 107", "index": 4},
+    {"branchId": 634, "branchName": "AUGUSTA-GREENVILLE CMS 110", "index": 5},
+    {"branchId": 635, "branchName": "FLORENCE CMS 111", "index": 6},
+    {"branchId": 638, "branchName": "KNOXVILLE-TRI CITIES CMS 114", "index": 7},
+    {"branchId": 640, "branchName": "CHATTANOOGA CMS 116", "index": 8},
+    {"branchId": 641, "branchName": "LEXINGTON CMS 117", "index": 9},
+  ];
+  List<Map<String, dynamic>> getUserBranches() {
+    return userBranches;
+  }
+   Future<List<dynamic>> getClientCancelReasons() async {
+        List<dynamic> lst = [
+          {"codeId": 2088, "reason": "Census Low"},
+          {"codeId": 2089, "reason": "Not Needed"},
+          {"codeId": 2090, "reason": "Other Agency Filled"},
+          {"codeId": 2091, "reason": "Staff Filled"},
+          {"codeId": 2730, "reason": "Cancelled by Second Level Manager"},
+          {"codeId": 2731, "reason": "Maintenance Repairs"},
+          {"codeId": 2732, "reason": "Closed Beds - Unit"},
+          {
+            "codeId": 2733,
+            "reason": "Other Agency - Preferred Provider filled Shift"
+          },
+          {"codeId": 2754, "reason": "StafferLinkFSM Cancellation"},
+          {"codeId": 2834, "reason": "VMS Cancellation"},
+          {"codeId": 2843, "reason": "Not Confirmed - CLIENT"},
+          {"codeId": 2844, "reason": "Not Confirmed - REGISTRANT"},
+          {"codeId": 2845, "reason": "Shift no longer available"}
+        ];
+        return lst;
+      }
+
+      Future<List<dynamic>> getRegistrantCancelreasons() async {
+        List<dynamic> lst = [
+          {"codeId": 2512, "reason": "Family Emergency"},
+          {"codeId": 2513, "reason": "Sick"},
+          {"codeId": 2514, "reason": "Transportation Issues"},
+          {"codeId": 2680, "reason": "Requested Time Off"},
+          {"codeId": 2689, "reason": "Fatigue"},
+          {"codeId": 2739, "reason": "No Call No Show"},
+          {"codeId": 2740, "reason": "Called Out"}
+        ];
+        return lst;
+      }
+
+      Future<List<dynamic>> getOrderTypes() async {
+        List<dynamic> lst = [
+          {"orderTypeCodeID": 4011, "codeName": "Travel"},
+          {"orderTypeCodeID": 4012, "codeName": "Contract"},
+          {"orderTypeCodeID": 4013, "codeName": "PerDiem"}
+        ];
+        return lst;
+      }
+
+      Future<List<dynamic>> getRateTypeCodes() async {
+        List<dynamic> lst = [
+          {
+            "rateTypeCodeId": 2491,
+            "codeName": "Contract",
+            "codeDesc": "Contract Rate"
+          },
+          {
+            "rateTypeCodeId": 2492,
+            "codeName": "MedSurg",
+            "codeDesc": "Medical / Surgical Rate"
+          },
+          {
+            "rateTypeCodeId": 2493,
+            "codeName": "Orientation",
+            "codeDesc": "Orientation Rate"
+          },
+          {
+            "rateTypeCodeId": 2494,
+            "codeName": "Specialty",
+            "codeDesc": "Specialty Rate"
+          },
+          {
+            "rateTypeCodeId": 2683,
+            "codeName": "Per Diem",
+            "codeDesc": "Scheduled Daily"
+          },
+          {
+            "rateTypeCodeId": 2684,
+            "codeName": "13 Week Contract",
+            "codeDesc": "Long Term Assignment"
+          },
+          {
+            "rateTypeCodeId": 2685,
+            "codeName": "Subsidy - Tax Free",
+            "codeDesc": "Long Term Assignment Weekly Subsidy Amount"
+          },
+          {
+            "rateTypeCodeId": 2686,
+            "codeName": "Bonus",
+            "codeDesc": "Referral Bonus"
+          },
+          {
+            "rateTypeCodeId": 2741,
+            "codeName": "Evaluation",
+            "codeDesc": "Evaluation"
+          },
+          {
+            "rateTypeCodeId": 2742,
+            "codeName": "Recertification",
+            "codeDesc": "Recertification"
+          },
+          {
+            "rateTypeCodeId": 2743,
+            "codeName": "Evaluation Orientation",
+            "codeDesc": "Evaluation Orientation"
+          },
+          {
+            "rateTypeCodeId": 2744,
+            "codeName": "Recertification Orientation",
+            "codeDesc": "Recertification Orientation"
+          },
+          {
+            "rateTypeCodeId": 2755,
+            "codeName": "Travel",
+            "codeDesc": "Travel Mileage"
+          },
+          {
+            "rateTypeCodeId": 2837,
+            "codeName": "Premium",
+            "codeDesc": "Premium Rate"
+          }
+        ];
+        return lst;
+      }
+
+      Future<List<dynamic>> getWorkerCompCodes() async {
+        List<dynamic> lst = [
+          //note codeName is WorkersCompTypeCode
+          {"workersCompCodeId": 2639, "codeName": "7111", "codeDesc": "Dietary"},
+          {
+            "workersCompCodeId": 2646,
+            "codeName": "8049",
+            "codeDesc": "Clinics / Health Practitioner / Physical Therapist"
+          },
+          {
+            "workersCompCodeId": 2652,
+            "codeName": "8742",
+            "codeDesc": "Sales (outside)"
+          },
+          {
+            "workersCompCodeId": 2654,
+            "codeName": "8810",
+            "codeDesc": "Clerical Office Employees"
+          },
+          {
+            "workersCompCodeId": 2655,
+            "codeName": "8811",
+            "codeDesc": "Immunization Clinics"
+          },
+          {
+            "workersCompCodeId": 2656,
+            "codeName": "8829",
+            "codeDesc": "Nursing Home-DO NOT USE"
+          },
+          {
+            "workersCompCodeId": 2657,
+            "codeName": "8830",
+            "codeDesc": "Hospital Professional"
+          },
+          {
+            "workersCompCodeId": 2658,
+            "codeName": "8832",
+            "codeDesc": "Physician and Clerical"
+          },
+          {
+            "workersCompCodeId": 2659,
+            "codeName": "8833",
+            "codeDesc": "Hospital - Professional Employees"
+          },
+          {
+            "workersCompCodeId": 2660,
+            "codeName": "8835",
+            "codeDesc": "Nursing - Home Health"
+          },
+          {
+            "workersCompCodeId": 2664,
+            "codeName": "9040",
+            "codeDesc": "Hospital North Dakota"
+          },
+          {"workersCompCodeId": 2665, "codeName": "9050", "codeDesc": "Hospice"},
+          {
+            "workersCompCodeId": 2669,
+            "codeName": "9999",
+            "codeDesc": "Not Otherwise Classified"
+          },
+          {
+            "workersCompCodeId": 2745,
+            "codeName": "8849",
+            "codeDesc": "NC State nursing Homes"
+          },
+          {
+            "workersCompCodeId": 2752,
+            "codeName": "8868",
+            "codeDesc": "School Professional Employees"
+          },
+          {
+            "workersCompCodeId": 2753,
+            "codeName": "8864",
+            "codeDesc": "Social Services Organization"
+          },
+          {
+            "workersCompCodeId": 2759,
+            "codeName": "8828",
+            "codeDesc": "Texas Home Health"
+          },
+          {
+            "workersCompCodeId": 2836,
+            "codeName": "8824",
+            "codeDesc": "Nursing Home"
+          }
+        ];
+        return lst;
+      }
+// AuthService authServices = AuthService();
+  Future<List<dynamic>> getClientCancelReasons() async {
+    List<dynamic> lst = [
+      {"codeId": 2088, "reason": "Census Low"},
+      {"codeId": 2089, "reason": "Not Needed"},
+      {"codeId": 2090, "reason": "Other Agency Filled"},
+      {"codeId": 2091, "reason": "Staff Filled"},
+      {"codeId": 2730, "reason": "Cancelled by Second Level Manager"},
+      {"codeId": 2731, "reason": "Maintenance Repairs"},
+      {"codeId": 2732, "reason": "Closed Beds - Unit"},
+      {
+        "codeId": 2733,
+        "reason": "Other Agency - Preferred Provider filled Shift"
+      },
+      {"codeId": 2754, "reason": "StafferLinkFSM Cancellation"},
+      {"codeId": 2834, "reason": "VMS Cancellation"},
+      {"codeId": 2843, "reason": "Not Confirmed - CLIENT"},
+      {"codeId": 2844, "reason": "Not Confirmed - REGISTRANT"},
+      {"codeId": 2845, "reason": "Shift no longer available"}
+    ];
+    return lst;
+  }
+
+  Future<List<dynamic>> getRegistrantCancelreasons() async {
+    List<dynamic> lst = [
+      {"codeId": 2512, "reason": "Family Emergency"},
+      {"codeId": 2513, "reason": "Sick"},
+      {"codeId": 2514, "reason": "Transportation Issues"},
+      {"codeId": 2680, "reason": "Requested Time Off"},
+      {"codeId": 2689, "reason": "Fatigue"},
+      {"codeId": 2739, "reason": "No Call No Show"},
+      {"codeId": 2740, "reason": "Called Out"}
+    ];
+    return lst;
+  }
+
+  Future<List<dynamic>> getOrderTypes() async {
+    List<dynamic> lst = [
+      {"orderTypeCodeID": 4011, "codeName": "Travel"},
+      {"orderTypeCodeID": 4012, "codeName": "Contract"},
+      {"orderTypeCodeID": 4013, "codeName": "PerDiem"}
+    ];
+    return lst;
+  }
+
+  Future<List<dynamic>> getRateTypeCodes() async {
+    List<dynamic> lst = [
+      {
+        "rateTypeCodeId": 2491,
+        "codeName": "Contract",
+        "codeDesc": "Contract Rate"
+      },
+      {
+        "rateTypeCodeId": 2492,
+        "codeName": "MedSurg",
+        "codeDesc": "Medical / Surgical Rate"
+      },
+      {
+        "rateTypeCodeId": 2493,
+        "codeName": "Orientation",
+        "codeDesc": "Orientation Rate"
+      },
+      {
+        "rateTypeCodeId": 2494,
+        "codeName": "Specialty",
+        "codeDesc": "Specialty Rate"
+      },
+      {
+        "rateTypeCodeId": 2683,
+        "codeName": "Per Diem",
+        "codeDesc": "Scheduled Daily"
+      },
+      {
+        "rateTypeCodeId": 2684,
+        "codeName": "13 Week Contract",
+        "codeDesc": "Long Term Assignment"
+      },
+      {
+        "rateTypeCodeId": 2685,
+        "codeName": "Subsidy - Tax Free",
+        "codeDesc": "Long Term Assignment Weekly Subsidy Amount"
+      },
+      {
+        "rateTypeCodeId": 2686,
+        "codeName": "Bonus",
+        "codeDesc": "Referral Bonus"
+      },
+      {
+        "rateTypeCodeId": 2741,
+        "codeName": "Evaluation",
+        "codeDesc": "Evaluation"
+      },
+      {
+        "rateTypeCodeId": 2742,
+        "codeName": "Recertification",
+        "codeDesc": "Recertification"
+      },
+      {
+        "rateTypeCodeId": 2743,
+        "codeName": "Evaluation Orientation",
+        "codeDesc": "Evaluation Orientation"
+      },
+      {
+        "rateTypeCodeId": 2744,
+        "codeName": "Recertification Orientation",
+        "codeDesc": "Recertification Orientation"
+      },
+      {
+        "rateTypeCodeId": 2755,
+        "codeName": "Travel",
+        "codeDesc": "Travel Mileage"
+      },
+      {
+        "rateTypeCodeId": 2837,
+        "codeName": "Premium",
+        "codeDesc": "Premium Rate"
+      }
+    ];
+    return lst;
+  }
+
+  Future<List<dynamic>> getWorkerCompCodes() async {
+    List<dynamic> lst = [
+      //note codeName is WorkersCompTypeCode
+      {"workersCompCodeId": 2639, "codeName": "7111", "codeDesc": "Dietary"},
+      {
+        "workersCompCodeId": 2646,
+        "codeName": "8049",
+        "codeDesc": "Clinics / Health Practitioner / Physical Therapist"
+      },
+      {
+        "workersCompCodeId": 2652,
+        "codeName": "8742",
+        "codeDesc": "Sales (outside)"
+      },
+      {
+        "workersCompCodeId": 2654,
+        "codeName": "8810",
+        "codeDesc": "Clerical Office Employees"
+      },
+      {
+        "workersCompCodeId": 2655,
+        "codeName": "8811",
+        "codeDesc": "Immunization Clinics"
+      },
+      {
+        "workersCompCodeId": 2656,
+        "codeName": "8829",
+        "codeDesc": "Nursing Home-DO NOT USE"
+      },
+      {
+        "workersCompCodeId": 2657,
+        "codeName": "8830",
+        "codeDesc": "Hospital Professional"
+      },
+      {
+        "workersCompCodeId": 2658,
+        "codeName": "8832",
+        "codeDesc": "Physician and Clerical"
+      },
+      {
+        "workersCompCodeId": 2659,
+        "codeName": "8833",
+        "codeDesc": "Hospital - Professional Employees"
+      },
+      {
+        "workersCompCodeId": 2660,
+        "codeName": "8835",
+        "codeDesc": "Nursing - Home Health"
+      },
+      {
+        "workersCompCodeId": 2664,
+        "codeName": "9040",
+        "codeDesc": "Hospital North Dakota"
+      },
+      {"workersCompCodeId": 2665, "codeName": "9050", "codeDesc": "Hospice"},
+      {
+        "workersCompCodeId": 2669,
+        "codeName": "9999",
+        "codeDesc": "Not Otherwise Classified"
+      },
+      {
+        "workersCompCodeId": 2745,
+        "codeName": "8849",
+        "codeDesc": "NC State nursing Homes"
+      },
+      {
+        "workersCompCodeId": 2752,
+        "codeName": "8868",
+        "codeDesc": "School Professional Employees"
+      },
+      {
+        "workersCompCodeId": 2753,
+        "codeName": "8864",
+        "codeDesc": "Social Services Organization"
+      },
+      {
+        "workersCompCodeId": 2759,
+        "codeName": "8828",
+        "codeDesc": "Texas Home Health"
+      },
+      {
+        "workersCompCodeId": 2836,
+        "codeName": "8824",
+        "codeDesc": "Nursing Home"
+      }
+    ];
+    return lst;
+  }
+// AuthService authServices = AuthService();
+  Future<List<dynamic>> getClientCancelReasons() async {
+    List<dynamic> lst = [
+      {"codeId": 2088, "reason": "Census Low"},
+      {"codeId": 2089, "reason": "Not Needed"},
+      {"codeId": 2090, "reason": "Other Agency Filled"},
+      {"codeId": 2091, "reason": "Staff Filled"},
+      {"codeId": 2730, "reason": "Cancelled by Second Level Manager"},
+      {"codeId": 2731, "reason": "Maintenance Repairs"},
+      {"codeId": 2732, "reason": "Closed Beds - Unit"},
+      {
+        "codeId": 2733,
+        "reason": "Other Agency - Preferred Provider filled Shift"
+      },
+      {"codeId": 2754, "reason": "StafferLinkFSM Cancellation"},
+      {"codeId": 2834, "reason": "VMS Cancellation"},
+      {"codeId": 2843, "reason": "Not Confirmed - CLIENT"},
+      {"codeId": 2844, "reason": "Not Confirmed - REGISTRANT"},
+      {"codeId": 2845, "reason": "Shift no longer available"}
+    ];
+    return lst;
+  }
+
+  Future<List<dynamic>> getRegistrantCancelreasons() async {
+    List<dynamic> lst = [
+      {"codeId": 2512, "reason": "Family Emergency"},
+      {"codeId": 2513, "reason": "Sick"},
+      {"codeId": 2514, "reason": "Transportation Issues"},
+      {"codeId": 2680, "reason": "Requested Time Off"},
+      {"codeId": 2689, "reason": "Fatigue"},
+      {"codeId": 2739, "reason": "No Call No Show"},
+      {"codeId": 2740, "reason": "Called Out"}
+    ];
+    return lst;
+  }
+
+  Future<List<dynamic>> getOrderTypes() async {
+    List<dynamic> lst = [
+      {"orderTypeCodeID": 4011, "codeName": "Travel"},
+      {"orderTypeCodeID": 4012, "codeName": "Contract"},
+      {"orderTypeCodeID": 4013, "codeName": "PerDiem"}
+    ];
+    return lst;
+  }
+
+  Future<List<dynamic>> getRateTypeCodes() async {
+    List<dynamic> lst = [
+      {
+        "rateTypeCodeId": 2491,
+        "codeName": "Contract",
+        "codeDesc": "Contract Rate"
+      },
+      {
+        "rateTypeCodeId": 2492,
+        "codeName": "MedSurg",
+        "codeDesc": "Medical / Surgical Rate"
+      },
+      {
+        "rateTypeCodeId": 2493,
+        "codeName": "Orientation",
+        "codeDesc": "Orientation Rate"
+      },
+      {
+        "rateTypeCodeId": 2494,
+        "codeName": "Specialty",
+        "codeDesc": "Specialty Rate"
+      },
+      {
+        "rateTypeCodeId": 2683,
+        "codeName": "Per Diem",
+        "codeDesc": "Scheduled Daily"
+      },
+      {
+        "rateTypeCodeId": 2684,
+        "codeName": "13 Week Contract",
+        "codeDesc": "Long Term Assignment"
+      },
+      {
+        "rateTypeCodeId": 2685,
+        "codeName": "Subsidy - Tax Free",
+        "codeDesc": "Long Term Assignment Weekly Subsidy Amount"
+      },
+      {
+        "rateTypeCodeId": 2686,
+        "codeName": "Bonus",
+        "codeDesc": "Referral Bonus"
+      },
+      {
+        "rateTypeCodeId": 2741,
+        "codeName": "Evaluation",
+        "codeDesc": "Evaluation"
+      },
+      {
+        "rateTypeCodeId": 2742,
+        "codeName": "Recertification",
+        "codeDesc": "Recertification"
+      },
+      {
+        "rateTypeCodeId": 2743,
+        "codeName": "Evaluation Orientation",
+        "codeDesc": "Evaluation Orientation"
+      },
+      {
+        "rateTypeCodeId": 2744,
+        "codeName": "Recertification Orientation",
+        "codeDesc": "Recertification Orientation"
+      },
+      {
+        "rateTypeCodeId": 2755,
+        "codeName": "Travel",
+        "codeDesc": "Travel Mileage"
+      },
+      {
+        "rateTypeCodeId": 2837,
+        "codeName": "Premium",
+        "codeDesc": "Premium Rate"
+      }
+    ];
+    return lst;
+  }
+
+  Future<List<dynamic>> getWorkerCompCodes() async {
+    List<dynamic> lst = [
+      //note codeName is WorkersCompTypeCode
+      {"workersCompCodeId": 2639, "codeName": "7111", "codeDesc": "Dietary"},
+      {
+        "workersCompCodeId": 2646,
+        "codeName": "8049",
+        "codeDesc": "Clinics / Health Practitioner / Physical Therapist"
+      },
+      {
+        "workersCompCodeId": 2652,
+        "codeName": "8742",
+        "codeDesc": "Sales (outside)"
+      },
+      {
+        "workersCompCodeId": 2654,
+        "codeName": "8810",
+        "codeDesc": "Clerical Office Employees"
+      },
+      {
+        "workersCompCodeId": 2655,
+        "codeName": "8811",
+        "codeDesc": "Immunization Clinics"
+      },
+      {
+        "workersCompCodeId": 2656,
+        "codeName": "8829",
+        "codeDesc": "Nursing Home-DO NOT USE"
+      },
+      {
+        "workersCompCodeId": 2657,
+        "codeName": "8830",
+        "codeDesc": "Hospital Professional"
+      },
+      {
+        "workersCompCodeId": 2658,
+        "codeName": "8832",
+        "codeDesc": "Physician and Clerical"
+      },
+      {
+        "workersCompCodeId": 2659,
+        "codeName": "8833",
+        "codeDesc": "Hospital - Professional Employees"
+      },
+      {
+        "workersCompCodeId": 2660,
+        "codeName": "8835",
+        "codeDesc": "Nursing - Home Health"
+      },
+      {
+        "workersCompCodeId": 2664,
+        "codeName": "9040",
+        "codeDesc": "Hospital North Dakota"
+      },
+      {"workersCompCodeId": 2665, "codeName": "9050", "codeDesc": "Hospice"},
+      {
+        "workersCompCodeId": 2669,
+        "codeName": "9999",
+        "codeDesc": "Not Otherwise Classified"
+      },
+      {
+        "workersCompCodeId": 2745,
+        "codeName": "8849",
+        "codeDesc": "NC State nursing Homes"
+      },
+      {
+        "workersCompCodeId": 2752,
+        "codeName": "8868",
+        "codeDesc": "School Professional Employees"
+      },
+      {
+        "workersCompCodeId": 2753,
+        "codeName": "8864",
+        "codeDesc": "Social Services Organization"
+      },
+      {
+        "workersCompCodeId": 2759,
+        "codeName": "8828",
+        "codeDesc": "Texas Home Health"
+      },
+      {
+        "workersCompCodeId": 2836,
+        "codeName": "8824",
+        "codeDesc": "Nursing Home"
+      }
+    ];
+    return lst;
+  }
+
 }

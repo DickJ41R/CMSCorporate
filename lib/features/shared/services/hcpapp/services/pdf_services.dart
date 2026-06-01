@@ -1,14 +1,13 @@
-import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
-import 'package:cms_web/features/shared/clientapp/services/client_services.dart';
+import 'package:hcp_app/services/client_services.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
-import 'package:cms_web/features/shared/utils/save_file_mobile_and_desktop.dart';
+import 'package:hcp_app/save_file_mobile_and_desktop.dart';
 //import 'package:path_provider/path_provider.dart' as path_provider;
-
+import 'package:hcp_app/services/auth_service.dart';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -18,6 +17,7 @@ class PDFService {
   final storageRef = FirebaseStorage.instance.ref();
   bool isAndroid = false;
   String imageFileName = '';
+  AuthService authService = AuthService();
   ClientServices clientServices = ClientServices();
   double documentNotesLength = 0;
   Future<Map<String, dynamic>> createPdfAndPublishPdf(
@@ -275,7 +275,13 @@ class PDFService {
         textPen: PdfPens.white,
         textBrush: PdfBrushes.darkOrange,
         font: PdfStandardFont(PdfFontFamily.helvetica, 12));
-
+    double otMealHours = 0.0;
+    if (item['otHours'] != null && item['otHours'] > 0) {
+      if (item['regularHours'] == 0) {
+        otMealHours = 0.5;
+        item['otHours'] -= otMealHours;
+      }
+    }
     PdfGridRow row1 = grid.rows.add();
     row1.style =
         PdfGridRowStyle(font: PdfStandardFont(PdfFontFamily.helvetica, 12));
@@ -283,6 +289,7 @@ class PDFService {
       PdfGridRow row = grid.rows.add();
       if (weekDay == i) {
         DateTime std = item['signedInDeviceDateTime'].toDate();
+        print('line 302: ${std}');
         String st = DateFormat("MM-dd-yyyy hh:mm a").format(std);
         List<String> sts = st.split(' ');
         // std = item['shiftSignedOutActionDate'].toDate();
@@ -302,23 +309,25 @@ class PDFService {
           row.cells[6].value =
               item['signedOutInitialVerification'] == true ? 'Yes' : 'No';
         } else {
+          print('line 322: ${item['signedInInitialStartTimeChanged']}');
           String cStartTime = item['signedInInitialStartTimeChanged'];
+          print('line 324: ${item['signedOutInitialEndTimeChanged']}');
           String cEndTime = item['signedOutInitialEndTimeChanged'];
           PdfGridRow row1 = grid.rows.add();
-          print('line 242');
+          print('line 327: ${cStartTime} ${cEndTime}');
           row1.cells[0].value = dayValues[i];
           row1.cells[1].value = sts[0];
           row1.cells[2].value = cStartTime; //item['dateTimeSignedOutValue'];
           row1.cells[2].style = cellStyle;
           row1.cells[3].value = cEndTime; //item['dateTimeSignedOutValue'];
           row1.cells[3].style = cellStyle;
-          row1.cells[4].value = item['signedOutInitialMealsChanged'].toString();
+          row1.cells[4].value = item['meals'].toString();
           row1.cells[4].style = cellStyle;
           row1.cells[5].value =
               item['signedOutInitialDecimalHoursChanged'].toStringAsFixed(2);
           row1.cells[5].style = cellStyle;
           row1.cells[6].value =
-              item['signedOutInitialVerification'] == true ? 'Yes' : 'No';
+              item['signedOutHasInitialVerification'] == true ? 'Yes' : 'No';
         }
         // } else if (i < 7 ){
         //     row.cells[0].value = dayValues[i];
@@ -342,10 +351,17 @@ class PDFService {
           row.cells[5].value = item['decimalHours'].toStringAsFixed(2);
           row1.cells[5].style = cellStyle1;
           row.cells[6].value =
-              item['signedOutInitialVerification'] == true ? 'Yes' : 'No';
+              item['signedOutHasInitialVerification'] == true ? 'Yes' : 'No';
           print('line 272->: ${dayValues.length}');
         } else {
+          print(
+              'line 364: ${item['signedOutInitialMealsChanged']} ${item['signedOutInitialDecimalHoursChanged']} ');
           PdfGridRow row1 = grid.rows.add();
+          // double mealHours =
+          //     double.parse(item['signedOutInitialMealsChanged'].toString());
+          // mealHours = double.parse((mealHours / 60).toStringAsFixed(2));
+          // double signedOutHours = item['signedOutHours'] - mealHours;
+
           row1.cells[0].value = dayValues[i + 2];
           row1.cells[0].style = PdfGridCellStyle(
               backgroundBrush: PdfBrushes.green, textPen: PdfPens.white);
@@ -358,21 +374,34 @@ class PDFService {
               item['signedOutInitialDecimalHoursChanged'].toStringAsFixed(2);
           row1.cells[5].style = cellStyle;
           row1.cells[6].value =
-              item['signedOutInitialVerification'] == true ? 'Yes' : 'No';
+              item['signedOutHasInitialVerification'] == true ? 'Yes' : 'No';
         }
       } else if (i == 8) {
-        row.cells[0].value = dayValues[i];
-        row.cells[0].style = PdfGridCellStyle(
-            backgroundBrush: PdfBrushes.green, textPen: PdfPens.white);
-        row.cells[1].value = '';
-        row.cells[2].value = '';
-        row.cells[3].value = '';
-        row.cells[4].value = '0';
-        row.cells[5].value = '0';
-        row.cells[6].value = '';
+        print('line 381: ${item['otHours']}');
+        if (item['otHours'] != null && item['otHours'] > 0.0) {
+          row.cells[0].value = dayValues[i];
+          row.cells[0].style = PdfGridCellStyle(
+              backgroundBrush: PdfBrushes.green, textPen: PdfPens.white);
+          row.cells[1].value = '';
+          row.cells[2].value = '';
+          row.cells[3].value = '';
+          row.cells[4].value = '0';
+          row.cells[5].value = item['otHours'].toStringAsFixed(2);
+          row.cells[6].value =
+              item['signedOutHasInitialVerification'] == true ? 'Yes' : 'No';
+        } else {
+          row.cells[0].value = dayValues[i];
+          row.cells[0].style = PdfGridCellStyle(
+              backgroundBrush: PdfBrushes.green, textPen: PdfPens.white);
+          row.cells[1].value = '';
+          row.cells[2].value = '';
+          row.cells[3].value = '';
+          row.cells[4].value = '0';
+          row.cells[5].value = '0';
+          row.cells[6].value = '';
+        }
       }
     }
-
     print('line 257 ${layoutResult.bounds.bottom}');
 //Draws the grid
     layoutResult = grid.draw(

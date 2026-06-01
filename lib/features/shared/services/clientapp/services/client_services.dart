@@ -1,21 +1,26 @@
 import 'package:cms_web/features/clientapp/models/client_address.dart';
-import 'package:cms_web/features/clientapp/models/client_rate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cms_web/features/clientapp/models/client_data.dart';
+import 'package:cms_web/features/clientapp/models/client_models/client_data.dart';
+import 'package:cms_web/features/authentication/services/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/services/utilities.dart';
 import 'package:cms_web/features/clientapp/models/client_user.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:cms_web/features/authentication/services/auth_service.dart';
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cms_web/features/shared/hcpapp/services/hcp_timecard_service.dart';
 
 class ClientServices {
   ClientServices();
+
+  static final _staticVariable = null;
   Map<String, dynamic>? client;
   UtilitiesServices util = UtilitiesServices();
-  AuthService authService = AuthService();
-//new client
+  AuthService authServices = AuthService();
+  HCPTimeCardService hts = HCPTimeCardService();
+
   Future<List<dynamic>> getClientWorkOrders(
       int clientId, BuildContext ctx) async {
     try {
@@ -34,11 +39,19 @@ class ClientServices {
       int clientId) async {
     print('line 32: $clientId');
     List<Map<String, dynamic>> lm = [];
+    DateTime dte = DateTime.now();
+    dte = dte.subtract(Duration(
+        hours: dte.hour,
+        minutes: dte.minute,
+        seconds: dte.second,
+        microseconds: dte.microsecond,
+        milliseconds: dte.millisecond));
     try {
       print('line 35 getcannot be scheduled: $clientId');
       await FirebaseFirestore.instance
           .collection('ClientCannotBeScheduled')
           .where("clientId", isEqualTo: clientId)
+          .where('shiftDate', isGreaterThanOrEqualTo: Timestamp.fromDate(dte))
           .get()
           .then((snapshot) {
         print(
@@ -62,27 +75,22 @@ class ClientServices {
       HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'retrieveclientworkorders02',
         options: HttpsCallableOptions(
-          timeout: const Duration(seconds: 300),
+          timeout: const Duration(seconds: 5),
         ),
       );
       print('line 68: just before calling retrieve client wos');
       List<dynamic> result = await callingRetrieveClientWorkOrdersFunction(
           callable, clientId, ctx);
       print('line 71: $result');
-      if (result.length == 0) {
+      if (result[0]['ERROR'] != null) {
         print('line 73: Error getting htc id to asm');
-        return [
-          {'error': 'No Data'}
-        ];
+        return result;
       }
       print('line 76 successfully retrieved htc');
 
       return result;
     } catch (e) {
       print('line 80 $e');
-      return [
-        {'error': e.toString()}
-      ];
       throw Exception('line 81: ${e.toString()}');
     }
   }
@@ -96,12 +104,8 @@ class ClientServices {
       };
       final HttpsCallableResult result = await callable(data);
       print('line 93 ${result.data}');
-      var convertedResult = Map<String, dynamic>.from(result.data);
-      if (convertedResult.containsKey('success') == true) {
-        return convertedResult['data'];
-      } else {
-        return ['Error'];
-      }
+      //    var convertedResult = Map<String, dynamic>.from(result.data);
+      return result.data;
     } catch (e) {
       print('line 97 error: $e');
       throw Exception('line 98  ${e.toString()}');
@@ -278,47 +282,38 @@ class ClientServices {
     return lm!;
   }
 
-  // Future<List<Map<String, dynamic>>>? getClientsByBranchId(branchId) async {
-  //   List<Map<String, dynamic>> lm = [];
-  //   print('line 163 getclientbybranchid $branchId');
-  //   try {
-  //     //begin debug
-  //     //take out for production
-  //     List<int> clientIds = [];
-  //     if (branchId == 632) {
-  //       clientIds = [137, 805, 2691];
-  //     } else if (branchId == 634) {
-  //       clientIds = [1231, 1300, 2519];
-  //     } else if (branchId == 638) {
-  //       clientIds = [1381, 2446, 2525];
-  //     } else {
-  //       print('line 177 invalid branch id $branchId');
-  //       throw Exception('Invalice branch id $branchId');
-  //     }
-  //     //end debug
-  //     await FirebaseFirestore.instance
-  //         .collection('Client')
-  //         .where("branchId", isEqualTo: branchId)
-  //         .where('clientId', whereIn: clientIds)
-  //         . //debug
-  //         get()
-  //         .then((snapshot) {
-  //       print('line 168 getclientbybrnchid ${snapshot.docs.length}');
-  //       for (var snp in snapshot.docs) {
-  //         final obj = snp.data();
-  //         lm.add(obj);
-  //       }
-  //       print('line 174: ${lm.length}');
-  //       return lm;
-  //     });
-  //     return lm;
-  //   } catch (e) {
-  //     print('line 258 error $e');
-  //     String te = e.toString();
-  //     te = te.replaceAll('Exception: Exception:', 'Exception:');
-  //     throw Exception(te.toString());
-  //   }
-  // }
+  Future<List<Map<String, dynamic>>>? getClientsByBranchId(branchId) async {
+    List<Map<String, dynamic>> lm = [];
+    print('line 163 getclientbybranchid $branchId');
+    try {
+      //begin debug
+      //take out for production
+      List<int> clientIds = [];
+
+      //end debug
+      await FirebaseFirestore.instance
+          .collection('Client')
+          .where("branchId", isEqualTo: branchId)
+          .where('clientId', whereIn: clientIds)
+          . //debug
+          get()
+          .then((snapshot) {
+        print('line 168 getclientbybrnchid ${snapshot.docs.length}');
+        for (var snp in snapshot.docs) {
+          final obj = snp.data();
+          lm.add(obj);
+        }
+        print('line 174: ${lm.length}');
+        return lm;
+      });
+      return lm;
+    } catch (e) {
+      print('line 258 error $e');
+      String te = e.toString();
+      te = te.replaceAll('Exception: Exception:', 'Exception:');
+      throw Exception(te.toString());
+    }
+  }
 
   Future<List<Map<String, dynamic>>>? getClientsByBranchIds(
       List<int> branchIds) async {
@@ -512,7 +507,7 @@ class ClientServices {
 
   Future<Map<String, dynamic>> getClientRateDisciplines(
       int clientId, int departmentId, String departmentName) async {
-    List<dynamic> listD = [];
+    //List<dynamic> listD = [];
     print('line 391: $clientId $departmentId $departmentName');
     Map<String, dynamic>? rateMap;
     List<Map<String, dynamic>> listOfRateMaps = [];
@@ -526,7 +521,7 @@ class ClientServices {
           .where('clientId', isEqualTo: clientId)
           .get()
           .then((querySnapshot) {
-        int cnt = 0;
+        // int cnt = 0;
         for (var docSnapshot in querySnapshot.docs) {
           print('line 405: $flagGotHit');
           if (flagGotHit == true) {
@@ -723,11 +718,9 @@ class ClientServices {
       },
       {"branchCode": 631, "branchName": "NASHVILLE CMS 106"},
       {"branchCode": 632, "branchName": "MEMPHIS CMS 107"},
-      {"branchCode": 634, "branchName": "AUGUSTA CMS 110"},
+      {"branchCode": 634, "branchName": "AUGUSTA-GREENVILLE CMS 110"},
       {"branchCode": 635, "branchName": "FLORENCE CMS 111"},
-      {"branchCode": 637, "branchName": "GREENVILLE CMS 113"},
-      {"branchCode": 638, "branchName": "KNOXVILLE CMS 114"},
-      {"branchCode": 639, "branchName": "TRI CITIES CMS 115"},
+      {"branchCode": 638, "branchName": "KNOXVILLE-TRI CITIES CMS 114"},
       {"branchCode": 640, "branchName": "CHATTANOOGA CMS 116"},
       {"branchCode": 641, "branchName": "LEXINGTON CMS 117"},
     ];
@@ -788,6 +781,9 @@ class ClientServices {
         for (var docSnapshot in querySnapshot.docs) {
           var obj = docSnapshot.data();
           if (obj['clientName'].indexOf('DO NOT') != -1) {
+            continue;
+          }
+          if (obj['gpoClient'] != null && obj['gpoClient'] == true) {
             continue;
           }
           if (clientNumber != -1) {
@@ -892,6 +888,9 @@ class ClientServices {
         }
       });
       print('line 1165 $clientCredit');
+      if (clientCredit == null) {
+        throw Exception('line 800 no client credit records');
+      }
       if (clientCredit!.entries.isNotEmpty) {
         Map<String, dynamic> agingData = await getAgingData(clientId);
         print('line 622: ${agingData}');
@@ -905,7 +904,7 @@ class ClientServices {
       }
     } catch (e) {
       print('line 1166 error: $e');
-      throw Exception('Error: $e');
+      return {};
     }
   }
 
@@ -1000,9 +999,41 @@ class ClientServices {
     }
   }
 
-  Future<bool> insertClientUser(Map<String, dynamic> obj) async {
+  Future<String> updateClientUserFromItself(
+      Map<String, dynamic> clt, String uid) async {
     try {
-      await FirebaseFirestore.instance.collection('ClientUser').doc().set(obj);
+      await FirebaseFirestore.instance
+          .collection('ClientUser')
+          .doc(uid)
+          .set(clt, SetOptions(merge: true));
+      return "Success";
+    } catch (e) {
+      print('line 926 error getting users: ${e.toString()}');
+      return "Error: ${e.toString()}";
+    }
+  }
+
+  Future<bool> insertClientUserX(Map<String, dynamic> obj) async {
+    try {
+      print('line 999: ${obj}');
+      String email = obj['email'];
+      String password = obj['password'];
+
+      UserCredential dyn = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      print('line 1738: $dyn');
+      if (dyn.user == null) {
+        print('line 2259: $email $password');
+        throw Exception('line 937: dyn is null');
+      }
+
+      print('line 1744: ${dyn.user!.uid} ');
+      String uid = dyn.user!.uid;
+      print('line 1746 uid: ${uid}');
+      await FirebaseFirestore.instance
+          .collection('ClientUser')
+          .doc(uid)
+          .set(obj);
       return true;
     } catch (e) {
       print('line 926 error getting users: ${e.toString()}');
@@ -1039,11 +1070,12 @@ class ClientServices {
   }
 
   Future<bool> updateTheClientUser(Map<String, dynamic> obj) async {
+    print('line 1052 $obj');
     try {
       await FirebaseFirestore.instance
           .collection('ClientUser')
           .doc(obj['id'])
-          .update(obj);
+          .set(obj, SetOptions(merge: true));
       return true;
     } catch (e) {
       print('line 937 error getting users: ${e.toString()}');
@@ -1057,7 +1089,7 @@ class ClientServices {
       await FirebaseFirestore.instance
           .collection('ClientUser')
           .where('clientId', isEqualTo: clientId)
-          .orderBy('clientUserId', descending: false)
+          .orderBy('genId', descending: false)
           .get()
           .then((querySnapshot) {
         for (var docSnapshot in querySnapshot.docs) {
@@ -1066,6 +1098,7 @@ class ClientServices {
           listCls.add(obj);
         }
       });
+      print('line 1062: ${listCls.length} ');
       return listCls;
     } catch (e) {
       print('line 926 error getting users: ${e.toString()}');
@@ -1168,29 +1201,60 @@ class ClientServices {
     }
   }
 
-  Future<List<double>> createSchedulingWorkOrder(
+  Future<dynamic>? createSchedulingWorkOrder(
       List<dynamic> listOfDatesWithShifts,
       String scheduleNotes,
       String pushNotificationFrequencyRate,
       int clientId,
-      List<Map<String, dynamic>> clientFCMToken,
-      List<Map<String, dynamic>> testerFCMToken,
+      List<String> clientFCMTokens,
       bool payPremiumRate,
+      int clientUserId,
       BuildContext ctx) async {
     print('line 1171 clentsvrcreatescheduline ${listOfDatesWithShifts.length}');
-    print('line 1172: $clientFCMToken $testerFCMToken');
-    //  bool bl = false;
-    bool useClientPayment = false;
+    print('line 1192: $clientUserId');
     List<Map<String, dynamic>> wosForCounts = [];
     List<Map<String, dynamic>> clArray = [];
-    // int meals = 0;
-    Map<String, dynamic> cswo = {};
-    List<Map<String, dynamic>> initObjs = [];
-    List<int> scheduleCount = [];
+    List<String> listClientWorkOrderIds = [];
+    int totalScheduledShifts = 0;
     try {
       //  int payRateGroupId =  rt.rateGroupId;
       String specialRequirements = '';
       int count = 0;
+      String? clientFcmToken;
+      String? clientUserEmail;
+      Map<String, dynamic> mp = {};
+      await FirebaseFirestore.instance
+          .collection('ClientUser')
+          .where('clientId', isEqualTo: clientId)
+          .where('clientUserId', isEqualTo: clientUserId)
+          .get()
+          .then((querySnapshot) {
+        for (var docSnapshot in querySnapshot.docs) {
+          final rls = docSnapshot.data();
+          rls['clientUserId'] = clientUserId;
+          if (rls['Roles'] != null) {
+            rls['roles'] = rls['Roles'];
+          }
+          clientUserEmail = rls['email'];
+          clientFcmToken =
+              rls['fcmToken'] == null ? 'Placeholder' : rls['fcmToken'];
+          for (var j = 0; j < rls['roles'].length; j++) {
+            var ro = rls['roles'][j];
+            if (ro == 'ClientAdmin' ||
+                ro == 'Administrator' ||
+                ro == 'CMSAdmin' ||
+                ro == 'ClientSupervisor') {
+              mp['role'] = ro;
+              mp['clientUserId'] = rls['genId'];
+              break;
+            }
+          }
+        }
+      });
+      print('line 1204 check $mp');
+      if (mp.isEmpty) {
+        throw Exception('Did not get a Clientuser');
+      }
       await FirebaseFirestore.instance
           .collection('ClientInstructions')
           .where('clientId', isEqualTo: clientId)
@@ -1207,9 +1271,9 @@ class ClientServices {
           }
         }
       });
-      print('line 1201: ${listOfDatesWithShifts[0]}');
+      print('line 1221: ${listOfDatesWithShifts[0]}');
       List<dynamic>? ldDepartments;
-      print('line 1203: ${listOfDatesWithShifts[0]['departmentIds']}');
+      print('line 1223: ${listOfDatesWithShifts[0]['departmentIds']}');
       ldDepartments = listOfDatesWithShifts[0]['departments'];
       print('line 1205 ${ldDepartments}');
       int departmentId = ldDepartments![0]['departmentId'];
@@ -1251,7 +1315,7 @@ class ClientServices {
       }
       List<dynamic> dps = listOfDatesWithShifts[0]['departments'];
       dynamic dp = dps[0];
-      useClientPayment = dp['useClientPayment'];
+      //bool useClientPayment = dp['useClientPayment'];
       print('line 1246 clisver create: $dp');
       //    int idx =-1;
       //   Map<String, dynamic>date;
@@ -1267,7 +1331,8 @@ class ClientServices {
             .then((querySnapshot) {
           for (var docSnapshot in querySnapshot.docs) {
             final obj = docSnapshot.data();
-            if (obj['addressType'] != 'Physical') {
+            if (obj['addressType'] != 'Physical' &&
+                obj['addressType'] != 'Primary') {
               continue;
             }
 
@@ -1295,6 +1360,7 @@ class ClientServices {
           "addressLine1": dp["mail_AddressLine1"],
           "addressLine2": dp["mail_AddressLine2"],
           "state": dp["mail_State"],
+          "clientState": dp["mail_state"],
           "zipCode": dp["mail_ZipCode"],
           "latitude": dp["latitude"],
           "longitude": dp["longitude"],
@@ -1303,9 +1369,11 @@ class ClientServices {
       }
       print('line 1295 clisver create: $addr');
       int? cClientId = clientMap['clientId'];
-      int? cClientUserId = authService.clientUserId;
+      int? cClientUserId = clientUserId;
       String? cClientName = clientMap['clientName'];
       int? cBranchId = clientMap['branchId'];
+      String currentEmail = authServices.currentUser!['email'];
+      String currentFcmToken = authServices.currentUser!['fcmToken'];
       String? cBranchName = clientMap['branchName'];
       // int? cDepartmentId = departmentId;
       //  String? cDDepartmentName = selectedDepartmentValue;
@@ -1327,77 +1395,83 @@ class ClientServices {
       // }
       Map<String, dynamic> clientSchedulingWorkOrder = {};
       var uuid = Uuid();
-      print('1054: ${listOfDatesWithShifts.length}');
+      print('line 1344: ${listOfDatesWithShifts.length}');
       for (int i = 0; i < listOfDatesWithShifts.length; i++) {
-        print('line 1322 beginnng of i loop: $i');
+        print('line 1346 beginnng of i loop: $i');
         dynamic rt = listOfDatesWithShifts[i]['rate'];
-
+        print('line 1402: ${rt}');
         print(
-            'line 1326:  ${rt['rateDetails']} ${rt['rateDetails'][4]['shiftCode']} ${rt['rateDetails'][4]['shiftCount']}');
+            'line 1350:  ${rt['rateDetails']} ${rt['rateDetails'][4]['shiftCode']} ${rt['rateDetails'][4]['shiftCount']}');
+
         rt['clientId'] = clientMap['clientId'];
         rt['clientName'] = clientMap['clientName'];
         rt['branchId'] = clientMap['branchId'];
         rt['branchName'] = clientMap['branchName'];
-        print('line 1331 ${clientMap['clientUserId']}');
-        if (clientMap['clientUserId'] != null) {
-          rt['clientUserId'] = clientMap['clientUserId'];
+        print('line 1355 ${clientMap['clientUserId']}');
+        if (mp['clientUserId'] != null) {
+          rt['clientUserId'] = mp['clientUserId'];
         } else {
-          rt['clientUserId'] = 0;
+          rt['clientUserId'] = null;
         }
-        print('line 1337');
+        if (clientUserId == 0) {
+          clientUserId = mp['clientUserId'];
+        }
+        print('line 1361');
         workersCompCodeId = listOfDatesWithShifts[i]['workersCompCodeId'];
-        print('line 1339');
+        print('line 1363');
         workersCompType = listOfDatesWithShifts[i]['workersCompType'];
-        print('line 1341');
+        print('line 1365');
         if (listOfDatesWithShifts[i]['rateType'] == '' ||
             listOfDatesWithShifts[i]['rateType'] == null) {
           rateType = 'Per Diem';
         } else {
           rateType = listOfDatesWithShifts[i]['rateType'];
         }
-        print('line 1343');
+        print('line 1372');
         if (listOfDatesWithShifts[i]['rateTypeCodeId'] != null) {
           rateTypeCodeId = listOfDatesWithShifts[i]['rateTypeCodeId'];
         } else {
           rateTypeCodeId = 2683;
         }
-        print('line 1345');
+        print('line 1378');
         listOfDatesWithShifts[i]['rate'] = rt;
         dynamic ld = listOfDatesWithShifts[i];
         print(
-            'line 1358: ${ld['payHolidayRate']}  ${ld['overridePayModifiers']}');
+            'line 1382: ${ld['payHolidayRate']}  ${ld['overridePayModifiers']}');
         print(
-            'line 1360 ${rt['overridePayModifiers']} ${rt['rateDetails'][0]['payRate']} ${rt['rateDetails'][0]['isAHoliday']}');
+            'line 1384 ${rt['overridePayModifiers']} ${rt['rateDetails'][0]['payRate']} ${rt['rateDetails'][0]['isAHoliday']}');
 
-        print('line 1362: ${clientMap} ${clientMap['payHolidayRate']}');
-        for (int z = 0; z < rt['rateDetails'].length; z++) {
-          //     print('line 1324: $z ${rt['rateDetails'][z]}');
-          if (rt['rateDetails'][z]['isAHoliday'] != null &&
-              rt['rateDetails'][z]['isAHoliday'] == true) {
-            if (rt['overridePayModifiers'] == false) {
-              rt['rateDetails'][z]['payRate'] *= clientMap['payHolidayRate'];
-              rt['rateDetails'][z]['payRateWE'] *= clientMap['payHolidayRate'];
-              rt['rateDetails'][z]['billRate'] *=
-                  clientMap['billingHolidayRate'];
-              rt['rateDetails'][z]['billRateWE'] *=
-                  clientMap['billingHolidayRate'];
-            } else {
-              print('line 1375');
-              if (rt['payHolidayRate'] == null || rt[['payHolidayRate']] == 0) {
-                rt['payHolidayRate'] = 1.5;
-              }
-              rt['rateDetails'][z]['payRate'] *= rt['payHolidayRate'];
-              rt['rateDetails'][z]['payRateWE'] *= rt['payHolidayRate'];
-              rt['rateDetails'][z]['billRate'] *= rt['billHolidayRate'];
-              rt['rateDetails'][z]['billRateWE'] *= rt['billHolidayRate'];
-            }
-          }
-          print(
-              'line 1386 $z ${rt['rateDetails'][z]['payRate']} ${rt['rateDetails'][z]['payRateWE']} ${clientMap['payHolidayRate']} ${rt['payHolidayRate']}');
-        }
+        print('line 1386: ${clientMap} ${clientMap['payHolidayRate']}');
+        // for (int z = 0; z < rt['rateDetails'].length; z++) {
+        //   //     print('line 1324: $z ${rt['rateDetails'][z]}');
+        //   if (rt['rateDetails'][z]['isAHoliday'] != null &&
+        //       rt['rateDetails'][z]['isAHoliday'] == true) {
+        //     if (rt['overridePayModifiers'] == false) {
+        //       rt['rateDetails'][z]['payRate'] *= clientMap['payHolidayRate'];
+        //       rt['rateDetails'][z]['payRateWE'] *= clientMap['payHolidayRate'];
+        //       rt['rateDetails'][z]['billRate'] *=
+        //           clientMap['billingHolidayRate'];
+        //       rt['rateDetails'][z]['billRateWE'] *=
+        //           clientMap['billingHolidayRate'];
+        //     } else {
+        //       print('line 1399');
+        //       if (rt['payHolidayRate'] == null || rt[['payHolidayRate']] == 0) {
+        //         rt['payHolidayRate'] = 1.5;
+        //       }
+        //       rt['rateDetails'][z]['payRate'] *= rt['payHolidayRate'];
+        //       rt['rateDetails'][z]['payRateWE'] *= rt['payHolidayRate'];
+        //       rt['rateDetails'][z]['billRate'] *= rt['billHolidayRate'];
+        //       rt['rateDetails'][z]['billRateWE'] *= rt['billHolidayRate'];
+        //     }
+        //   }
+        //   print(
+        //       'line 1410 $z ${rt['rateDetails'][z]['payRate']} ${rt['rateDetails'][z]['payRateWE']} ${clientMap['payHolidayRate']} ${rt['payHolidayRate']}');
+        // }
 
         //next two linees need to be correct to correction wit tlis date
         DateTime curd = ld['date'];
+        DateTime dtm = DateTime.now();
+        Timestamp createdDate = Timestamp.fromDate(dtm);
         curd = curd.subtract(Duration(
             hours: curd.hour,
             minutes: curd.minute,
@@ -1405,17 +1479,24 @@ class ClientServices {
             microseconds: curd.microsecond,
             milliseconds: curd.millisecond));
         print(
-            'line 1398: $curd ${clientMap['payHolidayRate']} ${rt['rateDetails'][0]['payRate']}');
+            'line 1422: $curd ${clientMap['payHolidayRate']} ${rt['rateDetails'][0]['payRate']}');
 
         clientSchedulingWorkOrder['rateGroupId'] = rt['rateGroupId'];
 
         //   clientSchedulingWorkOrder['rateTypeCode'] = rt.rateType;
         //  clientSchedulingWorkOrder['rateTypeDescription'] = rt.rateTypeDescription'];
         clientSchedulingWorkOrder['userId'] = 0;
+        clientSchedulingWorkOrder['clientFcmTokens'] = clientFCMTokens;
+        clientSchedulingWorkOrder['clientUserId'] = clientUserId;
+        clientSchedulingWorkOrder['clientUserEmail'] = clientUserEmail;
+        clientSchedulingWorkOrder['hcpFcmTokens'] = ['Placeholder'];
+        clientSchedulingWorkOrder['email'] = currentEmail;
         clientSchedulingWorkOrder['rateType'] = rt['rateType'];
         clientSchedulingWorkOrder['clientId'] = clientMap['clientId'];
         clientSchedulingWorkOrder['clientUserId'] = cClientUserId;
         clientSchedulingWorkOrder['clientName'] = clientMap['clientName'];
+        clientSchedulingWorkOrder['createdDate'] =
+            Timestamp.fromDate(DateTime.now());
         clientSchedulingWorkOrder['departmentId'] = departmentId;
         clientSchedulingWorkOrder['departmentName'] = departmentName;
         clientSchedulingWorkOrder['departmentNumber'] = departmentNumber;
@@ -1430,8 +1511,7 @@ class ClientServices {
         clientSchedulingWorkOrder['disciplineIds'] = [disciplineId];
         clientSchedulingWorkOrder['premiumRate'] = 1.0;
         clientSchedulingWorkOrder['scheduleNotes'] = scheduleNotes;
-        clientSchedulingWorkOrder['clientFCMToken'] = clientFCMToken;
-        clientSchedulingWorkOrder['testerFCMToken'] = testerFCMToken;
+        clientSchedulingWorkOrder['clientFCMToken'] = currentFcmToken;
         clientSchedulingWorkOrder['overridePayModifiers'] =
             ld['overridePayModifiers'];
         clientSchedulingWorkOrder['overrideBillModifiers'] =
@@ -1448,7 +1528,11 @@ class ClientServices {
         }
         latitude = clientMap['latitude'];
         longitude = clientMap['longitude'];
-
+        if (dp['latitude'] > 0) {
+          print('line 1532 got dept lat');
+          latitude = dp['latitude'];
+          longitude = dp['longitude'];
+          }
         print(
             'line 1443 clisver createsched $latitude, $longitude ${addr['state']}');
         clientSchedulingWorkOrder['latitude'] = latitude;
@@ -1482,7 +1566,7 @@ class ClientServices {
         clientSchedulingWorkOrder['clientCity'] = addr['city'];
         clientSchedulingWorkOrder['addressLine1'] = addr['addressLine1'];
         clientSchedulingWorkOrder['addressLine2'] = addr['addressLine2'];
-        clientSchedulingWorkOrder['clientCity'] = addr['city'];
+        clientSchedulingWorkOrder['clientState'] = addr['state'];
         clientSchedulingWorkOrder['zipCode'] = addr['zipCode'];
         clientSchedulingWorkOrder['orderTypeOrderId'] = null;
         clientSchedulingWorkOrder['specialRequirements'] = specialRequirements;
@@ -1497,54 +1581,57 @@ class ClientServices {
         print('line 1487: ${rateDetails.length}');
         dynamic rate = listOfDatesWithShifts[i]['rate'];
 
-        for (int k = 0; k < rateDetails.length; k++) {
-          var v4 = uuid.v4();
-          dynamic rd = rateDetails[k];
-          print('line 1493 $k  $rd');
-          if (rd['startTime'] == null) {
-            continue;
-          }
-          if (rd['shiftCount'] == 0) {
-            continue;
-          }
-
-          print('line 1501: $cBranchId $cBranchName $cClientId, $cClientName');
-          print('line 1502: $disciplineId $disciplineName ${ld['date']}');
-          Map<String, dynamic> clientPublishedSchedule = {
-            "uuid": v4,
-            "clientId": cClientId,
-            "clientName": cClientName,
-            "branchId": cBranchId,
-            "branchName": cBranchName,
-            "departmentId": departmentId,
-            "departmentName": departmentName,
-            "disciplineId": disciplineId,
-            "disciplineName": disciplineName,
-            "shiftDate": ld['date'],
-            "shiftId": rd['shiftCode'] == 'AP'
-                ? 4
-                : rd['shiftCode'] == 'PA'
-                    ? 5
-                    : int.tryParse(rd['shiftCode']),
-            "shiftCode": rd['shiftCode'],
-            "startTime": rd['startTime'],
-            "endTime": rd['endTime'],
-            "hcpRequired": rd['shiftCount'],
-            "shiftCount": rd['shiftCount'],
-            "hcpScheduled": 0,
-            "status": "Open" //Open, Canceled, Scheduled
-          };
-          await FirebaseFirestore.instance
-              .collection('ClientPublishedSchedule')
-              .doc()
-              .set(clientPublishedSchedule);
-        }
+        // for (int k = 0; k < rateDetails.length; k++) {
+        //   var v4 = uuid.v4();
+        //   dynamic rd = rateDetails[k];
+        //   print('line 1493 $k  $rd');
+        //   if (rd['startTime'] == null) {
+        //     continue;
+        //   }
+        //   if (rd['shiftCount'] == 0) {
+        //     continue;
+        //   }
+        //
+        //   print('line 1501: $cBranchId $cBranchName $cClientId, $cClientName');
+        //   print('line 1502: $disciplineId $disciplineName ${ld['date']}');
+        // //   Map<String, dynamic> clientPublishedSchedule = {
+        //     "uuid": v4,
+        //     "clientId": cClientId,
+        //     "clientName": cClientName,
+        //     "branchId": cBranchId,
+        //     "branchName": cBranchName,
+        //     "departmentId": departmentId,
+        //     "departmentName": departmentName,
+        //     "disciplineId": disciplineId,
+        //     "disciplineName": disciplineName,
+        //     "shiftDate": ld['date'],
+        //     "shiftId": rd['shiftCode'] == 'AP'
+        //         ? 4
+        //         : rd['shiftCode'] == 'PA'
+        //             ? 5
+        //             : int.tryParse(rd['shiftCode']),
+        //     "shiftCode": rd['shiftCode'],
+        //     "startTime": rd['startTime'],
+        //     "endTime": rd['endTime'],
+        //     "originalStartTime": rd['startTime'],
+        //     "originalEndTime": rd['endTime'],
+        //     "hcpRequired": rd['shiftCount'],
+        //     "shiftCount": rd['shiftCount'],
+        //     "hcpScheduled": 0,
+        //     "status": "Open" //Open, Canceled, Scheduled
+        //   };
+        //   await FirebaseFirestore.instance
+        //       .collection('ClientPublishedSchedule')
+        //       .doc()
+        //       .set(clientPublishedSchedule);
+        // }
 
         print('line 1533 clisvr create: $i ${cswo}');
         // Map<String,dynamic>ld = Map.from(listOfDatesWithShifts[j]);
         //  List<dynamic>listOfShifts = List.from(listOfDatesWithShifts[j]['shifts']);
         List<dynamic> rtd = rateDetails;
         print('line 1537: ${rtd.length}');
+        Map<String, dynamic> ccl = {};
         for (int k = 0; k < rtd.length; k++) {
           print('line 1539 start of k loop');
           clArray = [];
@@ -1578,7 +1665,7 @@ class ClientServices {
           rtd[k]['hour'] = hour;
           print('line 1568: ${rtd[k]['hour']}');
           dynamic shiftDetail = rtd[k];
-          dynamic clrg = {};
+
           //get rate group;d
           print('line 1572: $rtd');
           int ckv = -1;
@@ -1590,66 +1677,49 @@ class ClientServices {
             "holiday": listOfDatesWithShifts[i]['holiday'] ? true : false,
             "dayValue": listOfDatesWithShifts[i]['dayValue'],
             "shiftCode": shiftDetail['shiftCode'].toString(),
+            "startTime": shiftDetail['startTime'].toString(),
+            "endTime": shiftDetail['endTime'].toString(),
+            'createdDate': createdDate,
+            "statusId": 'O',
             "rateType": 'Per Diem',
             "overridePayModifiers": listOfDatesWithShifts[i]
-                ['overridePayModifiers'],
-            'payOTRate': authService!.clientMap!['PayOTRate'],
+                ["overridePayModifiers"],
+            'overrideBillModifiers': listOfDatesWithShifts[i]
+                ["overrideBillModifiers"],
+            'payOTRate': clientMap['payOTRate'],
+            'margin': shiftDetail['margin'],
+            'marginWE': shiftDetail['marginWE']
           };
-          si['overrideBillModifiers'] = false;
-          si['overridePayModifiers'] =
-              listOfDatesWithShifts[i]['overridePayModifiers'];
           print('line 1590 clisvr createsched $si $shiftDetail ');
 
           Map<String, dynamic> date = {};
           //  Map<String,dynamic> rts = {};
+          print(
+              'line 1621: ${si['overridePayModifiers']}  ${si['overrideBillModifiers']}');
           print('line 1634: ${rtd} ${rate['billingRate']} ${rate['rateType']}');
-          if (useClientPayment == true) {
-            cswo['payOT'] = rate['billingOTRate'];
-            cswo["payOTPlus"] = rate['billingOTPlusRate'];
-            cswo["payDbl"] = dp['billingDblRate'];
-            cswo["payDblPlus"] = dp['billingDblPlusRate'];
-            cswo["payHoliday"] = dp['payHolidayRate'];
-            cswo["payHolidayPlus"] = dp['payHolidayPlusRate'];
-            cswo["payMax"] = dp['payMaxRate'];
-            cswo["payMaxPlus"] = dp['payMaxPlusRate'];
-            cswo["billOT"] = dp['billingOTRate'];
-            cswo["billOTPlus"] = dp['billingOTPlusRate'];
-            cswo["billDbl"] = dp['billingDblRate"'];
-            cswo["billDblPlus"] = dp['billingDblPlusRate'];
-            cswo["billHoliday"] = dp['billingHolidayRate'];
-            cswo["billHolidayPlus"] = dp['billingHolidayPlusRate'];
-            cswo["billMax"] = dp['billingMaxRate'];
-            cswo["billMaxPlus"] = dp['billingMaxPlusRate'];
-            cswo['facilityCancelLimit'] = dp['facilityCancelLimit'];
-            cswo['facilityCancelCharge'] = dp['facilityCancelCharge'];
-            cswo['agencyCancelLimit'] = dp['agencyCancelLimit'];
-            cswo['agencyCancelCredit'] = dp['agencyCancelCredit'];
-          } else {
-            cswo["rateType"] = rt['rateType'];
-            cswo["overridePayModifier"] = rt['overridePayModifiers'];
-            cswo["overrideRates"] = rt['overridePayModifiers'];
-            cswo["overrideBillModifiers"] = rt['overrideBillModifiers'];
-            cswo['payOT'] = rt['payOT'];
-            cswo["payOTPlus"] = rt['payOTPlus'];
-            cswo["payDbl"] = rt['payDbl'];
-            cswo["payDblPlus"] = rt['payDblPlus'];
-            cswo["payHoliday"] = rt['payHoliday'];
-            cswo["payHolidayPlus"] = rt['payHolidayPlus'];
-            cswo["payMax"] = rt['payMax'];
-            cswo["payMaxPlus"] = rt['payMaxPlus'];
-            cswo["billOT"] = rt['billOT'];
-            cswo["billOTPlus"] = rt['billOTPlus'];
-            cswo["billDbl"] = rt['billDbl'];
-            cswo["billDblPlus"] = rt['billDblPlus'];
-            cswo["billHoliday"] = rt['billHoliday'];
-            cswo["billHolidayPlus"] = rt['billHolidayPlus'];
-            cswo["billMax"] = rt['billMax'];
-            cswo["billMaxPlus"] = rt['billMaxPlus'];
-            cswo['facilityCancelLimit'] = dp['facilityCancelLimit'];
-            cswo['facilityCancelCharge'] = dp['facilityCancelCharge'];
-            cswo['agencyCancelLimit'] = dp['agencyCancelLimit'];
-            cswo['agencyCancelCredit'] = dp['agencyCancelCredit'];
-          }
+
+          print('line 1625 using client money rates');
+          cswo['payOTRate'] = rt['payOTRate'];
+          cswo["payOTPlusRate"] = rt['payOTPlusRate'];
+          cswo["payDblRate"] = rt['payDblRate'];
+          cswo["payDblPlusRate"] = rt['payDblPlusRate'];
+          cswo["payHolidayRate"] = rt['payHolidayRate'];
+          cswo["payHolidayPlusRate"] = rt['payHolidayPlusRate'];
+          cswo["payMaxRate"] = rt['payMaxRate'];
+          cswo["payMaxPlusRate"] = rt['payMaxPlusRate'];
+          cswo["billOTRate"] = rt['billOTRate'];
+          cswo["billOTPlusRate"] = rt['billOTPlusRate'];
+          cswo["billDblRate"] = rt['billDblRate"'];
+          cswo["billDblPlusRate"] = rt['billDblPlusRate'];
+          cswo["billHolidayRate"] = rt['billHolidayRate'];
+          cswo["billHolidayPlusRate"] = rt['billHolidayPlusRate'];
+          cswo["billMaxRate"] = rt['billMaxRate'];
+          cswo["billMaxPlusRate"] = rt['billMaxPlusRate'];
+          cswo['facilityCancelLimit'] = ['facilityCancelLimit'];
+          cswo['facilityCancelCharge'] = dp['facilityCancelCharge'];
+          cswo['agencyCancelLimit'] = dp['agencyCancelLimit'];
+          cswo['agencyCancelCredit'] = dp['agencyCancelCredit'];
+
           cswo['shiftApprovalNote'] = null;
           cswo['shiftCanceled'] = false;
           cswo['shiftCanceledActionDate'] = null;
@@ -1658,11 +1728,11 @@ class ClientServices {
           cswo['shiftCanceledNote'] = null;
           cswo['shiftStatus'] = "Open";
           cswo['shiftStatusDate'] = Timestamp.fromDate(DateTime.now());
-          cswo['pushNotificationsFrequencyRate'] =
-              pushNotificationFrequencyRate;
-          cswo['clientFCMToken'] = clientFCMToken;
+          cswo['pushNotificationFrequencyRate'] = pushNotificationFrequencyRate;
+          cswo['clientFCMToken'] = clientFcmToken;
 
           print('line 1694 $k ${rtd[k]['shiftCount']}');
+          shiftCount = rtd[k]['shiftCount'];
           // if (rate['departments'] == null) {
           //   Map<String,dynamic> mp = {
           //     'departmentId': selectedDepartmentId,
@@ -1677,206 +1747,316 @@ class ClientServices {
           //   }
           //
           rate['scheduledRateDetails'] = null;
-          Map<String, dynamic> ccl = Map.from(cswo);
+          print('line 1769: ${rate}');
+          Map<String, dynamic> dts = {"rates": rate, "shiftDateInfo": si};
+          cswo['dates'] = dts;
+          print('line 1770: ${cswo['dates']}');
+          ccl = Map.from(cswo);
+          print('line 1771: ${ccl['workOrderId']} ${ccl['woWorkOrderId']} ');
           Map<String, dynamic> sii = Map.from(si);
+          print('line 1773: ${sii}');
           sii['indexValue'] = false;
           date['shiftDateInfo'] = Map.from(sii);
           rate['rateDetails'] = Map.from(shiftDetail);
           date['rates'] = Map.from(rate);
-
-          ccl['dates'] = Map.from(date);
+          print('line 1778: ${date} $rate');
           //       clArray.add(clientSchedulingWorkOrder);
-          print('line 1718: ${ccl['dates']}');
-          String workOrderId = uuid.v4();
-          String clientHCPWorkOrderId = uuid.v4();
-          workOrderId = uuid.v4();
-          clientHCPWorkOrderId = uuid.v4();
-          bool flagDidACheck = false;
-          DateTime curD = curd;
-          String? dcxId;
-          bool flagGotCWK = false;
-          print('line 1727: $queryShiftCode');
-          await FirebaseFirestore.instance
-              .collection('ClientWorkOrder')
-              .where('clientId', isEqualTo: ccl['clientId'])
-              .where('disciplineName', isEqualTo: disciplineName)
-              .where('dates.shiftDateInfo.shiftCode', isEqualTo: queryShiftCode)
-              .get()
-              .then((querySnapshot) async {
-            for (var docSnapshot in querySnapshot.docs) {
-              dcxId = docSnapshot.id;
-              final obj = docSnapshot.data();
-              print(
-                  'line 1738 $dcxId ${obj['shiftStatus']} ${obj['dates']['shiftDateInfo']['shiftCode']}');
-              if ((obj['ExternalId'] != null &&
-                      obj['externalId'] == '999999') ||
-                  (obj['internalNote'] != null &&
-                      obj['internalNote'].length > 0)) {
-                print('line 1743 continued on sl wkords');
-                continue;
-              }
-              //  shiftCount = double.parse(obj['shiftCount'].toString());
-              Timestamp stm = obj['dates']['shiftDateInfo']['shiftDate'];
-              DateTime dtm = stm.toDate();
-              dtm = dtm.subtract(Duration(
-                  hours: dtm.hour,
-                  minutes: dtm.minute,
-                  seconds: dtm.second,
-                  microseconds: dtm.microsecond,
-                  milliseconds: dtm.millisecond));
-              flagGotCWK = false;
-              Map<String, dynamic>? tvs;
+          print('line 1779: ${ccl['dates']}');
 
-              if (curD.millisecondsSinceEpoch == dtm.millisecondsSinceEpoch) {
-                flagGotCWK = true;
-                print('line 1753: $curD $dtm $shiftCount');
+          print(
+              'line 1782: $shiftCount ${ccl['clientId']} $disciplineName $queryShiftCode');
 
-                for (int s = 0; s < shiftCount; s++) {
-                  Map<String, dynamic> xbj = Map.from(ccl);
-                  xbj['dates']['shiftDateInfo']['shiftCount'] = 1;
-                  xbj['dates']['shiftDateInfo']['indexValue'] = true;
-                  if (s > 0) {
-                    workOrderId = uuid.v4();
-                    xbj['workOrderId'] = workOrderId;
-                    xbj['uuid'] = uuid.v4();
-                  }
-                  String? woWorkOrderId;
-                  await FirebaseFirestore.instance
-                      .collection('ClientWorkOrder')
-                      .add(xbj)
-                      .then((DocumentReference doc) {
-                    woWorkOrderId = doc.id;
-                  });
-                  print('line 1740 $woWorkOrderId');
-                  await FirebaseFirestore.instance
-                      .collection('ClientWorkOrder')
-                      .doc(woWorkOrderId)
-                      .update({'woWorkOrderId': woWorkOrderId!});
-                  Map<String, dynamic> hobj = convertObjToHbj(xbj);
-                  hobj['workOrderId'] = workOrderId;
-                  hobj['woWorkOrderId'] = woWorkOrderId!;
-                  print('line 1799: ${hobj['workOrderId']}');
-                  await FirebaseFirestore.instance
-                      .collection('ClientHCPWorkOrder')
-                      .doc()
-                      .set(hobj);
-                }
-                print('line 1740 check');
-                return [1];
-              }
+          for (int s = 0; s < shiftCount; s++) {
+            Map<String, dynamic> xbj = Map.from(ccl);
+            xbj['dates']['shiftDateInfo']['shiftCount'] = shiftCount;
+            xbj['dates']['shiftDateInfo']['shiftSequence'] = s + 1;
+            xbj['dates']['shiftDateInfo']['indexValue'] = false;
+            xbj['indexValue'] = false;
+            if (s > 0) {
+              xbj['dates']['shiftDateInfo']['indexValue'] = true;
 
-              print('line 1780: $workOrderId $clientHCPWorkOrderId');
-              ccl['workOrderId'] = workOrderId;
-              ccl['clientHCPWorkOrderId'] = clientHCPWorkOrderId;
-              ccl['shiftCount'] = shiftDetail['shiftCount'];
-              print('line 1784 check $flagGotCWK ');
-
-              clArray = [];
-              Map<String, dynamic> initialObj = ccl;
-              print('line 1759: $ccl');
-              int x = 0;
-              if (x == 0) {
-                throw Exception('line 1762 debug exception');
-              }
-              if (flagGotCWK == false) {
-                await FirebaseFirestore.instance
-                    .collection('ClientWorkOrder')
-                    .doc()
-                    .set(ccl);
-                print('line 1796: ${ccl['dates']['shiftDateInfo']}');
-                Map<String, dynamic> hobj = convertObjToHbj(ccl);
-                hobj['workOrderId'] = workOrderId;
-                print('line 1799: ${hobj['workOrderId']}');
-                Map<String, dynamic> mp = {
-                  "clientId": ccl['clientId'],
-                  "uuid": ccl['uuid']
-                };
-                wosForCounts.add(mp);
-                await FirebaseFirestore.instance
-                    .collection('ClientHCPWorkOrder')
-                    .doc()
-                    .set(hobj);
-                clArray.add(ccl);
-                print('line 1810: ${clArray.length} ${shiftDetail}');
-                print('line 1811 ${shiftDetail['shiftCount']}');
-                for (int p = 1; p < shiftDetail['shiftCount']; p++) {
-                  print('line 1813: $p ${ccl['dates']['shiftDateInfo']}');
-                  dynamic six = ccl['dates']['shiftDateInfo'];
-                  six['indexValue'] = true;
-                  ccl['dates']['shiftDateInfo'] = six;
-                  print('line 1817 $ccl');
-                  // cswo['dates'] = Map.from(date);
-                  clArray.add(ccl);
-                }
-                //      clArray.insert(0, ccl); // at index 0 we are adding A
-                print('line 1822 ${clArray.length} ');
-                print('line 1823: ${shiftDetail['shiftCount']}');
-                await Future.delayed(const Duration(seconds: 2));
-                for (int p = 1; p < shiftDetail['shiftCount']; p++) {
-                  Map<String, dynamic> obj = clArray[p];
-                  print('line 1827: $i $p, ${obj['dates']}');
-                  print('line 1828:  ${obj['dates']['shiftDateInfo']}');
-                  workOrderId = uuid.v4();
-                  clientHCPWorkOrderId = uuid.v4();
-                  obj['workOrderId'] = workOrderId;
-                  obj['shiftCount'] = shiftDetail['shiftCount'];
-                  print('line 1833: ${obj['shiftCount']}');
-                  obj['clientHCPWorkOrderId'] = clientHCPWorkOrderId;
-                  await FirebaseFirestore.instance
-                      .collection('ClientWorkOrder')
-                      .doc()
-                      .set(obj);
-                  Map<String, dynamic> hobj = convertObjToHbj(obj);
-                  hobj['workOrderId'] = workOrderId;
-                  await FirebaseFirestore.instance
-                      .collection('ClientHCPWorkOrder')
-                      .doc()
-                      .set(hobj);
-                }
-              }
-              print('line 1847');
-              //    clientRateGroups = List.from(myList);
-              // print('line 1220 ${clArray.length}');
-              // for (int q=0; q < clArray.length; q++) {
-              //   Map<String,dynamic> obj = clArray[q];
-              //   FirebaseFirestore.instance.collection('ClientWorkOrder')
-              //       .doc().set(obj);
-              // }
-              //  bl = true;
+              xbj['indexValue'] = true;
             }
-          });
+            print('line 1792 ${xbj}');
+            Map<String, dynamic> asmwo =
+                convertClientWorkOrderToAsmWorkOrder(xbj);
+            print('line 1795 ${asmwo}');
+            dynamic result = await hts.callCreateMobileWOFunction(asmwo, ctx);
+            print('line 1788: $result');
+            if (result != null) {
+              String workOrderIdUuid = uuid.v4();
+              String woWorkOrderId = uuid.v4();
+              xbj['orderId'] = result;
+              xbj['workOrderId'] = result.toString();
+              xbj['workOrderIdUuid'] = workOrderIdUuid;
+              xbj['woWorkOrderId'] = woWorkOrderId;
+              xbj['bookShift'] = true;
+              xbj['isGPOClient'] = false;
+              xbj['clientUserId'] =
+                  mp['clientUserId'] == null ? 0 : mp['clientUserId'];
+              xbj['flagShowPushNotifications'] =
+                  pushNotificationFrequencyRate == 'None' ? false : true;
+              xbj['clientHCPWorkOrderId'] = result.toString();
+              xbj['asmWorkOrderId'] = int.parse(result.toString());
+              xbj['orderId'] = int.parse(result.toString());
+              xbj['shiftCount'] = xbj['dates']['shiftDateInfo']['shiftCount'];
+              await FirebaseFirestore.instance
+                  .collection('ClientWorkOrder')
+                  .doc(result.toString())
+                  .set(xbj);
+
+              Map<String, dynamic> hobj = convertObjToHbj(xbj);
+              hobj['workOrderId'] = xbj['workOrderId'];
+              listClientWorkOrderIds.add(xbj['workOrderId']);
+              hobj['woWorkOrderId'] = woWorkOrderId;
+              hobj['woWorkOrderIdUuid'] = workOrderIdUuid;
+              print('line 1799: ${hobj['workOrderId']}');
+              await FirebaseFirestore.instance
+                  .collection('ClientHCPWorkOrder')
+                  .doc()
+                  .set(hobj);
+            }
+            print('line 1740 check');
+          }
         }
+        int sfc =
+            int.parse(ccl['dates']['shiftDateInfo']['shiftCount'].toString());
+        print(
+            'line 1855: ${pushNotificationFrequencyRate} $sfc ${totalScheduledShifts}');
+        //     if (woWorkOrderId != null) {
+        //       if (listClientWorkOrderIds.indexOf(woWorkOrderId!) == -1) {
+        //         listClientWorkOrderIds.add(woWorkOrderId!);
+        //       }
+        //     }
+        //   });
+        // Map<String, dynamic> mp = {
+        //   "clientId": ccl['clientId'],
+        //   "uuid": ccl['uuid']
+        // };
+        // wosForCounts.add(mp);
+        //   await FirebaseFirestore.instance
+        //       .collection('ClientHCPWorkOrder')
+        //       .doc()
+        //       .set(hobj);
+        //   Map<String, dynamic> initialObj = Map.from(ccl);
+        //   clArray.add(initialObj);
+        //   print('line 1831: ${clArray.length} ${shiftDetail}');
+        //   print('line 1832 ${shiftDetail['shiftCount']}');
+        //   for (int p = 1; p < shiftDetail['shiftCount']; p++) {
+        //     print('line 1834: $p ${ccl['dates']['shiftDateInfo']}');
+        //     dynamic six = ccl['dates']['shiftDateInfo'];
+        //     six['indexValue'] = true;
+        //     ccl['dates']['shiftDateInfo'] = six;
+        //     ccl['workOrderId'] = workOrderId;
+        //     ccl['woWorkOrderId'] = woWorkOrderId;
+        //     print('line 1838 $workOrderId $woWorkOrderId');
+        //     // cswo['dates'] = Map.from(date);
+        //     clArray.add(ccl);
+        //   }
+        //   //      clArray.insert(0, ccl); // at index 0 we are adding A
+        //   print('line 1843 ${clArray.length} ');
+        //   print('line 1844: ${shiftDetail['shiftCount']}');
+        //
+        //   for (int p = 1; p < shiftDetail['shiftCount']; p++) {
+        //     Map<String, dynamic> obj = clArray[p];
+        //     print('line 1848: $i $p, ${obj['dates']}');
+        //     print('line 1849:  ${obj['dates']['shiftDateInfo']}');
+        //     String wid = uuid.v4();
+        //     clientHCPWorkOrderId = uuid.v4();
+        //     obj['workOrderId'] = workOrderId;
+        //     obj['shiftCount'] = shiftDetail['shiftCount'];
+        //     print('line 1854: ${obj['workOrderId']}');
+        //     obj['woWorkOrderId'] = null;
+        //     obj['clientHCPWorkOrderId'] = clientHCPWorkOrderId;
+        //     String? wwo;
+        //     await FirebaseFirestore.instance
+        //         .collection('ClientWorkOrder')
+        //         .add(obj)
+        //         .then((DocumentReference doc) {
+        //       wwo = doc.id;
+        //     });
+        //     print('line 1880: $wwo $wid');
+        //     Map<String, dynamic> zbj = {
+        //       'woWorkOrderId': wwo,
+        //       'workOrderId': wwo
+        //     };
+        //     obj['woWorkOrderId'] = wwo;
+        //     await FirebaseFirestore.instance
+        //         .collection('ClientWorkOrder')
+        //         .doc(wwo)
+        //         .set(zbj, SetOptions(merge: true));
+        //     Map<String, dynamic> hobj = convertObjToHbj(obj);
+        //     hobj['workOrderId'] = workOrderId;
+        //     hobj['woWorkOrderId'] = woWorkOrderId;
+        //     await FirebaseFirestore.instance
+        //         .collection('ClientHCPWorkOrder')
+        //         .doc()
+        //         .set(hobj);
+        //   }
+        // }
+        print('line 1868');
       }
-      print('line 1858');
-      List<double> scheduleCount = [1];
-      // int? ib;
-      // double ctn = 0;
-      // await Future.forEach(wosForCounts, (action) async {
-      //   print('line 1814: $action');
-      //   Map<String, dynamic> mpp = await getScheduledCount(action, ctx);
-      //   print('line 1816: $mpp');
-      //   ctn += mpp['selected'];
-      //   scheduleCount.add(mpp['selected']);
-      // });
-      // print('line 1821: $scheduleCount');
-      // if (ctn == 0) {
-      //   if (scheduleCount.length == 0) {
-      //     scheduleCount.add(1);
-      //   } else {
-      //     int len = scheduleCount.length;
-      //     scheduleCount = [];
-      //     for (int i = 0; i < len; i++) {
-      //       scheduleCount.add(1);
-      //     }
-      //   }
-      // }
-      print('line 1881: $scheduleCount');
-      return scheduleCount;
+      //    }
+      print('line 1858: ${listClientWorkOrderIds}');
+      if (listClientWorkOrderIds.length == 0) {
+        List<double> cnt = [0];
+        return cnt;
+      }
+      double dCnt = double.parse(listClientWorkOrderIds.length.toString());
+      List<double> cnt = [dCnt];
+      return cnt;
+//       print('line 1930: ${DateTime.now().second}');
+//       double countOfScheduled = 0;
+//       await Future.delayed(Duration(seconds: 5), () async {
+//         print('line 1932: ${DateTime.now().second}');
+//
+//         await FirebaseFirestore.instance
+//             .collection('ClientWorkOrderCampaign')
+//             .where('woWorkOrderId', whereIn: listClientWorkOrderIds)
+//             .get()
+//             .then((querySnapshot) {
+//           countOfScheduled =
+//               double.parse(querySnapshot.docs.length.toStringAsFixed(0));
+//           return;
+//         });
+//         print('line 1881: $countOfScheduled');
+//         if (countOfScheduled == 0) {
+//           await cleanUpSchedulingData(listClientWorkOrderIds);
+//         }
+//         return;
+//       });
+//       return [countOfScheduled];
     } catch (e) {
-      print('line 1884 error: $e');
-      return [0];
+      print('line 1954 error: $e');
+      List<double> cnt = [0];
+      return cnt;
 //      throw Exception('$e');
     }
+  }
+
+  Map<String, dynamic> convertClientWorkOrderToAsmWorkOrder(
+      Map<String, dynamic> ccl) {
+//     Timestamp tms = ccl['dates']['shiftDateInfo']['shiftDate'];
+//     DateTime tm = tms.toDate();
+
+    try {
+      print('line 1984 in convert');
+      DateTime tm = ccl['dates']['shiftDateInfo']['shiftDate'];
+      String smonth = (tm.month).toString();
+      String sday = (tm.day).toString();
+      String syear = (tm.year).toString();
+      String formattedShiftDate = '${smonth}/${sday}/${syear}';
+      print('line 1990: ${formattedShiftDate}');
+      Map<String, dynamic> asm = {
+        "ExternalID": "9999999",
+        "AnticipatedNeed": false,
+        "ShiftDate": formattedShiftDate,
+        "DeptID": ccl['departmentId'],
+        "AreaID": null,
+        "Caller": null,
+        "PurchaseOrderID": null,
+        "Skills": null,
+        "DisciplineID": ccl['disciplineCodes'],
+        "DisciplineID2": null,
+        "SpecialtyID": null,
+        "SpecialtyID2": null,
+        "AdvertisedHourlyRate": 0.00,
+        "AdvertisedHourlyRate2": 0.00,
+        "VisibleAllRegsMobileApp": true,
+        "RegID": null,
+        "RateTypeCodeID": ccl['rateTypeCodeId'],
+        "ShiftCode": ccl['dates']['shiftDateInfo']['shiftCode'],
+        "WorkersCompCodeID": ccl['workersCompCodeId'],
+        "workersCompType": 8833,
+        "Charge": false,
+        "StartTime": ccl['dates']['shiftDateInfo']['startTime'],
+        "EndTime": ccl['dates']['shiftDateInfo']['endTime'],
+        "Meals": ccl['dates']['rates']['rateDetails']['meals'],
+        "Orientation": false,
+        "TimeclockEarlyClockMinutes": 30,
+        "InternalNote": "Ignore Client Generated",
+        "InvoiceNote": "Ignore Client Generated",
+        "OverrideRates": false,
+        "PayRate": ccl['dates']['rates']['rateDetails']['payRate'],
+        "PayRateWE": ccl['dates']['rates']['rateDetails']['payRateWE'],
+        "BillRate": ccl['dates']['rates']['rateDetails']['billRate'],
+        "BillRateWE": ccl['dates']['rates']['rateDetails']['billRateWE']
+      };
+      return asm;
+    } catch (e) {
+      print('line 2030: ${e.toString()}');
+      return {};
+    }
+  }
+
+  Future<void> cleanUpSchedulingData(List<String> lwos) async {
+    //clientWorkOrderUuid of ClientPublishedSchedule maps to  ClientWorkOrder.uuid;
+    //clientWorkOrderUuid of ClientScheduled maps to  ClientWorkOrder.uuid;
+    //woWorkOrderId of ClientWorkOrderCampaign maps to ClientWorkOrder.woWorkOrderId
+    //woWorkOrderId of ClientHCPWorkOrder maps to ClientWorkOrder.woWorkOrderId
+    //1. remove ClientHCPWorkOrders
+    List<String> listOfWos = [];
+    await FirebaseFirestore.instance
+        .collection('ClientWorkOrder')
+        .where('woWorkOrderId', whereIn: lwos)
+        .get()
+        .then((querySnapshot) async {
+      for (var snapshot in querySnapshot.docs) {
+        var obj = snapshot.data();
+        print('line 2011: ${snapshot.id}');
+        String woWorkOrderId = snapshot.id;
+        String uuid = obj['uuid'];
+        print('line 2014: $uuid $obj');
+        await FirebaseFirestore.instance
+            .collection('ClientHCPWorkOrder')
+            .where('woWorkOrderId', isEqualTo: woWorkOrderId)
+            .get()
+            .then((querySnapshot) async {
+          for (var snapshot in querySnapshot.docs) {
+            String docId = snapshot.id;
+            await FirebaseFirestore.instance
+                .collection('ClientHCPWorkOrder')
+                .doc(docId)
+                .delete();
+          }
+        });
+        print('line 2044: $uuid');
+        // await FirebaseFirestore.instance
+        //     .collection('ClientPublishedSchedule')
+        //     .where('uuid', isEqualTo: uuid)
+        //     .get()
+        //     .then((querySnapshot) async {
+        //   for (var snapshot in querySnapshot.docs) {
+        //     String docId = snapshot.id;
+        //     await FirebaseFirestore.instance
+        //         .collection('ClientPublishedSchedule')
+        //         .doc(docId)
+        //         .delete();
+        //   }
+        // });
+        // // await FirebaseFirestore.instance
+        //     .collection('ClientScheduled')
+        //     .where('clientWorkOrderUuid', isEqualTo: uuid)
+        //     .get()
+        //     .then((querySnapshot) async {
+        //   for (var snapshot in querySnapshot.docs) {
+        //     String docId = snapshot.id;
+        //     await FirebaseFirestore.instance
+        //         .collection('ClientScheduled')
+        //         .doc(docId)
+        //         .delete();
+        //   }
+        // });
+      }
+    });
+    for (int i = 0; i < lwos.length; i++) {
+      String docId = lwos[i];
+      await FirebaseFirestore.instance
+          .collection('ClientWorkOrder')
+          .doc(docId)
+          .delete();
+    }
+    return;
   }
 
   DateTime getFirestoreDateTime(dynamic gms) {
@@ -1958,7 +2138,7 @@ class ClientServices {
 
   Future<Map<String, dynamic>> getShiftsByClientAndDiscipline(
       int clientId, String disciplineDescription, rateGroupId) async {
-    print('linee 1377 docis: $clientId $disciplineDescription $rateGroupId');
+    print('line 2127 doc: $clientId $disciplineDescription $rateGroupId');
     try {
       String val = '';
       int idx = disciplineDescription.indexOf('(');
@@ -1968,9 +2148,23 @@ class ClientServices {
         val = disciplineDescription;
       }
       Map<String, dynamic> obj = {};
+      Map<String, dynamic> holdObj = {};
       bool flagGotHit = false;
       int objCount = -1;
 
+      Map<String, dynamic>? rateInstance;
+      print('line 2177: ${rateInstance}');
+      await FirebaseFirestore.instance
+          .collection('ClientRateInstance')
+          .where('clientId', isEqualTo: clientId)
+          .get()
+          .then((querySnapshot) {
+        if (querySnapshot.docs.length > 0) {
+          var snapShot = querySnapshot.docs[0];
+          rateInstance = snapShot.data();
+        }
+      });
+      print('ine 2187: ${rateInstance}');
       await FirebaseFirestore.instance
           .collection('ClientRate')
           .where('clientId', isEqualTo: clientId)
@@ -1979,31 +2173,79 @@ class ClientServices {
         for (var docSnapshot in querySnapshot.docs) {
           obj = docSnapshot.data();
           objCount += 1;
-          for (int j = 0; j < obj['disciplines'].length; j++) {
-            dynamic db = obj['disciplines'][j];
-            print('line 1399: $val $db ${obj['rateGroupId']}, $rateGroupId');
-            if (db['disciplineName'] == val &&
-                obj['rateGroupId'] == rateGroupId) {
-              print('line 1401: ${obj['departments']} $obj');
-              flagGotHit = true;
-              if (authService!.clientMap!['billingSameAsPhysical'] == true) {
-                obj['payHolidayPlusRate'] =
-                    authService!.clientMap!['payHolidayPlusRate'];
-                obj['payHolidayRate'] =
-                    authService!.clientMap!['payHolidayRate'];
-                obj['payMaxPlusRate'] =
-                    authService!.clientMap!['payMaxPlusRate'];
-                obj['payMaxRate'] = authService!.clientMap!['payMaxRate'];
-                obj['payOTRate'] = authService!.clientMap!['payHolidayRate'];
-              }
-              break;
+          if (obj['rateType'] != 'Per Diem') {
+            continue;
+          }
+          if (obj['rateTypeDescription'] != null) {
+            if (obj['rateTypeDescription'].toLowerCase().contains('contract')) {
+              print('line 2152: ${obj['rateTypeDescription']}');
+              continue;
             }
+          } else {
+            obj['rateTypeDescription'] = obj['rateType'];
           }
           if (flagGotHit == true) {
-            break;
+            continue;
           }
+
+          print('line 2215: ${flagGotHit}');
+          for (int j = 0; j < obj['disciplines'].length; j++) {
+            dynamic db = obj['disciplines'][j];
+            if (flagGotHit == true) {
+              continue;
+            }
+            print('line 2160: $val $db ${obj['rateGroupId']}, $rateGroupId');
+            if (db['disciplineName'] == val &&
+                obj['rateGroupId'] == rateGroupId) {
+              print('line 2224: ${obj['departments']} $obj');
+              flagGotHit = true;
+              if (obj['rates'][0]['overridePayModifiers']! == false) {
+                print('line 2227 ${rateInstance}');
+                if (rateInstance != null) {
+                  obj['rates'][0]['payDblPlusRate'] =
+                      rateInstance!['payDblPlusRate'];
+                  obj['rates'][0]['payDblRate'] = rateInstance!['payDblRate'];
+                  obj['rates'][0]['payHolidayPlusRate'] =
+                      rateInstance!['payHolidayPlusRate'];
+                  obj['rates'][0]['payHolidayRate'] =
+                      rateInstance!['payHolidayRate'];
+                  obj['rates'][0]['payMaxPlusRate'] =
+                      rateInstance!['payMaxPlusRate'];
+                  obj['rates'][0]['payMaxRate'] = rateInstance!['payMaxRate'];
+                  obj['rates'][0]['payOTPlusRate'] =
+                      rateInstance!['payOTPlusRate'];
+                  obj['rates'][0]['payOTRate'] = rateInstance!['payOTRate'];
+                }
+              }
+              if (obj['rates'][0]['overrideBillModifiers']! == false) {
+                print('line 2245: ${rateInstance}');
+                if (rateInstance != null) {
+                  obj['rates'][0]['billDblPlusRate'] =
+                      rateInstance!['billDblPlusRate'];
+                  obj['rates'][0]['billDblRate'] = rateInstance!['billDblRate'];
+                  obj['rates'][0]['billHolidayPlusRate'] =
+                      rateInstance!['billHolidayPlusRate'];
+                  obj['rates'][0]['billHolidayRate'] =
+                      rateInstance!['billHolidayRate'];
+                  obj['rates'][0]['billMaxPlusRate'] =
+                      rateInstance!['billMaxPlusRate'];
+                  obj['rates'][0]['billMaxRate'] = rateInstance!['billMaxRate'];
+                  obj['rates'][0]['billOTPlusRate'] =
+                      rateInstance!['billOTPlusRate'];
+                  obj['rates'][0]['billOTRate'] = rateInstance!['billOTRate'];
+                }
+              }
+            }
+            print('line 2263: ${obj}');
+            holdObj = Map.from(obj);
+            // if (flagGotHit == true) {
+            //   break;
+            // }
+          }
+          print('line 2268: ${obj}');
         }
       });
+      obj = Map.from(holdObj);
       List<dynamic> rds = [];
       if (flagGotHit == true) {
         List<String> lTimes = ['1', '2', '3', 'AP', 'PA'];
@@ -2011,12 +2253,13 @@ class ClientServices {
         for (int q = 0; q < rd.length; q++) {
           dynamic rdt = rd[q];
           if (lTimes.indexOf(rdt['shiftCode']) == -1) {
-            print('line 1956');
-            if (rdt['startTime'] == null) {
-              continue;
-            }
+            print('line 2188 ${rdt['shiftCode']}');
+            // if (rdt['startTime'] == null) {
+            //   continue;
+            // }
+            continue;
           }
-          print('line 1958');
+          print('line 2193');
           if (rdt['startTime'] == null) {
             continue;
           }
@@ -2030,10 +2273,10 @@ class ClientServices {
       }
       obj['rates'][0]['rateDetails'] = rds;
       flagGotHit = true;
-      print('line 1427 $obj');
+      print('line 2207 $obj');
       return obj;
     } catch (e) {
-      print('line 1430 error: $e');
+      print('line 2218 error: $e');
       throw Exception('Error ${e.toString()}');
     }
   }
@@ -2057,7 +2300,7 @@ class ClientServices {
 
   Future<List<Map<String, dynamic>>>? getDisciplinesFromClientRates(
       int clientId) async {
-    print('line 1813 in get disciplines from client rates $clientId');
+    print('line 2231 in get disciplines from client rates $clientId');
     try {
       List<Map<String, dynamic>> lstm = [];
       List<String> listNms = [];
@@ -2071,9 +2314,20 @@ class ClientServices {
         for (var docSnapshot in querySnapshot.docs) {
           final obj = docSnapshot.data();
           var docId = docSnapshot.id;
+          print('line 2245: $docId');
           obj['id'] = docId;
           if (obj['hcpId'] > 0) {
             continue;
+          }
+          if (obj['rateType'] != 'Per Diem') {
+            continue;
+          }
+          if (obj['rateType'] != null) {
+            if (obj['rateType'].toLowerCase().contains('contract')) {
+              continue;
+            }
+          } else {
+            obj['rateTypeDescription'] = obj['rateType'];
           }
           int disciplineIndex = -1;
           if (obj['disciplines'] != null && obj['disciplines'].length > 0) {
@@ -2084,7 +2338,7 @@ class ClientServices {
                   db['disciplineName'] != 'RN') {
                 continue;
               }
-              print('line 1836: ${obj['disciplines']} ${obj['departments']}');
+              print('line 2265: ${obj['disciplines']} ${obj['departments']}');
               if ((obj['departments'] == null ||
                       obj['departments'].length == 0) &&
                   obj['rateType'] == 'Per Diem') {
@@ -2113,13 +2367,13 @@ class ClientServices {
                 ];
               }
 
-              print('line 1867 ${obj['departments']}');
+              print('line 2294 ${obj['departments']}');
               if (obj['departments'].length == 0) {
                 continue;
               }
               List<dynamic> listDepts = obj['departments'];
-              print('line 1866: ${listDepts[0]}');
-              print('line 1867: ${obj['rateGroupId']} $db ${listDepts}');
+              print('line 2299: ${listDepts[0]}');
+              print('line 2300: ${obj['rateGroupId']} $db ${listDepts}');
               listNms.add(db['disciplineName']);
               Map<String, dynamic> dm = {
                 'rateGroupId': obj['rateGroupId'],
@@ -2128,12 +2382,15 @@ class ClientServices {
                 'disciplineDescription': db['disciplineName'],
                 'departmentName': listDepts[0]['departmentName']
               };
-              print('line 1847: $dm');
+              print('line 2309: $dm');
               lstm.add(dm);
             }
           }
         }
+      }).catchError((error) {
+        print('line 2315: $error');
       });
+      print('line 2317 ${lstm.length}');
       List<int> listCt = [0, 0, 0];
       for (int i = 0; i < listNms.length; i++) {
         if (listNms[i] == 'CNA') {
@@ -2157,10 +2414,10 @@ class ClientServices {
         }
       }
       lstm.sort((a, b) => a['disciplineId'].compareTo(b['disciplineId']));
-      print('line 1874: ${lstm.length}');
+      print('line 2338: ${lstm.length}');
       return lstm;
     } catch (e) {
-      print('line 1073 error getting disciplines ${e.toString()}');
+      print('line 2341 error getting disciplines ${e.toString()}');
       throw Exception(e.toString());
     }
   }
@@ -2206,11 +2463,46 @@ class ClientServices {
     }
   }
 
+  Future<String> insertClientUser(
+      Map<String, dynamic> obj, String userType) async {
+    try {
+      print('line 2209: ${obj}');
+      String email = obj['email'];
+      String password = obj['password'];
+      print('line 2212 cms_auth: $email $password ');
+      final UserCredential dyn =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      print('line 2216: $dyn');
+      if (dyn.user == null) {
+        print('line 2218: $email $password');
+        return 'Error: Invalid login';
+      }
+      await dyn.user!.updateDisplayName(userType);
+      obj['password'] = '**********';
+      //
+      print('line 1744: ${dyn.user!.uid} ');
+      // String uid =
+      //     obj['clientId'].toString() + ':' + obj['clientUserId'].toString();
+      String uid = dyn.user!.uid;
+      await FirebaseFirestore.instance
+          .collection('ClientUser')
+          .doc(uid)
+          .set(obj, SetOptions(merge: true));
+      return "Success";
+    } catch (e) {
+      print('line 926 error getting users: ${e.toString()}');
+      return "Error: ${e.toString()}";
+    }
+  }
+
   Future<bool> insertClientDNU(int clientId, int hcpId, int departmentId,
       String departmentName, String comments) async {
     print('line  745 $clientId, $hcpId $comments');
 
-    int clientUserId = authService.clientUserId!;
+    int clientUserId = authServices.clientUserId!;
     try {
       dynamic obj = {
         "hcpId": hcpId,
@@ -2237,8 +2529,7 @@ class ClientServices {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getClientDepartment(
-      int clientId, List<int> departmentIds) async {
+  Future<List<Map<String, dynamic>>> getClientDepartment(int clientId) async {
     List<Map<String, dynamic>> lm = [];
     List<String> departmentNames = [];
     await FirebaseFirestore.instance
@@ -2254,23 +2545,16 @@ class ClientServices {
         if (snp['departmentName'] == 'Not Specified') {
           continue;
         }
+        if (snp['departmentName'].toLowerCase().contains('contract')) {
+          continue;
+        }
         if (snp['branchName'].contains('PSG') == true) {
           continue;
         }
         if (departmentNames.indexOf(snp['departmentName']) != -1) {
           continue;
         }
-        bool gotDepartmentId = false;
-        for (int i = 0; i < departmentIds.length; i++) {
-          gotDepartmentId = false;
-          if (snp['departmentId'] == departmentIds[i]) {
-            gotDepartmentId = true;
-            break;
-          }
-        }
-        if (gotDepartmentId == true) {
-          departmentNames.add(snp['departmentName']);
-        }
+
         lm.add(snp.data());
       }
     });
@@ -2337,7 +2621,7 @@ class ClientServices {
       String dvs = days[dv - 1];
       DateTime dt = ts.toDate();
 
-      final format = DateFormat('MM-DD-yyyy');
+      final format = DateFormat('MM-dd-yyyy');
       String dte = format.format(dt);
       dte += ' ( ' + dvs + ')';
       return dte;
@@ -2360,10 +2644,11 @@ class ClientServices {
     print('line 2161');
     try {
       hobj = {
-        "orderId": 0,
+        "orderId": obj['orderId'],
         "uniqueId": 0,
         "lastModified": ts,
         "clientId": obj['clientId'],
+        'clientUserId': obj['clientUserId'],
         "clientName": obj['clientName'],
         "departmentId": obj['departmentId'],
         "departmentName": obj["departmentName"],
@@ -2388,6 +2673,8 @@ class ClientServices {
         "shiftCode": obj['dates']['shiftDateInfo']['shiftCode'],
         "startTime": obj['dates']['rates']['rateDetails']['startTime'],
         "endTime": obj['dates']['rates']['rateDetails']['endTime'],
+        "originalStartTime": obj['dates']['rates']['rateDetails']['startTime'],
+        "originalEndTime": obj['dates']['rates']['rateDetails']['endTime'],
         'shiftCount': obj['shiftCount'],
         "dayValue": obj['dates']['shiftDateInfo']['dayValue'],
         "meals": obj['dates']['rates']['rateDetails']['meals'],
@@ -2470,7 +2757,9 @@ class ClientServices {
         'vmsNote': null,
         'vmsJobDescription': null,
         'uuid': obj['uuid'],
-        'workOrderId': 0
+        'workOrderId': 0,
+        'bookShift': obj['bookShift'],
+        'isGPOClient': obj['isGPOClient']
       };
       print('line 2452 return from converttohobj: $hobj');
       return hobj;
@@ -2509,7 +2798,7 @@ class ClientServices {
     await FirebaseFirestore.instance
         .collection('ClientUser')
         .where("clientId", isEqualTo: clientId)
-        .where("clientUserId", isEqualTo: clientUserId)
+        .where("genId", isEqualTo: clientUserId)
         .get()
         .then((snapshot) {
       print('line 88 ${snapshot.docs.length}');
@@ -2518,7 +2807,7 @@ class ClientServices {
         lm = snp.data();
         lm['id'] = documentId;
         clientId = lm['clientId'];
-        clientUserId = lm['clientUserId'];
+        clientUserId = lm['genId'];
         client = lm;
         break;
       }
@@ -2526,7 +2815,7 @@ class ClientServices {
     return lm;
   }
 
-  Future<Map<String, dynamic>>? getSingleUser(int hcpId) async {
+  Future<Map<String, dynamic>>? getSingleHCPUser(int hcpId) async {
     Map<String, dynamic> lm = {};
     await FirebaseFirestore.instance
         .collection('users')
@@ -2538,6 +2827,23 @@ class ClientServices {
         break;
       }
     });
+    print('line 2653: $lm');
+    return lm;
+  }
+
+  Future<Map<String, dynamic>>? getSingleUserFromEmail(String email) async {
+    Map<String, dynamic> lm = {};
+    await FirebaseFirestore.instance
+        .collection('ClientUser')
+        .where('email', isEqualTo: email)
+        .get()
+        .then((querySnapshot) async {
+      for (var docSnapshot in querySnapshot.docs) {
+        lm = docSnapshot.data();
+        break;
+      }
+    });
+    print('line 2653: $lm');
     return lm;
   }
 
@@ -2578,6 +2884,7 @@ class ClientServices {
       templateId = "clientCancelWithEmployee";
     }
     Timestamp ts = wor['dates']['shiftDateInfo']['shiftDate'];
+    wor['asmWorkOrderId'] = wor['clientHCPWorkOrderId'];
     int orderId = wor['asmWorkOrderId'];
     Map<String, dynamic> cancelShift = {
       "orderId": wor['asmWorkOrderId'].toString(),
@@ -2610,721 +2917,5 @@ class ClientServices {
         .set(cancelShift);
 
     return;
-  }
-
-//old cms_web
-  Future<Map<String, dynamic>>? getASingleClientUser(int clientId) async {
-    print('line 20 get a singleclient user ${clientId}');
-    try {
-      Map<String, dynamic>? mp;
-      await FirebaseFirestore.instance
-          .collection('ClientUser')
-          .where('clientId', isEqualTo: clientId)
-          .where('roles', arrayContainsAny: [
-            'ClientAdmin',
-            'ClientSupervisor',
-            'ClientScheduler',
-            'CMSAdmin',
-            'CMSScheduler'
-          ])
-          .get()
-          .then((querySnapshot) {
-            if (querySnapshot.docs.length == 0) {
-              print('line 36 no records returned');
-              mp = {};
-              return mp;
-            }
-            var snp = querySnapshot.docs[0];
-            var documentId = snp.id;
-            var obj = snp.data();
-            obj['id'] = documentId;
-            mp = obj;
-            print('line 45 $mp');
-            return mp;
-          });
-      print('line 48 $mp');
-      return mp!;
-    } catch (e) {
-      print('line 42 error: ${e.toString()}');
-      throw Exception('line 37 ${e.toString()}');
-    }
-  }
-
-  Future<List<Map<String, dynamic>>> getListOfClientUsers(int clientId) async {
-    try {
-      List<Map<String, dynamic>> listMap = [];
-      await FirebaseFirestore.instance
-          .collection('ClientUser')
-          .where('clientId', isEqualTo: clientId)
-          .get()
-          .then((querySnapshot) {
-        for (var snp in querySnapshot.docs) {
-          String documentId = snp.id;
-          var obj = snp.data();
-          obj['id'] = documentId;
-          listMap.add(obj);
-        }
-      });
-      return listMap;
-    } catch (e) {
-      print('line 49 error: ${e.toString()}');
-      return [];
-    }
-  }
-
-  Future<bool> updateClientAddressForm(
-      String documentId, Map<String, dynamic> mp) async {
-    try {
-      print('line 36: $documentId ${mp}');
-      await FirebaseFirestore.instance
-          .collection('ClientAddress')
-          .doc(documentId)
-          .set(mp, SetOptions(merge: true));
-      return true;
-    } catch (e) {
-      print('line 37 error: ${e.toString()}');
-      return false;
-    }
-  }
-
-  //end of original client services
-  Future<List<Map<String, dynamic>>> getClientUsersByRole(
-      int clientId, String role) async {
-    List<Map<String, dynamic>> clus = [];
-
-    try {
-      List<Map<String, dynamic>>? lclu = await FirebaseFirestore.instance
-          .collection('ClientUser')
-          //   .where('clientId',isEqualTo: clientId) --put back when live
-          .where('clientId', isEqualTo: clientId)
-          .where('roles', arrayContains: role)
-          .get()
-          .then((querySnapshot) {
-        for (var docSnapshot in querySnapshot.docs) {
-          var obj = docSnapshot.data();
-          obj['id'] = docSnapshot.id;
-          clus.add(obj);
-        }
-      });
-      print('line 955: ${clus.length}');
-      return clus;
-    } catch (e) {
-      print('line 941 error: ${e.toString()}');
-      throw Exception(e.toString());
-    }
-  }
-
-  Future<Map<String, dynamic>>? getClientFromHCPSignedIn(int hcpId) async {
-    print('ine 19 in getclientfromhcpsignedin: $hcpId');
-    Map<String, dynamic>? lm;
-    int? clientId;
-    DateTime curd = DateTime.now();
-    curd = curd.subtract(Duration(
-        hours: curd.hour,
-        minutes: curd.minute,
-        seconds: curd.second,
-        microseconds: curd.microsecond,
-        milliseconds: curd.millisecond));
-
-    try {
-      print('line 31: $curd');
-      await FirebaseFirestore.instance
-          .collection('ClientWorkOrderCampaign')
-          .where("hcpId", isEqualTo: hcpId)
-          .where('shiftStatus', isEqualTo: 'SignedIn')
-          .get()
-          .then((snapshot) async {
-        print('line 38: ${snapshot.docs.length}');
-        for (var snp in snapshot.docs) {
-          var obj = snp.data();
-          print('line 39: ${obj['shiftDate']}');
-          Timestamp tss = obj['shiftDate'];
-          DateTime tdt = tss.toDate();
-          tdt = tdt.subtract(Duration(
-              hours: tdt.hour,
-              minutes: tdt.minute,
-              seconds: tdt.second,
-              microseconds: tdt.microsecond,
-              milliseconds: tdt.millisecond));
-          if (curd.millisecondsSinceEpoch == tdt.millisecondsSinceEpoch) {
-            //same day
-            clientId = obj['clientId'];
-            break;
-          } else {
-            //last shift
-            if (obj['shiftCode'] == 'PA' || obj['shiftCode'] == '5') {
-              tdt.add(Duration(days: 1));
-              if (curd.millisecondsSinceEpoch == tdt.millisecondsSinceEpoch) {
-                clientId = obj['clientId'];
-                break;
-              }
-            }
-          }
-        }
-        print('line 64: $clientId');
-        if (clientId != null) {
-          await FirebaseFirestore.instance
-              .collection('Client')
-              .where("clientId", isEqualTo: clientId!)
-              .get()
-              .then((snapshot) {
-            for (var snp in snapshot.docs) {
-              var obj = snp.data();
-              print('line 71: ${obj['gpoClient']}');
-              lm = {'clientId': clientId, 'gpoClient': obj['gpoClient']};
-              break;
-            }
-            return lm;
-          });
-        } else {
-          return lm;
-        }
-      });
-      print('line 83');
-      return lm!;
-    } catch (e) {
-      print('line 20 error: ${e.toString()}');
-      throw Exception('line 21 error: ${e.toString()}');
-    }
-  }
-
-  Future<bool>? getClientUserByName(int clientId, String usn) async {
-    String xusn = usn.replaceAll(' ', '');
-    bool? retV;
-    print('line 96: $clientId $usn $xusn');
-    await FirebaseFirestore.instance
-        .collection('ClientUser')
-        .where("clientId", isEqualTo: clientId)
-        .where('fullName', whereIn: [usn, xusn])
-        .get()
-        .then((snapshot) async {
-          print('line 38: ${snapshot.docs.length}');
-          if (snapshot.docs.length == 0) {
-            retV = false;
-          } else {
-            for (var snp in snapshot.docs) {
-              var obj = snp.data();
-              break;
-            }
-            retV = true;
-            return;
-          }
-        });
-    return retV!;
-  }
-
-  Future<bool>? getClientFromHCPSignedOut(int hcpId) async {
-    print('ine 93 in getclientfromhcpsignedin: $hcpId');
-    Map<String, dynamic>? lm;
-    int? clientId;
-    DateTime curd = DateTime.now();
-    curd = curd.subtract(Duration(
-        hours: curd.hour,
-        minutes: curd.minute,
-        seconds: curd.second,
-        microseconds: curd.microsecond,
-        milliseconds: curd.millisecond));
-
-    try {
-      print('line 31: $curd');
-      bool retV = false;
-      await FirebaseFirestore.instance
-          .collection('ClientWorkOrderCampaign')
-          .where("hcpId", isEqualTo: hcpId)
-          .where('shiftStatus', isEqualTo: 'SignedOut')
-          .get()
-          .then((snapshot) async {
-        print('line 38: ${snapshot.docs.length}');
-        for (var snp in snapshot.docs) {
-          var obj = snp.data();
-          print('line 39: ${obj['shiftDate']}');
-          Timestamp tss = obj['shiftDate'];
-          DateTime tdt = tss.toDate();
-          tdt = tdt.subtract(Duration(
-              hours: tdt.hour,
-              minutes: tdt.minute,
-              seconds: tdt.second,
-              microseconds: tdt.microsecond,
-              milliseconds: tdt.millisecond));
-          if (curd.millisecondsSinceEpoch == tdt.millisecondsSinceEpoch) {
-            //same day
-            clientId = obj['clientId'];
-            retV = true;
-            break;
-          } else {
-            //last shift
-            if (obj['shiftCode'] == 'PA' || obj['shiftCode'] == '5') {
-              tdt.add(Duration(days: 1));
-              if (curd.millisecondsSinceEpoch == tdt.millisecondsSinceEpoch) {
-                clientId = obj['clientId'];
-                retV = true;
-                break;
-              }
-            }
-          }
-        }
-      });
-      print('line 64: $clientId');
-      return retV;
-    } catch (e) {
-      print('line 20 error: ${e.toString()}');
-      throw Exception('line 21 error: ${e.toString()}');
-    }
-  }
-
-  Future<Map<String, dynamic>>? getASMWorkOrder(
-      int hcpId, DateTime shiftDate, String shiftCode) async {
-    DateTime time = shiftDate;
-    int timestamp = time.millisecondsSinceEpoch;
-    Map<String, dynamic> lm = {};
-    await FirebaseFirestore.instance
-        .collection('ASMWorkOrder')
-        .where("hcpId", isEqualTo: hcpId)
-        .where('shiftDate', isEqualTo: timestamp)
-        .where('shiftCode', isEqualTo: shiftCode)
-        .get()
-        .then((snapshot) {
-      print('line 88 ${snapshot.docs.length}');
-      for (var snp in snapshot.docs) {
-        lm = snp.data();
-        break;
-      }
-    });
-    return lm;
-  }
-
-  final CollectionReference<ClientData> clientRef = FirebaseFirestore.instance
-      .collection('ClientData')
-      .withConverter<ClientData>(
-        fromFirestore: (snapshots, _) => ClientData.fromJson(snapshots.data()!),
-        toFirestore: (client, _) => client.toJson(),
-      );
-
-  Future<List<Map<String, dynamic>>>? getBranches(List<int> branchIds) async {
-    List<Map<String, dynamic>> lm = [];
-    print('line 179 berbranches: $branchIds');
-    try {
-      await FirebaseFirestore.instance
-          .collection('CMSBranch')
-          .get()
-          .then((snapshot) {
-        print('line 88 ${snapshot.docs.length}');
-        for (var snp in snapshot.docs) {
-          final obj = snp.data();
-          int obi = obj['branchId'];
-          if (branchIds.indexOf(obi) != -1) {
-            lm.add(snp.data());
-          }
-        }
-      });
-      print('line 192:  ${lm.length}');
-      return lm;
-    } catch (e) {
-      print('line 191 get branches $e');
-      throw Exception(e.toString());
-    }
-  }
-
-  Future<List<Map<String, dynamic>>>? getBranchesOfHCP(String userEmail) async {
-    Map<String, dynamic> lm = {};
-    List<int> branchIds = [];
-    print('line 202 $userEmail');
-    if (userEmail.contains('tester') == true) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .where("email", isEqualTo: userEmail)
-          .get()
-          .then((snapshot) {
-        print('line 88 ${snapshot.docs.length}');
-        for (var snp in snapshot.docs) {
-          lm = snp.data();
-          for (int j = 0; j < lm['branchIds'].length; j++) {
-            int bid = lm['branchIds'][j];
-            if (bid == 0) {
-              branchIds = [
-                615,
-                624,
-                632,
-                634,
-                635,
-                637,
-                638,
-                639,
-                640,
-                641,
-                643
-              ];
-              break;
-            }
-            branchIds.add(bid);
-          }
-        }
-      });
-      lm = lm[0];
-    } else {
-      await FirebaseFirestore.instance
-          .collection('HCProfessional')
-          .where("email", isEqualTo: userEmail)
-          .get()
-          .then((snapshot) {
-        print('line 239 ${snapshot.docs.length}');
-        for (var snp in snapshot.docs) {
-          lm = snp.data();
-        }
-      });
-      lm = lm[0];
-      branchIds.add(lm['branchId']);
-    }
-    List<Map<String, dynamic>>? bm = [];
-    await FirebaseFirestore.instance
-        .collection('CMSBranch')
-        .where("branchId", whereIn: branchIds)
-        .get()
-        .then((snapshot) {
-      print('line 88 ${snapshot.docs.length}');
-      for (var snp in snapshot.docs) {
-        bm.add(snp.data());
-      }
-    });
-    return bm;
-  }
-
-  Future<dynamic> getSchedulingData(int clientId) async {
-    print('line 392 getscheudling data: $clientId');
-    try {
-      List<Map<String, dynamic>>? dps = [];
-      FirebaseFirestore.instance
-          .collection('ClientDepartment')
-          .where('clientId', isEqualTo: clientId)
-          .where('statusDescription', isEqualTo: 'Active')
-          .orderBy("clientId", descending: false)
-          .get()
-          .then((querySnapshot) {
-        for (var docSnapshot in querySnapshot.docs) {
-          final obj = docSnapshot.data();
-          dps.add(obj);
-        }
-      });
-      // List<Map<String, dynamic>> drs = [];
-      List<Map<String, dynamic>> listClientDepartments = dps;
-      var clientRateGroups = await FirebaseFirestore.instance
-          .collection('ClientRate')
-          .where('clientId', isEqualTo: clientId)
-          .where('rateType', isEqualTo: 'Per Diem')
-          .orderBy("clientId", descending: false)
-          .get();
-      List<ClientRate> listClientRateClass = [];
-      List<Map<String, dynamic>> listClientRates = [];
-      for (var doc in clientRateGroups.docs) {
-        Map<String, dynamic> obj = doc.data();
-        listClientRates.add(obj);
-      }
-      List<Map<String, dynamic>> listClientDisciplines = [];
-      List<Map<String, dynamic>> listClientShiftRates = [];
-      int currentDisciplineId = 0;
-      String currentDisciplineName = '';
-      List<String> validDisciplines = [
-        'CNA',
-        'RN',
-        'LPN',
-        'MedTech',
-        'KMA',
-        'SRNA',
-        'HCT',
-        'Sitter',
-        'House'
-      ];
-
-      for (int i = 0; i < listClientRates.length; i++) {
-        Map<String, dynamic> dr = listClientRates[i];
-        print('line 681: $dr');
-        if (dr['disciplines'].length == 0) {
-          continue;
-        }
-        List<DepartmentInstance> listDepartments = dr['departments'];
-        int ii = 0;
-        print('line 693 ${dps.length}');
-        bool gotAHit = false;
-        int departmentId = -1;
-        while (ii < listDepartments.length) {
-          DepartmentInstance dp = listDepartments[ii];
-          gotAHit = false;
-          for (int j = 0; j < dps.length; j++) {
-            Map<String, dynamic> dv = dps[j];
-
-            // print('line 698 $dv');
-            // print('line 699: ${dv['departmentId']}');
-            // print('line 700: ${dp['DeptID']}');
-            if (dv['departmentId'] == dp.departmentId) {
-              gotAHit = true;
-              if (dv['statusDescription'] != 'Active') {
-                listDepartments.removeAt(ii);
-                ii = -1;
-                break;
-              } else {
-                departmentId = dp.departmentId;
-                break;
-              }
-            }
-          }
-          if (gotAHit == false && ii != -1) {
-            listDepartments.removeAt(ii);
-            ii = -1;
-          } else {
-            if (departmentId != -1) {
-              break;
-            }
-          }
-          ii += 1;
-        }
-        List<DisciplineInstance> listDisciplines = dr['disciplines'];
-        List<RateInstance> listRates = dr['rates'];
-        int currentRateGroupId = 0;
-        print('line ${dr['rates']}');
-        if (dr['disciplineId'] == null || dr['rateType'] == null) {
-          continue;
-        }
-        ClientRate drr = ClientRate(
-            rateGroupId: dr['rateGroupId'],
-            rateType: dr['rateType'],
-            branchId: dr['branchId'],
-            branchName: dr['branchName'],
-            disciplineId: dr['disciplineId'],
-            disciplineName: dr['disciplineName'],
-            clientId: dr['clientId'],
-            clientName: dr['clientName'],
-            nationalClient: dr['nationalClient'],
-            hcpId: dr['hcpId'] == null ? 0 : dr['hcpId'],
-            hcpName: dr['hcpName'],
-            burden: dr['burden'],
-            orderId: dr['orderId'],
-            contract: dr['contract'],
-            workersCompCodeId: dr['workersCompCodeId'],
-            workersCompType: dr['workersCompType'],
-            quoteId: dr['quoteId'],
-            rateGroupTypeCodeId: dr['rateGroupTypeCodeId'],
-            rateGroupTypeName: dr['rateGroupTypeName'],
-            rateGroupTypeValue: dr['rateGroupTypeValue'],
-            contractTemplateName: dr['contractTemplateName'],
-            overridePayModifiers: dr['overridePayModifiers'],
-            payOT: dr['payOT'],
-            payOTPlus: dr['payOTPlus'],
-            payDbl: dr['payDbl'],
-            payDblPlus: dr['payDblPlus'],
-            payHoliday: dr['payHoliday'],
-            payHolidayPlus: dr['payHolidayPlus'],
-            payMax: dr['payMax'],
-            payMaxPlus: dr['payMaxPlus'],
-            overrideBillModifiers: dr['overrideBillModifiers'],
-            billOT: dr['billOT'],
-            billOTPlus: dr['billOTPlus'],
-            billDbl: dr['billDbl'],
-            billDblPlus: dr['billDblPlus'],
-            billHoliday: dr['billHoliday'],
-            billHolidayPlus: dr['billHolidayPlus'],
-            billMax: dr['billMax'],
-            billMaxPlus: dr['billMaxPlus'],
-            departments: listDepartments,
-            disciplines: listDisciplines,
-            rates: listRates,
-            expirationDate: null,
-            lastModifiedDate: null);
-        currentDisciplineId = dr['disciplineId'];
-        currentDisciplineName = dr['disciplineName'];
-        currentRateGroupId = dr['rateGroupId'];
-        dynamic lsd;
-        //   bool hasDrr = false;
-
-        print('line 740 check ${drr.branchName}');
-        print('line 741: ${listDepartments.length}');
-        for (int j = 0; j < listDepartments.length; j++) {
-          lsd = listDepartments[j];
-          bool isDuplicate = false;
-          for (int k = 0; k < listClientDepartments.length; k++) {
-            dynamic lse = listClientDepartments[k];
-            if (lsd['departmentId'] == lse['departmentId']) {
-              isDuplicate = true;
-              break;
-            }
-          }
-          if (isDuplicate == false) {
-            listClientDepartments.add(lsd);
-          }
-        }
-        print('line 756: ${listClientDepartments.length}');
-        for (int j = 0; j < listDisciplines.length; j++) {
-          lsd = listDisciplines[j];
-          bool isDuplicate = false;
-          for (int k = 0; k < listClientDisciplines.length; k++) {
-            dynamic lse = listClientDisciplines[k];
-            if (lsd['disciplineId'] == lse['disciplineId']) {
-              isDuplicate = true;
-              break;
-            }
-          }
-          //     print('line 490: $isDuplicate');
-          if (isDuplicate == false) {
-            if (lsd['disciplineName'] == 'Sitt2') {
-              lsd['disciplineName'] = 'Sitter';
-            }
-            if (lsd['disciplineName'] == 'HOUSE') {
-              lsd['disciplineName'] = 'House';
-            }
-            if (lsd['disciplineName'] == 'MTECH') {
-              lsd['disciplineName'] = 'MedTech';
-            }
-            print('line 777 in clsvr getschedata');
-            int idx = validDisciplines.indexOf(lsd['disciplineName']);
-            print('line 779 in clsvr getschedata');
-            if (idx == -1) {
-              continue;
-            }
-
-            listClientDisciplines.add(lsd);
-          }
-        }
-        //   print('line 511 clenver getsche  ${listRates.length}, $currentDisciplineId, $currentDisciplineName');
-        for (int j = 0; j < listRates.length; j++) {
-          lsd = listRates[j];
-          lsd['disciplineId'] = currentDisciplineId;
-          lsd['disciplineName'] = currentDisciplineName;
-          lsd['rateGroupId'] = currentRateGroupId;
-          listClientShiftRates.add(lsd);
-        }
-        listClientRateClass.add(drr);
-      }
-
-      dynamic obj = {
-        'clientRates': listClientRates,
-        'disciplines': listClientDisciplines,
-        'departments': listClientDepartments,
-        'shiftRates': listClientShiftRates
-      };
-      //   print('line 509: ${listClientDisciplines.length}');
-
-      return obj;
-    } catch (e) {
-      print('line 838: $e');
-      throw Exception(e);
-    }
-  }
-
-  Future<Map<String, dynamic>> getClientDepartments(int? clientId) async {
-    //   print('line 114: $app');
-
-    print('line 512 clntsrv $clientId');
-    String? userEmail = authService.clientMap!['email'];
-    if (clientId == null) {
-      print('line 516 clnsvr getdepts: $userEmail');
-      if (userEmail == null) {
-        throw Exception('line 122 clientsvr null email');
-      }
-      clientId = await getClientUser(userEmail);
-      if (clientId == null) {
-        throw Exception('line 126 clientsvr clientid =- null');
-      }
-    }
-    print('line 525 in cientserverices get depts: $clientId');
-    Map<String, dynamic>? lc;
-    try {
-      // var clientBase= await FirebaseFirestore.instance.collection("Client").withConverter(
-      //   fromFirestore: Client.fromFirestore,  //returns what it gets from the database as an object
-      //   //to write to firebase return object as map
-      //   toFirestore: (Client clientData,options) => clientData.toFirestore(),
-      // ).where("clientId", isGreaterThan: 0).get();
-
-      var clientDepartments = await FirebaseFirestore.instance
-          .collection('ClientDepartment')
-          .where('clientId', isEqualTo: clientId)
-          .where('statusDescription', isEqualTo: 'Active')
-          .get();
-
-      List<Map<String, dynamic>> listClientDepartments = [];
-      for (var doc in clientDepartments.docs) {
-        var obj = doc.data();
-        listClientDepartments.add(obj);
-      }
-      print('line 633: ${listClientDepartments[0]['departmentNumber']}');
-      //List<dynamic>lst = [];
-
-      var clientRateGroups = await FirebaseFirestore.instance
-          .collection('ClientRate')
-          .where('clientId', isEqualTo: clientId)
-          .get();
-
-      List<Map<String, dynamic>> listClientRates = [];
-      for (var doc in clientRateGroups.docs) {
-        var obj = doc.data();
-        listClientRates.add(obj);
-      }
-      //  updateClientDepartments(listClientDepartments);
-      //  val = await coll.findOne(where.eq("my_field", 17).fields(['str_field','my_field']));
-      //   List<Map<String,dynamic>> drs = await MongoDatabaseNonRealm.db!
-      //       .collection('ClientRate')
-      //       .find(where.eq('clientId',clientId).oneFrom('departments.DeptID',[departmentId])).toList();
-      //  ClientDepartment cdt = listClientDepartments[0];
-      for (int i = 0; i < listClientDepartments.length; i++) {
-        Map<String, dynamic> obj = listClientDepartments[i];
-        int departmentId = obj['departmentId'];
-        bool haveRate = false;
-        for (int j = 0; j < listClientRates.length; j++) {
-          Map<String, dynamic> obr = listClientRates[j];
-
-          for (int k = 0; k < obr['departments']!.length; k++) {
-            if (obr['departments']![k].departmentId == departmentId) {
-              haveRate = true;
-              obj['rateGroups'].add(obr);
-              break;
-            }
-          }
-          if (haveRate == true) {
-            break;
-          }
-        }
-      }
-      Map<String, dynamic> rtv = {'listDepartments': listClientDepartments};
-      print('line 6555 clsvrs getepts: ${rtv['listDepartments'].length}');
-      //   print('line 196  clsvrs getepts: ${listC[0]}');
-      return rtv;
-    } catch (e) {
-      print('line 3660 _getClient Schedule error: $lc $e');
-      throw Exception('line 661 error in clientsvr gett depts: $e');
-      //rethrow
-      //throw Exception('Error getting client invoices: $e');
-    }
-  }
-
-  Future<int?> getClientUser(dynamic email) async {
-    int? clientId;
-
-    try {
-      print('line 82 clver getcluser $email');
-      Map<String, dynamic>? ssr;
-      await FirebaseFirestore.instance
-          .collection('ClientUser')
-          .where('email', isEqualTo: email)
-          .get()
-          .then((querySnapshot) {
-        for (var docSnapshot in querySnapshot.docs) {
-          final obj = docSnapshot.data();
-          ssr = obj;
-          break;
-        }
-      });
-      print('line 85 in getclientuser $ssr');
-      //   ssr.then( (val) {
-      //     print('line 229: $ssr $val');
-      //     clientUser = val;
-      // });
-      //
-      if (ssr != null) {
-        return ssr!['clientId'];
-      }
-      return clientId;
-    } catch (e) {
-      Future.delayed(const Duration(seconds: 1));
-      print('line 236 gettingclientuser: $e');
-      return clientId;
-    }
   }
 }

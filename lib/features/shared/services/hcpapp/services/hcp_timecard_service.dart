@@ -4,20 +4,28 @@ import 'package:uuid/uuid.dart';
 // Create a storage reference from our app
 import 'package:path_provider/path_provider.dart';
 import 'dart:io' show Directory, File;
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:hcp_app/services/utilities.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/authentication/services/auth_service.dart';
+import 'package:hcp_app/services/client_services.dart';
+import 'package:hcp_app/services/auth_service.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import '../access_token_firebase.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:hcp_app/core/notifications/notification_service.dart';
+import 'package:hcp_app/services/hcp_services.dart';
 
 final storageRef = FirebaseStorage.instance.ref();
 
 class HCPTimeCardService {
   UtilitiesServices util = UtilitiesServices();
+  HCPServices hcpServices = HCPServices();
 
   // Map<String,int> getHoursMinutes(String tme) {
   //
@@ -35,6 +43,7 @@ class HCPTimeCardService {
   //   };
   //   return mps;
   // }
+  ClientServices clientServices = ClientServices();
   AuthService authServices = AuthService();
 
   T? tryCast<T>(dynamic value, {T? fallback}) {
@@ -129,6 +138,100 @@ class HCPTimeCardService {
     }
   }
 
+  Future<int> getVerificationsCount(int hcpId) async {
+    int vc = 0;
+    print('line 1493: $hcpId');
+    DateTime myDt = DateTime.now();
+    DateTime myt = myDt;
+    myt = myt.subtract(Duration(
+        hours: myt.hour,
+        minutes: myt.minute,
+        seconds: myt.second,
+        microseconds: myt.microsecond,
+        milliseconds: myt.millisecond));
+    await FirebaseFirestore.instance
+        .collection("HCPTimeCard")
+        .where('hcpId', isEqualTo: hcpId)
+        .where('shiftStatus', isEqualTo: 'SignedOut')
+        .where('signedOutHasInitialVerification', isEqualTo: false)
+        .get()
+        .then((querySnapshot) {
+      for (int i = 0; i < querySnapshot.docs.length; i++) {
+        var obj = querySnapshot.docs[i];
+        Timestamp sts = obj['shiftDate'];
+        DateTime dbx = sts.toDate();
+        String shiftStartTime = obj['shiftStartTime'];
+        String shiftEndTime = obj['shiftEndTime'];
+        int startMinutes = util.getMinutes(shiftStartTime);
+        int endMinutes = util.getMinutes(shiftEndTime);
+        print('line 2253: $startMinutes $endMinutes');
+        dbx = dbx.subtract(Duration(
+            hours: dbx.hour,
+            minutes: dbx.minute,
+            seconds: dbx.second,
+            microseconds: dbx.microsecond,
+            milliseconds: dbx.millisecond));
+        if (startMinutes > 720 && startMinutes > endMinutes) {
+          DateTime lmyt = myt.subtract(Duration(days: 1));
+          print(
+              'line 2262: ${lmyt.millisecondsSinceEpoch} ${dbx.millisecondsSinceEpoch}');
+          if (lmyt.millisecondsSinceEpoch != dbx.millisecondsSinceEpoch) {
+            continue;
+          }
+        } else {
+          print(
+              'line 2267: ${myt.millisecondsSinceEpoch} ${dbx.millisecondsSinceEpoch}');
+          if (myt.millisecondsSinceEpoch != dbx.millisecondsSinceEpoch) {
+            continue;
+          }
+        }
+        print('line 1980: $startMinutes $endMinutes');
+        DateTime dbx2 = dbx;
+        dbx = dbx.add(Duration(
+            hours: 0,
+            minutes: startMinutes,
+            seconds: 0,
+            microseconds: 0,
+            milliseconds: 0));
+        if (startMinutes > 720 && startMinutes > endMinutes) {
+          dbx2 = dbx2.add(Duration(
+              days: 1,
+              hours: 0,
+              minutes: endMinutes,
+              seconds: 0,
+              microseconds: 0,
+              milliseconds: 0));
+          if (myt.millisecondsSinceEpoch != dbx2.millisecondsSinceEpoch) {
+            continue;
+          }
+        } else {
+          dbx2 = dbx2.add(Duration(
+              hours: 0,
+              minutes: endMinutes,
+              seconds: 0,
+              microseconds: 0,
+              milliseconds: 0));
+        }
+        DateTime ldbx = dbx.subtract(Duration(minutes: 20));
+        if (ldbx.millisecondsSinceEpoch < myDt.millisecondsSinceEpoch) {
+          print('line 2012 passed 1st check');
+        } else {
+          print('line 2014 failed 1st check');
+          continue;
+        }
+        if (myt.millisecondsSinceEpoch < dbx2.millisecondsSinceEpoch) {
+          print('line 2018 passed second test valid');
+        } else {
+          print('lint 2020 failed second check');
+          continue;
+        }
+        vc += 1;
+      }
+    });
+    print('line 1525: $vc');
+    return vc;
+  }
+
   Future<bool> insertHCPTimeCard(
       Map<String, dynamic> item, WriteBatch batch) async {
     print('line 136 insertimechard ${item['id']}');
@@ -161,6 +264,7 @@ class HCPTimeCardService {
         "areaId": null,
         "areaName": null,
         "campaignMessage": item["scheduleNotes"],
+        'shiftCreatedDate': item['shiftCreatedDate'],
         "disciplineId": item["disciplineIds"],
         "disciplineNames": item["disciplineCodes"],
         "status": 'Confirmed',
@@ -228,6 +332,7 @@ class HCPTimeCardService {
         "signedOutGeofenceVerified": false,
         "signedOutHCPNotes": null,
         "signedOutHasInitialVerification": false,
+        "signedOutHasSecondaryVerification": false,
         "signedOutSupervisorSignatureFileName": null,
         "signedOutShiftDateTime": null,
         "signedOutInitialSupervisorName": null,
@@ -241,6 +346,13 @@ class HCPTimeCardService {
         "signedOutInitialVerificationDateTime": null,
         "signedOutInitialValuesChanged": null,
         "email": item['email'],
+        "otHours": item['otHours'],
+        "regularHours": item['regularHours'],
+        'forwardHours': item['forwardHours'],
+        'shiftPriorHours': item['forwardHours'],
+        'totalHours': item['totalHours'],
+        'shiftOvertime' : item['shiftOvertime'],
+        'shiftHoursOverTime': item['otHours'],
         // "signedOutHasSecondaryVerification" : false,
         // "signedOutSecondaryVerificationDateTime":null,
         //   "secondaryVerificationName": null,
@@ -256,14 +368,15 @@ class HCPTimeCardService {
         'clientWorkOrderCampaignId': item['id'],
       };
       print('line 243 $htc');
-      final docRefx =
-          await FirebaseFirestore.instance.collection('HCPTimeCard').doc();
+      final docRefx = await FirebaseFirestore.instance
+          .collection('HCPTimeCard')
+          .doc(item['id']);
 
       // await FirebaseFirestore.instance
       //     .collection('HCPTimeCard')
       //     .doc(item['id'])
       //     .set(htc);
-      batch.set(docRefx, htc);
+      batch.set(docRefx, htc, SetOptions(merge: true));
       print('line 268 after set: $htc');
       //
       // await FirebaseFirestore.instance.collection("HCPTimeCard")
@@ -514,52 +627,52 @@ class HCPTimeCardService {
     }
   }
 
-  Future<void> sendCancelConfirmMessage() async {
-    var uuid = Uuid();
-    var xuuid = uuid.v4();
-    Timestamp ts = Timestamp.fromDate(DateTime.now());
-    String sname = "Duffy-11, Marie";
-    int idx = -1;
-    idx = sname.indexOf(',');
-    var lastName = '';
-    var firstName = '';
-    if (idx != -1) {
-      lastName = sname.substring(0, idx);
-      firstName = sname.substring(idx + 1, sname.length);
-      firstName = firstName.trim();
-    }
-    print('line 534: $idx $firstName $lastName');
-
-    Map<String, dynamic> cancelShift = {
-      "branchId": 634,
-      "branchName": 'Augusta',
-      "clientId": 1300,
-      "clientName": 'Anchor Post',
-      "departmentId": 13257,
-      "departmentName": 'Department Name',
-      "disciplineId": 559,
-      "disciplineName": 'LPN',
-      "email": "duffymarie@aol.com",
-      "endTime": '11:00 PM',
-      "hcpId": 46090,
-      "hcpName": "Duffy-11, Marie",
-      "firstName": firstName,
-      "lastName": lastName,
-      "reason": 'Sick',
-      "shiftCode": 2,
-      "shiftDate": ts,
-      "startTime": "3:00 PM",
-      "statusId": "E",
-      "uuid": xuuid,
-    };
-    print('line 557: ${cancelShift}');
-    await FirebaseFirestore.instance
-        .collection('HCPCancelConfirmMessage')
-        .doc(xuuid)
-        .set(cancelShift);
-
-    return;
-  }
+  // Future<void> sendCancelConfirmMessage() async {
+  //   var uuid = Uuid();
+  //   var xuuid = uuid.v4();
+  //   Timestamp ts = Timestamp.fromDate(DateTime.now());
+  //   String sname = "Duffy-11, Marie";
+  //   int idx = -1;
+  //   idx = sname.indexOf(',');
+  //   var lastName = '';
+  //   var firstName = '';
+  //   if (idx != -1) {
+  //     lastName = sname.substring(0, idx);
+  //     firstName = sname.substring(idx + 1, sname.length);
+  //     firstName = firstName.trim();
+  //   }
+  //   print('line 534: $idx $firstName $lastName');
+  //
+  //   Map<String, dynamic> cancelShift = {
+  //     "branchId": 634,
+  //     "branchName": 'Augusta',
+  //     "clientId": 1300,
+  //     "clientName": 'Anchor Post',
+  //     "departmentId": 13257,
+  //     "departmentName": 'Department Name',
+  //     "disciplineId": 559,
+  //     "disciplineName": 'LPN',
+  //     "email": "duffymarie@aol.com",
+  //     "endTime": '11:00 PM',
+  //     "hcpId": 46090,
+  //     "hcpName": "Duffy-11, Marie",
+  //     "firstName": firstName,
+  //     "lastName": lastName,
+  //     "reason": 'Sick',
+  //     "shiftCode": 2,
+  //     "shiftDate": ts,
+  //     "startTime": "3:00 PM",
+  //     "statusId": "E",
+  //     "uuid": xuuid,
+  //   };
+  //   print('line 557: ${cancelShift}');
+  //   await FirebaseFirestore.instance
+  //       .collection('HCPCancelConfirmMessage')
+  //       .doc(xuuid)
+  //       .set(cancelShift);
+  //
+  //   return;
+  // }
 
   Future<List<Map<String, dynamic>>>? getAllSignedOutHCPTimeCards(
       int hcpId) async {
@@ -921,12 +1034,12 @@ class HCPTimeCardService {
       int hcpId,
       int clientId,
       String shiftScheduleStatus,
-      int shiftId,
+      String shiftCode,
       Timestamp ts,
       String startTime,
       String endTime) async {
     print(
-        'line 793 hst.getsingehcp: $hcpId $clientId $shiftScheduleStatus $shiftId $startTime $endTime');
+        'line 793 hst.getsingehcp: $hcpId $clientId $shiftScheduleStatus $shiftCode $startTime $endTime');
     DateTime currentDate = DateTime.now();
     try {
       //"hcpId == \$0 SORT(shiftDate ASC, shiftCode ASC)",[userId]);
@@ -935,7 +1048,7 @@ class HCPTimeCardService {
           .collection('HCPTimeCard')
           .where('hcpId', isEqualTo: hcpId)
           .where('clientId', isEqualTo: clientId)
-          .where('shiftId', isEqualTo: shiftId)
+          .where('shiftCode', isEqualTo: shiftCode)
           .where('shiftStatus', isEqualTo: shiftScheduleStatus)
           .get()
           .then((querySnapshot) {
@@ -1098,11 +1211,14 @@ class HCPTimeCardService {
         print('line 951: ${obj!['clientId']}');
         await FirebaseFirestore.instance
             .collection('Client')
-            .where("clientId", isEqualTo: obj!['clientId'])
+            .where("clientId", isEqualTo: obj['clientId'])
             .get()
             .then((querySnapshot) {
           for (var docSnapshot in querySnapshot.docs) {
             retV = docSnapshot.data();
+            authServices.client = retV!;
+            authServices.clientId = retV!['clientId'];
+
             break;
           }
           return;
@@ -1161,7 +1277,8 @@ class HCPTimeCardService {
     //    "shiftDate":    shiftDate,
     // };
     //  int day = tmc['shiftDate'].day;
-
+    String clwHcpIdDocumentId = item['id'];
+    String? htcHcpIdDocumentId;
     try {
       DateTime nww = DateTime.now();
       nww = nww.subtract(Duration(
@@ -1186,18 +1303,19 @@ class HCPTimeCardService {
           .then((querySnapshot) async {
         for (var docSnapshot in querySnapshot.docs) {
           documentId = docSnapshot.id;
-          print('line 834:  $documentId');
+          htcHcpIdDocumentId = docSnapshot.id;
+          print('line 1293:  $documentId');
           final docRef = FirebaseFirestore.instance
               .collection('HCPTimeCard')
               .doc(documentId);
           docRef.update(data).then(
               (value) =>
-                  print("line 846 DocumentSnapshot successfully updated!"),
+                  print("line 1299 DocumentSnapshot successfully updated!"),
               onError: (e) => print("Error updating document $e"));
           docRef
               .update({"signOutServerTime": FieldValue.serverTimestamp()}).then(
                   (value) =>
-                      print("line 846 DocumentSnapshot successfully updated!"),
+                      print("line 1304 DocumentSnapshot successfully updated!"),
                   onError: (e) => print("Error updating document $e"));
           break;
         }
@@ -1209,10 +1327,10 @@ class HCPTimeCardService {
       //print('line 1008: ${appDocDir.path}');
       //print('line 1009: ${appDocDir} $filePath $signatureFilename');
       Directory appSupDir = (await getApplicationSupportDirectory());
-      print('line 1011: $appSupDir');
+      print('line 1316: $appSupDir');
       if (authServices.isAndroid == true) {
         idx = signatureFilename.indexOf('files\/');
-        print('line 1013: $idx');
+        print('line 1319: $idx');
         if (idx != -1) {
           idx += 6;
           signatureFilename = signatureFilename.substring(idx);
@@ -1222,14 +1340,14 @@ class HCPTimeCardService {
         if (idx != -1) {
           idx += 28;
           signatureFilename = signatureFilename.substring(idx);
-          print('line 1087: $signatureFilename');
+          print('line 1329: $signatureFilename');
         } else {
-          throw Exception('line 1083 invalid file path: $signatureFilename');
+          throw Exception('line 1331 invalid file path: $signatureFilename');
         }
       }
-      print('line 1018: $signatureFilename');
+      print('line 1334: $signatureFilename');
       String filePath = appSupDir.path + '/' + signatureFilename;
-      print('line 1020: $filePath');
+      print('line 1336: $filePath');
 
       // String bg = filePath.substring(0, idx);
       // idx += 11;
@@ -1243,75 +1361,156 @@ class HCPTimeCardService {
       // print('line 1019 filepath: $filePath');
 
       final signatureRef = storageRef.child('images/${signatureFilename}');
+      print('line 1350 debug');
       File file = File(filePath);
 
       try {
         if (!file.existsSync()) {
-          print('line 1090 file not found: $file');
-          throw 'line 1091 File not found';
+          print('line 1355 file not found: $file');
+          throw 'line 1356 File not found';
         }
 
-        print('line 1094: $file ${filePath}');
+        print('line 1359: $file ${filePath}');
         await signatureRef.putFile(file);
       } catch (e) {
-        print('line 1097 error storing signature file');
-        throw Exception('line 1098: ${e.toString()}');
+        print('line 1362 error storing signature file');
+        throw Exception('line 1363: ${e.toString()}');
       }
 
       bl = true;
-      print('line 1127: $bl, ');
+      print('line 1367: $bl, ');
       return bl;
     } catch (e) {
-      print('line 1130 error $e');
-      throw Exception('line 1106 Error: $e');
+      print('line 1370 error $e');
+      await reWindUpdates(clwHcpIdDocumentId, htcHcpIdDocumentId!);
+
+      throw Exception('line 1371 Error: $e');
+    }
+  }
+
+  Future<void> reWindUpdates(
+      String clwHcpIdDocumentId, String htcHcpIdDocumentId) async {
+    try {
+      FirebaseFirestore.instance
+          .collection('ClientWorkOrderCampaign')
+          .doc(clwHcpIdDocumentId)
+          .set({'shiftStatus': 'SignedIn'}, SetOptions(merge: true));
+      FirebaseFirestore.instance
+          .collection('HCPTimeCard')
+          .doc(htcHcpIdDocumentId)
+          .set({'shiftStatus': 'SignedIn'}, SetOptions(merge: true));
+    } catch (e) {
+      throw Exception('line 1382 error rewinding updates');
     }
   }
 
   Future<bool> sendSingleMessage(
       Map<String, dynamic> parameters, BuildContext ctx) async {
+    print('line 1401 htc.sendsinglemessage: ${parameters}');
     try {
-      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
-        // 'uploadTimesheetFromStorage',
-        'sendSingleMessage',
-        options: HttpsCallableOptions(
-          timeout: const Duration(seconds: 5),
-        ),
-      );
-      print('line 1202 in call A  function: $callable');
-      dynamic result =
-          await callingSendSingleMessageFunction(callable, parameters, ctx);
-      print('line 1204: $result');
+      print('line 1403 in setpushnotifications');
+      List<String> listOfTokens = parameters['fcmTokens'];
+      print('line 1405: $listOfTokens');
+      bool result = false;
+      if (listOfTokens.length > 0) {
+        print('line 1408: $listOfTokens ');
+        for (int i = 0; i < listOfTokens.length; i++) {
+          final bl = await NotificationService().sendPushNotification(
+              deviceToken: listOfTokens[i],
+              title: parameters['title'],
+              body: parameters['body'],
+              data: parameters['data']);
+          result = bl;
+        }
+      }
+      print('line 1426: ${result}');
       return result;
     } catch (e) {
-      print('line 1165: $e');
-      throw Exception('line 1168: ${e.toString()}');
+      print('line 1420: $e');
+      return false;
     }
   }
 
   Future<bool> callingSendSingleMessageFunction(HttpsCallable callable,
-      Map<String, dynamic> message, BuildContext ctx) async {
+      Map<String, dynamic> parameters, BuildContext ctx) async {
     try {
-      //  String fcmToken = "clJsAO0w-kwoj5nyfj3zzE:APA91bGnhOsYUxI2lcBVKUVewgQ5cXFjlqftp2UB8v979cnOEMzBJ521c9fSUA3tGuWJuQVA881t-GomQfrUweXOBDRYlA02W7gE-9xF9VeNCyQkDmHje58";
-      //josh not correct   String fcmToken = "ePpx5Qg3VkPtq7u8EOB0nZ:APA91bFDg8N-BWYj0gIMZJYvIYvyUYZ0rQqfXR3e2bJ7LR8ZuKEAPKHlC1RqNyYL-z1QLGx5zqXVAp9FLynAHsPvXEvTc5PiWkg5_db-MYW7vGZebM3HI3w";
-      //billie jo not correct  String fcmToken = "dthZ2F6SMEQ_mcSr5gl5AC:APA91bGVDGyzJ3GufukIpDDZuccAhuuXm1jAJLI9eBw9IvIg3Qv_iR6Vceq5xah0-gI0i0mh3HtWZFo4LIs2heYtbwttoSXjckQ6B559y49OInvYjgYC9kg";
-      //chris not  String fcmToken = "fPKs90BGdkurhCkiI63vmO:APA91bFI35CFTCi99vzYJXxRV42CnRxJihMFGTB_--diJmu4gVFGupJtSj8eLN2Z2JyEW7VTcWrkwGfFo90q4xZcljTyccPTrrLWhx-PKSYokwmSmC1tDE0";
-      // String fcmToken = "clJsAO0w-kwoj5nyfj3zzE:APA91bGnhOsYUxI2lcBVKUVewgQ5cXFjlqftp2UB8v979cnOEMzBJ521c9fSUA3tGuWJuQVA881t-GomQfrUweXOBDRYlA02W7gE-9xF9VeNCyQkDmHje58";
-      // String fcmToken = 'dvcfisiV30sOm2a_DeFHJl:APA91bG27S98JTMhBRR931hmOxTpoAK1gDDtdg6Z_c-fMEN4pnZbZgeOBe1RQx1WC6fCOUX12YWf6_CMG91XqjPf2x0AXqb7aNyYk6aVQ1K7PKzGAjp3n-Q';
-      var data = {
-        "message": message,
-      };
-      print('line 1035: $data');
+      var data = {"message": parameters};
       final HttpsCallableResult result = await callable(data);
-      print('line 1208: $result');
-      print('line 1221 ${result.data}');
-      return result.data['data']['boolValue'];
+      print('line 2216: ${result.data}');
+      print('line 2217: ${result.data['data']}');
+      print('line 2218: ${result.data['data']['boolValue']}');
+      return true;
     } catch (e) {
-      print('line 1224 error: $e');
-      throw Exception('line 1225  ${e.toString()}');
+      print('line 2221 error: $e');
+      // throw Exception('line 1225  ${e.toString()}');
+      return false;
     }
   }
 
-  // Future<bool> callCancelWO(
+//   Future<bool> sendSingleMessage(
+//       Map<String, dynamic> parameters, BuildContext ctx) async {
+//     try {
+//       print('line 1374 send single message: $parameters');
+//       if (authServices.currentUser == null) {
+//         print('line 1379 current user is null');
+//         return false;
+//       }
+//
+//       // HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+//       //   'sendSingleMessageWithAuth10',
+//       //   options: HttpsCallableOptions(
+//       //     timeout: const Duration(seconds: 5),
+//       //   ),
+//       // );
+//       //    print('line 1202 in call A  function: $callable');
+//
+//       dynamic result = await callingSendSingleMessageFunction(parameters, ctx);
+//       print('line 1204: $result');
+//       return result;
+//     } catch (e) {
+//       print('line 1165: $e');
+//       throw Exception('line 1168: ${e.toString()}');
+//     }
+//   }
+//
+//   Future<bool> callingSendSingleMessageFunction(
+//       Map<String, dynamic> message, BuildContext ctx) async {
+//     Map<String, dynamic> data = {
+//       "message": message,
+//     };
+//     print('line 1035: $data');
+//     final idToken = authServices.idToken;
+//     print('line 1409: $idToken');
+//     try {
+//       var uri = Uri.parse(
+//           "https://us-central1-cmsproject-8e245.cloudfunctions.net/sendSingleMessageWithAuth16");
+// //          "https://us-central1-cmsproject-8e245.cloudfunctions.net/sendSingleMessageWithAuth12");
+//       String token = await AccessTokenFirebase().getAccessToken();
+//       print('line 1414: $token');
+//
+// //      String stringData = jsonEncode(data);
+//       final response = await Client().post(uri,
+//           headers: {
+//             'Content-Type': 'application/json',
+//             // Add the access token here
+//             'Authorization': 'Bearer $token',
+//           },
+//           body: jsonEncode(data));
+//
+//       if (response.statusCode == 200) {
+//         print('line 1425 Success: ${response.body}');
+//         return true;
+//       } else {
+//         print('line 1428 Failed: ${response.statusCode}');
+//         throw Exception('Failed: ${response.statusCode}');
+//       }
+//     } catch (e) {
+//       print('line 1432 error: ${e.toString()}');
+//       throw Exception('Failed: ${e.toString()}');
+//     }
+//   }
+
+// Future<bool> callCancelWO(
   //     String OrderID, Map<String, dynamic> data, BuildContext ctx) async {
   //   print('line 1360: $OrderID $data');
   //   try {
@@ -1352,7 +1551,7 @@ class HCPTimeCardService {
       int hcpId, typeVerification) async {
     List<Map<String, dynamic>> lmap = [];
 
-    print('line 301: $typeVerification $hcpId');
+    print('line 1360: $typeVerification $hcpId');
 
     try {
       DateTime myDt = DateTime.now();
@@ -1375,6 +1574,9 @@ class HCPTimeCardService {
           //  .where('signedOutHasSecondaryVerification',isEqualTo: false)
           .get()
           .then((querySnapshot) {
+        if (querySnapshot.docs.length == 0) {
+          return [];
+        }
         for (var docSnapshot in querySnapshot.docs) {
           documentId = docSnapshot.id;
           Map<String, dynamic> obj = docSnapshot.data();
@@ -1402,7 +1604,7 @@ class HCPTimeCardService {
               continue;
             }
           }
-          print('line 1980: $startMinutes $endMinutes');
+          print('line 1410: $startMinutes $endMinutes');
           DateTime dbx2 = dbx;
           dbx = dbx.add(Duration(
               hours: 0,
@@ -1428,18 +1630,18 @@ class HCPTimeCardService {
           }
           DateTime ldbx = dbx.subtract(Duration(minutes: 20));
           if (ldbx.millisecondsSinceEpoch < myDt.millisecondsSinceEpoch) {
-            print('line 2012 passed 1st check');
+            print('line 1436 passed 1st check');
           } else {
-            print('line 2014 failed 1st check');
+            print('line 1438 failed 1st check');
             continue;
           }
           if (myt.millisecondsSinceEpoch < dbx2.millisecondsSinceEpoch) {
-            print('line 2018 passed second test valid');
+            print('line 1442 passed second test valid');
           } else {
-            print('lint 2020 failed second check');
+            print('lint 1444 failed second check');
             continue;
           }
-          print('line 329 $documentId');
+          print('line 1447 $documentId');
           lmap.add(obj);
         }
         return lmap;
@@ -1452,240 +1654,6 @@ class HCPTimeCardService {
     }
   }
 
-  Future<dynamic>? updateInitialSignedOutHCPTimeCards(Map<String, dynamic> item,
-      Map<String, dynamic> data, BuildContext ctx) async {
-    print(
-        'line 565 in upatesignedouthcp ${item['id']} $data,${item['asmTimeCardId']}');
-    //Map<String, dynamic> rlm = {};
-
-    //  return realm.query("clientId = $clientId && hcpId == $hcpId && shiftStatus == 'SignedOut' SORT(shiftDate ASC, hcpId ASC, shiftCode ASC)");
-    try {
-      // await FirebaseFirestore.instance.collection("HCPTimeCard")
-      //     .where('hcpId', isEqualTo: item['hcpId'])
-      //     .where('hasSignedOut',isEqualTo: false)
-      //     .where('shiftId',isEqualTo:item['shiftId'])
-      //     .where('shiftDate',isEqualTo: timestamp)
-      //     .get().then(
-      //         (querySnapshot) {
-      //       for (var docSnapshot in querySnapshot.docs) {
-      //         documentId = docSnapshot.id;
-      //       //  rlm = docSnapshot.data();
-      //         break;
-      //       }
-      //     });
-      print('line 583: ${item['id']}');
-      final db = FirebaseFirestore.instance;
-      WriteBatch batch = db.batch();
-      final docRef =
-      FirebaseFirestore.instance.collection("HCPTimeCard").doc(item['id']);
-      batch.update(docRef, data);
-      // await docRef.update(data).then(
-      //     (value) => print("line 441 DocumentSnapshot successfully updated!"),
-      //     onError: (e) => print("Error updating document $e"));
-      int timeCardId = item['asmHCPTimeCardId'];
-      if (timeCardId == 0) {
-        throw Exception('line 448 invalid timecardid');
-      }
-      String timeCardFile = data['timesheetFileName'];
-      print('line 597: $timeCardId $timeCardFile');
-      //umcommented from production
-      //  dynamic rsp = await  writeTimeCardSheetToStorage(timeCardFile,data['fileAndPathName']);
-      //dynamic rsp =  await  callUploadOnRequestTimesheetFunction(timeCardFile,ctx);
-      // print('line 406 $rsp');
-      //now load time sheet to asm from storage
-      Map<String, dynamic> rsp = await callUploadTimesheetFromStorageFunction(
-          timeCardId.toString(), timeCardFile, ctx);
-      //uncomment after we have loaded to storage
-      print('line 606: $rsp');
-      if (rsp.containsKey('TimecardImageId') == true) {
-        int timeCardImageId = rsp['TimecardImageId'];
-        print('line 609: $timeCardImageId');
-        batch.update(docRef, {
-          'asmTimeCardImageId': timeCardImageId,
-          'signedOutHasInitialVerification': true,
-          'signedOutInitialVerification': true,
-          'signedOutInitialVerificationNotes':
-          data['signedOutInitialSupervisorNotes'],
-          'signedOutInitialVerificationDateTime':
-          Timestamp.fromDate(DateTime.now()),
-          'signedOutSupervisorName': data['signedOutSupervisorName'],
-          'hasSignedOut': data['hasSignedOut'],
-          'woWorkOrder': data['woWorkOrderId']
-        });
-        //update time card with shift data data
-        print('line 623');
-        HttpsCallableResult rxp = await callUpdateTimesheetFunction(
-            timeCardId,
-            item['departmentId'],
-            item['shiftDate'],
-            item['signedInInitialStartTimeChanged'],
-            item['signedOutInitialEndTimeChanged'],
-            item['meals'],
-            ctx);
-        print('line 632: ${rxp.data}');
-        if (rxp.data[0]['success'] == false) {
-          print('line 634 error: $rxp');
-          throw Exception('Error trying to update timecard times');
-        }
-        batch.commit();
-
-        print('line 638 debug');
-        Map<String, dynamic>? clc = await getSingleUserFromEmail(authServices.currentUser!['email']);
-        if (clc!.isEmpty) {
-          throw Exception('line 471 clc is empty from getsingleclientuser');
-        }
-        Map<String, dynamic>? usc =
-        await getSingleHCPUser(item['hcpId']);
-        if (usc!.isEmpty) {
-          throw Exception('line 476 usc is empty for getsingle user');
-        }
-        print('line 650: $usc');
-        print('line 647: ${clc}');
-        //  String fcmToken = usc['fcmToken'];
-        Timestamp ts = item['shiftDate'];
-        print('line 650:  ${item['shiftDate']}');
-        String shiftDate = convertFromTimestamp(ts);
-        print('line 652 just before body creation');
-        List<String> listOfTokens = [];
-        if (usc['iosFcmToken'] != null && usc['iosFcmToken'] != 'Placeholder') {
-          listOfTokens.add(usc['iosFcmToken']);
-        }
-        if (usc['iosFcmTabletToken'] != null &&
-            usc['iosFcmTabletToken'] != 'Placeholder') {
-          if (listOfTokens.indexOf(usc['iosFcmTabletToken']) == -1) {
-            listOfTokens.add(usc['iosFcmTabletToken']);
-          }
-        }
-        if (usc['androidFcmToken'] != null &&
-            usc['androidFcmToken'] != 'Placeholder') {
-          listOfTokens.add(usc['androidFcmToken']);
-        }
-        if (usc['androidFcmTabletToken'] != null &&
-            usc['androidFcmTabletToken'] != 'Placeholder') {
-          if (listOfTokens.indexOf(usc['androidFcmTabletToken']) == -1) {
-            listOfTokens.add(usc['androidFcmTabletToken']);
-          }
-        }
-        print('line 673: $listOfTokens');
-        if (listOfTokens.length > 0) {
-          String body =
-              '${clc['fullName']} has conducted the initial signout for the shift ${item['shiftCode']} for $shiftDate';
-          Map<String, dynamic> parameters = {
-            "title": "Shift Signout for: ${item['hcpName']}",
-            "body": body,
-            "fcmTokens": listOfTokens
-          };
-          print('line 682 ${parameters}');
-          try {
-            await sendSingleMessage(parameters, ctx);
-          } catch (e) {
-            print('line 686 error sending message');
-            return "Success";
-          }
-        }
-      } else {
-        throw Exception('Rsp: $rsp');
-      }
-      return "Success";
-    } catch (e) {
-      print('line 695 error: $e');
-      // String dte = util.convertFromTimestamp(item['shiftDate']);
-      // final data = {
-      //   "CancelType": "*",
-      //   "LateCancel": false,
-      //   "ReOpen": false,
-      //   "Record": false,
-      //   "CancelReasonCodeID": 2089,
-      //   "Conf_Emp": false,
-      //   "Conf_Emp_EmailText": false,
-      //   "Conf_Emp_Date": dte,
-      //   "Conf_Emp_Time": item['startTime'],
-      //   "Conf_Emp_Note": "Canceling wo on error",
-      //   "Conf_Cli": false,
-      //   "Conf_Cli_EmailText": false,
-      //   "Conf_Cli_Date": dte,
-      //   "Conf_Cli_Time": item['startTime'],
-      //   "Conf_Cli_Note": "Canceling wo on error",
-      //   "InternalNote": "mobile shift cancelation",
-      //   "InvoiceNote": "Shift cancelation on error"
-      // };
-      // print('line 517:${item['asmWorkOrderId'].toString()}');
-      // bool? result =
-      //     await callCancelWO(item['asmWorkOrderId'].toString(), data, ctx);
-      // print('line 518 $result');
-      return "ERROR: " + e.toString();
-      // throw Exception(e.toString());
-    }
-  }
-  Future<Map<String, dynamic>>? getSingleHCPUser(int hcpId) async {
-    Map<String, dynamic> lm = {};
-    await FirebaseFirestore.instance
-        .collection('users')
-        .where('genId', isEqualTo: hcpId)
-        .get()
-        .then((querySnapshot) async {
-      for (var docSnapshot in querySnapshot.docs) {
-        lm = docSnapshot.data();
-        break;
-      }
-    });
-    print('line 2653: $lm');
-    return lm;
-  }
-  Future<Map<String, dynamic>>? getSingleUserFromEmail(String email) async {
-    Map<String, dynamic> lm = {};
-    await FirebaseFirestore.instance
-        .collection('ClientUser')
-        .where('email', isEqualTo: email)
-        .get()
-        .then((querySnapshot) async {
-      for (var docSnapshot in querySnapshot.docs) {
-        lm = docSnapshot.data();
-        break;
-      }
-    });
-    print('line 2653: $lm');
-    return lm;
-  }
-
-  Future<Map<String, dynamic>>? getSingleClientUser(
-      int clientId, int clientUserId) async {
-    Map<String, dynamic> lm = {};
-    await FirebaseFirestore.instance
-        .collection('ClientUser')
-        .where("clientId", isEqualTo: clientId)
-        .where("genId", isEqualTo: clientUserId)
-        .get()
-        .then((snapshot) {
-      print('line 88 ${snapshot.docs.length}');
-      for (var snp in snapshot.docs) {
-        String documentId = snp.id;
-        lm = snp.data();
-        lm['id'] = documentId;
-//         clientId = lm['clientId'];
-//         clientUserId = lm['genId'];
-//         client = lm;
-        break;
-      }
-    });
-    return lm;
-  }
-  Future<Map<String, dynamic>>? getSingleUserFromEmail(String email) async {
-    Map<String, dynamic> lm = {};
-    await FirebaseFirestore.instance
-        .collection('ClientUser')
-        .where('email', isEqualTo: email)
-        .get()
-        .then((querySnapshot) async {
-      for (var docSnapshot in querySnapshot.docs) {
-        lm = docSnapshot.data();
-        break;
-      }
-    });
-    print('line 2653: $lm');
-    return lm;
-  }
-
   Future<Map<String, dynamic>> callUploadTimesheetFromStorageFunction(
       String timecardId, String timecardName, BuildContext ctx) async {
     print('line 1607: $timecardId $timecardName');
@@ -1694,7 +1662,7 @@ class HCPTimeCardService {
         // 'uploadTimesheetFromStorage',
         'uploadTimesheetFromStorage',
         options: HttpsCallableOptions(
-          timeout: const Duration(seconds: 5),
+          timeout: const Duration(seconds: 300),
         ),
       );
       print('line 1616 in call A  function: $callable');
@@ -1753,7 +1721,7 @@ class HCPTimeCardService {
       };
       Map<String, dynamic> h_headers = {"Content-Type": "application/json"};
       var response = await client.post(url, body: request);
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         String st = 'ok';
         print('line 1334');
         return json.decode(response.body);
@@ -1766,35 +1734,35 @@ class HCPTimeCardService {
     }
   }
 
-  Future<String> callUploadInitialTimesheetFunctionX(
-      String timesheetPathAndName, BuildContext ctx) async {
-    print('line 1095: $timesheetPathAndName');
-    try {
-      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
-        'uploadInitialTimesheet',
-        options: HttpsCallableOptions(
-          timeout: const Duration(seconds: 5),
-        ),
-      );
-      int idx = timesheetPathAndName.indexOf('timesheet');
-      String timeCardLocation = timesheetPathAndName.substring(0, idx);
-      String timeCardName = timesheetPathAndName.substring(idx);
-      print('line 1107 in call A  function: $callable');
-      dynamic result = await callingUploadInitialTimesheetFunction(
-          callable, timeCardName, timeCardLocation, ctx);
-      print('line 1109: $result');
-      if (result.contains('ERROR') == true) {
-        print('line 1111: Error getting htc id to asm');
-        return result;
-      }
-      print('line 1114 successfully retrieved htc $result');
-
-      return result;
-    } catch (e) {
-      print('line 1118: $e');
-      throw Exception('line 1119: ${e.toString()}');
-    }
-  }
+  // Future<String> callUploadInitialTimesheetFunctionX(
+  //     String timesheetPathAndName, BuildContext ctx) async {
+  //   print('line 1095: $timesheetPathAndName');
+  //   try {
+  //     HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+  //       'uploadInitialTimesheet',
+  //       options: HttpsCallableOptions(
+  //         timeout: const Duration(seconds: 5),
+  //       ),
+  //     );
+  //     int idx = timesheetPathAndName.indexOf('timesheet');
+  //     String timeCardLocation = timesheetPathAndName.substring(0, idx);
+  //     String timeCardName = timesheetPathAndName.substring(idx);
+  //     print('line 1107 in call A  function: $callable');
+  //     dynamic result = await callingUploadInitialTimesheetFunction(
+  //         callable, timeCardName, timeCardLocation, ctx);
+  //     print('line 1109: $result');
+  //     if (result.contains('ERROR') == true) {
+  //       print('line 1111: Error getting htc id to asm');
+  //       return result;
+  //     }
+  //     print('line 1114 successfully retrieved htc $result');
+  //
+  //     return result;
+  //   } catch (e) {
+  //     print('line 1118: $e');
+  //     throw Exception('line 1119: ${e.toString()}');
+  //   }
+  // }
 
   Future<String> callingUploadInitialTimesheetFunction(HttpsCallable callable,
       String timeCardName, String fileLocation, BuildContext ctx) async {
@@ -1969,544 +1937,370 @@ class HCPTimeCardService {
     }
   }
 
-  Future<String>? cancelConfirmedShiftByClients(
-      List<Map<String, dynamic>> items,
-      int clientId,
-      String canceledBy,
-      ctx) async {
-    print('line 626: $canceledBy ${items.length}');
-    print('line 627: ${items[0]}');
-
-    //Map<String, dynamic> rlm = {};
-
-    //  return realm.query("clientId = $clientId && hcpId == $hcpId && shiftStatus == 'SignedOut' SORT(shiftDate ASC, hcpId ASC, shiftCode ASC)");
+  Future<Map<String, dynamic>> getOvertimeForShift(
+      int hcpId, int clientId, Timestamp sftDate, String shiftCode) async {
+    print('line 2371 got into getOvertimeForShift: $hcpId $clientId');
     try {
-      final db = FirebaseFirestore.instance;
-      String asmWorkOrderId = '';
-      String orderId = '';
-      for (int i = 0; i < items.length; i++) {
-        Map<String, dynamic> item = items[i];
-        print('line 638: ${item['id']}');
-        DateTime nwd = DateTime.now();
-        nwd = nwd.subtract(Duration(
-            hours: nwd.hour,
-            minutes: nwd.minute,
-            microseconds: nwd.microsecond,
-            milliseconds: nwd.millisecond));
-        Timestamp ts = Timestamp.fromDate(nwd);
-        asmWorkOrderId = item['asmWorkOrderId'].toString();
-        print('line 648: ${item['workOrderId']}');
-        // final docRefx = db.collection("ClientWorkOrder").doc(item['id']);
-        // docRefx.get().then(
-        //   (DocumentSnapshot doc) {
-        //     orderId = doc.id;
-        //     final data = doc.data() as Map<String, dynamic>;
-        //   },
-        //   onError: (e) => print("Error getting document: $e"),
-        // );
-        // docRef.update(tata).then(
-        //     (value) => print("line 717 DocumentSnapshot successfully updated!"),
-        //     onError: (e) => {returnValue = "Error updating document $e"});
+      DateTime sed = sftDate.toDate();
 
-        print('line 661: $asmWorkOrderId ${item['workOrderId']}');
-
-        dynamic documentIdd;
-
-        await FirebaseFirestore.instance
-            .collection("ClientHCPWorkOrder")
-            .where('woWorkOrderId', isEqualTo: item['id'])
-            .get()
-            .then((querySnapshot) {
-          for (var docSnapshot in querySnapshot.docs) {
-            print('line 671: ${docSnapshot.id}');
-            documentIdd = docSnapshot.id;
-            //  rlm = docSnapshot.data();
-            break;
-          }
-        });
-        print('line 676: $documentIdd ${item['id']}');
-        List<dynamic> cwkidss = [];
-        await FirebaseFirestore.instance
-            .collection("ClientWorkOrderCampaign")
-            .where('woWorkOrderId', isEqualTo: item['id'])
-            .get()
-            .then((querySnapshot) {
-          print('line 684: ${querySnapshot.docs.length}');
-          for (var docSnapshot in querySnapshot.docs) {
-            print('line 686: ${docSnapshot.id}');
-            cwkidss.add(docSnapshot.id);
-          }
-        });
-        print('line 687 check: ${cwkidss.length}');
-        List<String> hcpidss = [];
-        await FirebaseFirestore.instance
-            .collection("HCPTimeCard")
-            .where('woWorkOrderId', isEqualTo: item['id'])
-            .get()
-            .then((querySnapshot) {
-          for (var docSnapshot in querySnapshot.docs) {
-            print('line 698: ${docSnapshot.id}');
-            hcpidss.add(docSnapshot.id);
-          }
-        });
-        print('line 698: ${hcpidss.length} $documentIdd');
-        //updates
-        print('line 700: $orderId ${item['id']}');
-        WriteBatch batch = db.batch();
-        //client work order
-        Map<String, dynamic> tata = {
-          // 'hcpId': 0,
-          // 'hcpName': null,
-          "shiftStatus": 'Canceled',
-          "shiftStatusDate": ts,
-          "canceledBy": canceledBy
-        };
-        var docRef = FirebaseFirestore.instance
-            .collection("ClientWorkOrder")
-            .doc(item['id']);
-        batch.update(docRef, tata);
-        print('line 826 ${item['workOrderId']}');
-        //ClientHCPWorkOrder
-        Map<String, dynamic> data = {
-          "statusId": 'C',
-          "statusDate": ts,
-          "canceledBy": canceledBy
-        };
-        print('line 721: $documentIdd');
-        if (documentIdd != null) {
-          var docRef1 = FirebaseFirestore.instance
-              .collection("ClientHCPWorkOrder")
-              .doc(documentIdd);
-          batch.update(docRef1, data);
-        }
-        //clientcampaignworkorder
-
-        var cdata = {
-          'shiftStatus': 'Canceled',
-          'shiftStatusDate': Timestamp.fromDate(DateTime.now()),
-          'shiftCanceled': true,
-          'shiftCanceledByName': canceledBy
-        };
-        for (int j = 0; j < cwkidss.length; j++) {
-          var docId = cwkidss[j];
-          print('line 738: $docId');
-          var docRef2 = FirebaseFirestore.instance
-              .collection("ClientWorkOrderCampaign")
-              .doc(docId);
-          batch.update(docRef2, cdata);
-        }
-        var hdata = {
-          'shiftStatus': 'Canceled',
-          'shiftStatusDate': Timestamp.fromDate(DateTime.now()),
-          'shiftCanceled': true,
-          'shiftCanceledByName': canceledBy,
-          'shiftCanceledByHCP': false,
-          'shiftCanceledHCPDateTime': Timestamp.fromDate(DateTime.now()),
-        };
-
-        for (int j = 0; j < hcpidss.length; j++) {
-          var docId = hcpidss[j];
-          print('line 755: $docId');
-          var docRef3 =
-              FirebaseFirestore.instance.collection("HCPTimeCard").doc(docId);
-          batch.update(docRef3, hdata);
-        }
-        // int x = 0;
-        // if (x == 0) {
-        //   batch.commit();
-        //   throw Exception('debug exception ');
-        // }
-        batch.commit();
-        final DateTime now = DateTime.now();
-        final DateFormat formatter = DateFormat('MM-dd-yyyy');
-        final String formatted = formatter.format(now);
-        String time = DateFormat.jm().format(now);
-        String nbsp = String.fromCharCode(0x00A0);
-        time = time.replaceAll(nbsp, ' ');
-        print('line 764: $formatted $time');
-        dynamic shiftCancellationMapX = {
-          "CancelType": item['shiftCancellationType'],
-          "LateCancel": false,
-          "ReOpen": false,
-          "Record": false,
-          "CancelReasonCodeID": item['cancelReasonCodeId'],
-          "Conf_Emp": false,
-          "Conf_Emp_EmailText": false,
-          "Conf_Emp_Date": null,
-          "Conf_Emp_Time": null,
-          "Conf_Emp_Note": null,
-          "Conf_Cli": true,
-          "Conf_Cli_EmailText": true,
-          "Conf_Cli_Date": formatted,
-          "Conf_Cli_Time": time,
-          "Conf_Cli_Note": item['shiftCancellationReason'],
-          "InternalNote": "Mobile cancellation by employee",
-          "InvoiceNote": "Shift should not be invoiced"
-        };
-
-        print('line 874: $shiftCancellationMapX $asmWorkOrderId');
-        String url =
-            "https://api.stafferlink.com/asm/Orders/${asmWorkOrderId}/Cancel";
-
-        bool bl = await util.putAnyData(shiftCancellationMapX, url);
-        if (bl == false) {
-          throw Exception('line 814 bad cancel call');
-        }
-        // bool bl = await callCancelWO(
-        //     asmWorkOrderId.toString(), shiftCancellationMapX, ctx);
-        batch.commit();
-      }
-      print('line 879');
-      return 'Success';
-    } catch (e) {
-      print('line 884 error: $e');
-      throw Exception(e.toString());
-    }
-  }
-
-  Future<String>? cancelWorkOrdersByClient(List<Map<String, dynamic>> items,
-      String canceledBy, BuildContext ctx) async {
-    print('line 579: $canceledBy ${items.length}');
-    print('line 749: ${items[0]}');
-
-    //Map<String, dynamic> rlm = {};
-
-    //  return realm.query("clientId = $clientId && hcpId == $hcpId && shiftStatus == 'SignedOut' SORT(shiftDate ASC, hcpId ASC, shiftCode ASC)");
-    try {
-      final db = FirebaseFirestore.instance;
-      String asmWorkOrderId = '';
-      String orderId = '';
-      for (int i = 0; i < items.length; i++) {
-        Map<String, dynamic> item = items[i];
-        print('line 588: ${item['id']}');
-        DateTime nwd = DateTime.now();
-        nwd = nwd.subtract(Duration(
-            hours: nwd.hour,
-            minutes: nwd.minute,
-            microseconds: nwd.microsecond,
-            milliseconds: nwd.millisecond));
-        Timestamp ts = Timestamp.fromDate(nwd);
-        asmWorkOrderId = item['asmWorkOrderId'].toString();
-        dynamic returnValue = null;
-        print('line 768: ${item['workOrderId']}');
-        final docRefx = db.collection("ClientWorkOrder").doc(item['id']);
-        docRefx.get().then(
-          (DocumentSnapshot doc) {
-            orderId = doc.id;
-            final data = doc.data() as Map<String, dynamic>;
-          },
-          onError: (e) => print("Error getting document: $e"),
-        );
-        // docRef.update(tata).then(
-        //     (value) => print("line 717 DocumentSnapshot successfully updated!"),
-        //     onError: (e) => {returnValue = "Error updating document $e"});
-
-        print('line 785: $asmWorkOrderId ${item['workOrderId']}');
-
-        String? documentId;
-
-        await FirebaseFirestore.instance
-            .collection("ClientHCPWorkOrder")
-            .where('woWorkOrderId', isEqualTo: item['id'])
-            .get()
-            .then((querySnapshot) {
-          for (var docSnapshot in querySnapshot.docs) {
-            documentId = docSnapshot.id;
-            //  rlm = docSnapshot.data();
-            break;
-          }
-        });
-        print('line 800: ${item['id']}');
-        List<String> cwkids = [];
-        await FirebaseFirestore.instance
-            .collection("ClientWorkOrderCampaign")
-            .where('woWorkOrderId', isEqualTo: item['id'])
-            .get()
-            .then((querySnapshot) {
-          for (var docSnapshot in querySnapshot.docs) {
-            cwkids.add(docSnapshot.id);
-          }
-        });
-        print('line 812 check: ${cwkids.length}');
-        List<String> hcpids = [];
-        await FirebaseFirestore.instance
-            .collection("HCPTimeCard")
-            .where('woWorkOrderId', isEqualTo: item['id'])
-            .get()
-            .then((querySnapshot) {
-          for (var docSnapshot in querySnapshot.docs) {
-            hcpids.add(docSnapshot.id);
-          }
-        });
-        print('line 820: ${hcpids.length} $documentId');
-        //updates
-        print('line 822: $orderId ${item['id']}');
-        WriteBatch batch = db.batch();
-        //client work order
-        Map<String, dynamic> tata = {
-          'hcpId': 0,
-          'hcpName': null,
-          "shiftStatus": 'Canceled',
-          "shiftStatusDate": ts,
-          "canceledBy": canceledBy
-        };
-        var docRef = FirebaseFirestore.instance
-            .collection("ClientWorkOrder")
-            .doc(item['id']);
-        batch.update(docRef, tata);
-        print('line 826 ${item['woWorkOrderId']}');
-        //ClientHCPWorkOrder
-        Map<String, dynamic> data = {
-          "hcpId": 0,
-          "hcpName": null,
-          "statusId": '*',
-          "statusDate": ts,
-          "canceledBy": canceledBy
-        };
-        print('line 840: $documentId');
-        if (documentId != null) {
-          var docRef1 = FirebaseFirestore.instance
-              .collection("ClientHCPWorkOrder")
-              .doc(documentId);
-          batch.update(docRef1, data);
-        }
-        //clientcampaignworkorder
-
-        var cdata = {
-          'shiftStatus': 'Canceled',
-          'shiftStatusDate': Timestamp.fromDate(DateTime.now()),
-          'shiftCanceled': true,
-          'shiftCanceledByName': canceledBy
-        };
-        for (int j = 0; j < cwkids.length; j++) {
-          var docId = cwkids[j];
-          var docRef2 = FirebaseFirestore.instance
-              .collection("ClientWorkOrderCampaign")
-              .doc(docId);
-          batch.update(docRef2, cdata);
-        }
-        var hdata = {
-          'shiftStatus': 'Canceled',
-          'shiftStatusDate': Timestamp.fromDate(DateTime.now()),
-          'shiftCanceled': true,
-          'shiftCanceledByName': canceledBy,
-          'shiftCanceledByHCP': false,
-          'shiftCanceledHCPDateTime': Timestamp.fromDate(DateTime.now()),
-        };
-
-        for (int j = 0; j < hcpids.length; j++) {
-          var docId = hcpids[j];
-          var docRef3 =
-              FirebaseFirestore.instance.collection("HCPTimeCard").doc(docId);
-          batch.update(docRef3, hdata);
-        }
-        final DateTime now = DateTime.now();
-        final DateFormat formatter = DateFormat('MM-dd-yyyy');
-        final String formatted = formatter.format(now);
-        final time = DateFormat.jm().format(now);
-
-        dynamic shiftCancellationMap = {
-          "CancelType": item['shiftCancellationType'],
-          "LateCancel": false,
-          "ReOpen": false,
-          "Record": false,
-          "CancelReasonCodeID": item['cancelReasonCodeId'],
-          "Conf_Emp": false,
-          "Conf_Emp_EmailText": false,
-          "Conf_Emp_Date": null,
-          "Conf_Emp_Time": null,
-          "Conf_Emp_Note": null,
-          "Conf_Cli": true,
-          "Conf_Cli_EmailText": true,
-          "Conf_Cli_Date": formatted,
-          "Conf_Cli_Time": time,
-          "Conf_Cli_Note": item['shiftCancellationNote'],
-          "InternalNote": "Mobile cancellation by employee",
-          "InvoiceNote": "Shift should not be invoiced"
-        };
-
-        print('line 874: $shiftCancellationMap $asmWorkOrderId');
-        String url =
-            "https://api.stafferlink.com/asm/Orders/${asmWorkOrderId}/Cancel";
-
-        bool bl = await util.putAnyData(shiftCancellationMap, url);
-        if (bl == false) {
-          throw Exception('line 814 bad cancel call');
-        }
-        print('line 874: $shiftCancellationMap $asmWorkOrderId');
-        //
-        // bool bl = await callCancelWO(
-        //     asmWorkOrderId.toString(), shiftCancellationMap, ctx);
-        batch.commit();
-      }
-      print('line 879');
-      return 'Success';
-    } catch (e) {
-      print('line 884 error: $e');
-      throw Exception(e.toString());
-    }
-  }
-
-  Future<String>? republishWorkOrdersByClient(List<Map<String, dynamic>> items,
-      String republishedBy, BuildContext ctx) async {
-    print('line 579: $republishedBy ${items.length}');
-    print('line 749: ${items[0]}');
-    try {
-      //  cdt = cdt.subtract(Duration(hours:cdt.hour,minutes:cdt.minute,
-      //  seconds:cdt.second,microseconds: cdt.microsecond,milliseconds: cdt.millisecond);
-      print('line 768: ${items[0]['uuid']}');
-      String uuid = items[0]['uuid'];
-      int clientId = items[0]['clientId'];
-      List<Map<String, dynamic>> hcps = [];
-      List<int> hcpIds = [];
-      List<String> fcmTokens = [];
-      FirebaseFirestore.instance
-          .collection('ClientWorkOrderCampaign')
-          .where('clientWorkOrderUuid', isEqualTo: uuid)
-          .where('statusId', whereIn: ['Open', 'Accepted', 'Approved'])
+      int shiftDay = sed.weekday;
+      int diffDay = shiftDay - 1; //eg
+      DateTime shiftDate = sed.subtract(Duration(
+        hours: sed.hour,
+        minutes: sed.minute,
+        seconds: sed.second,
+        microseconds: sed.microsecond,
+        milliseconds: sed.millisecond,
+      ));
+      Map<String, dynamic>? mp;
+      DateTime tx = shiftDate.subtract(Duration(days: diffDay));
+      int stmps = tx.millisecondsSinceEpoch;
+      await FirebaseFirestore.instance
+          .collection('HCPWeeklyShift')
+          .where('hcpId', isEqualTo: hcpId)
+          .where('startOfWorkWeekTimestamp', isEqualTo: stmps)
           .get()
-          .then((querySnapshot) {
-            for (var docSnapshot in querySnapshot.docs) {
-              var obj = docSnapshot.data();
-              DateTime cdt = DateTime.now();
-              Timestamp tms = obj['shiftDate'];
-              DateTime tmd = tms.toDate();
-              tmd = tmd.subtract(Duration(
-                  hours: tmd.hour,
-                  minutes: tmd.minute,
-                  seconds: tmd.second,
-                  microseconds: tmd.microsecond,
-                  milliseconds: tmd.millisecond));
-              Map<String, dynamic> shm = util.getHoursMinutes(obj['startTime']);
-              DateTime tmdd = tmd;
-              tmd = tmd
-                  .add(Duration(hours: shm['hours'], minutes: shm['minutes']));
-              print('line 1064: $tmd $cdt');
-              if (cdt.millisecondsSinceEpoch > tmd.millisecondsSinceEpoch) {
+          .then((querySnapshot) async {
+        print('line 2394: ${querySnapshot.docs.length}');
+        if (querySnapshot.docs.length > 0) {
+          var snapShot = querySnapshot.docs[0];
+          var obj = snapShot.data();
+          List<dynamic> listOfCreatedDateTimestamps =
+              obj['listOfCreatedDateTimestamps'];
+          for (int i = 0; i < listOfCreatedDateTimestamps.length; i++) {
+            var tbj = listOfCreatedDateTimestamps[i];
+            print('line 2402 ${tbj}');
+            if (tbj == null) {
+              continue;
+            }
+            if (tbj.containsKey('createdDateTimestamp') == false) {
+              continue;
+            }
+
+            List<dynamic> listOfClients = tbj['listOfClients'];
+            print('line 2403 debug check ${listOfClients.length} $tbj');
+            for (int k = 0; k < listOfClients.length; k++) {
+              var rbj = listOfClients[k];
+              print('line 2412: ${rbj}');
+              if (rbj == null) {
                 continue;
               }
-              Map<String, dynamic> mp = {
-                "hcpId": obj['hcpId'],
-                "hcpName": obj['hcpName'],
-                "title": "Shift Republish",
-                "clientName": obj['clientName'],
-                "shiftDate": tmdd,
-                "shiftCode": obj['shiftCode'],
-                "fcmToken": null,
-              };
-              hcps.add(mp);
-              hcpIds.add(obj['hcpId']);
-            }
-            print('line 1079: ${hcps.length}');
-            if (hcps.length > 0) {
-              //previously scheduled
-              FirebaseFirestore.instance
-                  .collection('ClientWorkOrderCampaign')
-                  .where('clientId', isNotEqualTo: clientId)
-                  .where('statusId', isEqualTo: 'Confirmed')
-                  .where('hcpId', whereIn: hcpIds)
-                  .get()
-                  .then((querySnapshot) async {
-                for (var docSnapshot in querySnapshot.docs) {
-                  var obj = docSnapshot.data();
-                  Timestamp cts = obj['shiftDate'];
-                  DateTime ctd = cts.toDate();
-                  ctd = ctd.subtract(Duration(
-                      hours: ctd.hour,
-                      minutes: ctd.minute,
-                      seconds: ctd.second,
-                      microseconds: ctd.microsecond,
-                      milliseconds: ctd.millisecond));
-                  int q = 0;
-                  while (q < hcps.length) {
-                    Map<String, dynamic> mp = hcps[q];
-                    if (mp['hcpId'] == obj['hcpId'] &&
-                        mp['shiftCode'] == obj['shiftCode'] &&
-                        mp['shiftDate'] == ctd) {
-                      hcpIds.removeAt(q);
-                      hcps.removeAt(q);
-                      continue;
-                    }
-                    q += 1;
-                  }
+              if (rbj.containsKey('clientId') == false) {
+                continue;
+              }
+              if (rbj['clientId'] != clientId) {
+                print('line 2422: ${rbj['clientId']} $clientId');
+                continue;
+              }
+              print('line 2425: ${rbj['clientId']}');
+              List<dynamic> listOfWorkShiftDays = rbj['listOfWorkShiftDays'];
+              for (int l = 0; l < listOfWorkShiftDays.length; l++) {
+                var qbj = listOfWorkShiftDays[l];
+                print('line 2425: ${qbj}');
+                if (qbj == null) {
+                  continue;
                 }
-                bool flagHaveAtLeastOne = false;
-                FirebaseFirestore.instance
-                    .collection('users')
-                    .where('userId', whereIn: hcpIds)
-                    .get()
-                    .then((querySnapshot) async {
-                  for (var docSnapshot in querySnapshot.docs) {
-                    var obj = docSnapshot.data();
-                    int q = 0;
-                    while (q < hcps.length) {
-                      Map<String, dynamic> mp = hcps[q];
-                      if (mp['hcpId'] != obj['userId']) {
-                        q += 1;
-                        continue;
-                      }
-                      if (obj['fcmToken'] != 'PlaceHolder') {
-                        mp['fcmToken'] = obj['fcmToken'];
-                        flagHaveAtLeastOne = true;
-                        hcps[q] = mp;
-                        break;
-                      } else {
-                        break;
-                      }
-                    }
-                  }
-                });
-                if (flagHaveAtLeastOne == true) {
-                  print('line 1140 had at least one');
-                  dynamic result =
-                      await callSendRepublishNotificationFunction(hcps, ctx);
+                if (qbj.containsKey('dayOT') == false) {
+                  continue;
                 }
-              });
+                List<dynamic> listOfShifts = qbj['listOfShifts'];
+                for (int m = 0; m > listOfShifts.length; m++) {
+                  var wbj = listOfShifts[m];
+                  print('line 2429 ${wbj}');
+                  if (wbj == null) {
+                    continue;
+                  }
+                  if (wbj.containsKey('clientId') == false) {
+                    continue;
+                  }
+                  print('line 2442 check');
+                  Timestamp wbjts = wbj['shiftDate'];
+                  DateTime wbjdt = wbjts.toDate();
+                  wbjdt = wbjdt.subtract(Duration(
+                      hours: wbjdt.hour,
+                      minutes: wbjdt.minute,
+                      seconds: wbjdt.second,
+                      microseconds: wbjdt.microsecond,
+                      milliseconds: wbjdt.millisecond));
+                  if (wbjdt.millisecondsSinceEpoch !=
+                      shiftDate.millisecondsSinceEpoch) {
+                    print(
+                        'line 2439 skipping: ${wbjdt.millisecondsSinceEpoch} ${shiftDate.millisecondsSinceEpoch}');
+                    continue;
+                  }
+                  if (wbj['shiftCode'] != shiftCode) {
+                    print(
+                        'line 2443 skipping: ${wbj['shiftCode']} ${shiftCode}');
+                    continue;
+                  }
+                  int regularMinutes = wbj['shiftMinutes'] - wbj['otMinutes'];
+                  double regularHours = wbj['shiftHours'] - wbj['otHours'];
+                  mp = {
+                    'otMinutes': wbj['otMinutes'],
+                    'otHours': wbj['otHours'],
+                    'regularMinutes': regularMinutes,
+                    'regularHours': regularHours
+                  };
+                  print('returning');
+                  return;
+                }
+              }
             }
-          });
+          }
+        }
+      });
+      if (mp != null) {
+        print('line 2458: ${mp!}');
+        return mp!;
+      } else {
+        print('line 2485  ${mp}');
+        return {};
+      }
+    } catch (e) {
+      print('line 2375 error: ${e.toString()}');
+      throw Exception('line 2376 error: ${e.toString()}');
+    }
+  }
+
+  Future<bool> setOvertimeForShift(Map<String, dynamic> tcm) async {
+    print('line 2370 in setOvertimeForShift');
+    try {
+      Map<String, dynamic> mp = await getOvertimeForShift(
+          tcm['hcpId'], tcm['clientId'], tcm['shiftDate'], tcm['shiftCode']);
+      print('line 2469 ${mp}');
+      if (mp.containsKey('otMinutes') == false) {
+        return false;
+      }
+      FirebaseFirestore.instance
+          .collection('HCPTimeCard')
+          .doc(tcm['id'])
+          .update({
+        'otMinutes': mp['otMinutes'],
+        'otHours': mp['otHours'],
+        'regularMinutes': mp['regularMinutes'],
+        'regularHours': mp['regularHours']
+      });
+      return true;
+    } catch (e) {
+      print('line 2374 error: ${e.toString()}');
+      throw Exception('line 2475 error: ${e.toString()}');
+    }
+  }
+
+  Future<bool> updateTimeCardService(
+      String documentId, Map<String, dynamic> data) async {
+    print('line 46 in updatetimecard service $data');
+    int sMin = util.getMinutes(data['signedInInitialStartTimeChanged']);
+    int eMin = util.getMinutes(data['signedOutInitialEndTimeChanged']);
+    if (sMin > eMin) {
+      eMin += 1440;
+    }
+    int shiftMinutes = eMin - sMin;
+    double shiftHours = double.parse((shiftMinutes / 60).toString());
+    shiftHours = double.parse(shiftHours.toStringAsFixed(2));
+
+    try {
+      FirebaseFirestore.instance
+          .collection('HCPTimeCard')
+          .doc(documentId)
+          .update({
+        'decimalHours': shiftHours,
+        'shiftMinutes': shiftMinutes,
+        'otHours': data['otHours'],
+        'otMinutes': 0,
+        'regularMinutes': 0,
+        'regularHours': data['regularHours'],
+        'signedOutShiftTimeWorked': shiftHours,
+        'calculatedHoursWorked': shiftHours,
+        'signedOutMeals': data['signedOutInitialMealsChanged'],
+        'signedOutInitialMealsChanged': data['signedOutInitialMealsChanged'],
+        'signedOutHoursWorked': shiftHours,
+        'signedOutHours': shiftHours,
+        "signedOutHasInitialSupervisorVerification":
+            data['"signedOutHasInitialSupervisorVerification"'],
+        'signedOutInitialVerificationDateTime':
+            data["signedOutInitialVerificationDateTime"],
+        'shiftStartTime': data['signedInInitialStartTimeChanged'],
+        'signedInShiftStartTime': data['signedInInitialStartTimeChanged'],
+        'signedInDateTimeValue': data['signedInInitialStartTimeChanged'],
+        'signedInInitialStartTimeChanged':
+            data['signedInInitialStartTimeChanged'],
+        'shiftEndTime': data['signedOutInitialEndTimeChanged'],
+        'signedOutDateTimeValue': data['signedOutInitialEndTimeChanged'],
+        'signedOutShiftEndTime': data['signedOutInitialEndTimeChanged'],
+        'signedOutInitialEndTimeChanged':
+            data['signedOutInitialEndTimeChanged'],
+        'shiftOvertime': data['shiftOvertime'],
+        'signedOutHasInitialVerification':
+            data['signedOutHasInitialVerification'],
+        'signedInHasInitialVerification': false,
+        "signedOutSupervisorName": data["signedOutSupervisorName"],
+        'signedOutInitialDecimalHoursChanged':
+            data['signedOutInitialDecimalHoursChanged'],
+        'forwardHours': data['forwardHours'],
+         'regularHours': data['regularHours'],
+         'shiftPriorHours': data['shiftPriorHours'],
+         'shiftHoursOvertime': data['otHours'],
+         'shiftOvertime': data['shiftOvertime'],
+         'totalHours': data['totalHours'],
+         'shiftHoursOverTime': data['otHours'],
+      });
+      return true;
+    } catch (e) {
+      print('line 51 error: ${e.toString()}');
+      throw Exception('line 52 error: ${e.toString()}');
+    }
+  }
+
+  Future<dynamic>? updateInitialSignedOutHCPTimeCards(Map<String, dynamic> item,
+      Map<String, dynamic> data, BuildContext ctx) async {
+    print(
+        'line 380 in upatesignedouthcp ${item['id']} $data,${item['asmTimeCardId']}');
+    //Map<String, dynamic> rlm = {};
+
+    //  return realm.query("clientId = $clientId && hcpId == $hcpId && shiftStatus == 'SignedOut' SORT(shiftDate ASC, hcpId ASC, shiftCode ASC)");
+    try {
+      print('line 574: ${item['id']}');
+      final db = FirebaseFirestore.instance;
+      WriteBatch batch = db.batch();
+      final docRef =
+          FirebaseFirestore.instance.collection("HCPTimeCard").doc(item['id']);
+      batch.update(docRef, data);
+      int timeCardId = item['asmHCPTimeCardId'];
+      if (timeCardId == 0) {
+        throw Exception('line 448 invalid timecardid');
+      }
+      String timeCardFile = data['timesheetFileName'];
+      print('line 445: $timeCardId $timeCardFile');
+      //umcommented from production
+      //  dynamic rsp = await  writeTimeCardSheetToStorage(timeCardFile,data['fileAndPathName']);
+      //dynamic rsp =  await  callUploadOnRequestTimesheetFunction(timeCardFile,ctx);
+      // print('line 406 $rsp');
+      //now load time sheet to asm from storage
+      Map<String, dynamic> rsp = await callUploadTimesheetFromStorageFunction(
+          timeCardId.toString(), timeCardFile, ctx);
+      //uncomment after we have loaded to storage
+      print('line 464: $rsp');
+      if (rsp.containsKey('TimecardImageId') == true) {
+        int timeCardImageId = rsp['TimecardImageId'];
+        print('line 466: $timeCardImageId');
+        batch.update(docRef, {
+          'asmTimeCardImageId': timeCardImageId,
+          'signedOutHasInitialVerification': true,
+          'signedOutInitialVerification': true,
+          'signedOutInitialVerificationNotes':
+              data['signedOutInitialSupervisorNotes'],
+          'signedOutInitialVerificationDateTime':
+              Timestamp.fromDate(DateTime.now()),
+          'signedOutSupervisorName': data['signedOutSupervisorName'],
+          'hasSignedOut': data['hasSignedOut'],
+          'woWorkOrder': data['woWorkOrderId']
+        });
+        //update time card with shift data data
+        print('line 623');
+        dynamic rxp = await callUpdateTimesheetFunction(
+            timeCardId,
+            item['departmentId'],
+            item['shiftDate'],
+            item['signedInInitialStartTimeChanged'],
+            item['signedOutInitialEndTimeChanged'],
+            item['meals'],
+            ctx);
+
+        if (rxp.data[0]['success'] == false) {
+          throw Exception('Line 2106: Error trying to update timecard times');
+        }
+        Map<String, dynamic>? clc;
+        print('line 2108 just before getsingle client');
+        if (authServices.clientUserId != null) {
+          clc = await clientServices.getSingleClientUser(
+              item['clientId'], authServices.clientUserId!);
+          if (clc == null) {
+            // throw Exception('line 2112 clc is empty from getsingleclientuser');
+            clc = {'fullName': "Unknown Client User"};
+            print('line 2113 clc is null');
+          }
+        } else {
+          clc = {'fullName': "Unknown Client User"};
+        }
+        Map<String, dynamic>? usc =
+            await hcpServices.getSingleUser(item['hcpId']);
+        if (usc == null) {
+          batch.commit();
+          throw Exception(
+              'line 2117 usc is empty for getsingle user but you have been confirmed.');
+        }
+        print('line 2119: ${clc} ${usc}');
+        List<String> fcmTokens = [];
+        if (authServices.isIOS == true) {
+          if (clc['iosFcmToken'] != null &&
+              clc['iosFcmToken'] != 'Placeholder') {
+            fcmTokens.add(clc['iosFcmToken']);
+          }
+          if (usc['iosFcmTabletToken'] != null &&
+              usc['iosFcmTabletToken'] != 'Placeholder' &&
+              fcmTokens.contains(usc['iosFcmTabletToken']) != true) {
+            fcmTokens.add(usc['iosFcmTabletToken']);
+          }
+        }
+        if (authServices.isAndroid == true) {
+          if (clc['androidFcmToken'] != null &&
+              clc['androidFcmToken'] != 'Placeholder') {
+            fcmTokens.add(clc['androidFcmToken']);
+          }
+          if (usc['androidFcmTabletToken'] != null &&
+              usc['androidFcmTabletToken'] != 'Placeholder' &&
+              fcmTokens.contains(usc['androidFcmTabletToken']) != true) {
+            fcmTokens.add(usc['androidFcmTabletToken']);
+          }
+        }
+        Timestamp ts = item['shiftDate'];
+        print('line 2122: $fcmTokens ${item['shiftDate']}');
+        String shiftDate = convertFromTimestamp(ts);
+        print('line 2124 just before body creation');
+
+        String body =
+            '${clc['fullName']} has accepted the shift ${item['shiftCode']} for $shiftDate';
+            Map<String,dynamic>nullMap = {};
+        Map<String, dynamic> parameters = {
+          "title": "Shift verified for: ${item['hcpName']}",
+          "body": body,
+          "fcmTokens": fcmTokens,
+          "data": nullMap
+        };
+        print('line 2132 ${parameters}');
+        await sendSingleMessage(parameters, ctx);
+        batch.commit();
+      } else {
+        throw Exception('Rsp: $rsp');
+      }
       return "Success";
     } catch (e) {
-      print('line 1038 error in republish shift: ${e.toString()}');
-      throw Exception('line 1039 error in republish shift: ${e.toString()}');
+      print('line 2140 error: $e');
+      return e.toString();
+      // throw Exception(e.toString());
     }
   }
 
-  Future<dynamic> callSendRepublishNotificationFunction(
-      List<Map<String, dynamic>> hcps, BuildContext ctx) async {
-    print('line 1607:  ${hcps[0]}');
+  Future<Map<String, dynamic>> getSingleHCPTimeCardUpdated(
+      String documentId) async {
+    print('line 372 in get Singlehcptimecard');
     try {
-      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
-        // 'uploadTimesheetFromStorage',
-        'sendMultipleMessages',
-        options: HttpsCallableOptions(
-          timeout: const Duration(seconds: 5),
-        ),
-      );
-      print('line 1616 in call A  function: $callable');
-      dynamic result =
-          await callingSendRepublishNotificationFunction(callable, hcps, ctx);
-      print('line 1690');
-      return result;
+      Map<String, dynamic>? mp;
+      await FirebaseFirestore.instance
+          .collection('HCPTimeCard')
+          .doc(documentId)
+          .get()
+          .then((querySnapshot) {
+        if (querySnapshot.exists) {
+          mp = querySnapshot.data();
+        }
+      });
+      print('line 385: ${mp}');
+      return mp!;
     } catch (e) {
-      print('line 1693: $e');
-      throw Exception('line 1694: ${e.toString()}');
-    }
-  }
-
-  Future<dynamic> callingSendRepublishNotificationFunction(
-      HttpsCallable callable,
-      List<Map<String, dynamic>> hcps,
-      BuildContext ctx) async {
-    print('line 1304: ${hcps[0]}');
-    var ddata = {"data": hcps};
-    try {
-      final HttpsCallableResult result = await callable(ddata);
-      print('line 1722: $result');
-      print('line 1723 ${result.data}');
-      return result.data;
-    } catch (e) {
-      print('line 1726 error: $e');
-      throw Exception('line 1356  ${e.toString()}');
+      print('line 385 error: ${e.toString()}');
+      throw Exception('line 386 error: ${e.toString()}');
     }
   }
 }
