@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/shared/services/custom_error_handler.dart';
+import 'package:cms_web/features/shared/utils/custom_error_handler.dart';
 import 'package:cms_web/features/shared/utils/app_color_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cms_web/features/authentication/views/pages/login/login.dart';

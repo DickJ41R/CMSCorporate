@@ -5,7 +5,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'dart:async';
 import 'package:syncfusion_flutter_core/theme.dart';
 //import 'package:hcp_app/screens/show_hcp_file_menu.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 import 'package:cms_web/features/hcpapp/models/hcprofessional_data_model.dart';
 //import 'package:hcp_app/pages/login/login.dart';
 

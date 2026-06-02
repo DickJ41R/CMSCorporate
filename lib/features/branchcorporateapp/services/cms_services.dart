@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/branchcorporateapp/models/cms_branch_users.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:http/http.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/clientapp/services/client_services.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
 
 class CMSServices {
   CMSServices();

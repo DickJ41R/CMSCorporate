@@ -1,16 +1,16 @@
 import 'package:cms_web/features/clientapp/models/client_address.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cms_web/features/clientapp/models/client_models/client_data.dart';
+import 'package:cms_web/features/clientapp/models/client_data.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
-import 'package:cms_web/features/shared/services/utilities.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/clientapp/models/client_user.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cms_web/features/shared/hcpapp/services/hcp_timecard_service.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_timecard_service.dart';
 
 class ClientServices {
   ClientServices();
@@ -2918,4 +2918,120 @@ class ClientServices {
 
     return;
   }
+  Future<bool> updateClientAddressForm(
+      String documentId, Map<String, dynamic> mp) async {
+    try {
+      print('line 36: $documentId ${mp}');
+      await FirebaseFirestore.instance
+          .collection('ClientAddress')
+          .doc(documentId)
+          .set(mp, SetOptions(merge: true));
+      return true;
+    } catch (e) {
+      print('line 37 error: ${e.toString()}');
+      return false;
+    }
+  }
+  Future<Map<String,dynamic>>? getASingleClientById(int clientId) async {
+    try {
+      print('line 36: $clientId');
+      Map<String,dynamic>?mp;
+      await FirebaseFirestore.instance
+          .collection('Client')
+          .where('clientId',isEqualTo: clientId)
+          .get()
+          .then((querySnapshot) {
+        if (querySnapshot.docs.length == 0) {
+          print('line 36 no records returned');
+          final snapShot = querySnapshot.docs[0];
+          mp = snapShot.data();
+        }
+        return mp!;
+      });
+      return mp!;
+    } catch (e) {
+      print('line 2592 error: ${e.toString()}');
+      return {};
+    }
+  }
+  Future<Map<String, dynamic>>? getASingleClientUser(int clientId) async {
+    print('line 20 get a singleclient user ${clientId}');
+    try {
+      Map<String, dynamic>? mp;
+      await FirebaseFirestore.instance
+          .collection('ClientUser')
+          .where('clientId', isEqualTo: clientId)
+          .where('roles', arrayContainsAny: [
+        'ClientDON',
+        'ClientADON',
+        'ClientAdmin',
+        'ClientSupervisor',
+        'ClientScheduler',
+        'ClientStaff',
+        'CMSAdmin',
+        'CMSScheduler'
+      ])
+          .get()
+          .then((querySnapshot) {
+        if (querySnapshot.docs.length == 0) {
+          print('line 36 no records returned');
+          mp = {};
+          return mp;
+        }
+        var snp = querySnapshot.docs[0];
+        var documentId = snp.id;
+        var obj = snp.data();
+        obj['id'] = documentId;
+        mp = obj;
+        print('line 45 $mp');
+        return mp;
+      });
+      print('line 48 $mp');
+      return mp!;
+    } catch (e) {
+      print('line 42 error: ${e.toString()}');
+      throw Exception('line 37 ${e.toString()}');
+    }
+  }
+  Future<Map<String, dynamic>>? getSingleClientUserWithClientId(
+      int clientId) async {
+    Map<String, dynamic> lm = {};
+    try {
+      print('line 356: $clientId ');
+      bool flagGotHit = false;
+      await FirebaseFirestore.instance
+          .collection('ClientUser')
+          .where("clientId", isEqualTo: clientId)
+          .get()
+          .then((snapshot) {
+        print('line 88 ${snapshot.docs.length}');
+        for (var snp in snapshot.docs) {
+          lm = snp.data();
+          flagGotHit = false;
+          for (int i = 0; i < lm['roles'].length; i++) {
+            String ro = lm['roles'][i];
+            if (ro == 'ClientAdmin' ||
+                ro == 'CMSAdmin' ||
+                ro == 'ClientSupervisor' ||
+                ro == 'CMSSupervisor' ||
+                ro == 'ClientDON' ||
+                ro == 'ClientADON') {
+              flagGotHit = true;
+              break;
+            }
+          }
+          if (flagGotHit == true) {
+            break;
+          }
+        }
+        return;
+      });
+      return lm;
+    } catch (e) {
+      print('line 372 read error clientuser: ${e.toString()}');
+      throw Exception(e.toString());
+    }
+  }
+
+
 }

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/clientapp/services/client_work_order_campaign_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_services.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_work_order_campaign_service.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 import 'package:intl/intl.dart';
 //import 'package:hcp_app/models/client_models/client_work_order_campaign.dart';
 import 'package:cms_web/features/hcpapp/models/users.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_user_services.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_timecard_service.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_timecard_service.dart';
 //import 'package:hcp_app/pages/home/home.dart';
 import 'package:cms_web/features/hcpapp/views/hcp_menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/shared/utils/routerConstants.dart';
 
 class ProcessHCPAvailableShifts extends StatefulWidget {
@@ -38,7 +37,6 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
   Users? user;
   dynamic currentUser;
   AuthService authService = AuthService();
-  HCPUserServices hcpUserServices = HCPUserServices();
   HCPServices hst = HCPServices();
   Map<String, dynamic>? hcpUser;
   int? hcpId;
@@ -49,9 +47,9 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 50 gethcpuser available shfts: $hcpUserServices');
+    print('line 50 gethcpuser available shfts: $hst');
     try {
-      Map<String, dynamic>? lm = await hcpUserServices.getHCPUser(hcpId!);
+      Map<String, dynamic>? lm = await hst.getHCPUser(hcpId!);
       print('line 54: $lm');
       if (lm.isEmpty) {
         print('line 54 lm i septy');

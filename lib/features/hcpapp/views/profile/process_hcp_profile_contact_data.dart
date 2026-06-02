@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cms_web/features/hcpapp/models/users.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_user_services.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 import 'package:cms_web/features/hcpapp/views/hcp_menu.dart';
-import 'package:cms_web/features/shared/services/dropdown_codes.dart';
+import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ProcessHCPProfileContactData extends StatefulWidget {
@@ -23,7 +22,6 @@ class _ProcessHCPProfileContactDataState
   final formKey = GlobalKey<FormState>();
   var hcpContact;
   AuthService authService = AuthService();
-  HCPUserServices hcpUserServices = HCPUserServices();
   HCPServices hcpServices = HCPServices();
   DropDownCodes dropDownCodes = DropDownCodes();
   int? hcpId;
@@ -98,8 +96,8 @@ class _ProcessHCPProfileContactDataState
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 38 gethcpuser address: $hcpUserServices');
-    Map<String, dynamic> lm = await hcpUserServices.getHCPUser(hcpId!);
+    print('line 38 gethcpuser address: $hcpServices');
+    Map<String, dynamic> lm = await hcpServices.getHCPUser(hcpId!);
     if (lm.isEmpty) {
       return lm;
     }

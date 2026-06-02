@@ -1,4 +1,4 @@
-import 'package:cms_web/features/shared/services/dropdown_codes.dart';
+import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
 
 class HCPCredential {
   HCPCredential(

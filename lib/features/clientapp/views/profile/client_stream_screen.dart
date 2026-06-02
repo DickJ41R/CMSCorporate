@@ -1,4 +1,4 @@
-import 'package:cms_web/features/clientapp/services/client_services.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,8 +12,7 @@ import 'package:cms_web/features/clientapp/models/client.dart';
 import 'package:cms_web/features/clientapp/models/client_class.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
-import 'package:cms_web/features/clientapp/services/client_services.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 
 // Replace the defaultFirebaseOptions with your own Firebase options.
 const defaultFirebaseOptions = FirebaseOptions(

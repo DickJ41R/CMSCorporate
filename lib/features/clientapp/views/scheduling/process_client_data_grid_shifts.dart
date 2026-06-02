@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 
 class ShiftClass {
   final String shiftCode;

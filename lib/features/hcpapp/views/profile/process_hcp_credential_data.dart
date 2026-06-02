@@ -4,13 +4,12 @@ import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:cms_web/features/hcpapp/views/profile/hcp_show_credential_details_screen.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 //import 'package:hcp_app/pages/home/home.dart';
 import 'package:cms_web/features/hcpapp/models/users.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_user_services.dart';
 import 'package:cms_web/features/hcpapp/views/process_hcp_profile_menu.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 
 final dio = Dio();
 
@@ -42,7 +41,6 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
 
   AuthService authService = AuthService();
   HCPServices hcpServices = HCPServices();
-  HCPUserServices hcpUserServices = HCPUserServices();
   UtilitiesServices utilityServices = UtilitiesServices();
   String? gEmail;
   Map<String, dynamic>? arguments;
@@ -61,8 +59,8 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 38 gethcpuser CREDENGTIALS: $hcpUserServices');
-    Map<String, dynamic> lm = await hcpUserServices.getHCPUser(hcpId!);
+    print('line 38 gethcpuser CREDENGTIALS: $hcpServices');
+    Map<String, dynamic> lm = await hcpServices.getHCPUser(hcpId!);
     if (lm.isEmpty) {
       return lm;
     }

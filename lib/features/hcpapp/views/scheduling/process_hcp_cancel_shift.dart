@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_timecard_service.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_timecard_service.dart';
 //import 'package:hcp_app/models/client_models/client_work_order_campaign.dart';
 import 'package:cms_web/features/hcpapp/models/users.dart';
-import 'package:cms_web/features/clientapp/services/client_work_order_campaign_service.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_work_order_campaign_service.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_user_services.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:intl/intl.dart';
 import 'package:cms_web/features/hcpapp/views/hcp_menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cms_web/features/shared/services/dropdown_codes.dart';
+import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
@@ -27,7 +27,7 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
   dynamic currentUser;
   ClientWorkOrderCampaignService clw = ClientWorkOrderCampaignService();
   HCPTimeCardService hcpTimeCardService = HCPTimeCardService();
-  HCPUserServices hcpUserServices = HCPUserServices();
+  HCPServices hcpServices = HCPServices();
   UtilitiesServices utilitiesServices = UtilitiesServices();
   DropDownCodes dropDownCodes = DropDownCodes();
 
@@ -59,9 +59,9 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 50 gethcpuser available shfts: $hcpUserServices');
+    print('line 50 gethcpuser available shfts: $hcpServices');
     try {
-      Map<String, dynamic>? lm = await hcpUserServices.getHCPUser(hcpId!);
+      Map<String, dynamic>? lm = await hcpServices.getHCPUser(hcpId!);
 
       if (lm.isEmpty) {
         print('line 54 lm i septy');
@@ -75,7 +75,6 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
       throw Exception(e.toString());
     }
   }
-
   String? cancelReason;
   String? fullName;
   Map<String, dynamic>? arguments;
@@ -518,7 +517,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
 
     return prs;
   }
-
+  final valueListenableCancelReason = ValueNotifier<String?>(null);
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.sizeOf(context).width;
@@ -644,7 +643,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                               ),
                               items: listH
                                   .map((dynamic item) =>
-                                      DropdownMenuItem<dynamic>(
+                                      DropdownItem<dynamic>(
                                         value: item,
                                         child: Container(
                                           height: 32,
@@ -659,7 +658,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                                         ),
                                       ))
                                   .toList(),
-                              value: selectedCancelReasonValue,
+                              valueListenable: valueListenableCancelReason,
                               onChanged: (dynamic value) async {
                                 selectedCancelReasonValue = value;
                                 print('line 609: $value');

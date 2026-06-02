@@ -1,11 +1,11 @@
 import 'package:cms_web/features/shared/utils/routerConstants.dart';
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/clientapp/services/client_services.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 import 'package:cms_web/features/hcpapp/views/scheduling/show_hcp_payment_details_screen.dart';
-import 'package:cms_web/features/hcpapp/services/payment_api_request.dart';
+import 'package:cms_web/features/shared/services/hcpapp/payment_api_request.dart';
 import 'package:cms_web/features/hcpapp/models/users.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_user_services.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -29,7 +29,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
   dynamic currentUser;
   String? gEmail;
   AuthService authService = AuthService();
-  HCPUserServices hcpUserServices = HCPUserServices();
+  HCPServices hcpServices = HCPServices();
   ClientServices clientServices = ClientServices();
 
   String fromDate = '';
@@ -117,7 +117,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    Map<String, dynamic> lm = await hcpUserServices.getHCPUser(hcpId!);
+    Map<String, dynamic> lm = await hcpServices.getHCPUser(hcpId!);
     hcpId = lm['hcpId'];
     return lm;
   }

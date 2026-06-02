@@ -1,12 +1,11 @@
-import 'package:cms_web/features/shared/services/dropdown_codes.dart';
+import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cms_web/features/hcpapp/models/users.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 //import 'package:hcp_app/pages/home/home.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_user_services.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_timecard_service.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_timecard_service.dart';
 import 'package:intl/intl.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
@@ -28,7 +27,6 @@ class ProcessClientDNUState extends State<ProcessHCPDNU> {
 
   AuthService authService = AuthService();
   HCPServices hcpServices = HCPServices();
-  HCPUserServices hcpUserServices = HCPUserServices();
   HCPTimeCardService hcpTimeCardService = HCPTimeCardService();
 
   List<int> clientIds = [];
@@ -50,9 +48,9 @@ class ProcessClientDNUState extends State<ProcessHCPDNU> {
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 50 gethcpuser available shfts: $hcpUserServices');
+    print('line 50 gethcpuser available shfts: $hcpServices');
     try {
-      Map<String, dynamic>? lm = await hcpUserServices.getHCPUser(hcpId!);
+      Map<String, dynamic>? lm = await hcpServices.getHCPUser(hcpId!);
 
       if (lm.isEmpty) {
         print('line 54 lm i septy');

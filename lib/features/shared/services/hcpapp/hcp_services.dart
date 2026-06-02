@@ -5,31 +5,33 @@ import 'dart:io';
 import 'package:cms_web/features/hcpapp/models/hcprofessional_data_model.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_utilities.dart';
+import 'package:cms_web/features/authentication/services/auth_service.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
 
 class HCPServices {
   HCPServices();
 
-  HCPUtilitiesServices hcpUtil = HCPUtilitiesServices();
   UtilitiesServices util = UtilitiesServices();
+  AuthService authServices = AuthService();
 
   Future<List<Map<String, dynamic>>>? getHCPAddresses(int hcpId) async {
     try {
       List<Map<String, dynamic>> hcpAddresses = [];
-
+      print('line 22 get address: $hcpId');
       await FirebaseFirestore.instance
           .collection("HCPAddress")
           .where('hcpId', isEqualTo: hcpId)
           .get()
           .then((querySnapshot) {
+        hcpAddresses = [];
         for (var docSnapshot in querySnapshot.docs) {
           final obj = docSnapshot.data();
-          hcpAddresses.add(obj);
+          hcpAddresses!.add(obj);
         }
       });
+      print('line 34: ${hcpAddresses.length}');
       return hcpAddresses;
     } catch (e) {
       print('line 53 error getting hcpuser: $e');
@@ -37,31 +39,19 @@ class HCPServices {
     }
   }
 
-  Future<List<Map<String, dynamic>>>? getHCPSpecialRates(int hcpId) async {
-    try {
-      List<Map<String, dynamic>>? hcpSpecialRates = [];
-
-      await FirebaseFirestore.instance
-          .collection("HCProfessionalRate")
-          .where('hcpId', isEqualTo: hcpId)
-          .get()
-          .then((querySnapshot) {
-        for (var docSnapshot in querySnapshot.docs) {
-          String docId = docSnapshot.id;
-          final obj = docSnapshot.data();
-          obj['id'] = docId;
-          hcpSpecialRates.add(obj);
-        }
-      });
-      hcpSpecialRates.sort((a, b) {
-        int sd = a['shiftCode'].compareTo(b['shiftCode']);
-        return sd;
-      });
-      return hcpSpecialRates;
-    } catch (e) {
-      print('line 56 error getting hcpuser: $e');
-      throw Exception(e);
-    }
+  Future<Map<String, dynamic>>? getSingleUser(int hcpId) async {
+    Map<String, dynamic> lm = {};
+    await FirebaseFirestore.instance
+        .collection('users')
+        .where('genId', isEqualTo: hcpId)
+        .get()
+        .then((querySnapshot) async {
+      for (var docSnapshot in querySnapshot.docs) {
+        lm = docSnapshot.data();
+        break;
+      }
+    });
+    return lm;
   }
 
   Future<List<Map<String, dynamic>>>? getHCPContacts(int hcpId) async {
@@ -74,15 +64,13 @@ class HCPServices {
           .get()
           .then((querySnapshot) {
         for (var docSnapshot in querySnapshot.docs) {
-          String docId = docSnapshot.id;
           final obj = docSnapshot.data();
-          obj['id'] = docId;
           hcpContacts.add(obj);
         }
       });
       return hcpContacts;
     } catch (e) {
-      print('line 80 error getting hcpuser: $e');
+      print('line 53 error getting hcpuser: $e');
       throw Exception(e);
     }
   }
@@ -118,7 +106,12 @@ class HCPServices {
         .get()
         .then((querySnapshot) {
       for (var docSnapshot in querySnapshot.docs) {
+        String id = docSnapshot.id;
+        if (id.indexOf('-') != -1) {
+          continue;
+        }
         final obj = docSnapshot.data();
+
         listOfHCPCredentials.add(obj);
       }
     });
@@ -180,6 +173,38 @@ class HCPServices {
     return listOfClientsFromDNUs;
   }
 
+  Future<Map<String, dynamic>>? getSingleTestFromClientUsers(int hcpId) async {
+    print('line 134 get all singletestclientuser: $hcpId');
+    //  return realm.all<ClientWorkOrderCampaign>();
+    Map<String, dynamic>? mph;
+    await FirebaseFirestore.instance
+        .collection('ClientUser')
+        .where("cmsId", isEqualTo: hcpId)
+        .get()
+        .then((snapshot) {
+      for (var docSnapshot in snapshot.docs) {
+        mph = docSnapshot.data();
+      }
+    });
+    return mph!;
+  }
+
+  Future<Map<String, dynamic>>? getSingleClientByBranchId(int branchId) async {
+    print('line 148 get single clientbybranchid: $branchId');
+    //  return realm.all<ClientWorkOrderCampaign>();
+    Map<String, dynamic>? mph;
+    await FirebaseFirestore.instance
+        .collection('Client')
+        .where("branchId", isEqualTo: branchId)
+        .get()
+        .then((snapshot) {
+      for (var docSnapshot in snapshot.docs) {
+        mph = docSnapshot.data();
+      }
+    });
+    return mph!;
+  }
+
   Future<List<Map<String, dynamic>>>? getBranchesFromBranchIds(
       List<int> branchIds) async {
     print('line 163 get branches from breancid: $branchIds');
@@ -197,7 +222,7 @@ class HCPServices {
     return mph;
   }
 
-  Future<List<Map<String, dynamic>>>? getAllHCProfessionals() async {
+  Future<List<Map<String, dynamic>>>? getAllHCPProfessionals() async {
     print('line 9 get all hcps');
     //  return realm.all<ClientWorkOrderCampaign>();
     List<Map<String, dynamic>> listOfHCPs = [];
@@ -213,199 +238,23 @@ class HCPServices {
     return listOfHCPs;
   }
 
-  Future<Map<String, dynamic>> getASingleHCPUser(int hcpId) async {
-    print('line 185 get a singled hcpuser');
-    try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .where("genId", isEqualTo: hcpId)
-          .get()
-          .then((querySnapshot) {
-        var snapShot = querySnapshot.docs[0];
-        String documentId = snapShot.id;
-        Map<String, dynamic> userMap = snapShot.data();
-        userMap['id'] = documentId;
-        return userMap;
-      });
-      return {};
-    } catch (e) {
-      print('line 201 error: ${e.toString()}');
-      return {};
-    }
+  Future<Map<String, dynamic>>? getSingleHCProfessional(int hcpId) async {
+    print('line 9 get all hcps: $hcpId');
+    //  return realm.all<ClientWorkOrderCampaign>();
+    Map<String, dynamic>? mph;
+    await FirebaseFirestore.instance
+        .collection('HCProfessional')
+        .where("hcpId", isEqualTo: hcpId)
+        .get()
+        .then((snapshot) {
+      for (var docSnapshot in snapshot.docs) {
+        mph = docSnapshot.data();
+      }
+    });
+    return mph!;
   }
 
-  Future<Map<String, dynamic>>? getHCProfessionalByHCPId(int hcpId) async {
-    print('line 207 gethcprofessionalbyHCPId $hcpId');
-    Map<String, dynamic>? hcpMap;
-    try {
-      await FirebaseFirestore.instance
-          .collection('HCProfessional')
-          .where("hcpId", isEqualTo: hcpId)
-          .get()
-          .then((querySnapshot) {
-        var snapShot = querySnapshot.docs[0];
-        String documentId = snapShot.id;
-        hcpMap = snapShot.data();
-        hcpMap!['id'] = documentId;
-        return;
-      });
-      return hcpMap!;
-    } catch (e) {
-      print('line 233 error: ${e.toString()}');
-      return {};
-    }
-  }
-
-  Query buildDynamicQuery(Map<String, dynamic> arg) {
-    CollectionReference contentsRef =
-        FirebaseFirestore.instance.collection(arg['searchCollection']);
-    Query query = contentsRef;
-
-    //check search criteria
-    //all
-    if (arg['searchCriteria'] == 'All') {
-      return query;
-    }
-    //isequalto
-    if (arg['searchCriteria'] == 'Is Equal To') {
-      if (arg['searchField'].indexOf('Id') != -1) {
-        int value = int.parse(arg['searchValue']);
-        query = query.where(arg['searchField'], isEqualTo: value);
-        return query;
-      } else {
-        query = query.where(arg['searchField'], isEqualTo: arg['searchValue']);
-        return query;
-      }
-    }
-    //less than
-    if (arg['searchCriteria'] == 'Is Less Than') {
-      if (arg['searchField'].indexOf('Id') != -1) {
-        int value = int.parse(arg['searchValue']);
-        query = query.where(arg['searchField'], isLessThan: value);
-        return query;
-      } else {
-        query = query.where(arg['searchField'], isLessThan: arg['searchValue']);
-        return query;
-      }
-    }
-    //greater than
-    if (arg['searchCriteria'] == 'Is Greater Than') {
-      if (arg['searchField'].indexOf('Id') != -1) {
-        int value = int.parse(arg['searchValue']);
-        query = query.where(arg['searchField'], isGreaterThan: value);
-        return query;
-      } else {
-        query =
-            query.where(arg['searchField'], isGreaterThan: arg['searchValue']);
-        return query;
-      }
-    }
-    // Is greater Than or Equal To,
-    if (arg['searchCriteria'] == 'Is Greater Than Or Equal To') {
-      if (arg['searchField'].indexOf('Id') != -1) {
-        int value = int.parse(arg['searchValue']);
-        query = query.where(arg['searchField'], isGreaterThanOrEqualTo: value);
-        return query;
-      } else {
-        query = query.where(arg['searchField'],
-            isGreaterThanOrEqualTo: arg['searchValue']);
-        return query;
-      }
-    }
-
-    //Is less Than or Equal To",
-    if (arg['searchCriteria'] == 'Is Less Than Or Equal To') {
-      if (arg['searchField'].indexOf('Id') != -1) {
-        int value = int.parse(arg['searchValue']);
-        query = query.where(arg['searchField'], isLessThanOrEqualTo: value);
-      } else {
-        query = query.where(arg['searchField'],
-            isLessThanOrEqualTo: arg['searchValue']);
-      }
-    }
-    //Is Between (Include Edges)",
-    if (arg['searchCriteria'] == 'Is Between (Include Edges)') {
-      if (arg['searchField'].indexOf('Id') != -1) {
-        int value = int.parse(arg['searchValue']);
-        query = query.where(arg['searchField'], isGreaterThanOrEqualTo: value);
-        query = query.where(arg['searchField'], isLessThanOrEqualTo: value);
-      } else {
-        query = query.where(arg['searchField'],
-            isGreaterThanOrEqualTo: arg['searchValue']);
-        query = query.where(arg['searchField'],
-            isLessThanOrEqualTo: arg['searchValue']);
-      }
-    }
-    // Is Between (Do not Include Edges)",
-    if (arg['searchCriteria'] == 'Is Between (Do not Include Edges)') {
-      if (arg['searchField'].indexOf('Id') != -1) {
-        int value = int.parse(arg['searchValue']);
-        query = query.where(arg['searchField'], isGreaterThan: value);
-        query = query.where(arg['searchField'], isLessThan: value);
-      } else {
-        query =
-            query.where(arg['searchField'], isGreaterThan: arg['searchValue']);
-        query = query.where(arg['searchField'], isLessThan: arg['searchValue']);
-      }
-    }
-
-    if (arg['searchCriteria'] == 'Is In (colon separated list)') {
-      String sx = arg['searchCriteria'].replaceAll(',', ':');
-      List<String> lsx = sx.split(':');
-      if (arg['searchField'].indexOf('Id') != -1) {
-        List<int> lvalues = [];
-        for (int i = 0; i < lsx.length; i++) {
-          String sv = lsx[i];
-          lvalues.add(int.parse(sv));
-        }
-        query = query.where(arg['searchField'], whereIn: lvalues);
-      } else {
-        List<String> svalues = [];
-        for (int i = 0; i < lsx.length; i++) {
-          String sv = lsx[i];
-          svalues.add(sv);
-        }
-        query = query.where(arg['searchField'], whereIn: svalues);
-      }
-    }
-    return query;
-  }
-
-  Future<List<Map<String, dynamic>>>? getHCProfessionalsByArgument(
-      Map<String, dynamic> arguments) async {
-    print('line 9 get all hcps: $arguments');
-    try {
-      //  return realm.all<ClientWorkOrderCampaign>();
-      List<Map<String, dynamic>> mph = [];
-      Query query = buildDynamicQuery(arguments!);
-      print('line 182: $query');
-      query.get().then(((querySnapshot) async {
-        for (var docSnapShot in querySnapshot.docs) {
-          print('line 198 in querysnapshot');
-          Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
-          obj['id'] = docSnapShot.id;
-          Timestamp ts = obj['credsWillWarnDate'];
-          DateTime date = ts.toDate();
-          var formattedDate = DateFormat('MM/dd/yyyy').format(date);
-          obj['credsWillWarnDate'] = formattedDate;
-          ts = obj['lastWorked'];
-          date = ts.toDate();
-          formattedDate = DateFormat('MM/dd/yyyy').format(date);
-          obj['lastWorked'] = formattedDate;
-
-          //    print('line 184: $formattedDate  ${obj['credsWillWarnDate']}');
-
-          mph.add(obj);
-        }
-      }));
-      return mph;
-    } catch (e) {
-      print('line 217 error: $e');
-      throw Exception(e.toString());
-    }
-  }
-
-  Future<List<Map<String, dynamic>>>? getHCProfessionalsByBranchId(
+  Future<List<Map<String, dynamic>>>? getHCPProfessionalByBranchId(
       int branchId) async {
     print('line 9 get all hcps: $branchId');
     try {
@@ -417,19 +266,7 @@ class HCPServices {
           .get()
           .then((snapshot) {
         for (var docSnapshot in snapshot.docs) {
-          Map<String, dynamic> obj = docSnapshot.data();
-          Timestamp ts = obj['credsWillWarnDate'];
-          DateTime date = ts.toDate();
-          var formattedDate = DateFormat('MM/dd/yyyy').format(date);
-          obj['credsWillWarnDate'] = formattedDate;
-          ts = obj['lastWorked'];
-          date = ts.toDate();
-          formattedDate = DateFormat('MM/dd/yyyy').format(date);
-          obj['lastWorked'] = formattedDate;
-
-          //    print('line 184: $formattedDate  ${obj['credsWillWarnDate']}');
-
-          mph.add(obj);
+          mph.add(docSnapshot.data());
         }
       });
       return mph;
@@ -439,91 +276,67 @@ class HCPServices {
     }
   }
 
-  Future<List<dynamic>> getHCPDocumentationCategories() async {
-    List<dynamic> lst = [
-      {
-        "codeId": 118,
-        "codeValue": "CERT",
-        "description": "Professional Certification"
-      },
-      {"codeId": 120, "codeValue": "CPR", "description": "CPR Certification"},
-      {
-        "codeId": 121,
-        "codeValue": "CRIM",
-        "description": "Criminal Background Check"
-      },
-      {"codeId": 123, "codeValue": "Drug", "description": "Drug Screen"},
-      {"codeId": 125, "codeValue": "HEPB", "description": "Hepatitis B"},
-      {
-        "codeId": 139,
-        "codeValue": "XRAY",
-        "description": "Chest X-Ray (Positive PPD"
-      },
-      {
-        "codeId": 141,
-        "codeValue": "LIC",
-        "description": "Professional License - Number"
-      },
-      {
-        "codeId": 146,
-        "codeValue": "License Status Verified - Annually",
-        "description": "Board Status - Clear"
-      },
-      {
-        "codeId": 200,
-        "codeValue": "Negative Drug Screen - 12 Panel",
-        "description": "12 Panel Drug Test"
-      },
-      {
-        "codeId": 251,
-        "codeValue": "Background Verification",
-        "description": "Background Verification"
-      },
-      {
-        "codeId": 289,
-        "codeValue": "CNA CERT",
-        "description": "CNA Certification"
-      },
-      {
-        "codeId": 302,
-        "codeValue": "Sex Offender Report",
-        "description": "Sex Offender Report"
-      },
-      {
-        "codeId": 305,
-        "codeValue": "COVID Vaccine w/ Exp Date",
-        "description": "COVID Vaccine w/ Exp Date"
-      },
-    ];
-    return lst;
-  }
-  // Timestamp convertToTimeStamp(String dts) {
-  //   Timestamp? ts;
-  //   try {
-  //     dts = dts.replaceAll('\/', '-');
-  //     List<String> sts = dts.split('-');
-  //     if (sts[2].length != 4) {
-  //       throw Exception('Invalid date: year not 4 digits');
+  // Future<List<HCProfessionalDataModel>> getHCPDataFromSearchCNA(
+  //     String hcpRecordName) async {
+  //   print('line 309: $hcpRecordName');
+  //   await FirebaseFirestore.instance
+  //       .collection('HCProfessional')
+  //       .where("branchId", isEqualTo: 624)
+  //       .where("disciplineId", isEqualTo: 558)
+  //       .get()
+  //       .then((querySnapshot) {
+  //     print('line 324: ${querySnapshot.docs.length}');
+  //     for (var docSnapshot in querySnapshot.docs) {
+  //       final obj = docSnapshot.data();
+  //       print('line 327: ${obj['hcpId']} ${obj['fullName']}');
   //     }
-  //     if (sts[0].length == 1) {
-  //       String st = '0' + sts[0];
-  //       sts[0] = st;
-  //     }
-  //     if (sts[1].length == 1) {
-  //       String st = '0' + sts[1];
-  //       sts[1] = st;
-  //     }
-  //
-  //     String dtm = sts[2] + '-' + sts[0] + '-' + sts[1];
-  //     DateTime dte = DateTime.parse(dtm);
-  //     ts = Timestamp.fromDate(dte);
-  //     print('line 341: $ts $dte');
-  //     return ts;
-  //   } catch (e) {
-  //     print('line 345: error: ${e.toString()}');
-  //     throw Exception('Error: ${e.toString()}');
-  //   }
+  //   });
+  //   return [];
   // }
+
+  Timestamp convertToTimeStamp(String dts) {
+    Timestamp? ts;
+    try {
+      dts = dts.replaceAll('\/', '-');
+      List<String> sts = dts.split('-');
+      if (sts[2].length != 4) {
+        throw Exception('Invalid date: year not 4 digits');
+      }
+      if (sts[0].length == 1) {
+        String st = '0' + sts[0];
+        sts[0] = st;
+      }
+      if (sts[1].length == 1) {
+        String st = '0' + sts[1];
+        sts[1] = st;
+      }
+
+      String dtm = sts[2] + '-' + sts[0] + '-' + sts[1];
+      DateTime dte = DateTime.parse(dtm);
+      ts = Timestamp.fromDate(dte);
+      print('line 341: $ts $dte');
+      return ts;
+    } catch (e) {
+      print('line 345: error: ${e.toString()}');
+      throw Exception('Error: ${e.toString()}');
+    }
+  }
+
+  List<int> getHoursAndMinutes(String et) {
+    String char = String.fromCharCode(8239);
+    et = et.replaceAll(char, ' ');
+    List<String> sts = et.split(' ');
+    String es = sts[0];
+    List<String> ess = es.split(':');
+    List<int> its = [];
+    its.add(int.parse(ess[0]));
+    its.add(int.parse(ess[1]));
+    if (sts[1].toLowerCase() == 'pm') {
+      its[0] += 12;
+    }
+    return its;
+  }
+
 
   Future<List<HCProfessionalDataModel>> getHCPDataFromSearch(
       Map<String, String> arguments) async {
@@ -573,14 +386,14 @@ class HCPServices {
             .collection('ClientWorkOrderCampaign')
             .where("hcpId", isEqualTo: hcpId)
             .where('shiftStatus', whereIn: [
-              'Open',
-              'Accepted',
-              'Approved',
-              'Confirmed',
-              'SignedIn',
-            ])
+          'Open',
+          'Accepted',
+          'Approved',
+          'Confirmed',
+          'SignedIn',
+        ])
             .where('shiftDate', isGreaterThanOrEqualTo: dns)
-            //  .where('shiftStatus', whereNotIn: ['Closed', 'Canceled', 'SignedOut'])
+        //  .where('shiftStatus', whereNotIn: ['Closed', 'Canceled', 'SignedOut'])
             .orderBy("branchId", descending: false)
             .orderBy('disciplineName', descending: false)
             .orderBy('shiftStatus', descending: false)
@@ -589,56 +402,56 @@ class HCPServices {
             .orderBy('hcpName', descending: false)
             .get()
             .then((querySnapshot) {
-              print('line 493: ${querySnapshot.docs.length}');
+          print('line 493: ${querySnapshot.docs.length}');
 
-              for (var docSnapshot in querySnapshot.docs) {
-                final obj = docSnapshot.data();
+          for (var docSnapshot in querySnapshot.docs) {
+            final obj = docSnapshot.data();
 
-                Timestamp ts = obj['shiftDate'];
-                DateTime dte = ts.toDate();
+            Timestamp ts = obj['shiftDate'];
+            DateTime dte = ts.toDate();
 
-                print('line 548: ${obj['branchName']}');
+            print('line 548: ${obj['branchName']}');
 
-                print('line 574 ${obj['shiftDate']}');
-                print(
-                    'line 592 ${obj['hcpName']} ${obj['disciplineName']} ${obj['branchName']}');
-                var shft = '';
-                if (obj['shiftStatus'] == 'Open') {
-                  shft = 'Opn';
-                } else if (obj['shiftStatus'] == 'Accepted') {
-                  shft = 'Acp';
-                } else if (obj['shiftStatus'] == 'Approved') {
-                  shft = 'App';
-                } else if (obj['shiftStatus'] == 'Confirmed') {
-                  shft = 'Cnf';
-                } else if (obj['shiftStatus'] == 'SignedIn') {
-                  shft = 'SgI';
-                } else if (obj['shiftStatus'] == 'SignedOut') {
-                  shft = 'SgO';
-                } else {
-                  print(
-                      'line 616 **** : ${obj['hcpId']} ${obj['shiftStatus']}');
-                  shft = obj['shiftStatus'].substring(0, 3);
-                }
-                counter += 1;
-                print(
-                    'line 621 **** : $counter ${obj['hcpId']} ${obj['shiftStatus']}');
-                htp = HCProfessionalDataModel(
-                    hcpId: obj['hcpId'],
-                    hcpName: obj['hcpName'],
-                    branchId: obj['branchId'],
-                    branchName: obj['branchName'],
-                    shiftDateString: dte.toString(),
-                    shiftStatus: shft,
-                    shiftCode: obj['shiftCode'],
-                    startTime: obj['startTime'],
-                    endTime: obj['endTime'],
-                    disciplineName: obj['disciplineName']);
+            print('line 574 ${obj['shiftDate']}');
+            print(
+                'line 592 ${obj['hcpName']} ${obj['disciplineName']} ${obj['branchName']}');
+            var shft = '';
+            if (obj['shiftStatus'] == 'Open') {
+              shft = 'Opn';
+            } else if (obj['shiftStatus'] == 'Accepted') {
+              shft = 'Acp';
+            } else if (obj['shiftStatus'] == 'Approved') {
+              shft = 'App';
+            } else if (obj['shiftStatus'] == 'Confirmed') {
+              shft = 'Cnf';
+            } else if (obj['shiftStatus'] == 'SignedIn') {
+              shft = 'SgI';
+            } else if (obj['shiftStatus'] == 'SignedOut') {
+              shft = 'SgO';
+            } else {
+              print(
+                  'line 616 **** : ${obj['hcpId']} ${obj['shiftStatus']}');
+              shft = obj['shiftStatus'].substring(0, 3);
+            }
+            counter += 1;
+            print(
+                'line 621 **** : $counter ${obj['hcpId']} ${obj['shiftStatus']}');
+            htp = HCProfessionalDataModel(
+                hcpId: obj['hcpId'],
+                hcpName: obj['hcpName'],
+                branchId: obj['branchId'],
+                branchName: obj['branchName'],
+                shiftDateString: dte.toString(),
+                shiftStatus: shft,
+                shiftCode: obj['shiftCode'],
+                startTime: obj['startTime'],
+                endTime: obj['endTime'],
+                disciplineName: obj['disciplineName']);
 
-                hcpms.add(htp!);
-                break;
-              }
-            });
+            hcpms.add(htp!);
+            break;
+          }
+        });
         break;
       }
       print('line 641: ${hcpms.length}');
@@ -734,7 +547,7 @@ class HCPServices {
     var client = http.Client();
     // const ura = 'https://api.stafferlink.com/asm/authenticate';
     var url = Uri.https('api.stafferlink.com', 'asm/authenticate');
-    var orgId = dotenv.env['ASM_DB2'];
+    var orgId = dotenv.env['ASM_DB1'];
     print('url:  $url');
     Map data = {
       'key': '30c39597a9604a979e9430ee5794fab6',
@@ -910,7 +723,9 @@ class HCPServices {
       List<dynamic> result = await callingRetrieveHCPWorkOrderCampaignsFunction(
           callable, hcpId, ctx);
       print('line 44 after call: $result');
-
+      if (result.isEmpty) {
+        return result;
+      }
       if (result[0]['ERROR'] != null) {
         print('line 46: Error getting htc id to asm');
         return result;
@@ -940,4 +755,210 @@ class HCPServices {
       throw Exception('line 739  ${e.toString()}');
     }
   }
+  Future<List<Map<String, dynamic>>>? getHCProfessionalsByArgument(
+      Map<String, dynamic> arguments) async {
+    print('line 376 get all hcps: $arguments');
+    try {
+      //  return realm.all<ClientWorkOrderCampaign>();
+      List<Map<String, dynamic>> mph = [];
+      Query query = util.buildDynamicQuery(arguments!);
+      print('line 381: $query');
+      QuerySnapshot querySnapshot = await query.get();
+      List<int> dupIds = [];
+      print('line 384: ${querySnapshot.docs.length}');
+      for (var docSnapShot in querySnapshot.docs) {
+        Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
+        obj['id'] = docSnapShot.id;
+        print('line 387: ${obj['id']}');
+        Timestamp ts = obj['credsWillWarnDate'];
+        DateTime date = ts.toDate();
+        var formattedDate = DateFormat('MM/dd/yyyy').format(date);
+        obj['credsWillWarnDate'] = formattedDate;
+        ts = obj['lastWorked'];
+        date = ts.toDate();
+        formattedDate = DateFormat('MM/dd/yyyy').format(date);
+        obj['lastWorked'] = formattedDate;
+
+        //    print('line 184: $formattedDate  ${obj['credsWillWarnDate']}');
+
+        mph.add(obj);
+      }
+      print('line 402: ${mph.length}');
+      return mph;
+    } catch (e) {
+      print('line 403 error: $e');
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<List<Map<String, dynamic>>>? getHCProfessionalsByBranchId(
+      int branchId) async {
+    print('line 9 get all hcps: $branchId');
+    try {
+      //  return realm.all<ClientWorkOrderCampaign>();
+      List<Map<String, dynamic>> mph = [];
+      await FirebaseFirestore.instance
+          .collection('HCProfessional')
+          .where("branchId", isEqualTo: branchId)
+          .get()
+          .then((snapshot) {
+        for (var docSnapshot in snapshot.docs) {
+          Map<String, dynamic> obj = docSnapshot.data();
+          Timestamp ts = obj['credsWillWarnDate'];
+          DateTime date = ts.toDate();
+          var formattedDate = DateFormat('MM/dd/yyyy').format(date);
+          obj['credsWillWarnDate'] = formattedDate;
+          ts = obj['lastWorked'];
+          date = ts.toDate();
+          formattedDate = DateFormat('MM/dd/yyyy').format(date);
+          obj['lastWorked'] = formattedDate;
+
+          //    print('line 184: $formattedDate  ${obj['credsWillWarnDate']}');
+
+          mph.add(obj);
+        }
+      });
+      return mph;
+    } catch (e) {
+      print('line 217 error: $e');
+      throw Exception(e.toString());
+    }
+  }
+  Future<Map<String, dynamic>> getHCPUser(int hcpId) async {
+    print('line 19 in gethcpuser $hcpId');
+    try {
+      Map<String, dynamic>? hcpUser;
+      await FirebaseFirestore.instance
+          .collection("HCProfessional")
+          .where('hcpId', isEqualTo: hcpId)
+          .get()
+          .then((querySnapshot) async {
+        for (var docSnapshot in querySnapshot.docs) {
+          var obj = docSnapshot.data();
+          hcpUser = obj;
+          print('line 29: ${hcpUser!['hcpId']}');
+          await FirebaseFirestore.instance
+              .collection('HCPAddress')
+              .where('hcpId', isEqualTo: obj['hcpId'])
+              .get()
+              .then((querySnapshot) {
+            for (var docSnapshot in querySnapshot.docs) {
+              var adr = docSnapshot.data();
+              if (adr['latitude'] != null) {
+                hcpUser!['latitude'] = adr['latitude'];
+                hcpUser!['longitude'] = adr['longitude'];
+                break;
+              }
+            }
+          });
+          if (hcpUser == null) {
+            print('line 48 hcpuser is null ');
+            return {};
+          }
+          print('line 50:  ${hcpUser!['latitude']} ${hcpUser!['longitude']}');
+          authServices.hcpId = hcpUser!['hcpId'];
+          print('line 52 in get hcpuser hcpid');
+          return hcpUser!;
+        }
+      });
+      return hcpUser!;
+    } catch (e) {
+      print('line 58 error getting hcpuser: $e');
+      throw Exception(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> getHCProfessional(String email) async {
+    print('line 61 in getHCPProfessional: $email');
+    try {
+      Map<String, dynamic>? hcpUser;
+      await FirebaseFirestore.instance
+          .collection("HCProfessional")
+          .where('email', isEqualTo: email)
+          .get()
+          .then((querySnapshot) {
+        for (var docSnapshot in querySnapshot.docs) {
+          var obj = docSnapshot.data();
+          hcpUser = obj;
+        }
+      });
+
+      print('line 42: in get hcpuser $email');
+      return hcpUser!;
+    } catch (e) {
+      print('line 53 error getting hcpuser: $e');
+      throw Exception(e);
+    }
+  }
+  Future<Map<String, dynamic>> getASingleHCPUser(int hcpId) async {
+    print('line 185 get a singled hcpuser');
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .where("genId", isEqualTo: hcpId)
+          .get()
+          .then((querySnapshot) {
+        var snapShot = querySnapshot.docs[0];
+        String documentId = snapShot.id;
+        Map<String, dynamic> userMap = snapShot.data();
+        userMap['id'] = documentId;
+        return userMap;
+      });
+      return {};
+    } catch (e) {
+      print('line 201 error: ${e.toString()}');
+      return {};
+    }
+  }
+
+  Future<Map<String, dynamic>>? getHCProfessionalByHCPId(int hcpId) async {
+    print('line 207 gethcprofessionalbyHCPId $hcpId');
+    Map<String, dynamic>? hcpMap;
+    try {
+      await FirebaseFirestore.instance
+          .collection('HCProfessional')
+          .where("hcpId", isEqualTo: hcpId)
+          .get()
+          .then((querySnapshot) {
+        var snapShot = querySnapshot.docs[0];
+        String documentId = snapShot.id;
+        hcpMap = snapShot.data();
+        hcpMap!['id'] = documentId;
+        return;
+      });
+      return hcpMap!;
+    } catch (e) {
+      print('line 233 error: ${e.toString()}');
+      return {};
+    }
+  }
+  Future<List<Map<String, dynamic>>>? getHCPSpecialRates(int hcpId) async {
+    try {
+      List<Map<String, dynamic>>? hcpSpecialRates = [];
+
+      await FirebaseFirestore.instance
+          .collection("HCProfessionalRate")
+          .where('hcpId', isEqualTo: hcpId)
+          .get()
+          .then((querySnapshot) {
+        for (var docSnapshot in querySnapshot.docs) {
+          String docId = docSnapshot.id;
+          final obj = docSnapshot.data();
+          obj['id'] = docId;
+          hcpSpecialRates.add(obj);
+        }
+      });
+      hcpSpecialRates.sort((a, b) {
+        int sd = a['shiftCode'].compareTo(b['shiftCode']);
+        return sd;
+      });
+      return hcpSpecialRates;
+    } catch (e) {
+      print('line 56 error getting hcpuser: $e');
+      throw Exception(e);
+    }
+  }
+
+
+
 }

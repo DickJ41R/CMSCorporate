@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cms_web/features/hcpapp/models/users.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_user_services.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 import 'package:cms_web/features/hcpapp/views/hcp_menu.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
@@ -27,7 +26,6 @@ class _ProcessHCPProfileEducationDataState
   String? email;
   Map<String, dynamic>? hcpUser;
   AuthService authService = AuthService();
-  HCPUserServices hcpUserServices = HCPUserServices();
   HCPServices hcpServices = HCPServices();
 
   int? hcpId;
@@ -59,7 +57,7 @@ class _ProcessHCPProfileEducationDataState
 
   String? fullName;
   Future<Map<String, dynamic>> getHCPUser() async {
-    Map<String, dynamic> lm = await hcpUserServices.getHCPUser(hcpId!);
+    Map<String, dynamic> lm = await hcpServices.getHCPUser(hcpId!);
     hcpId = lm['hcpId'];
     fullName = lm['legalName'];
     return lm;

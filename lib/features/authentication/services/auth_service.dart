@@ -9,13 +9,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cms_web/features/authentication/views/pages/login/login.dart';
 import 'dart:core';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/shared/services/routes.dart';
 import 'package:cms_web/features/branchcorporateapp/models/cms_branch_users.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cms_web/features/shared/utils/encdec.dart';
 import 'package:cms_web/features/clientapp/models/client.dart';
-import 'package:cms_web/features/clientapp/services/client_services.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
 import 'package:cms_web/features/clientapp/views/client_menu.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 // Private constructor to prevent external instantiation.
@@ -32,6 +32,8 @@ class AuthService {
 
   final _auth = FirebaseAuth.instance;
   String? fcmToken;
+  Map<String, dynamic>? client;
+  int? hcpId;
   dynamic currentUser;
   dynamic clientUser;
   Map<String, dynamic>? hcpMap;

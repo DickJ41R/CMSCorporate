@@ -1,6 +1,6 @@
-import 'package:cms_web/features/hcpapp/services/hcp_timecard_service.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_timecard_service.dart';
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/clientapp/services/client_work_order_campaign_service.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_work_order_campaign_service.dart';
 import 'package:intl/intl.dart';
 import 'package:cms_web/features/authentication//services/auth_service.dart';
 import 'package:cms_web/features/clientapp/models/client_user.dart';

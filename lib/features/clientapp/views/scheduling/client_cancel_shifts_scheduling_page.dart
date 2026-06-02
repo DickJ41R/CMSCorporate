@@ -1,15 +1,15 @@
 //Client Cancel Shifts Scheduling Page
 import 'package:cms_web/features/clientapp/models/client.dart';
-import 'package:cms_web/features/clientapp/services/client_work_order_campaign_service.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_work_order_campaign_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_timecard_service.dart';
-import 'package:cms_web/features/shared/services/dropdown_codes.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_timecard_service.dart';
+import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
-import 'package:cms_web/features/clientapp/services/client_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ShiftCancel {
@@ -88,7 +88,6 @@ class _ClientCancelShiftsSchedulingPageState
   double smallFontSize = 14;
   double smallerFontSize = 12;
   ClientWorkOrderCampaignService clw = ClientWorkOrderCampaignService();
-
   //late ShiftClassDataSource _shiftClassDataSource;
   List<dynamic> listOfShiftCancelData = [];
   DataGridController _dataGridController = DataGridController();
@@ -288,6 +287,7 @@ class _ClientCancelShiftsSchedulingPageState
             ));
     return;
   }
+  final valueListenableCancelReason = ValueNotifier<String?>(null);
 
   Future<void> sendCancelEmail(
       List<Map<String, dynamic>> clientWorkOrders, String reason) async {
@@ -839,7 +839,7 @@ class _ClientCancelShiftsSchedulingPageState
                                                   ),
                                                   items: listH
                                                       .map((dynamic item) =>
-                                                          DropdownMenuItem<
+                                                          DropdownItem<
                                                               dynamic>(
                                                             value: item,
                                                             child: Container(
@@ -860,10 +860,12 @@ class _ClientCancelShiftsSchedulingPageState
                                                             ),
                                                           ))
                                                       .toList(),
-                                                  value:
-                                                      selectedClientCancelReasonValue,
+                                                  valueListenable:
+                                                  valueListenableCancelReason,
                                                   onChanged:
                                                       (dynamic value) async {
+                                                        valueListenableCancelReason
+                                                            .value = value;
                                                     selectedClientCancelReasonValue =
                                                         value;
                                                     print('line 609: $value');

@@ -1,6 +1,6 @@
 //Client Contact Profile Page
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/clientapp/services/client_services.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
 import 'package:cms_web/features/clientapp//models/client_user.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 

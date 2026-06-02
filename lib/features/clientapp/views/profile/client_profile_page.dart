@@ -1,8 +1,7 @@
 //Client Profile Page
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:cms_web/features/clientapp/services/client_services.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'package:flutter/services.dart';
 

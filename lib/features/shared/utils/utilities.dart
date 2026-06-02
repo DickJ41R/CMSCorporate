@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:hcp_app/models/client_models/client_rate.dart';
 // import 'package:hcp_app/services/auth_service.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid.dart';
 // import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -1732,5 +1732,300 @@ class UtilitiesServices {
       }
 
   }  //shift minutes
+  String convertDateFromUnknown(dynamic t) {
+    print('line 18: in convert from unknown $t');
+    try {
+      if (t == null) {
+        DateTime d = new DateTime(1970, 1, 1);
+        int itt = d.millisecondsSinceEpoch;
+        DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(itt);
+        String ss = getFormattedDate(dateTime);
+        print('line 24: $ss');
+        return ss;
+      } else if (t is String) {
+        print('line 27: $t');
+        return t;
+      } else if (t is Timestamp) {
+        DateTime date = t.toDate();
+        String s = getFormattedDate(date);
+        print('line 32: $s');
+        return s;
+      } else {
+        print('line 35 null');
+        return "";
+      }
+    } catch (e) {
+      print('line 40 error ${e.toString()}');
+      throw Exception('line 41 error in cvt from ukn');
+    }
+  }
+  Query buildDynamicQuery(Map<String, dynamic> arg) {
+    Query? query;
+    //check search criteria
+    //all
+    print('line 926 $arg');
+    try {
+      Map<String, String>? baseArg;
+      bool flagHaveBaseArgument = true;
+      String stringBranchId = arg['branchValue'];
+      if (stringBranchId == '0') {
+        flagHaveBaseArgument = false;
+      }
+      CollectionReference contentsRef =
+      FirebaseFirestore.instance.collection(arg['searchCollection']!);
+
+      if (arg['searchCriteria'] == 'All') {
+        print('line 938');
+        return contentsRef;
+      }
+      //isequalto
+      print('line 942');
+      if (arg['searchCriteria'] == 'Is Equal To') {
+        if (arg['searchField']!.indexOf('Id') != -1) {
+          int value = int.parse(arg['searchValue']!);
+          print('line 84: $value ${arg['searchField']}');
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isEqualTo: value);
+          } else {
+            query = contentsRef.where(arg['searchField']!, isEqualTo: value);
+          }
+        } else {
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isEqualTo: arg['searchValue']);
+          } else {
+            query = contentsRef.where(arg['searchField']!,
+                isEqualTo: arg['searchValue']);
+          }
+        }
+      }
+      //less than
+      print('line 968');
+      if (arg['searchCriteria'] == 'Is Less Than') {
+        if (arg['searchField']!.indexOf('Id') != -1) {
+          int value = int.parse(arg['searchValue']!);
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            ;
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isLessThan: value);
+          } else {
+            query = contentsRef.where(arg['searchField']!, isLessThan: value);
+          }
+        } else {
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isLessThan: arg['searchValue']!);
+          } else {
+            query = contentsRef.where(arg['searchField']!,
+                isLessThan: arg['searchValue']);
+          }
+        }
+      }
+      //greater than
+      print('line 994');
+      if (arg['searchCriteria'] == 'Is Greater Than') {
+        if (arg['searchField']!.indexOf('Id') != -1) {
+          int value = int.parse(arg['searchValue']!);
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isGreaterThan: value);
+          } else {
+            query =
+                contentsRef.where(arg['searchField']!, isGreaterThan: value);
+          }
+        } else {
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isGreaterThan: arg['searchValue']);
+          } else {
+            query = contentsRef.where(arg['searchField']!,
+                isGreaterThan: arg['searchValue']);
+          }
+        }
+      }
+      // Is greater Than or Equal To,
+      print('line 1020');
+      if (arg['searchCriteria'] == 'Is Greater Than Or Equal To') {
+        if (arg['searchField']!.indexOf('Id') != -1) {
+          int value = int.parse(arg['searchValue']!);
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isGreaterThanOrEqualTo: value);
+          } else {
+            query = contentsRef.where(arg['searchField']!,
+                isGreaterThanOrEqualTo: value);
+          }
+        } else {
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef.where('branchId', isEqualTo: branchId).where(
+                arg['searchField']!,
+                isGreaterThanOrEqualTo: arg['searchValue']);
+          } else {
+            query = contentsRef.where(arg['searchField']!,
+                isGreaterThanOrEqualTo: arg['searchValue']);
+          }
+        }
+      }
+
+      //Is less Than or Equal To",
+      if (arg['searchCriteria'] == 'Is Less Than Or Equal To') {
+        if (arg['searchField']!.indexOf('Id') != -1) {
+          int value = int.parse(arg['searchValue']!);
+          int branchId = int.parse(stringBranchId);
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isLessThanOrEqualTo: value);
+          } else {
+            query = contentsRef.where(arg['searchField']!,
+                isLessThanOrEqualTo: value);
+          }
+        } else {
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef.where('branchId', isEqualTo: branchId).where(
+                arg['searchField']!,
+                isLessThanOrEqualTo: arg['searchValue']);
+          } else {
+            query = contentsRef.where(arg['searchField']!,
+                isLessThanOrEqualTo: arg['searchValue']);
+          }
+        }
+      }
+      //Is Between (Include Edges)",
+      if (arg['searchCriteria'] ==
+          'Is Between (Edges, colon separated fields)') {
+        if (arg['searchField']!.indexOf('Id') != -1) {
+          List<String> lst = arg['searchValue']!.split(':');
+          List<int> values = [];
+          for (int i = 0; i < lst.length; i++) {
+            values.add(int.parse(lst[i]));
+          }
+          print('line 143: $values');
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
+                .where(arg['searchField']!, isLessThanOrEqualTo: values[1]);
+          } else {
+            query = contentsRef
+                .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
+                .where(arg['searchField']!, isLessThanOrEqualTo: values[1]);
+          }
+        } else {
+          List<String> lst = arg['searchValue']!.split(':');
+          List<String> values = [];
+
+          for (int i = 0; i < lst.length; i++) {
+            values.add(lst[i]);
+          }
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
+                .where(arg['searchField']!, isLessThanOrEqualTo: values[1]);
+          } else {
+            query = contentsRef
+                .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
+                .where(arg['searchField']!, isLessThanOrEqualTo: values[1]);
+          }
+        }
+      }
+      // Is Between (Do not Include Edges)",
+      if (arg['searchCriteria'] ==
+          'Is Between (No Edges, colon separated fields)') {
+        if (arg['searchField']!.indexOf('Id') != -1) {
+          List<String> lst = arg['searchValue']!.split(':');
+          List<int> values = [];
+          for (int i = 0; i < lst.length; i++) {
+            values.add(int.parse(lst[i]));
+          }
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isGreaterThan: values[0])
+                .where(arg['searchField']!, isLessThan: values[1]);
+          } else {
+            query = contentsRef
+                .where(arg['searchField']!, isGreaterThan: values[0])
+                .where(arg['searchField']!, isLessThan: values[1]);
+          }
+        } else {
+          List<String> lst = arg['searchValue']!.split(':');
+          List<String> values = [];
+          for (int i = 0; i < lst.length; i++) {
+            values.add(lst[i]);
+          }
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg['searchField']!, isGreaterThan: values[0])
+                .where(arg['searchField']!, isLessThan: values[1]);
+          }
+        }
+      }
+
+      if (arg['searchCriteria'] == 'Is In (colon separated list)') {
+        String sx = arg['searchValue']!.replaceAll(',', ':');
+        List<String> lsx = sx.split(':');
+        print('line 1046 $lsx');
+        if (arg['searchField']!.indexOf('Id') != -1) {
+          List<int> lvalues = [];
+          for (int i = 0; i < lsx.length; i++) {
+            String sv = lsx[i];
+            lvalues.add(int.parse(sv));
+          }
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg!['searchField']!, whereIn: lvalues);
+          } else {
+            query = contentsRef.where(arg!['searchField']!, whereIn: lvalues);
+          }
+        } else {
+          List<String> svalues = [];
+          for (int i = 0; i < lsx.length; i++) {
+            String sv = lsx[i];
+            svalues.add(sv);
+          }
+          if (flagHaveBaseArgument == true) {
+            int branchId = int.parse(stringBranchId);
+            query = contentsRef
+                .where('branchId', isEqualTo: branchId)
+                .where(arg!['searchField']!, whereIn: svalues);
+          } else {
+            query = contentsRef.where(arg['searchField']!, whereIn: svalues);
+          }
+        }
+      }
+      print('line 1183 $query');
+      return query!;
+    } catch (e) {
+      print('line 1186: ${e.toString()}');
+      throw Exception(e.toString());
+    }
+  }
 
 }

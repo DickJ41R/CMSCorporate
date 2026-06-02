@@ -1,44 +1,44 @@
-//Client Contact Profile Page
+import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/shared/services/dropdown_codes.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:cms_web/features/shared/widgets/show_hcp_document_pdf.dart';
+import 'package:cms_web/features/shared//widgets/show_hcp_document_pdf.dart';
 import 'package:cms_web/features/shared/widgets/show_hcp_document_img.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_services.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_timecard_service.dart';
-import 'package:cms_web/features/clientapp/models/client_user.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_timecard_service.dart';
+import 'package:cms_web/features/authentication/services/auth_service.dart';
 import 'dart:typed_data';
 
-class ClientCredentialsProfilePage extends StatefulWidget {
-  final Map<String, dynamic> args;
-  const ClientCredentialsProfilePage({super.key, required this.args});
+final DropDownCodes dropDownCodes = DropDownCodes();
+
+String globalBranchName = '';
+
+class ProcessClientHCPDocumentation extends StatefulWidget {
+  const ProcessClientHCPDocumentation({super.key});
 
   @override
-  State<ClientCredentialsProfilePage> createState() =>
-      _ClientCredentialsProfilePageState();
+  ProcessClientHCPDocumentationState createState() =>
+      ProcessClientHCPDocumentationState();
 }
 
-class _ClientCredentialsProfilePageState
-    extends State<ClientCredentialsProfilePage> {
-  String? localTitle;
-  String genericTitle = '';
-  HCPServices hcpServices = HCPServices();
-  HCPTimeCardService hcpTimecardService = HCPTimeCardService();
+class ProcessClientHCPDocumentationState
+    extends State<ProcessClientHCPDocumentation> {
 
   final DropDownCodes dropDownCodes = DropDownCodes();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late int? clientId;
+  int? clientId;
 
-  dynamic currentUser;
-  ClientUser? clientUser;
-
+  Map<String, dynamic>? currentUser;
+  Map<String, dynamic>? clientUser;
+  HCPServices hcpServices = HCPServices();
+  HCPTimeCardService hcpTimecardService = HCPTimeCardService();
+  AuthService authService = AuthService();
   dynamic listDocuments;
   String selectedValue = '';
   String selectedValueDoc = '';
   dynamic selectedValueHCP = null;
   int selectedHCPId = -1;
   List<dynamic>? listHcps;
-  String? selectedValueCredentialCategory;
+  dynamic selectedValueCredentialCategory;
   int selectedCredentialCodeId = -1;
   late Future<List<String>> futureHCPS;
   late List<String> hcpDocumentationCategories;
@@ -56,7 +56,7 @@ class _ClientCredentialsProfilePageState
   Future<List<dynamic>> _getCredentialCategories() async {
     print('line 61 get credentials categories list');
     listOfCredentialCategories =
-        await hcpServices.getHCPDocumentationCategories();
+    await dropDownCodes.getHCPDocumentationCategories();
     List<dynamic> lst = [];
     for (int i = 0; i < listOfCredentialCategories.length; i++) {
       // print('line 66 ${listOfCredentialCategories[i]}');
@@ -112,10 +112,10 @@ class _ClientCredentialsProfilePageState
   List<dynamic> listOfHcps = [];
 
   Future<List<dynamic>> _getHCPs(context) async {
-    print('line 120 ethcps: $clientId');
+    print('line 104 ethcps: $clientId');
     try {
       List<Map<String, dynamic>>? lst =
-          await hcpTimecardService.getHCPs(clientId!);
+      await hcpTimecardService.getHCPs(clientId!);
       //  selectedValueHCP = lst[0]['id'];
       if (lst!.isEmpty) {
         await _showDialog(context, "No Data",
@@ -146,7 +146,7 @@ class _ClientCredentialsProfilePageState
       hasHCPData = true;
       return listx;
     } catch (e) {
-      print('line 13y gethcps docs error: $e');
+      print('line 152 gethcps docs error: $e');
       throw Exception('line 131 error gethcps: $e');
     }
   }
@@ -169,52 +169,52 @@ class _ClientCredentialsProfilePageState
 
   Future<void> _showDialog(
       BuildContext context, String title, String? description) async {
-    print('line `12 showdialog');
+    print('line 12 showdialog');
     // Future.delayed(Duration(seconds: 3), () {
     //   Navigator.of(context).pop(); // Close the dialog
     // });
     await showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-              title: Text(title),
-              content: Text(description!),
-              contentTextStyle: TextStyle(
-                color: color2,
-                fontSize: fontSize,
-                fontWeight: FontWeight.bold,
+        builder: (BuildContext ctx) => AlertDialog(
+          title: Text(title),
+          content: Text(description!),
+          contentTextStyle: TextStyle(
+            color: color2,
+            fontSize: fontSize,
+            fontWeight: FontWeight.bold,
+          ),
+          titleTextStyle: TextStyle(
+              color: color2,
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold),
+          actions: <Widget>[
+            // TextButton(
+            //   onPressed: () => Navigator.pop(context, 'Cancel'),
+            //   child: const Text('Cancel'),
+            // ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'OK'),
+              child: Text(
+                'OK',
+                style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.bold,
+                    color: color2),
               ),
-              titleTextStyle: TextStyle(
-                  color: color2,
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold),
-              actions: <Widget>[
-                // TextButton(
-                //   onPressed: () => Navigator.pop(context, 'Cancel'),
-                //   child: const Text('Cancel'),
-                // ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, 'OK'),
-                  child: Text(
-                    'OK',
-                    style: TextStyle(
-                        fontSize: fontSize,
-                        fontWeight: FontWeight.bold,
-                        color: color2),
-                  ),
-                )
-              ],
-            ));
+            )
+          ],
+        ));
     return;
   }
 
-  Map<String, dynamic>? arguments;
   @override
   void initState() {
     super.initState();
-    arguments = widget.args;
-    print('line 220: $arguments');
-    clientId = arguments!['clientId'];
+    clientId = authService.currentUser!['clientId'];
     //  clientId = ref.read(clientUserNotifierProvider.notifier).fromClientId;
+    currentUser = authService.currentUser;
+    clientUser = currentUser;
+    userEmail = currentUser!['email'];
   }
 
   bool hasHCPData = false;
@@ -239,26 +239,23 @@ class _ClientCredentialsProfilePageState
   Color color1 = Color.fromARGB(255, 134, 219, 197); //green from website
   Color color2 = Color.fromARGB(255, 19, 125, 103); //green from logo
   Color color3 = Colors.grey.shade200;
-  double totalCurrentBalance = 0.0;
-  double h = 1.0;
-  double fontSize = 16;
   double? screenWidth;
   double? screenHeight;
+  double fontSize = 16;
   double? smallFontSize;
+
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    const title = 'Client Contact Form';
+  Widget build(context) {
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
-    print('line 115: $screenWidth $screenHeight');
-    smallFontSize = 12;
-    double? hh = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
-    h = hh!;
-    if (h < 1.0) {
+    double? h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
+    if (h! < 1.0) {
       h = 1.0;
     }
-    fontSize = 16 / h;
+    fontSize = 16;
+    fontSize /= h;
+    smallFontSize = 14 / h;
+    debugPrint('line 136');
     return SafeArea(
       child: Scaffold(
         backgroundColor: color1,
@@ -273,11 +270,10 @@ class _ClientCredentialsProfilePageState
                   Navigator.pop(context);
                 }),
           ],
-          title: Text("HCP Credentials - HCP must be working a shift.",
+          title: Text("HCP Credentials",
               style: TextStyle(
                 fontSize:
-                    Theme.of(context).textTheme.headlineSmall!.fontSize! / h,
-                color: color1,
+                Theme.of(context).textTheme.headlineSmall!.fontSize! / h,
               )),
         ),
         body: Container(
@@ -288,20 +284,20 @@ class _ClientCredentialsProfilePageState
               child: ListView(
                 // crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  // SizedBox(height: 10),
-                  // Container(
-                  //   height: 32,
-                  //   width: 340,
-                  //   child: Center(
-                  //     child: Text(
-                  //       'Select HC Professional',
-                  //       style: TextStyle(
-                  //         fontSize: fontSize,
-                  //         fontWeight: FontWeight.bold,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
+                  SizedBox(height: 10),
+                  Container(
+                    height: 32,
+                    width: screenWidth! - 10,
+                    child: Center(
+                      child: Text(
+                        'Select HC Professional',
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                   SizedBox(height: 10.0),
                   Container(
                     padding: EdgeInsets.all(10.0),
@@ -310,7 +306,7 @@ class _ClientCredentialsProfilePageState
                   SizedBox(height: 10),
                   Container(
                     height: 32,
-                    width: 340,
+                    width: screenWidth! - 10,
                     child: Center(
                       child: Text(
                         'Select HC Professional',
@@ -349,8 +345,8 @@ class _ClientCredentialsProfilePageState
                               child: Text('Get Documentation',
                                   style: TextStyle(
                                       fontSize: fontSize, color: Colors.black87
-                                      //   backgroundColor: color2,
-                                      )),
+                                    //   backgroundColor: color2,
+                                  )),
                             ),
                           ),
                         )
@@ -389,7 +385,7 @@ class _ClientCredentialsProfilePageState
           child: DropdownButtonHideUnderline(
             child: Container(
               height: 50,
-              width: 340,
+              width: screenWidth! - 8,
               decoration: BoxDecoration(
                   color: Colors.grey[200],
                   border: Border.all(color: Colors.black87),
@@ -406,17 +402,17 @@ class _ClientCredentialsProfilePageState
                 ),
                 items: listD
                     .map(
-                      (dynamic item) => DropdownMenuItem<dynamic>(
-                        value: item,
-                        child: Text(
-                          item,
-                          style: TextStyle(
-                              fontSize: smallFontSize, color: Colors.black87),
-                        ),
-                      ),
-                    )
+                      (dynamic item) => DropdownItem<String>(
+                    value: item,
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                          fontSize: smallFontSize, color: Colors.black87),
+                    ),
+                  ),
+                )
                     .toList(),
-                value: selectedValueCredentialCategory,
+                valueListenable: selectedValueCredentialCategory,
                 onChanged: (dynamic value) {
                   setState(() {
                     selectedValueCredentialCategory = value!;
@@ -437,10 +433,10 @@ class _ClientCredentialsProfilePageState
 
   Widget getHCPDataList() {
     return FutureBuilder(
-        // future: Future.wait([
-        //   futureHCPS,
-        //   hcpDocumentationCategories
-        // ]),
+      // future: Future.wait([
+      //   futureHCPS,
+      //   hcpDocumentationCategories
+      // ]),
         future: Future.wait(
           [_getHCPs(context)],
         ),
@@ -468,7 +464,7 @@ class _ClientCredentialsProfilePageState
                   child: DropdownButtonHideUnderline(
                     child: Container(
                       height: 50,
-                      width: 340,
+                      width: screenWidth! - 8,
                       decoration: BoxDecoration(
                           color: Colors.grey[200],
                           border: Border.all(color: Colors.black87),
@@ -485,20 +481,20 @@ class _ClientCredentialsProfilePageState
                         ),
                         items: listH
                             .map(
-                              (dynamic item) => DropdownMenuItem<dynamic>(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: TextStyle(
-                                    fontSize: fontSize,
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                              (dynamic item) => DropdownItem<String>(
+                            value: item,
+                            child: Text(
+                              item,
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
                               ),
-                            )
+                            ),
+                          ),
+                        )
                             .toList(),
-                        value: selectedValueHCP,
+                        valueListenable: selectedValueHCP,
                         onChanged: (dynamic value) {
                           print('line 349: $value');
                           setState(() {

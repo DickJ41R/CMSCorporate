@@ -7,9 +7,9 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
 
 class ProcessHCPScheduleView extends StatefulWidget {

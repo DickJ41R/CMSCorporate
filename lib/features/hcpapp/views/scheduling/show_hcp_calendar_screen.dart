@@ -3,9 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 import 'package:cms_web/features/hcpapp/models/users.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_user_services.dart';
 
 final dio = Dio();
 
@@ -33,7 +32,6 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
   AuthService authService = AuthService();
   Map<String, dynamic>? hcpUser;
   HCPServices hcpServices = HCPServices();
-  HCPUserServices hcpUserServices = HCPUserServices();
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     print('line 28 onselection chANGED');
@@ -308,9 +306,9 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 50 gethcpuser available shfts: $hcpUserServices');
+    print('line 50 gethcpuser available shfts: $hcpServices');
     try {
-      Map<String, dynamic>? lm = await hcpUserServices.getHCPUser(hcpId!);
+      Map<String, dynamic>? lm = await hcpServices.getHCPUser(hcpId!);
 
       if (lm.isEmpty) {
         print('line 54 lm i septy');

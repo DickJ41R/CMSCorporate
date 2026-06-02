@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_timecard_service.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_timecard_service.dart';
 //import 'package:hcp_app/models/client_models/client_work_order_campaign.dart';
 import 'package:cms_web/features/hcpapp/models/users.dart';
-import 'package:cms_web/features/clientapp/services/client_work_order_campaign_service.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_work_order_campaign_service.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_user_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
@@ -30,7 +30,7 @@ class _ProcessFunctionsAppState extends State<ProcessFunctionsApp> {
   dynamic currentUser;
   ClientWorkOrderCampaignService clw = ClientWorkOrderCampaignService();
   HCPTimeCardService hcpTimeCardService = HCPTimeCardService();
-  HCPUserServices hcpUserServices = HCPUserServices();
+  HCPServices hcpUserServices = HCPServices();
 
   AuthService authService = AuthService();
   int? hcpId;

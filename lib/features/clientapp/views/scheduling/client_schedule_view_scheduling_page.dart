@@ -6,9 +6,9 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:cms_web/features/clientapp/services/client_services.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ClientScheduleViewSchedulingPage extends StatefulWidget {

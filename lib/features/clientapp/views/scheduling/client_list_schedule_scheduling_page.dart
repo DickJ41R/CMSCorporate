@@ -1,12 +1,12 @@
 //Client List Schedule  Scheduling Page
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/shared/services/dropdown_codes.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/clientapp/services/client_work_order_campaign_service.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_work_order_campaign_service.dart';
 import 'package:intl/intl.dart';
 import 'package:cms_web/features/branchcorporateapp/models/cms_user.dart';
-import 'package:cms_web/features/clientapp/services/client_services.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 

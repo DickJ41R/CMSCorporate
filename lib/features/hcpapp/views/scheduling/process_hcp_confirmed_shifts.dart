@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/clientapp/services/client_work_order_campaign_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_timecard_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_user_services.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_work_order_campaign_service.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_timecard_service.dart';
 import 'package:intl/intl.dart';
 import 'package:cms_web/features/hcpapp/models/users.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_services.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ProcessHCPConfirmedShifts extends StatefulWidget {
@@ -26,7 +25,6 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
   AuthService authServices = AuthService();
   HCPTimeCardService hcpTimeCardService = HCPTimeCardService();
   HCPServices hcpServices = HCPServices();
-  HCPUserServices hcpUserServices = HCPUserServices();
   UtilitiesServices utilityServices = UtilitiesServices();
   ClientWorkOrderCampaignService clw = ClientWorkOrderCampaignService();
   int? hcpId;
@@ -38,7 +36,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
     print('line 38 getAll approved shifts $hcpId');
     try {
       List<Map<String, dynamic>>? lm = await clw.getWorkOrderCampaignsApproved(
-          clientId: null, hcpId: hcpId!);
+          hcpId!, clientId!);
       print('line 41 in get all confirmed');
       if (lm.isEmpty) {
         return [];
@@ -172,7 +170,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
             ];
             String from = 'noreply@consolidatedstaffing.com';
             String fromUserName = 'Support';
-            String subject = 'Employee Weekly Overtime';
+            String subject = 'Employee Shift Confirmation';
 
             String text = "Shift Confirmation";
             text +=
@@ -212,9 +210,9 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 50 gethcpuser available shfts: $hcpUserServices');
+    print('line 50 gethcpuser available shfts: $hcpServices');
     try {
-      Map<String, dynamic>? lm = await hcpUserServices.getHCPUser(hcpId!);
+      Map<String, dynamic>? lm = await hcpServices.getHCPUser(hcpId!);
 
       if (lm.isEmpty) {
         print('line 54 lm i septy');
@@ -237,6 +235,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
     super.initState();
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
+    clientId = authServices.client!['clientId'];
     currentHCPMap = authServices.currentHCPMap;
   }
 

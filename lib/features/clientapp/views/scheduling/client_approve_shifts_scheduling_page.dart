@@ -1,13 +1,14 @@
 //Client Approve Shifts Scheduling Page
+import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/hcpapp/services/hcp_timecard_service.dart';
+import 'package:cms_web/features/shared/services/hcpapp/hcp_timecard_service.dart';
 import 'package:flutter/material.dart';
-import 'package:cms_web/features/clientapp/services/client_work_order_campaign_service.dart';
+import 'package:cms_web/features/shared/services/clientapp/client_work_order_campaign_service.dart';
 import 'package:intl/intl.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
 import 'package:cms_web/features/clientapp/models/client_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cms_web/features/shared/services/utility_services.dart';
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ClientApproveShiftsSchedulingPage extends StatefulWidget {
@@ -22,7 +23,7 @@ class ClientApproveShiftsSchedulingPage extends StatefulWidget {
 class _ClientApproveShiftsSchedulingPageState
     extends State<ClientApproveShiftsSchedulingPage> {
   AuthService authService = AuthService();
-
+  ClientServices clientServices = ClientServices();
   late dynamic currentUser;
 
   late int? clientId;
@@ -140,7 +141,10 @@ class _ClientApproveShiftsSchedulingPageState
       throw Exception(e.toString());
     }
   }
+  Future<void> _getClient() async {
+     clientMap = await  clientServices.getASingleClientById(clientId!);
 
+  }
   bool? isShiftApproved = false;
   Map<String, dynamic>? arguments;
   Map<String, dynamic>? clientMap;
@@ -150,9 +154,11 @@ class _ClientApproveShiftsSchedulingPageState
     super.initState();
 
     arguments = widget.args;
-    arguments = widget.args;
     clientId = arguments!['clientId'];
-    clientMap = authService.clientMap!;
+    if (authService.clientMap == null) {
+      _getClient();
+    }
+
     startWorkDay = clientMap!['startWeekDay'];
     userEmail = clientMap!['email'];
     clw = ClientWorkOrderCampaignService();
@@ -168,8 +174,9 @@ class _ClientApproveShiftsSchedulingPageState
     try {
       var response = '';
       if (item['actionType'] == 'Approve') {
+        int potentialOTMinutes = await clw.checkForPotentialOT(item);
         Map<String, dynamic> hitem =
-            await clw.determineIfShiftRequiresOT(clientId!, item);
+        await clw.determineIfShiftRequiresOT(item, potentialOTMinutes);
         print('line 162:  ${hitem['flagWillOweOT']} ${hitem}');
         print(
             'line 164: ${hitem['otHours']},${hitem['otPay']}, ${hitem['regularHours']}, ${hitem['regularPay']}');
@@ -188,7 +195,7 @@ class _ClientApproveShiftsSchedulingPageState
           String shiftApprover =
               clientUser!.firstName + ' ' + clientUser!.lastName;
           isShiftApproved = await clw.updateClientWorkOrderCampaignDeclined(
-              item, shiftApprover, ctx);
+              item, shiftApprover, authService.clientUser!['email'],ctx);
           //   Navigator.of(context).popAndPushNamed('/clientschedulingmenu');
           setState(() {});
           return;
@@ -206,7 +213,7 @@ class _ClientApproveShiftsSchedulingPageState
         String shiftApprover =
             clientUser!.firstName + ' ' + clientUser!.lastName;
         isShiftApproved = await clw.updateClientWorkOrderCampaignDeclined(
-            item, shiftApprover, ctx);
+            item, shiftApprover, authService.clientUser!['email'],ctx);
         //   Navigator.of(context).popAndPushNamed('/clientschedulingmenu');
         setState(() {});
       }

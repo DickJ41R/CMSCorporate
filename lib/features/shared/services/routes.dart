@@ -27,7 +27,7 @@ import 'package:cms_web/features/clientapp/views/scheduling/client_schedule_shif
 import 'package:cms_web/features/clientapp/views/scheduling/client_schedule_view_scheduling_page.dart';
 import 'package:cms_web/features/clientapp/views/scheduling/client_set_dns_scheduling_page.dart';
 import 'package:cms_web/features/clientapp/views/scheduling/client_timecard_approval_scheduling_page.dart';
-import 'package:cms_web/features/clientapp/views/scheduling/client_mitigate_ot_schedulng_page.dart';
+import 'package:cms_web/features/clientapp/views/scheduling/client_mitigate_ot_scheduling_page.dart';
 
 //import 'package:cms_web/web/services/cms_auth_service.dart';
 //hcp
@@ -103,7 +103,7 @@ class MyRoutes {
         print('line 83 clientcredentialsprofilepage');
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-            builder: (context) => ClientCredentialsProfilePage(args: mp));
+            builder: (context) => ProcessClientRequestSchedule(args: mp));
       case clientCannotBeScheduledProfilePage:
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
@@ -127,7 +127,7 @@ class MyRoutes {
       case clientScheduleShiftsSchedulingPage:
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-            builder: (context) => ClientScheduleShiftsSchedulingPage(args: mp));
+            builder: (context) => ProcessClientRequestSchedule(args: mp));
       case clientApproveShiftsSchedulingPage:
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
