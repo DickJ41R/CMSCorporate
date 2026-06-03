@@ -35,9 +35,10 @@ class ClientUserProfilePage extends StatefulWidget {
   @override
   State<ClientUserProfilePage> createState() => _ClientUserProfilePageState();
 }
-
+GlobalKey<FormState> formKey = GlobalKey();
+GlobalKey<FormState> formKey1 = GlobalKey();
 class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
-  GlobalKey<FormState> formKey = GlobalKey();
+
   String? documentId;
 
   UtilitiesServices utilityServices = UtilitiesServices();
@@ -732,8 +733,8 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     }
     double smallFontSize = 16 / h;
     double vWidth1 = 780;
-    double height = 80;
-    double height2 = 60;
+    double height = 65;
+    double height2 = 55;
     double width3 = 740;
     double width2 = 370; //(screenWidth - 10) - vWidth1;
     print('line 672: $vWidth1 $width2 $screenWidth, $screenHeight');
@@ -922,166 +923,260 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                       }),
                 ],
               ),
-            )
-                : Container(),
-            if (flagShowForm == true)
-              Container(
-                alignment: Alignment.topLeft,
-                height: screenHeight - 120,
-                width: width3,
+            ) : SizedBox.shrink(),
+            flagShowForm == true ?
+              SingleChildScrollView(
+               // alignment: Alignment.topLeft,
                 child: Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(2.0),
-                      child: Form(
-                        key: formKey,
-                        child: Container(
-                          color: color1,
-                          child: SingleChildScrollView(
-                            child: Container(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    height: height,
-                                    width: width3,
-                                    color: Colors.grey[200],
-                                    child: Row(
-                                      children: [
-                                        Container(
+                      child: SizedBox(
+                        height: screenHeight - 100,
+                        width: screenWidth -10,
+                        child: Form(
+                          key: formKey1,
+                          child: Container(
+                            color: color1,
+                              height: screenHeight - 100,
+                              width:  screenWidth -10,
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: height,
+                                  width: width3,
+                                  color: Colors.grey[200],
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: height,
+                                        width: width2,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.black)),
+                                        child: TextFormField(
+                                          style: TextStyle(
+                                            fontSize: fontSize,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                          controller: clientUserIdController,
+                                          maxLength: 10,
+                                          decoration: InputDecoration(
+                                            // Provides an outlined border
+                                              counterText: '',
+                                              label: Text(
+                                                'UserId',
+                                                style: TextStyle(
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              hint: Text('UserId',
+                                                  style: TextStyle(
+                                                      fontSize: fontSize,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      color: Colors.black))),
+                                          validator: (value) {
+                                            return null;
+                                            //'some data' failed validation
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Container(
                                           height: height,
                                           width: width2,
                                           decoration: BoxDecoration(
                                               border: Border.all(
                                                   color: Colors.black)),
                                           child: TextFormField(
-                                            style: TextStyle(
-                                              fontSize: fontSize,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            textAlign: TextAlign.left,
-                                            controller: clientUserIdController,
-                                            maxLength: 10,
-                                            decoration: InputDecoration(
-                                              // Provides an outlined border
-                                                counterText: '',
-                                                label: Text(
-                                                  'UserId',
+                                              textAlign: TextAlign.start,
+                                              controller: ssnController,
+                                              keyboardType:
+                                              TextInputType.none,
+                                              maxLength: 4,
+                                              style: TextStyle(
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black),
+                                              decoration: InputDecoration(
+                                                  counterText: '',
+                                                  label: Text(
+                                                    'ssn',
+                                                    style: TextStyle(
+                                                      fontSize: fontSize,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                  hint: Text('ssn',
+                                                      style: TextStyle(
+                                                          fontSize: fontSize,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          color:
+                                                          Colors.black))),
+                                              validator: (value) {
+                                                if (value != null &&
+                                                    value.length != 4) {
+                                                  return "last 4 digits of ssn";
+                                                } else if (value == null) {
+                                                  return "Enter last 4 digits of ssn";
+                                                }
+                                                return null;
+                                              }),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Container(
+                                  height: height,
+                                  width: screenWidth -10,
+                                  // child: Row(
+                                  //   children: [
+                                  //     Expanded(
+                                  //       child: Container(
+                                  //         height: height,
+                                  //         width: width2,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      border:
+                                      Border.all(color: Colors.black)),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: height,
+                                        width: width3,
+                                        child: CheckboxListTile(
+                                            title: Container(
+                                              height: height,
+                                              width: width2,
+                                              child: Text('Status/Active',
                                                   style: TextStyle(
                                                     fontSize: fontSize,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black,
-                                                  ),
-                                                ),
-                                                hint: Text('UserId',
-                                                    style: TextStyle(
-                                                        fontSize: fontSize,
-                                                        fontWeight:
-                                                        FontWeight.bold,
-                                                        color: Colors.black))),
-                                            validator: (value) {
-                                              return null;
-                                              //'some data' failed validation
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Expanded(
-                                          child: Container(
-                                            height: height,
-                                            width: width2,
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.black)),
-                                            child: TextFormField(
-                                                textAlign: TextAlign.start,
-                                                controller: ssnController,
-                                                keyboardType:
-                                                TextInputType.none,
-                                                maxLength: 4,
-                                                style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black),
-                                                decoration: InputDecoration(
-                                                    counterText: '',
-                                                    label: Text(
-                                                      'ssn',
-                                                      style: TextStyle(
-                                                        fontSize: fontSize,
-                                                        fontWeight:
-                                                        FontWeight.bold,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                    hint: Text('ssn',
-                                                        style: TextStyle(
-                                                            fontSize: fontSize,
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                            color:
-                                                            Colors.black))),
-                                                validator: (value) {
-                                                  if (value != null &&
-                                                      value.length != 4) {
-                                                    return "last 4 digits of ssn";
-                                                  } else if (value == null) {
-                                                    return "Enter last 4 digits of ssn";
-                                                  }
-                                                  return null;
-                                                }),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: 60,
-                                    width: width3,
-                                    // child: Row(
-                                    //   children: [
-                                    //     Expanded(
-                                    //       child: Container(
-                                    //         height: height,
-                                    //         width: width2,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        border:
-                                        Border.all(color: Colors.black)),
-                                    child: CheckboxListTile(
-                                        title: Text('Status/Active',
+                                                  )),
+                                            ),
+                                            value: isActiveChecked,
+                                            checkColor: color2,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                print('line 1026 $value');
+                                                isActiveChecked = value!;
+                                              });
+                                            }),
+                                      ),
+
+                                // ),
+                                //     TextFormField(
+                                //    controller:
+                                //        activeController,
+                                //   style: TextStyle(
+                                //        fontSize:
+                                //            smallFontSize,
+                                //        fontWeight:
+                                //            FontWeight
+                                //               .bold,
+                                //       color: Colors
+                                //           .black),
+                                //   // Provides an outlined border
+                                //   decoration:
+                                //       InputDecoration(
+                                //     label: Text(
+                                //       'Status/Active',
+                                //       style:
+                                //           TextStyle(
+                                //         fontSize:
+                                //             smallFontSize,
+                                //         fontWeight:
+                                //             FontWeight
+                                //                 .bold,
+                                //         color: Colors
+                                //             .black,
+                                //       ),
+                                //     ),
+                                //     hint: Text(
+                                //         'Status/Active',
+                                //         style: TextStyle(
+                                //             fontSize:
+                                //                 smallFontSize,
+                                //             fontWeight: FontWeight
+                                //                 .bold,
+                                //             color:
+                                //                 Colors.black)),
+                                //     suffixIcon:
+                                //         Checkbox(
+                                //             value:
+                                //                 isActiveChecked,
+                                //             onChanged:
+                                //                 (value) {
+                                //               setState(() {
+                                //                 isActiveChecked = value!;
+                                //               });
+                                //               activeController.text = value.toString().toLowerCase() == 'true'
+                                //                   ? 'true'
+                                //                   : 'false';
+                                //             }),
+                                //   ),
+                                // )),
+
+                                SizedBox(width: 8),
+                                Container(
+                                  height: height,
+                                  width: width2,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      border:
+                                      Border.all(color: Colors.black)),
+                                  child: CheckboxListTile(
+                                      title: Container(
+                                        height: height,
+                                        width: width2,
+                                        child: Text('Administrator',
                                             style: TextStyle(
                                               fontSize: fontSize,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.black,
                                             )),
-                                        value: isActiveChecked,
-                                        checkColor: color2,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            print('line 1026 $value');
-                                            isActiveChecked = value!;
-                                          });
-                                        }),
-                                  ),
-                                  // ),
+                                      ),
+                                      value: isAdministratorChecked,
+                                      checkColor: color2,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          isAdministratorChecked = value!;
+                                        });
+                                      }),
+                                ),
+                                  ],
+                                ),
+                                ),
+                                  // child:
                                   //     TextFormField(
-                                  //    controller:
-                                  //        activeController,
+                                  //   controller:
+                                  //       isAdministratorController,
                                   //   style: TextStyle(
-                                  //        fontSize:
-                                  //            smallFontSize,
-                                  //        fontWeight:
-                                  //            FontWeight
-                                  //               .bold,
-                                  //       color: Colors
-                                  //           .black),
-                                  //   // Provides an outlined border
+                                  //     fontSize:
+                                  //         smallFontSize,
+                                  //     fontWeight:
+                                  //         FontWeight
+                                  //             .bold,
+                                  //     color: Colors
+                                  //         .black,
+                                  //   ),
                                   //   decoration:
                                   //       InputDecoration(
+                                  //     // Provides an outlined border
                                   //     label: Text(
-                                  //       'Status/Active',
+                                  //       'Administrator',
                                   //       style:
                                   //           TextStyle(
                                   //         fontSize:
@@ -1094,468 +1189,171 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                   //       ),
                                   //     ),
                                   //     hint: Text(
-                                  //         'Status/Active',
-                                  //         style: TextStyle(
-                                  //             fontSize:
-                                  //                 smallFontSize,
-                                  //             fontWeight: FontWeight
-                                  //                 .bold,
-                                  //             color:
-                                  //                 Colors.black)),
+                                  //         'Administrator',
+                                  //         style:
+                                  //             TextStyle(
+                                  //           fontSize:
+                                  //               smallFontSize,
+                                  //           fontWeight:
+                                  //               FontWeight
+                                  //                   .bold,
+                                  //           color: Colors
+                                  //               .black,
+                                  //         )),
                                   //     suffixIcon:
                                   //         Checkbox(
                                   //             value:
-                                  //                 isActiveChecked,
+                                  //                 isAdministratorChecked,
                                   //             onChanged:
                                   //                 (value) {
-                                  //               setState(() {
-                                  //                 isActiveChecked = value!;
+                                  //               setState(
+                                  //                   () {
+                                  //                 isAdministratorChecked =
+                                  //                     value!;
                                   //               });
-                                  //               activeController.text = value.toString().toLowerCase() == 'true'
+                                  //               isAdministratorController
+                                  //                   .text = value.toString().toLowerCase() ==
+                                  //                       'true'
                                   //                   ? 'true'
                                   //                   : 'false';
                                   //             }),
                                   //   ),
-                                  // )),
-
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: 60,
-                                    width: width3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        border:
-                                        Border.all(color: Colors.black)),
-                                    child: CheckboxListTile(
-                                        title: Container(
-                                          height: height,
-                                          width: width2,
-                                          child: Text('Administrator',
+                                  // ),
+                                SizedBox(height: 8),
+                                Container(
+                                  height: height,
+                                  width: width3,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      border:
+                                      Border.all(color: Colors.black)),
+                                  child: TextFormField(
+                                      controller: firstNameController,
+                                      keyboardType: TextInputType.none,
+                                      maxLength: 50,
+                                      style: TextStyle(
+                                          fontSize: fontSize,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                      decoration: InputDecoration(
+                                          errorStyle: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                            18.0, // Set your desired font size here
+                                          ),
+                                          counterText: '',
+                                          label: Text('First Name',
                                               style: TextStyle(
-                                                fontSize: fontSize,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              )),
-                                        ),
-                                        value: isAdministratorChecked,
-                                        checkColor: color2,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            isAdministratorChecked = value!;
-                                          });
-                                        }),
-                                    // child:
-                                    //     TextFormField(
-                                    //   controller:
-                                    //       isAdministratorController,
-                                    //   style: TextStyle(
-                                    //     fontSize:
-                                    //         smallFontSize,
-                                    //     fontWeight:
-                                    //         FontWeight
-                                    //             .bold,
-                                    //     color: Colors
-                                    //         .black,
-                                    //   ),
-                                    //   decoration:
-                                    //       InputDecoration(
-                                    //     // Provides an outlined border
-                                    //     label: Text(
-                                    //       'Administrator',
-                                    //       style:
-                                    //           TextStyle(
-                                    //         fontSize:
-                                    //             smallFontSize,
-                                    //         fontWeight:
-                                    //             FontWeight
-                                    //                 .bold,
-                                    //         color: Colors
-                                    //             .black,
-                                    //       ),
-                                    //     ),
-                                    //     hint: Text(
-                                    //         'Administrator',
-                                    //         style:
-                                    //             TextStyle(
-                                    //           fontSize:
-                                    //               smallFontSize,
-                                    //           fontWeight:
-                                    //               FontWeight
-                                    //                   .bold,
-                                    //           color: Colors
-                                    //               .black,
-                                    //         )),
-                                    //     suffixIcon:
-                                    //         Checkbox(
-                                    //             value:
-                                    //                 isAdministratorChecked,
-                                    //             onChanged:
-                                    //                 (value) {
-                                    //               setState(
-                                    //                   () {
-                                    //                 isAdministratorChecked =
-                                    //                     value!;
-                                    //               });
-                                    //               isAdministratorController
-                                    //                   .text = value.toString().toLowerCase() ==
-                                    //                       'true'
-                                    //                   ? 'true'
-                                    //                   : 'false';
-                                    //             }),
-                                    //   ),
-                                    // ),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: height,
-                                    width: width3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        border:
-                                        Border.all(color: Colors.black)),
-                                    child: TextFormField(
-                                        controller: firstNameController,
-                                        keyboardType: TextInputType.none,
-                                        maxLength: 50,
-                                        style: TextStyle(
-                                            fontSize: fontSize,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                        decoration: InputDecoration(
-                                            errorStyle: TextStyle(
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize:
-                                              18.0, // Set your desired font size here
-                                            ),
-                                            counterText: '',
-                                            label: Text('First Name',
-                                                style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black)),
-                                            // Provides an outlined border
-                                            hint: Text('First Name',
-                                                style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black))),
-                                        validator: (value) {
-                                          if (currentPassword == '**********') {
-                                            return null;
-                                          }
-                                          if (value == null) {
-                                            return "You must enter a first name.";
-                                          }
-                                          return null;
-                                        }),
-                                  ),
-
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: height,
-                                    width: width3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        border:
-                                        Border.all(color: Colors.black)),
-                                    child: TextFormField(
-                                        controller: lastNameController,
-                                        keyboardType: TextInputType.none,
-                                        maxLength: 50,
-                                        style: TextStyle(
-                                            fontSize: fontSize,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                        decoration: InputDecoration(
-                                            errorStyle: TextStyle(
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize:
-                                              18.0, // Set your desired font size here
-                                            ),
-                                            counterText: '',
-                                            label: Text('Last Name',
-                                                style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black)),
-                                            hint: Text('Last Name',
-                                                style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black))),
-                                        validator: (value) {
-                                          if (value == null) {
-                                            return "You must enter a last name.";
-                                          }
-                                          return null;
-                                        }),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: 80,
-                                    width: width3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        border:
-                                        Border.all(color: Colors.black)),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            height: 80,
-                                            width: 350,
-                                            decoration: BoxDecoration(
-                                                color: Colors.grey[200],
-                                                border: Border.all(
-                                                    color: Colors.black)),
-                                            child: TextFormField(
-                                                controller: passwordController,
-                                                keyboardType:
-                                                TextInputType.none,
-                                                maxLength: 20,
-                                                style: TextStyle(
                                                   fontSize: fontSize,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                                enabled: currentPassword ==
-                                                    '**********'
-                                                    ? false
-                                                    : true,
-                                                decoration: InputDecoration(
-                                                    errorStyle: TextStyle(
-                                                      color: Colors.red,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize:
-                                                      18.0, // Set your desired font size here
-                                                    ),
-                                                    counterText: '',
-                                                    label: Text('Password',
-                                                        style: TextStyle(
-                                                            fontSize: fontSize,
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                            color:
-                                                            Colors.black)),
-                                                    hint: Text(
-                                                      'Password',
-                                                      style: TextStyle(
-                                                        fontSize: fontSize,
-                                                        fontWeight:
-                                                        FontWeight.bold,
-                                                        color: Colors.black,
-                                                      ),
-                                                    )),
-                                                validator: (value) {
-                                                  if (value == null) {
-                                                    return "You must enter a password.";
-                                                  }
-                                                  if (currentPassword ==
-                                                      '**********') {
-                                                    return null;
-                                                  }
-                                                  bool bl =
-                                                  checkPassword(value);
-                                                  if (bl == false) {
-                                                    return 'Invalid password format';
-                                                  }
-                                                  return null;
-                                                }),
-                                          ),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Expanded(
-                                          child: Container(
-                                            height: 80,
-                                            width: 390,
-                                            decoration: BoxDecoration(
-                                                color: Colors.grey[200],
-                                                border: Border.all(
-                                                    color: Colors.black)),
-                                            child: TextFormField(
-                                                controller:
-                                                dateLastLoggedInController,
-                                                keyboardType:
-                                                TextInputType.none,
-                                                style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black),
-                                                maxLength: 18,
-                                                enabled: false,
-                                                decoration: InputDecoration(
-                                                    errorStyle: TextStyle(
-                                                      color: Colors.red,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize:
-                                                      18.0, // Set your desired font size here
-                                                    ),
-                                                    counterText: '',
-                                                    label: Text(
-                                                        'Date Last Login',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                            color:
-                                                            Colors.black)),
-                                                    hint: Text(
-                                                        'Date Last Login',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                            color:
-                                                            Colors.black))),
-                                                validator: (value) {
-                                                  return null;
-                                                }),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: height,
-                                    width: width3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        border:
-                                        Border.all(color: Colors.black)),
-                                    child: TextFormField(
-                                        keyboardType: TextInputType.none,
-                                        controller: emailController,
-                                        style: TextStyle(
-                                          fontSize: fontSize,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                        maxLength: 100,
-                                        enabled: passwordController.text ==
-                                            '**********'
-                                            ? false
-                                            : true,
-                                        decoration: InputDecoration(
-                                            errorStyle: TextStyle(
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize:
-                                              18.0, // Set your desired font size here
-                                            ),
-                                            counterText: '',
-                                            label: Text('Email',
-                                                style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black)),
-                                            hint: Text(
-                                              'Email',
+                                                  color: Colors.black)),
+                                          // Provides an outlined border
+                                          hint: Text('First Name',
                                               style: TextStyle(
-                                                fontSize: fontSize,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              ),
-                                            )),
-                                        validator: (value) {
-                                          if (value == null) {
-                                            return "You must enter an email.";
-                                          }
-                                          bool bl = checkEmail(value);
-                                          if (bl == false) {
-                                            return 'Invalid email format.';
-                                          }
-                                          return null;
-                                        }),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: 80,
-                                    width: width3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        border:
-                                        Border.all(color: Colors.black)),
-                                    child: TextFormField(
-                                        controller: departmentController,
-                                        maxLength: 45,
-                                        keyboardType: TextInputType.none,
-                                        style: TextStyle(
-                                          fontSize: fontSize,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                        decoration: InputDecoration(
-                                            errorStyle: TextStyle(
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize:
-                                              18.0, // Set your desired font size here
-                                            ),
-                                            counterText: '',
-                                            label: Text('Department',
-                                                style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black)),
-                                            hint: Text(
-                                              'Department',
-                                              style: TextStyle(
-                                                fontSize: fontSize,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              ),
-                                            )),
-                                        validator: (value) {
-                                          return null;
-                                        }),
-                                  ),
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black))),
+                                      validator: (value) {
 
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: 80,
-                                    width: width3,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        border:
-                                        Border.all(color: Colors.black)),
-                                    child: Row(
-                                      children: [
-                                        Container(
+                                        if (value == null) {
+                                          return "You must enter a first name.";
+                                        }
+                                        return null;
+                                      }),
+                                ),
+
+                                SizedBox(height: 8),
+                                Container(
+                                  height: height,
+                                  width: width3,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      border:
+                                      Border.all(color: Colors.black)),
+                                  child: TextFormField(
+                                      controller: lastNameController,
+                                      keyboardType: TextInputType.none,
+                                      maxLength: 50,
+                                      style: TextStyle(
+                                          fontSize: fontSize,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                      decoration: InputDecoration(
+                                          errorStyle: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                            18.0, // Set your desired font size here
+                                          ),
+                                          counterText: '',
+                                          label: Text('Last Name',
+                                              style: TextStyle(
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black)),
+                                          hint: Text('Last Name',
+                                              style: TextStyle(
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black))),
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return "You must enter a last name.";
+                                        }
+                                        return null;
+                                      }),
+                                ),
+                                SizedBox(height: 8),
+                                Container(
+                                  height: height,
+                                  width: width3,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      border:
+                                      Border.all(color: Colors.black)),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
                                           height: height,
-                                          width: width2,
+                                          width: 350,
                                           decoration: BoxDecoration(
+                                              color: Colors.grey[200],
                                               border: Border.all(
                                                   color: Colors.black)),
                                           child: TextFormField(
-                                              controller: telephoneController,
-                                              keyboardType: TextInputType.none,
-                                              maxLength: 12,
+                                              controller: passwordController,
+                                              keyboardType:
+                                              TextInputType.none,
+                                              maxLength: 20,
                                               style: TextStyle(
                                                 fontSize: fontSize,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black,
                                               ),
+                                              enabled: currentPassword ==
+                                                  '**********'
+                                                  ? false
+                                                  : true,
                                               decoration: InputDecoration(
                                                   errorStyle: TextStyle(
                                                     color: Colors.red,
-                                                    fontWeight: FontWeight.bold,
+                                                    fontWeight:
+                                                    FontWeight.bold,
                                                     fontSize:
                                                     18.0, // Set your desired font size here
                                                   ),
                                                   counterText: '',
-                                                  label: Text('Telephone',
+                                                  label: Text('Password',
                                                       style: TextStyle(
                                                           fontSize: fontSize,
                                                           fontWeight:
                                                           FontWeight.bold,
-                                                          color: Colors.black)),
+                                                          color:
+                                                          Colors.black)),
                                                   hint: Text(
-                                                    '222 333-4444',
+                                                    'Password',
                                                     style: TextStyle(
                                                       fontSize: fontSize,
                                                       fontWeight:
@@ -1565,475 +1363,688 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                                   )),
                                               validator: (value) {
                                                 if (value == null) {
-                                                  return "You must enter a telephone number.";
+                                                  return "You must enter a password.";
                                                 }
-
-                                                print('line 1028: $value');
-                                                bool isValidTelephone =
-                                                checkTelephone(value);
-                                                print(
-                                                    'line 1031: $isValidTelephone');
-                                                if (isValidTelephone == false) {
-                                                  return "Invalid telephone format";
+                                                if (currentPassword ==
+                                                    '**********') {
+                                                  return null;
+                                                }
+                                                bool bl =
+                                                checkPassword(value);
+                                                if (bl == false) {
+                                                  return 'Invalid password format';
                                                 }
                                                 return null;
                                               }),
                                         ),
-                                        SizedBox(width: 8),
-                                        Expanded(
-                                          child: Container(
-                                            height: 80,
-                                            width: width2,
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.black)),
-                                            child: TextFormField(
-                                                controller:
-                                                telephoneExtensionController,
-                                                maxLength: 20,
-                                                keyboardType:
-                                                TextInputType.none,
-                                                style: TextStyle(
+                                      ),
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Container(
+                                          height: height,
+                                          width: 390,
+                                          decoration: BoxDecoration(
+                                              color: Colors.grey[200],
+                                              border: Border.all(
+                                                  color: Colors.black)),
+                                          child: TextFormField(
+                                              controller:
+                                              dateLastLoggedInController,
+                                              keyboardType:
+                                              TextInputType.none,
+                                              style: TextStyle(
                                                   fontSize: fontSize,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                                decoration: InputDecoration(
-                                                    counterText: '',
-                                                    errorStyle: TextStyle(
-                                                      color: Colors.red,
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize:
-                                                      18.0, // Set your desired font size here
-                                                    ),
-                                                    label: Text('Extension',
-                                                        style: TextStyle(
-                                                            fontSize: fontSize,
-                                                            fontWeight:
-                                                            FontWeight.bold,
-                                                            color:
-                                                            Colors.black)),
-                                                    hint: Text(
-                                                      'Extension',
+                                                  color: Colors.black),
+                                              maxLength: 18,
+                                              enabled: false,
+                                              decoration: InputDecoration(
+                                                  errorStyle: TextStyle(
+                                                    color: Colors.red,
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    fontSize:
+                                                    18.0, // Set your desired font size here
+                                                  ),
+                                                  counterText: '',
+                                                  label: Text(
+                                                      'Date Last Login',
                                                       style: TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          color:
+                                                          Colors.black)),
+                                                  hint: Text(
+                                                      'Date Last Login',
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          color:
+                                                          Colors.black))),
+                                              validator: (value) {
+                                                return null;
+                                              }),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Container(
+                                  height: height,
+                                  width: width3,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      border:
+                                      Border.all(color: Colors.black)),
+                                  child: TextFormField(
+                                      keyboardType: TextInputType.none,
+                                      controller: emailController,
+                                      style: TextStyle(
+                                        fontSize: fontSize,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                      maxLength: 100,
+                                      enabled: passwordController.text ==
+                                          '**********'
+                                          ? false
+                                          : true,
+                                      decoration: InputDecoration(
+                                          errorStyle: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                            18.0, // Set your desired font size here
+                                          ),
+                                          counterText: '',
+                                          label: Text('Email',
+                                              style: TextStyle(
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black)),
+                                          hint: Text(
+                                            'Email',
+                                            style: TextStyle(
+                                              fontSize: fontSize,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          )),
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return "You must enter an email.";
+                                        }
+                                        bool bl = checkEmail(value);
+                                        if (bl == false) {
+                                          return 'Invalid email format.';
+                                        }
+                                        return null;
+                                      }),
+                                ),
+                                SizedBox(height: 8),
+                                Container(
+                                  height: height,
+                                  width: width3,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      border:
+                                      Border.all(color: Colors.black)),
+                                  child: TextFormField(
+                                      controller: departmentController,
+                                      maxLength: 45,
+                                      keyboardType: TextInputType.none,
+                                      style: TextStyle(
+                                        fontSize: fontSize,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                      decoration: InputDecoration(
+                                          errorStyle: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize:
+                                            18.0, // Set your desired font size here
+                                          ),
+                                          counterText: '',
+                                          label: Text('Department',
+                                              style: TextStyle(
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black)),
+                                          hint: Text(
+                                            'Department',
+                                            style: TextStyle(
+                                              fontSize: fontSize,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          )),
+                                      validator: (value) {
+                                        return null;
+                                      }),
+                                ),
+
+                                SizedBox(height: 8),
+                                Container(
+                                  height: height,
+                                  width: width3,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      border:
+                                      Border.all(color: Colors.black)),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: height,
+                                        width: width2,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.black)),
+                                        child: TextFormField(
+                                            controller: telephoneController,
+                                            keyboardType: TextInputType.none,
+                                            maxLength: 12,
+                                            style: TextStyle(
+                                              fontSize: fontSize,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                            decoration: InputDecoration(
+                                                errorStyle: TextStyle(
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:
+                                                  18.0, // Set your desired font size here
+                                                ),
+                                                counterText: '',
+                                                label: Text('Telephone',
+                                                    style: TextStyle(
                                                         fontSize: fontSize,
                                                         fontWeight:
                                                         FontWeight.bold,
-                                                        color: Colors.black,
-                                                      ),
-                                                    )),
-                                                onSaved: (value) {
-                                                  print('line 1556 $value');
-                                                }),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: height,
-                                    width: width3,
-                                    color: Colors.grey[200],
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            height: 100,
-                                            width: width2,
-                                            decoration: BoxDecoration(
-                                                color: Colors.grey[200],
-                                                border: Border.all(
-                                                    color: Colors.black)),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton2<String>(
-                                                isExpanded: true,
+                                                        color: Colors.black)),
                                                 hint: Text(
-                                                  'Select Roles',
+                                                  '222 333-4444',
                                                   style: TextStyle(
-                                                    fontSize: 24,
+                                                    fontSize: fontSize,
+                                                    fontWeight:
+                                                    FontWeight.bold,
                                                     color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
                                                   ),
-                                                ),
-                                                items: listRoles.map((item) {
-                                                  print('line 1659: $item');
-                                                  return DropdownItem(
-                                                    value: item,
-                                                    key: Key(Random()
-                                                        .nextDouble()
-                                                        .toString()),
-                                                    height: 40,
-                                                    closeOnTap: false,
-                                                    child:
-                                                    ValueListenableBuilder<
-                                                        List<String>>(
-                                                      valueListenable:
-                                                      roleMultiValueListenable,
-                                                      builder: (context,
-                                                          multiValue, _) {
-                                                        final isSelected =
-                                                        multiValue
-                                                            .contains(item);
-                                                        return Container(
-                                                          height:
-                                                          double.infinity,
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal:
-                                                              8.0),
-                                                          child: Row(
-                                                            children: [
-                                                              if (isSelected)
-                                                                const Icon(Icons
-                                                                    .check_box_outlined)
-                                                              else
-                                                                const Icon(Icons
-                                                                    .check_box_outline_blank),
-                                                              const SizedBox(
-                                                                  width: 16),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  item,
-                                                                  style:
-                                                                  const TextStyle(
-                                                                    fontSize:
-                                                                    24,
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        );
-                                                      },
+                                                )),
+                                            validator: (value) {
+                                              if (value == null) {
+                                                return "You must enter a telephone number.";
+                                              }
+
+                                              print('line 1028: $value');
+                                              bool isValidTelephone =
+                                              checkTelephone(value);
+                                              print(
+                                                  'line 1031: $isValidTelephone');
+                                              if (isValidTelephone == false) {
+                                                return "Invalid telephone format";
+                                              }
+                                              return null;
+                                            }),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Container(
+                                          height: height,
+                                          width: width2,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.black)),
+                                          child: TextFormField(
+                                              controller:
+                                              telephoneExtensionController,
+                                              maxLength: 20,
+                                              keyboardType:
+                                              TextInputType.none,
+                                              style: TextStyle(
+                                                fontSize: fontSize,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                              decoration: InputDecoration(
+                                                  counterText: '',
+                                                  errorStyle: TextStyle(
+                                                    color: Colors.red,
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    fontSize:
+                                                    18.0, // Set your desired font size here
+                                                  ),
+                                                  label: Text('Extension',
+                                                      style: TextStyle(
+                                                          fontSize: fontSize,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                          color:
+                                                          Colors.black)),
+                                                  hint: Text(
+                                                    'Extension',
+                                                    style: TextStyle(
+                                                      fontSize: fontSize,
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      color: Colors.black,
                                                     ),
-                                                  );
-                                                }).toList(),
-                                                multiValueListenable:
-                                                roleMultiValueListenable,
-                                                onChanged: (value) {
-                                                  final multiValue =
-                                                      roleMultiValueListenable
-                                                          .value;
-                                                  final isSelected = multiValue
-                                                      .contains(value);
-                                                  if (value == 'All') {
-                                                    isSelected
-                                                        ? roleMultiValueListenable
-                                                        .value = []
-                                                        : roleMultiValueListenable
-                                                        .value =
-                                                        List.from(
-                                                            listRoles);
-                                                  } else {
-                                                    roleMultiValueListenable
-                                                        .value =
-                                                    isSelected
-                                                        ? ([...multiValue]
-                                                      ..remove(value))
-                                                        : [
-                                                      ...multiValue,
-                                                      value!
-                                                    ];
-                                                  }
-                                                },
-                                                selectedItemBuilder: (context) {
-                                                  return listRoles.map(
-                                                        (item) {
-                                                      return ValueListenableBuilder<
-                                                          List<String>>(
-                                                          valueListenable:
-                                                          roleMultiValueListenable,
-                                                          builder: (context,
-                                                              multiValue, _) {
-                                                            return Container(
-                                                              alignment:
-                                                              AlignmentDirectional
-                                                                  .center,
+                                                  )),
+                                              onSaved: (value) {
+                                                print('line 1556 $value');
+                                              }),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Container(
+                                  height: height,
+                                  width: width3,
+                                  color: Colors.grey[200],
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          height: height,
+                                          width: width2,
+                                          decoration: BoxDecoration(
+                                              color: Colors.grey[200],
+                                              border: Border.all(
+                                                  color: Colors.black)),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              hint: Text(
+                                                'Select Roles',
+                                                style: TextStyle(
+                                                  fontSize: 24,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              items: listRoles.map((item) {
+                                                print('line 1659: $item');
+                                                return DropdownItem(
+                                                  value: item,
+                                                  key: Key(Random()
+                                                      .nextDouble()
+                                                      .toString()),
+                                                  height: 40,
+                                                  closeOnTap: false,
+                                                  child:
+                                                  ValueListenableBuilder<
+                                                      List<String>>(
+                                                    valueListenable:
+                                                    roleMultiValueListenable,
+                                                    builder: (context,
+                                                        multiValue, _) {
+                                                      final isSelected =
+                                                      multiValue
+                                                          .contains(item);
+                                                      return Container(
+                                                        height:
+                                                        double.infinity,
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal:
+                                                            8.0),
+                                                        child: Row(
+                                                          children: [
+                                                            if (isSelected)
+                                                              const Icon(Icons
+                                                                  .check_box_outlined)
+                                                            else
+                                                              const Icon(Icons
+                                                                  .check_box_outline_blank),
+                                                            const SizedBox(
+                                                                width: 16),
+                                                            Expanded(
                                                               child: Text(
-                                                                multiValue
-                                                                    .where((item) =>
-                                                                item !=
-                                                                    'All')
-                                                                    .join(', '),
+                                                                item,
                                                                 style:
                                                                 const TextStyle(
-                                                                  fontSize: 24,
+                                                                  fontSize:
+                                                                  24,
                                                                   color: Colors
                                                                       .black,
                                                                   fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                                  overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
                                                                 ),
-                                                                maxLines: 1,
                                                               ),
-                                                            );
-                                                          });
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
                                                     },
-                                                  ).toList();
-                                                },
-                                                buttonStyleData:
-                                                const ButtonStyleData(
-                                                  padding: EdgeInsets.only(
-                                                      left: 8, right: 8),
-                                                  height: 40,
-                                                  width: 140,
-                                                ),
-                                                menuItemStyleData:
-                                                const MenuItemStyleData(
-                                                  padding: EdgeInsets.zero,
-                                                ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              multiValueListenable:
+                                              roleMultiValueListenable,
+                                              onChanged: (value) {
+                                                final multiValue =
+                                                    roleMultiValueListenable
+                                                        .value;
+                                                final isSelected = multiValue
+                                                    .contains(value);
+                                                if (value == 'All') {
+                                                  isSelected
+                                                      ? roleMultiValueListenable
+                                                      .value = []
+                                                      : roleMultiValueListenable
+                                                      .value =
+                                                      List.from(
+                                                          listRoles);
+                                                } else {
+                                                  roleMultiValueListenable
+                                                      .value =
+                                                  isSelected
+                                                      ? ([...multiValue]
+                                                    ..remove(value))
+                                                      : [
+                                                    ...multiValue,
+                                                    value!
+                                                  ];
+                                                }
+                                              },
+                                              selectedItemBuilder: (context) {
+                                                return listRoles.map(
+                                                      (item) {
+                                                    return ValueListenableBuilder<
+                                                        List<String>>(
+                                                        valueListenable:
+                                                        roleMultiValueListenable,
+                                                        builder: (context,
+                                                            multiValue, _) {
+                                                          return Container(
+                                                            alignment:
+                                                            AlignmentDirectional
+                                                                .center,
+                                                            child: Text(
+                                                              multiValue
+                                                                  .where((item) =>
+                                                              item !=
+                                                                  'All')
+                                                                  .join(', '),
+                                                              style:
+                                                              const TextStyle(
+                                                                fontSize: 24,
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                              ),
+                                                              maxLines: 1,
+                                                            ),
+                                                          );
+                                                        });
+                                                  },
+                                                ).toList();
+                                              },
+                                              buttonStyleData:
+                                              const ButtonStyleData(
+                                                padding: EdgeInsets.only(
+                                                    left: 8, right: 8),
+                                                height: 40,
+                                                width: 140,
+                                              ),
+                                              menuItemStyleData:
+                                              const MenuItemStyleData(
+                                                padding: EdgeInsets.zero,
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: 8),
-                                        Expanded(
-                                          child: Container(
-                                            height: 100,
-                                            width: width2,
-                                            decoration: BoxDecoration(
-                                                color: Colors.grey[200],
-                                                border: Border.all(
-                                                    color: Colors.black)),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton2<String>(
-                                                isExpanded: true,
-                                                hint: Text(
-                                                  'Select Disciplines',
-                                                  style: TextStyle(
-                                                    fontSize: 24,
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Container(
+                                          height: height,
+                                          width: width2,
+                                          decoration: BoxDecoration(
+                                              color: Colors.grey[200],
+                                              border: Border.all(
+                                                  color: Colors.black)),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              hint: Text(
+                                                'Select Disciplines',
+                                                style: TextStyle(
+                                                  fontSize: 24,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
-                                                items:
-                                                listDisciplines.map((item) {
-                                                  return DropdownItem(
-                                                    value: item,
-                                                    key: Key(Random()
-                                                        .nextDouble()
-                                                        .toString()),
-                                                    height: 40,
-                                                    closeOnTap: false,
-                                                    child:
-                                                    ValueListenableBuilder<
-                                                        List<String>>(
-                                                      valueListenable:
-                                                      disciplineMultiValueListenable,
-                                                      builder: (context,
-                                                          multiValue, _) {
-                                                        final isSelected =
-                                                        multiValue
-                                                            .contains(item);
-                                                        return Container(
-                                                          height:
-                                                          double.infinity,
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal:
-                                                              16.0),
-                                                          child: Row(
-                                                            children: [
-                                                              if (isSelected)
-                                                                const Icon(Icons
-                                                                    .check_box_outlined)
-                                                              else
-                                                                const Icon(Icons
-                                                                    .check_box_outline_blank),
-                                                              const SizedBox(
-                                                                  width: 16),
-                                                              Expanded(
-                                                                child: Text(
-                                                                  item,
-                                                                  style:
-                                                                  const TextStyle(
-                                                                    fontSize:
-                                                                    24,
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        );
-                                                      },
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                                multiValueListenable:
-                                                disciplineMultiValueListenable,
-                                                onChanged: (value) {
-                                                  final multiValue =
-                                                      disciplineMultiValueListenable
-                                                          .value;
-                                                  final isSelected = multiValue
-                                                      .contains(value);
-                                                  if (value == 'All') {
-                                                    isSelected
-                                                        ? disciplineMultiValueListenable
-                                                        .value = []
-                                                        : disciplineMultiValueListenable
-                                                        .value =
-                                                        List.from(
-                                                            listDisciplines);
-                                                  } else {
-                                                    disciplineMultiValueListenable
-                                                        .value =
-                                                    isSelected
-                                                        ? ([...multiValue]
-                                                      ..remove(value))
-                                                        : [
-                                                      ...multiValue,
-                                                      value!
-                                                    ];
-                                                  }
-                                                },
-                                                selectedItemBuilder: (context) {
-                                                  return listDisciplines.map(
-                                                        (item) {
-                                                      return ValueListenableBuilder<
-                                                          List<String>>(
-                                                          valueListenable:
-                                                          disciplineMultiValueListenable,
-                                                          builder: (context,
-                                                              multiValue, _) {
-                                                            return Container(
-                                                              alignment:
-                                                              AlignmentDirectional
-                                                                  .center,
+                                              ),
+                                              items:
+                                              listDisciplines.map((item) {
+                                                return DropdownItem(
+                                                  value: item,
+                                                  key: Key(Random()
+                                                      .nextDouble()
+                                                      .toString()),
+                                                  height: 40,
+                                                  closeOnTap: false,
+                                                  child:
+                                                  ValueListenableBuilder<
+                                                      List<String>>(
+                                                    valueListenable:
+                                                    disciplineMultiValueListenable,
+                                                    builder: (context,
+                                                        multiValue, _) {
+                                                      final isSelected =
+                                                      multiValue
+                                                          .contains(item);
+                                                      return Container(
+                                                        height:
+                                                        double.infinity,
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal:
+                                                            16.0),
+                                                        child: Row(
+                                                          children: [
+                                                            if (isSelected)
+                                                              const Icon(Icons
+                                                                  .check_box_outlined)
+                                                            else
+                                                              const Icon(Icons
+                                                                  .check_box_outline_blank),
+                                                            const SizedBox(
+                                                                width: 16),
+                                                            Expanded(
                                                               child: Text(
-                                                                multiValue
-                                                                    .where((item) =>
-                                                                item !=
-                                                                    'All')
-                                                                    .join(', '),
+                                                                item,
                                                                 style:
                                                                 const TextStyle(
-                                                                  fontSize: 24,
+                                                                  fontSize:
+                                                                  24,
                                                                   fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                                  overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
                                                                 ),
-                                                                maxLines: 1,
                                                               ),
-                                                            );
-                                                          });
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
                                                     },
-                                                  ).toList();
-                                                },
-                                                buttonStyleData:
-                                                const ButtonStyleData(
-                                                  padding: EdgeInsets.only(
-                                                      left: 8, right: 8),
-                                                  height: 40,
-                                                  width: 140,
-                                                ),
-                                                menuItemStyleData:
-                                                const MenuItemStyleData(
-                                                  padding: EdgeInsets.zero,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  SizedBox(height: 8),
-                                  Container(
-                                    height: height2,
-                                    width: width3,
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            height: height2,
-                                            width: (width3 - 20) / 3,
-                                            child: ElevatedButton(
-                                              onPressed: () {
-                                                print('line 1083 ');
-
-                                                _submit();
-                                              },
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                height: height,
-                                                width: (width3 - 20) / 3,
-                                                child: Text(
-                                                  'Save Form',
-                                                  style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
                                                   ),
+                                                );
+                                              }).toList(),
+                                              multiValueListenable:
+                                              disciplineMultiValueListenable,
+                                              onChanged: (value) {
+                                                final multiValue =
+                                                    disciplineMultiValueListenable
+                                                        .value;
+                                                final isSelected = multiValue
+                                                    .contains(value);
+                                                if (value == 'All') {
+                                                  isSelected
+                                                      ? disciplineMultiValueListenable
+                                                      .value = []
+                                                      : disciplineMultiValueListenable
+                                                      .value =
+                                                      List.from(
+                                                          listDisciplines);
+                                                } else {
+                                                  disciplineMultiValueListenable
+                                                      .value =
+                                                  isSelected
+                                                      ? ([...multiValue]
+                                                    ..remove(value))
+                                                      : [
+                                                    ...multiValue,
+                                                    value!
+                                                  ];
+                                                }
+                                              },
+                                              selectedItemBuilder: (context) {
+                                                return listDisciplines.map(
+                                                      (item) {
+                                                    return ValueListenableBuilder<
+                                                        List<String>>(
+                                                        valueListenable:
+                                                        disciplineMultiValueListenable,
+                                                        builder: (context,
+                                                            multiValue, _) {
+                                                          return Container(
+                                                            alignment:
+                                                            AlignmentDirectional
+                                                                .center,
+                                                            child: Text(
+                                                              multiValue
+                                                                  .where((item) =>
+                                                              item !=
+                                                                  'All')
+                                                                  .join(', '),
+                                                              style:
+                                                              const TextStyle(
+                                                                fontSize: 24,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold,
+                                                                overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                              ),
+                                                              maxLines: 1,
+                                                            ),
+                                                          );
+                                                        });
+                                                  },
+                                                ).toList();
+                                              },
+                                              buttonStyleData:
+                                              const ButtonStyleData(
+                                                padding: EdgeInsets.only(
+                                                    left: 8, right: 8),
+                                                height: 40,
+                                                width: 140,
+                                              ),
+                                              menuItemStyleData:
+                                              const MenuItemStyleData(
+                                                padding: EdgeInsets.zero,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                SizedBox(height: 8),
+                                Container(
+                                  height: height2,
+                                  width: width3,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          height: height2,
+                                          width: (width3 - 20) / 3,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              print('line 1083 ');
+
+                                              _submit();
+                                            },
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              height: height,
+                                              width: (width3 - 20) / 3,
+                                              child: Text(
+                                                'Save Form',
+                                                style: TextStyle(
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: 5),
-                                        Expanded(
-                                          child: Container(
-                                            height: height,
-                                            width: (width3 - 20) / 3,
-                                            child: ElevatedButton(
-                                              onPressed: () {
-                                                print('line 662 reset');
-                                                resetData();
-                                              },
-                                              child: Text('Reset Form',
-                                                  style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  )),
-                                            ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Expanded(
+                                        child: Container(
+                                          height: height,
+                                          width: (width3 - 20) / 3,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              print('line 662 reset');
+                                              resetData();
+                                            },
+                                            child: Text('Reset Form',
+                                                style: TextStyle(
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                )),
                                           ),
                                         ),
-                                        SizedBox(width: 5),
-                                        Expanded(
-                                          child: Container(
-                                            height: height,
-                                            width: (width3 - 20) / 3,
-                                            child: ElevatedButton(
-                                              onPressed: () {
-                                                print('line 2157 cancel');
-                                                setState(() {
-                                                  flagShowForm = false;
-                                                });
-                                              },
-                                              child: Text('Cancel',
-                                                  style: TextStyle(
-                                                    fontSize: fontSize,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                  )),
-                                            ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Expanded(
+                                        child: Container(
+                                          height: height,
+                                          width: (width3 - 20) / 3,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              print('line 2157 cancel');
+                                              setState(() {
+                                                flagShowForm = false;
+                                              });
+                                            },
+                                            child: Text('Cancel',
+                                                style: TextStyle(
+                                                  fontSize: fontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                )),
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         ),
@@ -2041,9 +2052,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                     ),
                   ],
                 ),
-              )
-            else
-              Container(),
+              ) :SizedBox.shrink(),
           ],
         ));
   }

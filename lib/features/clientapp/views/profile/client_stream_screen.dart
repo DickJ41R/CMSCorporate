@@ -60,89 +60,18 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
   Stream<QuerySnapshot>? _clientStream;
   Map<String, dynamic>? arguments;
   List<Map<String, dynamic>> listOfClients = [];
-
+  List<Map<String, dynamic>>? clm;
   Future<List<Map<String, dynamic>>> _getAllClientData() async {
     print('line 178 in _getallclientdata: $arguments');
-    List<Map<String, dynamic>>? clm;
-    try {
-      clm = [];
-      Query query = util.buildDynamicQuery(arguments!);
-      print('line 182: $query');
-      QuerySnapshot querySnapshot = await query.get();
-      for (var docSnapShot in querySnapshot.docs) {
-        print('line 206: ${querySnapshot.docs.length}');
-        Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
-        obj['id'] = docSnapShot.id;
-        print('line 210 in querysnapshot: $obj');
 
-        listOfClients.add(obj);
-        await FirebaseFirestore.instance
-            .collection('ClientAddress')
-            .where('clientId', isEqualTo: obj['clientId'])
-            .where('addressType', isEqualTo: 'Physical')
-            .get()
-            .then((QuerySnapshot) async {
-          for (var docSnapshot in QuerySnapshot.docs) {
-            Map<String, dynamic> tobj = docSnapshot.data();
-            //        print('line 100: $tobj');
-            obj['city'] = tobj['city'];
-            obj['state'] = tobj['state'];
-            break;
-          }
-        });
-        print('line 222 $obj');
-        await FirebaseFirestore.instance
-            .collection('ClientCredit')
-            .where('clientId', isEqualTo: obj['clientId'])
-            .get()
-            .then((QuerySnapshot) async {
-          for (var docSnapshot in QuerySnapshot.docs) {
-            Map<String, dynamic> cobj = docSnapshot.data();
-            //     print('line 113: $cobj');
-            obj['balance'] = '0.00';
-            obj['openCredit'] =
-                cobj['creditLimit'] == null ? 0.0 : cobj['creditLimit'];
-            break;
-          }
-        });
-        print('line 237: $obj');
-        Map<String, dynamic> xbj = {
-          'clientId': obj['clientId'].toString().length < 4
-              ? "    ".substring(0, 4 - obj['clientId'].toString().length) +
-                  obj['clientId'].toString()
-              : obj['clientId'].toString(),
-          'statusId': obj['statusId'] == null ? 'U' : obj['statusId'],
-          'clientName':
-              obj['clientName'] == null ? 'Unknown' : obj['clientName'],
-          'branchName':
-              obj['branchName'] == null ? 'Unknown' : obj['branchName'],
-          'clientType':
-              obj['clientType'] == null ? 'Unknown' : obj['clientType'],
-          'disciplinesServiced': obj['disciplinesServiced'] == null
-              ? "Unknown"
-              : obj['disciplinesServiced'].indexOf('CNA') == -1
-                  ? "Unknown"
-                  : obj['disciplinesServiced'].indexOf('LPN') == -1
-                      ? "Unknown"
-                      : obj['disciplinesServiced'].indexOf('RN') == -1
-                          ? "Unknown"
-                          : obj['disciplinesServiced'],
-          'city': obj['city'] == null ? "Unknown" : obj['city'],
-          'state': obj['state'] == null ? "Unk" : obj['state'],
-          'balance':
-              obj['balance'] == null ? "0.00" : obj['balance'].toString(),
-          'openCredit':
-              obj['openCredit'] == null ? "0.00" : obj['openCredit'].toString()
-        };
-        //   print('line 138: $xbj');
-        clm!.add(xbj);
-      }
-      clm.sort((a, b) {
-        int cmp = a['clientId'].compareTo(b['clientId']);
-        if (cmp != 0) return cmp;
-        return a['clientId'].compareTo(b['clientId']);
-      });
-      return clm;
+    try {
+
+      clm = [];
+
+      Query query = util.buildDynamicQuery(arguments!);
+       clm = await clientServices.getQueryData(query);
+       print('line 72: $clm');
+      return clm!;
     } catch (e) {
       print('line 262: ${e.toString()}');
       throw Exception('line 124 Error getting client data');
@@ -199,7 +128,23 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
   double? screenWidth;
   double? screenHeight;
   double count = 0;
-
+//   @override
+//   int get rowCount = 0;
+//
+//   @override
+//   Future<bool> handlePageChange(int oldPageIndex, int newPageIndex,
+//       int startRowIndex, int rowsPerPage) async {
+//     int endIndex = startRowIndex + rowsPerPage;
+//     if (endIndex > orders.length) {
+//       endIndex = orders.length - 1;
+//     }
+//
+//     paginatedDataSource = List.from(
+//         orders.getRange(startRowIndex, endIndex).toList(growable: false));
+//     notifyListeners();
+//     return true;
+//   }
+// }
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
@@ -210,6 +155,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
     if (h! < 1.0) {
       h = 1.0;
     }
+    clm = [];
     print('line 87: $screenHeight $screenWidth');
     return Scaffold(
       appBar: AppBar(
@@ -304,7 +250,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
               } else {
                 List<Map<String, dynamic>> listH = snapshot.data![0];
                 //   print('line 312: ${listH.length} ${listH[0]}');
-                ClientClassData.clear();
+                clientClassData.clear();
                 listH.forEach((doc) {
                   //  print('line 307: ${doc.data()}');
                   clientClassData.add(ClientClass.fromJson(doc));
@@ -352,13 +298,13 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                       }
                     }
                     authServices.targetType = "Client";
-                    Map<String, dynamic>? smp =
-                        await clientServices.getASingleClientUser(
-                            authServices.clientMap!['clientId']);
-                    print('line 356: $smp');
-                    if (smp!.containsKey('clientId') == true) {
-                      authServices.clientUserMap = smp;
-                    }
+                    // Map<String, dynamic>? smp =
+                    //     await clientServices.getASingleClientUser(
+                    //         authServices.clientMap!['clientId']);
+                    // print('line 304: $smp');
+                    // if (smp!.containsKey('clientId') == true) {
+                    //   authServices.clientUserMap = smp;
+                    // }
                     Map<String, dynamic> args = {
                       'clientId': currentId,
                       'clientName': clientName

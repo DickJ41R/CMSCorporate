@@ -162,6 +162,7 @@ class ProcessClientRequestScheduleState
       throw Exception('Error getting client departments: ${e.toString()}');
     }
   }
+
   Map<String, dynamic>? arguments;
 
   List<DateTime> dateTimeList = [];
@@ -169,11 +170,13 @@ class ProcessClientRequestScheduleState
   void initState() {
     super.initState();
 //    sendAnEmail();
-    print('line 154 initstate');
+    print('line 172 initstate: ');
     arguments = widget.args;
+    print('line 174 initstate: $arguments');
     clientId = arguments!['clientId'];
     currentUser = authService.currentUser;
 
+    print('line 176 in init schedule shifts');
     listOfClientTokens = [];
     if (currentUser!['iosFcmToken'] != null &&
         currentUser!['iosFcmToken'] != 'Placeholder') {
@@ -199,11 +202,10 @@ class ProcessClientRequestScheduleState
     //      .fromClientId;
     print('line 246: $clientId');
 
-    userEmail = clientUser!['email'];
     print('line 194 in didchange');
     setPNRates();
     _getListOfHolidays(clientId!);
-    print('line 189 end of initstate');
+    print('line 208 end of initstate');
   }
 
   Future<dynamic> _showDialog(

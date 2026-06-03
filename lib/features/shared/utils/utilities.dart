@@ -1776,7 +1776,17 @@ class UtilitiesServices {
 
       if (arg['searchCriteria'] == 'All') {
         print('line 938');
-        return contentsRef;
+        int value = int.parse(arg['searchValue']!);
+        int branchId = int.parse(stringBranchId);
+        if (branchId == 0) {
+          query = contentsRef
+              .where(arg['searchField']!, isGreaterThanOrEqualTo: value);
+       } else {
+          query = contentsRef
+              .where('branchId', isEqualTo: branchId)
+              .where(arg['searchField']!, isGreaterThanOrEqualTo: value);
+        }
+        return query;
       }
       //isequalto
       print('line 942');

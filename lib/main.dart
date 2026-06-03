@@ -13,7 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
-  var orgId = dotenv.env['ASM_DB2'];
+  var orgId = dotenv.env['ASM_DB1'];
   print('line 16: $orgId $kIsWeb');
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

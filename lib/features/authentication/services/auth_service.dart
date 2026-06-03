@@ -396,6 +396,7 @@ class AuthService {
             userDocumentId = docSnapshot.id;
 
             obj = docSnapshot.data();
+            currentUser = obj;
             print('line 396 checking _authservice $obj');
             cmsBranchUserId = obj!['genId'];
             cmsBranchUserMap = obj;
@@ -434,6 +435,7 @@ class AuthService {
             userDocumentId = docSnapshot.id;
 
             obj = docSnapshot.data();
+            currentUser = obj;
             print('line 413 checking _authservice $obj');
             cmsUserId = obj!['genId'];
             cmsUserMap = obj;

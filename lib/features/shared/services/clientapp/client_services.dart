@@ -3032,6 +3032,103 @@ class ClientServices {
       throw Exception(e.toString());
     }
   }
+Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
+    List<Map<String,dynamic>>? clm;
+    List<Map<String,dynamic>>? listOfClients;
+    try {
 
+      listOfClients = [];
+      QuerySnapshot querySnapshot = await query.get();
+      clm = [];
+      for (var docSnapShot in querySnapshot.docs) {
+        print('line 3041: ${querySnapshot.docs.length}');
+        Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
+        obj['id'] = docSnapShot.id;
+        print('line 3044 in querysnapshot: $obj');
+
+        listOfClients.add(obj);
+        obj['city'] = '';
+        obj['state'] =  '';
+        await FirebaseFirestore.instance
+            .collection('ClientAddress')
+            .where('clientId', isEqualTo: obj['clientId'])
+            .where('addressType', isEqualTo: 'Physical')
+            .get()
+            .then((QuerySnapshot) async {
+              print('line 3057: ${QuerySnapshot.docs.length}');
+          for (var docSnapshot in QuerySnapshot.docs) {
+            Map<String, dynamic> tobj = docSnapshot.data();
+           print('line 3055: $tobj');
+            obj['city'] = tobj['city'];
+            obj['state'] = tobj['state'];
+            break;
+          }
+        });
+        print('line 3066: $obj');
+        obj['balance'] = '0.0';
+        obj['openCredit'] = false;
+        obj['creditLimit'] = 0.0;
+        print('line 3070 $obj');
+        await FirebaseFirestore.instance
+            .collection('ClientCredit')
+            .where('clientId', isEqualTo: obj['clientId'])
+            .get()
+            .then((QuerySnapshot) async {
+          for (var docSnapshot in QuerySnapshot.docs) {
+            Map<String, dynamic> cobj = docSnapshot.data();
+//     print('line 113: $cobj');
+            obj['balance'] = '0.00';
+            obj['openCredit'] = cobj['weeklyCreditLimit'];
+            obj['creditLimit'] = cobj['creditLimit'] == null ? 0.0 : cobj['creditLimit'];
+            break;
+          }
+        });
+        print('line 3805: $obj');
+        Map<String, dynamic> xbj = {
+          'clientId': obj['clientId'].toString().length < 4
+              ? "    ".substring(0, 4 - obj['clientId'].toString().length) +
+              obj['clientId'].toString()
+              : obj['clientId'].toString(),
+          'statusId': obj['statusId'] == null ? 'U' : obj['statusId'],
+          'clientName':
+          obj['clientName'] == null ? 'Unknown' : obj['clientName'],
+          'branchName':
+          obj['branchName'] == null ? 'Unknown' : obj['branchName'],
+          'clientType':
+          obj['clientType'] == null ? 'Unknown' : obj['clientType'],
+          'disciplinesServiced': obj['disciplinesServiced'] == null
+              ? "Unknown"
+              : obj['disciplinesServiced'].indexOf('CNA') == -1
+              ? "Unknown"
+              : obj['disciplinesServiced'].indexOf('LPN') == -1
+              ? "Unknown"
+              : obj['disciplinesServiced'].indexOf('RN') == -1
+              ? "Unknown"
+              : obj['disciplinesServiced'],
+          'city': obj['city'] == null ? "Unknown" : obj['city'],
+          'state': obj['state'] == null ? "Unk" : obj['state'],
+          'balance':
+          obj['balance'] == null ? "0.00" : obj['balance'].toString(),
+          'openCredit':
+          obj['openCredit'] == null ? "0.00" : obj['openCredit'].toString()
+        };
+     print('line 3110: $xbj');
+        clm.add(xbj);
+      }
+      clm.sort((a, b) {
+        int cmp = a['clientId'].compareTo(b['clientId']);
+        if (cmp != 0) return cmp;
+        return a['clientId'].compareTo(b['clientId']);
+      });
+      print('line 3123 ${clm.length}');
+      return clm;
+
+    } catch(e) {
+      print('line 3116 error: ${e.toString()}');
+      return [];
+
+    }
+
+  }
 
 }

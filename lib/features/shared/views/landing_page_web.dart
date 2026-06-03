@@ -111,8 +111,9 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       case 1:
         {
           for (int i = 0; i < hcpFields!.length; i++) {
+            Map<String, String> obj = hcpFields![i];
             DropdownMenuEntry me =
-                DropdownMenuEntry(value: hcpFields![i], label: hcpFields![i]);
+            DropdownMenuEntry(value: obj['value']!, label: obj['label']!);
             dropDownSearchFieldsEntries.add(me);
           }
         }
@@ -120,8 +121,9 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       case 2:
         {
           for (int i = 0; i < workOrderFields!.length; i++) {
-            DropdownMenuEntry me = DropdownMenuEntry(
-                value: workOrderFields![i], label: workOrderFields![i]);
+            Map<String, String> obj = workOrderFields![i];
+            DropdownMenuEntry me =
+                DropdownMenuEntry(value: obj['value']!, label: obj['label']!);
             dropDownSearchFieldsEntries.add(me);
           }
         }
@@ -134,8 +136,8 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   bool haveFields = false;
   List<dynamic>? searchCriteria;
   List<Map<String, String>>? clientFields;
-  List<dynamic>? workOrderFields;
-  List<dynamic>? hcpFields;
+  List<Map<String,String>>? workOrderFields;
+  List<Map<String,String>>? hcpFields;
   void _setClientFields() {
     clientFields = [
       {"value": 'clientId', "label": 'Client Id'},
@@ -149,7 +151,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   void _setHCPFields() {
     hcpFields = [
       {"value": "hcpId", "label": 'Hcp Id'},
-      {'value": "fullName","label": "Hcp Name (LastName, FirstName'},
+      {"value": "fullName","label": "Hcp Name (LN, FN)"},
       {"value": "status", "label": 'Status'},
       {'value': "branchId", "label": 'Branch Id'},
       {'value': 'branchName', 'label': 'Branch Name'}
@@ -157,12 +159,12 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   }
 
   void _setWorkOrderFields() {
-    hcpFields = [
-      'Hcp Id',
-      'Hcp Name (LastName, FirstName',
-      'Status',
-      'Branch Id',
-      'Branch Name'
+    workOrderFields = [
+      {"value": "orderId", "label": "Order Id"},
+      {"value": "hcpName", "label": "HcpName (LastName, FirstName"},
+      {"value": "statusId", "label": "Status"},
+      {"value": "shiftDate", "label": "Shift Date"},
+      {"value": "clientName", "label": "Client Name"},
     ];
   }
 
@@ -193,6 +195,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   void _setBranches() {
     print('line 50 in _setBranches');
     userBranches = dropDownCodes.getUserBranches();
+    bool flagHaveCorporate = false;
     print(
         'line 60: ${userBranches!.length} ${listOfCurrentUserBranches!.length}');
     if (authServices.corporateOrBranch == 'Corporate') {
@@ -204,6 +207,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
               mp['branchName'].toString(),
           label: mp['branchName']);
       dropDownBranchEntries.add(me);
+      flagHaveCorporate = true;
     }
     for (int i = 0; i < userBranches!.length; i++) {
       // String st = userBranches[i]['branchName'];
@@ -211,16 +215,15 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       //  _widgetOptions.add(userBranches[i]);
       bool flagGotHit = false;
       Map<String, dynamic> mp = userBranches![i];
-
       for (int j = 0; j < listOfCurrentUserBranches!.length; j++) {
-        Map<String, dynamic> tp = listOfCurrentUserBranches![j];
-        if (tp['branchId'] == mp['branchId']) {
-          flagGotHit = true;
-          break;
+          Map<String, dynamic> tp = listOfCurrentUserBranches![j];
+          if (tp['branchId'] == mp['branchId']) {
+            flagGotHit = true;
+            break;
+          }
+        if (flagGotHit == false) {
+          continue;
         }
-      }
-      if (flagGotHit == false) {
-        continue;
       }
       DropdownMenuEntry me = DropdownMenuEntry(
           value: '(' +
@@ -249,9 +252,9 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     if (index == 0) {
       ivv = clientFields![index]['value']!;
     } else if (index == 1) {
-      ivv = hcpFields![index]['value'];
+      ivv = hcpFields![index]['value']!;
     } else if (index == 2) {
-      ivv = workOrderFields![index]['value'];
+      ivv = workOrderFields![index]['value']!;
     }
     print('line 253 $ivv');
     return ivv;
@@ -289,13 +292,27 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   }
 
   void setDataElements() {
-    print("line 268 edit ${searchTermsController.text}");
+    print("line 295 edit ${searchTermsController.text}");
     currentArgument!['searchValue'] = currentTermsValue.toString();
     currentArgument!['branchValue'] = selectedBranchNumber.toString();
-    print('line 271: ${currentArgument}');
+    if (currentArgument!['searchCriteria'] == 'All') {
+      if (isCheckedClient == true) {
+        currentArgument!['searchField'] = 'clientId';
+        currentArgument!['searchValue'] = '0';
+      } else if (isCheckedHCP == true) {
+        currentArgument!['searchField'] = 'hcpId';
+        currentArgument!['searchValue'] = '0';
+      } else {
+        currentArgument!['searchField'] = 'orderId';
+        currentArgument!['searchValue'] = '0';
+
+      }
+    }
+    print('line 298: ${currentArgument}');
     bool bl = _validateCurrentArguments();
+    print('line 300: $bl');
     if (bl == false) {
-      print('line 283 bl == false');
+      print('line 302 bl == false');
       return;
     }
     setState(() {
@@ -318,16 +335,18 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
     print(
-        'line build 184: $screenWidth $selectedBranch $selectedMenuOption $flagHaveData $flagHaveCalled');
+        'line build 321: $screenWidth $selectedBranch $selectedMenuOption $flagHaveData $flagHaveCalled');
     screenHeight = MediaQuery.of(context).size.height;
     double? h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
     if (h! < 1.0) {
       h = 1.0;
     }
     fontSize = 18 / h;
-    print('line 406: $screenWidth $screenHeight $fontSize $h');
+    print('line 328: $screenWidth $screenHeight $fontSize $h');
 
     return Scaffold(
+      backgroundColor: color1,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
           localTitle!,
@@ -383,14 +402,14 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                     //         ['branchId'];
                                     //
                                     flagHasTopLevelBranch = true;
-                                    print('line 341:  ${selectedBranchNumber}');
+                                    print('line 386:  ${selectedBranchNumber}');
                                   }
                                 });
 
                                 if (selectedMenuOption != null &&
                                     flagHaveCalled == false) {
                                   print(
-                                      'line 404 in show circular progress indicator');
+                                      'line 393 in show circular progress indicator');
                                   flagHaveData == false
                                       ? Center(
                                           child: Container(
@@ -410,7 +429,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                           ),
                                         )
                                       : Container();
-                                  print('line 424 just before get rows');
+                                  print('line 413 just before get rows');
                                 }
                               },
 

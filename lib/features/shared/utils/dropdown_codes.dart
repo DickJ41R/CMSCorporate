@@ -6443,7 +6443,7 @@ class DropDownCodes {
   }
 
   List<Map<String, dynamic>> userBranches = [
-    {"branchId": 0, "branchName": "CORPORATE", "index": 0},
+    {"branchId": 0, "branchName": "Corporate", "index": 0},
     {"branchId": 615, "branchName": "RALEIGH CMS 101", "index": 1},
     {"branchId": 624, "branchName": "COLUMBIA CMS 105", "index": 2},
     {"branchId": 631, "branchName": "NASHVILLE CMS 106", "index": 3},
@@ -6451,8 +6451,9 @@ class DropDownCodes {
     {"branchId": 634, "branchName": "AUGUSTA-GREENVILLE CMS 110", "index": 5},
     {"branchId": 635, "branchName": "FLORENCE CMS 111", "index": 6},
     {"branchId": 638, "branchName": "KNOXVILLE-TRI CITIES CMS 114", "index": 7},
-    {"branchId": 640, "branchName": "CHATTANOOGA CMS 116", "index": 8},
-    {"branchId": 641, "branchName": "LEXINGTON CMS 117", "index": 9},
+    {"branchId": 639, "branchName": "TRI CITIES CMS 115", "index": 8},
+    {"branchId": 640, "branchName": "CHATTANOOGA CMS 116", "index": 9},
+    {"branchId": 641, "branchName": "LEXINGTON CMS 117", "index": 10},
   ];
   List<Map<String, dynamic>> getUserBranches() {
     return userBranches;
