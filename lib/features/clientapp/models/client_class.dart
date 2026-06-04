@@ -84,7 +84,7 @@ class ClientClass {
         json['city'] == null ? "" : json['city'] as String,
         json['state'] == null ? "" : json['state'] as String,
         json['balance'] == null ? "\$0.00" : json['balance'] as String,
-        json['openCredit'] == null ? "\$0.00" : json['openCredit'] as String);
+        json['openCredit'] as String);
   }
 
   Map<String, dynamic> toJson() => {

@@ -44,7 +44,9 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
   late String formatted;
   late double fontSize;
   late List<Map<String, dynamic>> listOfClientClassData;
-  late List<ClientClass> ClientClassData = [];
+  late List<ClientClass> clientClassData = [];
+  List<ClientClass> _paginatedClients = [];
+  List<ClientClass>_clients = [];
   Color color1 = Color.fromARGB(255, 134, 219, 197); //green from website
   Color color2 = Color.fromARGB(255, 19, 125, 103); //green from logo
   Color color3 = Colors.grey.shade200;
@@ -53,27 +55,44 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
     List<ClientClass> cli = clientClasses;
     return cli;
   }
-
+  int? _rowsPerPage;
+  final double _dataPagerHeight = 60.0;
+  List<ClientClass> _paginateClients = [];
   // Add maxWidth constraint check
 
-  List<ClientClass> clientClassData = [];
   Stream<QuerySnapshot>? _clientStream;
   Map<String, dynamic>? arguments;
   List<Map<String, dynamic>> listOfClients = [];
   List<Map<String, dynamic>>? clm;
+  List<Map<String,dynamic>>? holdClm;
   Future<List<Map<String, dynamic>>> _getAllClientData() async {
-    print('line 178 in _getallclientdata: $arguments');
+    print('line 178 in _getallclientdata: $arguments ${clm!.length}');
 
     try {
+      if (holdClm != null && holdClm!.length > 0) {
+        clm = holdClm;
+        print('line 73 no get $clm');
 
+        return clm!;
+      }
+     _rowsPerPage = 15;
       clm = [];
-
+      holdClm = [];
       Query query = util.buildDynamicQuery(arguments!);
        clm = await clientServices.getQueryData(query);
-       print('line 72: $clm');
+       if (clm!.length < _rowsPerPage!) {
+         _rowsPerPage = clm!.length;
+       }
+       print('line 80');
+       for (int i=0; i < clm!.length; i++) {
+         Map<String, dynamic>obj = clm![i];
+         _clients.add(ClientClass.fromJson(obj));
+       }
+       holdClm = clm;
+       print('line 85: $clm');
       return clm!;
     } catch (e) {
-      print('line 262: ${e.toString()}');
+      print('line 87: ${e.toString()}');
       throw Exception('line 124 Error getting client data');
     }
   }
@@ -147,11 +166,20 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
 // }
   @override
   Widget build(BuildContext context) {
-    screenHeight = MediaQuery.of(context).size.height;
+    screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
     //screenHeight = MediaQuery.sizeOf(context).height;
     //screenWidth = MediaQuery.sizeOf(context).width;
-    screenWidth = MediaQuery.of(context).size.width;
-    double? h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
+    screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    double? h = MediaQuery
+        .maybeOf(context)
+        ?.textScaler
+        .scale(1.0);
     if (h! < 1.0) {
       h = 1.0;
     }
@@ -163,7 +191,11 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
             style: TextStyle(
                 backgroundColor: color1,
                 fontSize:
-                    Theme.of(context).textTheme.headlineSmall!.fontSize! / h,
+                Theme
+                    .of(context)
+                    .textTheme
+                    .headlineSmall!
+                    .fontSize! / h,
                 fontWeight: FontWeight.bold,
                 color: Colors.black)),
         leading: IconButton(
@@ -202,10 +234,11 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                   child: Text('Error: ${snapshot.error}',
                       overflow: TextOverflow.visible,
                       style: TextStyle(
-                          fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .fontSize! /
+                          fontSize: Theme
+                              .of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .fontSize! /
                               h!,
                           color: Colors.red,
                           fontWeight: FontWeight.bold)),
@@ -219,10 +252,11 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                   width: screenWidth! - 10,
                   child: Text('There are no clients to list.',
                       style: TextStyle(
-                          fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .fontSize! /
+                          fontSize: Theme
+                              .of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .fontSize! /
                               h!,
                           color: color2,
                           fontWeight: FontWeight.bold)),
@@ -238,10 +272,11 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                     width: screenWidth! - 10,
                     child: Text('There are no clients to list.',
                         style: TextStyle(
-                            fontSize: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall!
-                                    .fontSize! /
+                            fontSize: Theme
+                                .of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .fontSize! /
                                 h!,
                             color: color2,
                             fontWeight: FontWeight.bold)),
@@ -256,10 +291,198 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                   clientClassData.add(ClientClass.fromJson(doc));
                 });
                 //   print('line 311: ${clientClassData[0].clientId}');
-                clientClassDataSource = ClientClassDataSource(clientClassData);
+                clientClassDataSource = ClientClassDataSource(
+                    clientClassData, _rowsPerPage!, _clients, _paginatedClients);
+                return LayoutBuilder(builder: (context, constraint) {
+                  return Column(children: [
+                    SizedBox(
+                        height: constraint.maxHeight - _dataPagerHeight,
+                        width: constraint.maxWidth,
+                        child: buildDataGrid(constraint)),
+                     Container(
+                        height: _dataPagerHeight,
+                        child: SfDataPager(
+                          delegate: clientClassDataSource,
+                          pageCount: _clients.length / _rowsPerPage!,
+                          direction: Axis.horizontal,
+                        ))
+                  ]);
+                });
+              }
+            }
+          }
+      ),
+    );
+  }
+  Widget buildDataGrid(BoxConstraints constraint) {
                 return SfDataGrid(
                   columnWidthMode: ColumnWidthMode.fill,
                   source: clientClassDataSource,
+                  columns: <GridColumn>[
+                    GridColumn(
+                        columnName: 'clientId',
+                        allowEditing: false,
+                        allowFiltering: true,
+                        allowSorting: true,
+                        maximumWidth: 80,
+                        width: 80,
+                        label: Container(
+                            width: 80,
+                            height: 32,
+                            padding: EdgeInsets.all(16.0),
+                            alignment: Alignment.center,
+                            child: Text('ID',
+                                style: TextStyle(
+                                  fontSize: fontSize,
+                                )))),
+                    GridColumn(
+                        allowSorting: false,
+                        allowFiltering: false,
+                        columnName: 'statusId',
+                        allowEditing: false,
+                        maximumWidth: 30,
+                        width: 30,
+                        label: Container(
+                            width: 30,
+                            height: 32,
+                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                            alignment: Alignment.center,
+                            child: Text('Sts',
+                                style: TextStyle(
+                                  fontSize: fontSize,
+                                )))),
+                    GridColumn(
+                        allowFiltering: true,
+                        columnName: 'clientName',
+                        allowSorting: true,
+                        width: 300,
+                        maximumWidth: 300,
+                        allowEditing: false,
+                        label: Container(
+                            width: 300,
+                            height: 32,
+                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                            alignment: Alignment.center,
+                            child: Text('Client Name',
+                                style: TextStyle(
+                                    overflow: TextOverflow.ellipsis, fontSize: fontSize)))),
+                    GridColumn(
+                        columnName: 'branchName',
+                        allowEditing: false,
+                        allowFiltering: false,
+                        allowSorting: false,
+                        width: 180,
+                        maximumWidth: 180,
+                        label: Container(
+                            width: 180,
+                            height: 32,
+                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                            alignment: Alignment.center,
+                            child: Text('Branch Name',
+                                style: TextStyle(
+                                    overflow: TextOverflow.ellipsis, fontSize: fontSize)))),
+                    GridColumn(
+                        columnName: 'clientType',
+                        allowEditing: false,
+                        allowSorting: false,
+                        allowFiltering: false,
+                        width: 130,
+                        maximumWidth: 130,
+                        label: Container(
+                            width: 130,
+                            height: 32,
+                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                            alignment: Alignment.center,
+                            child: Text('Type',
+                                style: TextStyle(
+                                  fontSize: fontSize,
+                                  overflow: TextOverflow.ellipsis,
+                                )))),
+                    GridColumn(
+                        columnName: 'disciplinesServiced',
+                        allowEditing: false,
+                        allowSorting: false,
+                        allowFiltering: false,
+                        width: 80,
+                        maximumWidth: 80,
+                        label: Container(
+                            width: 80,
+                            height: 32,
+                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                            alignment: Alignment.center,
+                            child: Text('Disc',
+                                style: TextStyle(
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: fontSize,
+                                )))),
+                    GridColumn(
+                        allowFiltering: false,
+                        allowSorting: false,
+                        columnName: 'city',
+                        allowEditing: false,
+                        width: 100,
+                        maximumWidth: 100,
+                        label: Container(
+                            width: 100,
+                            height: 32,
+                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                            alignment: Alignment.center,
+                            child: Text('City',
+                                style: TextStyle(
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: fontSize,
+                                )))),
+                    GridColumn(
+                        columnName: 'state',
+                        allowEditing: false,
+                        allowSorting: false,
+                        allowFiltering: false,
+                        width: 40,
+                        maximumWidth: 40,
+                        label: Container(
+                            width: 40,
+                            height: 32,
+                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                            alignment: Alignment.center,
+                            child: Text('Ste',
+                                style: TextStyle(
+                                  fontSize: fontSize,
+                                )))),
+                    GridColumn(
+                        columnName: 'balance',
+                        allowEditing: false,
+                        allowFiltering: false,
+                        allowSorting: false,
+                        width: 130,
+                        maximumWidth: 130,
+                        label: Container(
+                            width: 130,
+                            height: 32,
+                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                            alignment: Alignment.center,
+                            child: Text('Balance',
+                                style: TextStyle(
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: fontSize,
+                                )))),
+                    GridColumn(
+                        columnName: 'openCredit',
+                        allowEditing: false,
+                        allowSorting: false,
+                        allowFiltering: false,
+                        width: 130,
+                        maximumWidth: 130,
+                        label: Container(
+                            width: 130,
+                            height: 32,
+                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                            alignment: Alignment.center,
+                            child: Text('Credit',
+                                style: TextStyle(
+                                  fontSize: fontSize,
+                                  overflow: TextOverflow.ellipsis,
+                                )))),
+                  ],
                   allowEditing: true,
                   editingGestureType: EditingGestureType.doubleTap,
                   onQueryRowHeight: (details) {
@@ -268,7 +491,6 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                   },
                   // rowHeight: 40,
                   selectionMode: SelectionMode.single,
-                  columns: clientClassDataSource.getColumns(fontSize),
                   onSelectionChanged: (addedRows, removedRows) async {
                     print(
                         'line 343: ${addedRows.length} ${addedRows[0].getCells()}');
@@ -314,8 +536,4 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                   },
                 );
               }
-            }
-          }),
-    );
-  }
 }

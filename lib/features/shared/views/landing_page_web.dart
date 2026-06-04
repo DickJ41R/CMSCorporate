@@ -103,7 +103,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
           for (int i = 0; i < clientFields!.length; i++) {
             Map<String, String> obj = clientFields![i];
             DropdownMenuEntry me =
-                DropdownMenuEntry(value: obj['value']!, label: obj['label']!);
+            DropdownMenuEntry(value: obj['value']!, label: obj['label']!);
             dropDownSearchFieldsEntries.add(me);
           }
         }
@@ -123,7 +123,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
           for (int i = 0; i < workOrderFields!.length; i++) {
             Map<String, String> obj = workOrderFields![i];
             DropdownMenuEntry me =
-                DropdownMenuEntry(value: obj['value']!, label: obj['label']!);
+            DropdownMenuEntry(value: obj['value']!, label: obj['label']!);
             dropDownSearchFieldsEntries.add(me);
           }
         }
@@ -152,7 +152,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     hcpFields = [
       {"value": "hcpId", "label": 'Hcp Id'},
       {"value": "fullName","label": "Hcp Name (LN, FN)"},
-      {"value": "status", "label": 'Status'},
+      {"value": "shiftStatus", "label": 'Status'},
       {'value': "branchId", "label": 'Branch Id'},
       {'value': 'branchName', 'label': 'Branch Name'}
     ];
@@ -216,11 +216,11 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       bool flagGotHit = false;
       Map<String, dynamic> mp = userBranches![i];
       for (int j = 0; j < listOfCurrentUserBranches!.length; j++) {
-          Map<String, dynamic> tp = listOfCurrentUserBranches![j];
-          if (tp['branchId'] == mp['branchId']) {
-            flagGotHit = true;
-            break;
-          }
+        Map<String, dynamic> tp = listOfCurrentUserBranches![j];
+        if (tp['branchId'] == mp['branchId']) {
+          flagGotHit = true;
+          break;
+        }
         if (flagGotHit == false) {
           continue;
         }
@@ -247,14 +247,30 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     return -1;
   }
 
-  String _getSelectedSearchFieldIndex(int index, dynamic value) {
+  String _getSelectedSearchFieldIndex(int index, String value) {
     String ivv = '';
+    print('line 252: $index $value');
     if (index == 0) {
-      ivv = clientFields![index]['value']!;
+      for (int i=0; i < clientFields!.length; i++) {
+        if (clientFields![i]['value'] == value) {
+          ivv = clientFields![i]['value']!;
+          break;
+        }
+      }
     } else if (index == 1) {
-      ivv = hcpFields![index]['value']!;
+      for (int i=0; i < hcpFields!.length; i++) {
+        if (hcpFields![i]['value'] == value) {
+          ivv = hcpFields![i]['value']!;
+          break;
+        }
+      }
     } else if (index == 2) {
-      ivv = workOrderFields![index]['value']!;
+      for (int i=0; i < workOrderFields!.length; i++) {
+        if (workOrderFields![i]['value'] == value) {
+          ivv = workOrderFields![i]['value']!;
+          break;
+        }
+      }
     }
     print('line 253 $ivv');
     return ivv;
@@ -341,7 +357,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     if (h! < 1.0) {
       h = 1.0;
     }
-    fontSize = 18 / h;
+    fontSize = 1;
     print('line 328: $screenWidth $screenHeight $fontSize $h');
 
     return Scaffold(
@@ -412,22 +428,22 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                       'line 393 in show circular progress indicator');
                                   flagHaveData == false
                                       ? Center(
-                                          child: Container(
-                                            height: 50,
-                                            width: 50,
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                border: Border.all(
-                                                    color: Color.fromARGB(
-                                                        255, 19, 125, 103),
-                                                    width: 4),
-                                                borderRadius:
-                                                    BorderRadius.circular(12)),
-                                            child: CircularProgressIndicator(
-                                              backgroundColor: color1,
-                                            ),
-                                          ),
-                                        )
+                                    child: Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: Color.fromARGB(
+                                                  255, 19, 125, 103),
+                                              width: 4),
+                                          borderRadius:
+                                          BorderRadius.circular(12)),
+                                      child: CircularProgressIndicator(
+                                        backgroundColor: color1,
+                                      ),
+                                    ),
+                                  )
                                       : Container();
                                   print('line 413 just before get rows');
                                 }
@@ -438,20 +454,20 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                           ),
                           selectedBranch != null
                               ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                        height: 50,
-                                        width: 285,
-                                        child: Text(
-                                            'Selected: ${selectedBranch}')),
-                                  ],
-                                )
-                              : Container(
-                                  height: 30,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                  height: 50,
                                   width: 285,
-                                  child: Text('Please select a branch.'),
-                                ),
+                                  child: Text(
+                                      'Selected: ${selectedBranch}')),
+                            ],
+                          )
+                              : Container(
+                            height: 30,
+                            width: 285,
+                            child: Text('Please select a branch.'),
+                          ),
                         ],
                       ),
                     ),
@@ -492,25 +508,25 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                               },
 
                               dropdownMenuEntries:
-                                  dropDownSearchCriteriaEntries,
+                              dropDownSearchCriteriaEntries,
                             ),
                           ),
                           selectedSearchCriteria != null
                               ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                        height: 50,
-                                        width: 2,
-                                        child: Text(
-                                            'Selected: ${selectedSearchCriteria}')),
-                                  ],
-                                )
-                              : Container(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
                                   height: 50,
-                                  width: 285,
-                                  child: Text('Please select search criteria.'),
-                                ),
+                                  width: 2,
+                                  child: Text(
+                                      'Selected: ${selectedSearchCriteria}')),
+                            ],
+                          )
+                              : Container(
+                            height: 50,
+                            width: 285,
+                            child: Text('Please select search criteria.'),
+                          ),
                         ],
                       ),
                     ),
@@ -585,7 +601,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                 currentArgument!['searchCollection'] = 'None';
                               } else {
                                 currentArgument!['searchCollection'] =
-                                    'HCProfessional';
+                                'HCProfessional';
 
                                 isCheckedClient = !value;
                                 isCheckedWorkSchedule = !value;
@@ -626,7 +642,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                 currentArgument!['searchCollection'] = 'None';
                               } else {
                                 currentArgument!['searchCollection'] =
-                                    'ClientWorkOrder';
+                                'ClientWorkOrder';
 
                                 isCheckedHCP = !value;
                                 isCheckedClient = !value;
@@ -687,20 +703,20 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                           ),
                           selectedSearchField != null
                               ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                        height: 50,
-                                        width: 285,
-                                        child: Text(
-                                            'Selected: ${selectedSearchField}')),
-                                  ],
-                                )
-                              : Container(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
                                   height: 50,
                                   width: 285,
-                                  child: Text('Please select search Field'),
-                                ),
+                                  child: Text(
+                                      'Selected: ${selectedSearchField}')),
+                            ],
+                          )
+                              : Container(
+                            height: 50,
+                            width: 285,
+                            child: Text('Please select search Field'),
+                          ),
                         ],
                       ),
                     ),
@@ -748,56 +764,56 @@ class _LandingPageWebState extends State<LandingPageWeb> {
           ),
           right: flagHasTopLevelBranch == true && flagHaveQueryData == true
               ? Container(
-                  width: screenWidth! - 310,
-                  height: screenHeight,
-                  decoration: BoxDecoration(
-                    color: color1,
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(padding: EdgeInsets.only(top: 10.0)),
-                      Row(
-                        children: [
-                          TabsWeb(
-                              title: 'Home', route: homePage, argumentId: null),
-                          Spacer(),
-                          TabsWeb(
-                              title: 'Work Order',
-                              route: workOrderPage,
-                              argumentId: -1,
-                              argumentMap: currentArgument),
-                          Spacer(),
-                          TabsWeb(
-                              title: 'Clients',
-                              route: clientPage,
-                              argumentId: -1,
-                              argumentMap: currentArgument),
-                          Spacer(),
-                          TabsWeb(
-                              title: 'HC Professionals',
-                              route: hcprofessionalPage,
-                              argumentId: -1,
-                              argumentMap: currentArgument),
-                          Spacer(),
-                        ],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 30),
-                      ),
-                      Center(
-                        child: Text(
-                            "This application has been developed to provide both Corporate and Branch users the capabilities of view and modifying data elements.  Any changes made to the data presented in this applications will be replicated in the StafferLink's primary database as well as the database for the target mobile devices.",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: color2,
-                            )),
-                      ),
-                    ],
-                  ),
-                )
+            width: screenWidth! - 310,
+            height: screenHeight,
+            decoration: BoxDecoration(
+              color: color1,
+              border: Border.all(color: Colors.black),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(padding: EdgeInsets.only(top: 10.0)),
+                Row(
+                  children: [
+                    TabsWeb(
+                        title: 'Home', route: homePage, argumentId: null),
+                    Spacer(),
+                    TabsWeb(
+                        title: 'Work Order',
+                        route: workOrderPage,
+                        argumentId: -1,
+                        argumentMap: currentArgument),
+                    Spacer(),
+                    TabsWeb(
+                        title: 'Clients',
+                        route: clientPage,
+                        argumentId: -1,
+                        argumentMap: currentArgument),
+                    Spacer(),
+                    TabsWeb(
+                        title: 'HC Professionals',
+                        route: hcprofessionalPage,
+                        argumentId: -1,
+                        argumentMap: currentArgument),
+                    Spacer(),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 30),
+                ),
+                Center(
+                  child: Text(
+                      "This application has been developed to provide both Corporate and Branch users the capabilities of view and modifying data elements.  Any changes made to the data presented in this applications will be replicated in the StafferLink's primary database as well as the database for the target mobile devices.",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: color2,
+                      )),
+                ),
+              ],
+            ),
+          )
               : SizedBox.shrink(),
         ),
       ),

@@ -87,7 +87,9 @@ class _ClientCannotBeScheduledProfilePageState
                 size: 24,
                 color: Colors.black,
               ),
-              onPressed: () {}),
+              onPressed: () {
+                Navigator.of(context).pop(null);
+              }),
         ),
       ),
       body: FutureBuilder<dynamic>(

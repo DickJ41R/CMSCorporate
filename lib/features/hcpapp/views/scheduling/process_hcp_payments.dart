@@ -116,10 +116,16 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
     return;
   }
 
-  Future<Map<String, dynamic>> getHCPUser() async {
-    Map<String, dynamic> lm = await hcpServices.getHCPUser(hcpId!);
-    hcpId = lm['hcpId'];
-    return lm;
+  Future<void>getHCPUser() async {
+    currentHCPMap = await hcpServices.getHCPUser(hcpId!);
+    gEmail = currentHCPMap!['email'];
+    orgId = dotenv.env['PRIMARY_ORGID'];
+    DateTime cd = DateTime.now();
+    startDate = new DateTime(cd.year, cd.month, 1);
+    endDate = getLastDayOfMonth(cd);
+    print('line 157: $startDate $endDate');
+    print('line 143: ${orgId!}');
+    return;
   }
 
   Color color1 = Color.fromARGB(255, 134, 219, 197); //green from website
@@ -148,15 +154,9 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
     super.initState();
     paymentService = HCPPaymentDataService();
     arguments = widget.args;
-    currentHCPMap = authService.currentHCPMap;
-    hcpId = currentHCPMap!['hcpId'];
-    gEmail = currentHCPMap!['email'];
-    orgId = dotenv.env['PRIMARY_ORGID'];
-    DateTime cd = DateTime.now();
-    startDate = new DateTime(cd.year, cd.month, 1);
-    endDate = getLastDayOfMonth(cd);
-    print('line 157: $startDate $endDate');
-    print('line 143: ${orgId!}');
+    hcpId = arguments!['hcpId'];
+    getHCPUser();
+
     //listOfHolidays = paymentService.getListOfHCPHolidays();
   }
 

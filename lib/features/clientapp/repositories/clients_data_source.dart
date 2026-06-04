@@ -6,11 +6,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ClientClassDataSource extends DataGridSource {
   /// Creates the order data source class with required details.
+  ///
 
-  ClientClassDataSource(this._clientClassInfo) {
+  int rowsPerPage;
+  List<ClientClass>clients;
+  List<ClientClass>paginatedClients;
+  ClientClassDataSource(this._clientClassInfo,this.rowsPerPage,this.clients,this.paginatedClients) {
     //  print('line 11: ${this._clientClassInfo}');
+    print('line 14: $rowsPerPage $clients $paginatedClients');
+    paginatedClients = clients.getRange(0,rowsPerPage).toList(growable: false);
     //_addCityState();
-    _buildDataRow();
+    buildPaginatedDataGridRows();
+   // _buildDataRow();
   }
 
   // void _addCityState() {
@@ -33,10 +40,13 @@ class ClientClassDataSource extends DataGridSource {
   //     });
   //   }
   // }
+  List<DataGridRow> dataGridRows = [];
 
-  List<DataGridRow> clients = [];
+  @override
+  List<DataGridRow> get rows => dataGridRows;
+
   List<ClientClass> _clientClassInfo;
-
+  double fontSize = 18;
   String _fetchColumnName(String columnName) {
     switch (columnName) {
       case 'clientId':
@@ -51,7 +61,7 @@ class ClientClassDataSource extends DataGridSource {
         return 'Type';
       case 'disciplinesServiced':
         return 'Disc';
-      case 'City':
+      case 'city':
         return 'City';
       case 'state':
         return 'Ste';
@@ -64,240 +74,148 @@ class ClientClassDataSource extends DataGridSource {
     }
   }
 
-  void _buildDataRow() {
-    clients = _clientClassInfo
-        .map<DataGridRow>((e) => DataGridRow(cells: [
-              DataGridCell(
-                columnName: _fetchColumnName('clientId'),
-                value: e.clientId.length < 4
-                    ? "   ".substring(0, 4 - e.clientId.length) + e.clientId
-                    : e.clientId,
-              ),
-              DataGridCell(
-                columnName: _fetchColumnName('statusId'),
-                value: e.statusId,
-              ),
-              DataGridCell(
-                columnName: _fetchColumnName('clientName'),
-                value: e.clientName,
-              ),
-              DataGridCell(
-                columnName: _fetchColumnName('branchName'),
-                value: e.branchName,
-              ),
-              DataGridCell(
-                columnName: _fetchColumnName('clientType'),
-                value: e.clientType,
-              ),
-              DataGridCell(
-                columnName: _fetchColumnName('disciplinesServiced'),
-                value: e.disciplinesServiced,
-              ),
-              DataGridCell(
-                columnName: _fetchColumnName('city'),
-                value: e.city,
-              ),
-              DataGridCell(
-                columnName: _fetchColumnName('state'),
-                value: e.state,
-              ),
-              DataGridCell(
-                columnName: _fetchColumnName('balance'),
-                value: e.balance,
-              ),
-              DataGridCell(
-                columnName: _fetchColumnName('openCredit'),
-                value: e.openCredit,
-              ),
-            ]))
-        .toList();
-//    print('line 88: ${clients}');
-  }
-
   @override
-  List<DataGridRow> get rows => clients;
-
-  @override
-  DataGridRowAdapter buildRow(
-    DataGridRow row,
-  ) {
-    return DataGridRowAdapter(
-        cells: row.getCells().map<Widget>((e) {
-      return Container(
-        alignment: Alignment.center,
-        padding: EdgeInsets.all(8.0),
-        child: Text(e.value.toString()),
-      );
-    }).toList());
-  }
-
-  List<GridColumn> getColumns(double fontSize) {
-    return <GridColumn>[
-      GridColumn(
-          columnName: 'clientId',
-          allowEditing: false,
-          allowFiltering: true,
-          allowSorting: true,
-          maximumWidth: 80,
-          width: 80,
-          label: Container(
+  DataGridRowAdapter? buildRow(DataGridRow row) {
+        return DataGridRowAdapter(
+        cells: row.getCells().map<Widget>((dataGridCell) {
+            if (dataGridCell.columnName == _fetchColumnName('clientId')) {
+            return Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
               width: 80,
               height: 32,
-              padding: EdgeInsets.all(16.0),
               alignment: Alignment.center,
-              child: Text('ID',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          allowSorting: false,
-          allowFiltering: false,
-          columnName: 'statusId',
-          allowEditing: false,
-          maximumWidth: 30,
-          width: 30,
-          label: Container(
-              width: 30,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Sts',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          allowFiltering: true,
-          columnName: 'clientName',
-          allowSorting: true,
-          width: 300,
-          maximumWidth: 300,
-          allowEditing: false,
-          label: Container(
-              width: 300,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Client Name',
-                  style: TextStyle(
-                      overflow: TextOverflow.ellipsis, fontSize: fontSize)))),
-      GridColumn(
-          columnName: 'branchName',
-          allowEditing: false,
-          allowFiltering: false,
-          allowSorting: false,
-          width: 180,
-          maximumWidth: 180,
-          label: Container(
-              width: 180,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Branch Name',
-                  style: TextStyle(
-                      overflow: TextOverflow.ellipsis, fontSize: fontSize)))),
-      GridColumn(
-          columnName: 'clientType',
-          allowEditing: false,
-          allowSorting: false,
-          allowFiltering: false,
-          width: 130,
-          maximumWidth: 130,
-          label: Container(
-              width: 130,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Type',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    overflow: TextOverflow.ellipsis,
-                  )))),
-      GridColumn(
-          columnName: 'disciplinesServiced',
-          allowEditing: false,
-          allowSorting: false,
-          allowFiltering: false,
-          width: 80,
-          maximumWidth: 80,
-          label: Container(
-              width: 80,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Disc',
-                  style: TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          allowFiltering: false,
-          allowSorting: false,
-          columnName: 'city',
-          allowEditing: false,
-          width: 100,
-          maximumWidth: 100,
-          label: Container(
-              width: 100,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('City',
-                  style: TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          columnName: 'state',
-          allowEditing: false,
-          allowSorting: false,
-          allowFiltering: false,
-          width: 40,
-          maximumWidth: 40,
-          label: Container(
-              width: 40,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Ste',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          columnName: 'balance',
-          allowEditing: false,
-          allowFiltering: false,
-          allowSorting: false,
-          width: 130,
-          maximumWidth: 130,
-          label: Container(
-              width: 130,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Balance',
-                  style: TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          columnName: 'openCredit',
-          allowEditing: false,
-          allowSorting: false,
-          allowFiltering: false,
-          width: 130,
-          maximumWidth: 130,
-          label: Container(
-              width: 130,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Credit',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    overflow: TextOverflow.ellipsis,
-                  )))),
-    ];
+            child: Text(
+            dataGridCell.value.toString(),
+            overflow: TextOverflow.ellipsis,
+
+            ),
+            );
+            } else if (dataGridCell.columnName == _fetchColumnName('statusId')) {
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                alignment: Alignment.centerRight,
+                child: Text(
+                  dataGridCell.value.toString(),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            } else if (dataGridCell.columnName == _fetchColumnName('clientName')) {
+            return Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            alignment: Alignment.centerLeft,
+            child: Text(
+            dataGridCell.value.toString(),
+            overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: fontSize,
+              ),
+            ),
+            );
+            } else if (dataGridCell.columnName == _fetchColumnName('branchName')) {
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  dataGridCell.value.toString(),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            } else if (dataGridCell.columnName == _fetchColumnName('clientType')) {
+            return Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            alignment: Alignment.centerLeft,
+            child: Text(
+            dataGridCell.value.toString(),
+            overflow: TextOverflow.ellipsis,
+            ),
+            );
+            } else if (dataGridCell.columnName == _fetchColumnName('disciplinesServiced')) {
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  dataGridCell.value.toString(),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            } else if (dataGridCell.columnName == _fetchColumnName('city')) {
+            return Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            alignment: Alignment.centerLeft,
+            child: Text(
+            dataGridCell.value.toString(),
+            overflow: TextOverflow.ellipsis,
+            ),
+            );
+            } else if (dataGridCell.columnName == _fetchColumnName('state')) {
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  dataGridCell.value.toString(),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            } else if (dataGridCell.columnName == _fetchColumnName('balance')) {
+            return Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            alignment: Alignment.centerRight,
+            child: Text(
+            dataGridCell.value.toString(),
+            overflow: TextOverflow.ellipsis,
+            ),
+            );
+            } else if (dataGridCell.columnName == _fetchColumnName('openCredit')) {
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                alignment: Alignment.center,
+                child: Text(
+                  dataGridCell.value.toString(),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            } else {
+               return SizedBox.shrink();
+            }
+        })
+        .toList());
   }
+
+
+
+  @override
+  Future<bool> handlePageChange(int oldPageIndex, int newPageIndex) async {
+    int startIndex = newPageIndex * rowsPerPage;
+    int endIndex = startIndex + rowsPerPage;
+    if (startIndex < clients.length && endIndex <= clients.length) {
+      paginatedClients =
+          clients.getRange(startIndex, endIndex).toList(growable: false);
+      buildPaginatedDataGridRows();
+      notifyListeners();
+    } else {
+      paginatedClients = [];
+    }
+
+    return true;
+  }
+  void buildPaginatedDataGridRows() {
+    dataGridRows = paginatedClients.map<DataGridRow>((dataGridRow) {
+      return DataGridRow(cells: [
+        DataGridCell(columnName: 'Client ID', value: dataGridRow.clientId),
+        DataGridCell(columnName: 'Sts', value: dataGridRow.statusId),
+        DataGridCell(columnName: 'Client Name', value: dataGridRow.clientName),
+        DataGridCell(columnName: 'Branch Name', value: dataGridRow.branchName),
+        DataGridCell(columnName: 'Type', value: dataGridRow.clientType),
+        DataGridCell(columnName: 'Disc', value: dataGridRow.disciplinesServiced),
+        DataGridCell(columnName: 'City', value: dataGridRow.city),
+        DataGridCell(columnName: 'Ste', value: dataGridRow.state),
+        DataGridCell(columnName: 'Balance', value: dataGridRow.balance),
+        DataGridCell(columnName: 'Credit', value: dataGridRow.openCredit),
+
+      ]);
+    }).toList(growable: false);
+  }
+
 }
 //   Stream<QuerySnapshot> getStream() {
 //     print('line 50 in getStream');

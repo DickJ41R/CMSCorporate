@@ -225,9 +225,9 @@ class HCPClassDataSource extends DataGridSource {
 
   @override
   Widget? buildGroupCaptionCellWidget(
-    RowColumnIndex rowColumnIndex,
-    String summaryValue,
-  ) {
+      RowColumnIndex rowColumnIndex,
+      String summaryValue,
+      ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
       child: Text(summaryValue),

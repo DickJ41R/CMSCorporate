@@ -735,7 +735,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     double vWidth1 = 780;
     double height = 65;
     double height2 = 55;
-    double width3 = 740;
+    double width3 = 760;
     double width2 = 370; //(screenWidth - 10) - vWidth1;
     print('line 672: $vWidth1 $width2 $screenWidth, $screenHeight');
     print(
@@ -1039,7 +1039,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                 SizedBox(height: 8),
                                 Container(
                                   height: height,
-                                  width: screenWidth -10,
+                                  width: width3,
                                   // child: Row(
                                   //   children: [
                                   //     Expanded(
@@ -1054,7 +1054,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                     children: [
                                       Container(
                                         height: height,
-                                        width: width3,
+                                        width: width2,
                                         child: CheckboxListTile(
                                             title: Container(
                                               height: height,

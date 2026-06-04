@@ -88,6 +88,10 @@ class _HCProfessionalStreamScreenState
       listOfHCPs = hcpm!;
       final rowsCount = listOfHCPs.length as double;
       pageCount = (rowsCount / _rowsPerPage).floorToDouble();
+      print('line 91: $rowCount $pageCount $_rowsPerPage');
+      if (pageCount == 0) {
+        pageCount =1;
+      }
       return listOfHCPs;
     } catch (e) {
       print('line 123: ${e.toString()}');

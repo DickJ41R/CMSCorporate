@@ -287,7 +287,7 @@ class _ClientMenuState extends State<ClientMenu> {
       String title = 'Screen Width';
       String sdif = dif.toStringAsFixed(0);
       description =
-          'Extend the width of your screen until menu appears on left.';
+          'Extend the width of your screen to the right until the menu appears on left.';
       flagHasSnackbar = true;
     }
     print(

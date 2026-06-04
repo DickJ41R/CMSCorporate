@@ -67,13 +67,14 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
     }
   }
   Map<String,dynamic>? currentHCPMap;
+  Map<String,dynamic>?arguments;
   UtilitiesServices utilitiesServices = UtilitiesServices();
   @override
   void initState() {
     // TODO: implement initState
 
-    currentHCPMap = authService.currentHCPMap;
-    hcpId = currentHCPMap!['hcpId'];
+    arguments = widget.args;
+    hcpId = arguments!['hcpId'];
     getRawDataForDataSourceX(hcpId, context);
 
     setOrientationPreference(1);

@@ -3110,7 +3110,7 @@ Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
           'balance':
           obj['balance'] == null ? "0.00" : obj['balance'].toString(),
           'openCredit':
-          obj['openCredit'] == null ? "0.00" : obj['openCredit'].toString()
+          obj['openCredit'] == false ? "No" : "Yes"
         };
      print('line 3110: $xbj');
         clm.add(xbj);
