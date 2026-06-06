@@ -24,7 +24,7 @@ class _ClientDepartmentProfilePageState
   List<DropdownMenuEntry<dynamic>> dropDownMenuOptionEntries = [];
   UtilitiesServices utilityServices = UtilitiesServices();
   Future<List<dynamic>> _getDropDownMenuItems() async {
-    print('line 30 get client contact Dropdownitems: $arguments');
+    debugPrint('line 30 get client contact Dropdownitems: $arguments');
     dropDownMenuEntries = [];
     menuDepartments = [];
     try {
@@ -32,7 +32,7 @@ class _ClientDepartmentProfilePageState
         listOfDepartments = await clientServices
             .getClientDepartmentDataClass(arguments!['clientId']);
       }
-      print('line 35: ${listOfDepartments!.length}');
+      debugPrint('line 35: ${listOfDepartments!.length}');
 
       if (listOfDepartments!.length > 0) {
         for (int i = 0; i < listOfDepartments!.length; i++) {
@@ -46,14 +46,14 @@ class _ClientDepartmentProfilePageState
           dropDownMenuEntries.add(me);
           menuDepartments!.add(mdep);
         }
-        print('line 48: ${dropDownMenuEntries}');
+        debugPrint('line 48: ${dropDownMenuEntries}');
         return dropDownMenuEntries;
       } else {
         return [];
       }
-      print('line 49: dropdownentries ${dropDownMenuEntries.length}');
+      debugPrint('line 49: dropdownentries ${dropDownMenuEntries.length}');
     } catch (e) {
-      print('line 57: error: ${e.toString()}');
+      debugPrint('line 57: error: ${e.toString()}');
       throw Exception('line 58 error getting dropdown menu items');
     }
   }
@@ -132,9 +132,9 @@ class _ClientDepartmentProfilePageState
   TextEditingController longitudeController = TextEditingController();
   TextEditingController omrQueueController = TextEditingController();
   TextEditingController otTemplateIdController = TextEditingController();
-  TextEditingController printImagesController = TextEditingController();
-  TextEditingController printQueueController = TextEditingController();
-  TextEditingController printQueueCopiesController = TextEditingController();
+  TextEditingController debugPrintImagesController = TextEditingController();
+  TextEditingController debugPrintQueueController = TextEditingController();
+  TextEditingController debugPrintQueueCopiesController = TextEditingController();
   TextEditingController splitHolidaysController = TextEditingController();
   TextEditingController splitShiftsController = TextEditingController();
   TextEditingController splitWeekendsController = TextEditingController();
@@ -161,18 +161,18 @@ class _ClientDepartmentProfilePageState
   TextEditingController menuController = TextEditingController();
 
   int getSelectedMenuIndex(value) {
-    print('line 57 getselected contact index : $value');
+    debugPrint('line 57 getselected contact index : $value');
     int index = -1;
 
     for (int i = 0; i < dropDownMenuEntries.length; i++) {
       DropdownMenuEntry de = dropDownMenuEntries[i];
-      print('line 171: $de $value');
+      debugPrint('line 171: $de $value');
       if (de.value == value) {
         index = i;
         break;
       }
     }
-    print('line 62: $index $arguments');
+    debugPrint('line 62: $index $arguments');
     if (index != -1) {
       Map<String, dynamic> dep = listOfDepartments![index];
       //section 1
@@ -302,13 +302,13 @@ class _ClientDepartmentProfilePageState
       omrQueueController.text = dep['omrQueue'] == false ? 'false' : 'true';
       otTemplateIdController.text =
           dep['otTemplateId'] == null ? "" : dep['otTemplateId'];
-      printImagesController.text =
-          dep['printImages'] == false ? 'false' : 'true';
-      printQueueController.text =
-          dep['printQueue'] == null ? "" : dep['printQueue'];
-      printQueueCopiesController.text = dep['printQueueCopies'] == null
+      debugPrintImagesController.text =
+          dep['debugPrintImages'] == false ? 'false' : 'true';
+      debugPrintQueueController.text =
+          dep['debugPrintQueue'] == null ? "" : dep['debugPrintQueue'];
+      debugPrintQueueCopiesController.text = dep['debugPrintQueueCopies'] == null
           ? '0'
-          : dep['printQueueCopies'].toString();
+          : dep['debugPrintQueueCopies'].toString();
       splitHolidaysController.text =
           dep['splitHolidays'] == false ? 'false' : 'true';
       splitShiftsController.text =
@@ -420,9 +420,9 @@ class _ClientDepartmentProfilePageState
     longitudeController.dispose();
     omrQueueController.dispose();
     otTemplateIdController.dispose();
-    printImagesController.dispose();
-    printQueueController.dispose();
-    printQueueCopiesController.dispose();
+    debugPrintImagesController.dispose();
+    debugPrintQueueController.dispose();
+    debugPrintQueueCopiesController.dispose();
     splitHolidaysController.dispose();
     splitShiftsController.dispose();
     splitWeekendsController.dispose();
@@ -450,7 +450,7 @@ class _ClientDepartmentProfilePageState
     arguments = widget.args;
     localTitle = 'Client Contacts for: ' + arguments!['clientName'];
     listOfDepartments = [];
-    print('line 72 arguments $arguments');
+    debugPrint('line 72 arguments $arguments');
   }
 
   double? screenHeight;
@@ -475,7 +475,7 @@ class _ClientDepartmentProfilePageState
     const title = 'Client Contact Form';
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    print('line 115: $screenWidth $screenHeight');
+    debugPrint('line 115: $screenWidth $screenHeight');
     double? hh = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
     h = hh!;
     if (h < 1.0) {
@@ -560,7 +560,7 @@ class _ClientDepartmentProfilePageState
                                     );
                                   } else {
                                     List<dynamic> listH = snapshot.data![0];
-                                    print('line 111 ${listH.length}');
+                                    debugPrint('line 111 ${listH.length}');
                                     if (listH.length == 0) {
                                       return Center(
                                         child: Padding(
@@ -582,7 +582,7 @@ class _ClientDepartmentProfilePageState
                                       );
                                     } else {
                                       List<dynamic> listD = snapshot.data![0]!;
-                                      print('line 260 ${listD.length}');
+                                      debugPrint('line 260 ${listD.length}');
 
                                       return Container(
                                         height: 80,
@@ -596,12 +596,12 @@ class _ClientDepartmentProfilePageState
                                               label: const Text(
                                                   'Client Department Menu'),
                                               onSelected: (dynamic value) {
-                                                print(
+                                                debugPrint(
                                                     'line 278 on selected $value');
                                                 selectedMenu = value;
                                                 selectedMenuIndex =
                                                     getSelectedMenuIndex(value);
-                                                print(
+                                                debugPrint(
                                                     'line 283: $selectedMenuIndex');
                                                 selectedMenuName =
                                                     menuDepartments![
@@ -1098,7 +1098,7 @@ class _ClientDepartmentProfilePageState
                                       height: 50,
                                       width: 300,
                                       child: TextFormField(
-                                          controller: printImagesController,
+                                          controller: debugPrintImagesController,
                                           maxLength: 10,
                                           decoration: InputDecoration(
                                               label: Text('Print Images')),
@@ -1155,7 +1155,7 @@ class _ClientDepartmentProfilePageState
                                       height: 50,
                                       width: 300,
                                       child: TextFormField(
-                                          controller: printQueueController,
+                                          controller: debugPrintQueueController,
                                           maxLength: 20,
                                           decoration: InputDecoration(
                                               label: Text('Print Queue')),
@@ -1213,7 +1213,7 @@ class _ClientDepartmentProfilePageState
                                       width: 300,
                                       child: TextFormField(
                                           controller:
-                                              printQueueCopiesController,
+                                              debugPrintQueueCopiesController,
                                           maxLength: 10,
                                           decoration: InputDecoration(
                                               label:
@@ -2369,7 +2369,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
 
     _ratio = widget.ratio;
     _ratio = .25;
-    print('line 99: $_ratio');
+    debugPrint('line 99: $_ratio');
   }
 
   @override

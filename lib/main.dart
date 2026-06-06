@@ -4,17 +4,22 @@ import 'package:cms_web/features/shared/utils/app_color_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cms_web/features/authentication/views/pages/login/login.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
+import 'package:flutter/foundation.dart'; //show defaultTargetPlatform, kIsWeb;
 import 'package:cms_web/features/shared/services/routes.dart';
 import 'package:cms_web/features/authentication//services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 
 //import 'package:window_manager/window_manager.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
   var orgId = dotenv.env['ASM_DB1'];
-  print('line 16: $orgId $kIsWeb');
+  debugPrint('line 16: $orgId $kIsWeb');
+  // Turn off all debugPrint outputs if the app is built for release
+  if (kReleaseMode) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
       options: FirebaseOptions(
@@ -23,7 +28,7 @@ void main() async {
           messagingSenderId: "146420810693",
           appId: "1:146420810693:web:3187590d8adf8ba26001ac",
           storageBucket: 'cmsproject-8e245.appspot.com'));
-  print('line 25: $orgId $kIsWeb');
+  debugPrint('line 25: $orgId $kIsWeb');
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details);
     runApp(ErrorWidgetClass(details));
@@ -50,7 +55,7 @@ void main() async {
   // });
 
   //   ShowError showError = ShowError('line 47')
-  print('line 41');
+  debugPrint('line 41');
   ThemeData(
     useMaterial3: true,
     appBarTheme: const AppBarTheme(
@@ -62,7 +67,7 @@ void main() async {
       AppColorTheme(),
     ],
   );
-  print('line 53');
+  debugPrint('line 53');
   runApp(MyApp());
 }
 

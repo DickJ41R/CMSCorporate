@@ -105,18 +105,18 @@ class _ClientCancelShiftsSchedulingPageState
   }
 
   String _convertFromTimestamp(Timestamp? t) {
-    print('line 75: $t');
+    debugPrint('line 75: $t');
     if (t == null) {
       DateTime d = new DateTime(1970, 1, 1);
       int itt = d.millisecondsSinceEpoch;
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(itt);
       String ss = getFormattedDate(dateTime);
-      print('line 81 null date: $ss');
+      debugPrint('line 81 null date: $ss');
       return ss;
     }
     DateTime date = t.toDate();
     String s = getFormattedDate(date);
-    print('line 85: $s');
+    debugPrint('line 85: $s');
     return s;
   }
 
@@ -126,7 +126,7 @@ class _ClientCancelShiftsSchedulingPageState
   int selectedClientCancelReasonIndex = -1;
 
   Future<int> getClientReasonIndex(dynamic value) async {
-    print('line 458 in getReasonindex');
+    debugPrint('line 458 in getReasonindex');
     for (int i = 0; i < listOfClientReasons.length; i++) {
       if (value == listOfClientReasons[i]) {
         selectedClientCancelReasonIndex = i;
@@ -135,7 +135,7 @@ class _ClientCancelShiftsSchedulingPageState
       }
     }
     flagPublishedButtonDisabled = false;
-    print('line 465: $selectedClientCancelReasonIndex');
+    debugPrint('line 465: $selectedClientCancelReasonIndex');
     return selectedClientCancelReasonIndex;
   }
 
@@ -157,11 +157,11 @@ class _ClientCancelShiftsSchedulingPageState
     try {
       List<dynamic> lms = [];
       allItemsTemp = await clw.getWorkOrderCancelShifts(clientId);
-      print('line 105 ${allItemsTemp!.length} $clientId');
+      debugPrint('line 105 ${allItemsTemp!.length} $clientId');
       if (allItemsTemp == null) {
         flagPublishedButtonDisabled = true;
         flagWaitDisabled = false;
-        print('line 109 check');
+        debugPrint('line 109 check');
         return lms;
         // throw Exception("No available shifts to cancel");
       }
@@ -169,25 +169,25 @@ class _ClientCancelShiftsSchedulingPageState
         flagPublishedButtonDisabled = true;
         flagWaitDisabled = false;
         // throw Exception("No available shifts to cancel");
-        print('line 117 check');
+        debugPrint('line 117 check');
         return lms;
       }
 
       for (int i = 0; i < allItemsTemp!.length; i++) {
         allItemsTemp![i]['cancel'] = false;
         dynamic obj = allItemsTemp![i];
-        print('line 124: ${obj}');
+        debugPrint('line 124: ${obj}');
         lms.add(obj);
       }
-      print('line 126: ${lms.length} ${lms[0]}');
+      debugPrint('line 126: ${lms.length} ${lms[0]}');
       listOfShiftCancelData = lms;
       shiftCancels = getShiftCancelData();
       shiftCancelDataSource =
           ShiftCancelDataSource(shiftCancelData: shiftCancels, fontS: fts);
-      print('line 131: ${allItemsTemp!.length} ${lms.length}');
+      debugPrint('line 131: ${allItemsTemp!.length} ${lms.length}');
       return lms;
     } catch (e) {
-      print('line 134 error: $e');
+      debugPrint('line 134 error: $e');
       // //    _showDialog(context, 'Shift Cancellation', 'No shifts to cancel.');
       //   final navigator = Navigator.of(context);
       //   navigator.pushReplacement(
@@ -205,7 +205,7 @@ class _ClientCancelShiftsSchedulingPageState
     super.initState();
     arguments = widget.args;
     clientId = arguments!['clientId'];
-    print('line 98: ${clientId} ');
+    debugPrint('line 98: ${clientId} ');
   }
 
   @override
@@ -242,7 +242,7 @@ class _ClientCancelShiftsSchedulingPageState
       };
 
       ShiftCancel shift = ShiftCancel.fromJson(jst);
-      print('line 206: ${shift.id} ${shift.hcpId}');
+      debugPrint('line 206: ${shift.id} ${shift.hcpId}');
       listC.add(shift);
     }
     return listC;
@@ -250,7 +250,7 @@ class _ClientCancelShiftsSchedulingPageState
 
   Future<dynamic> _showDialog(
       BuildContext context, String title, String? description) async {
-    print('line 398 showdialog');
+    debugPrint('line 398 showdialog');
     // Future.delayed(Duration(seconds: 3), () {
     //   Navigator.of(context).pop(); // Close the dialog
     // });
@@ -330,7 +330,7 @@ class _ClientCancelShiftsSchedulingPageState
 
   Future<void> processCanceledShiftsList(
       List<DataGridRow> selList, String reason, BuildContext ctx) async {
-    print('line 302 process canceled shifts: $reason ${selList.length}');
+    debugPrint('line 302 process canceled shifts: $reason ${selList.length}');
     if (selList.length == 0) {
       _showDialog(context, "Process Canceled Shifts",
           "You have not selected any shifts to cancel.");
@@ -348,10 +348,10 @@ class _ClientCancelShiftsSchedulingPageState
           break;
         }
       }
-      print('line 357: $cancelReasonCodeId');
+      debugPrint('line 357: $cancelReasonCodeId');
       List<Map<String, dynamic>> canceledShifts = [];
       for (int i = 0; i < selList.length; i++) {
-        print('line 322: ${selList[i]}');
+        debugPrint('line 322: ${selList[i]}');
         DataGridRow row = selList[i];
         List<DataGridCell> cells = row.getCells();
         Map<String, dynamic> obj = {};
@@ -392,7 +392,7 @@ class _ClientCancelShiftsSchedulingPageState
         }
         canceledShifts.add(obj);
       }
-      print(
+      debugPrint(
           'line 365 check ${canceledShifts[0]['id']} ${canceledShifts.length}');
       List<Map<String, dynamic>> workOrders = [];
       List<Map<String, dynamic>> clientWorkOrders = [];
@@ -404,38 +404,38 @@ class _ClientCancelShiftsSchedulingPageState
         List<String> ldts = dts.split('-');
         ldts[2] = '20' + ldts[2];
         dts = ldts[2] + '-' + ldts[0] + '-' + ldts[1];
-        print('line 376 $dts ${csf['shiftCode']}');
+        debugPrint('line 376 $dts ${csf['shiftCode']}');
         DateTime tsm = DateTime.parse(dts);
         for (int i = 0; i < allItemsTemp!.length; i++) {
           Map<String, dynamic> obj = allItemsTemp![i];
-          print('line 380: ${obj['id']} ${csf['id']}');
+          debugPrint('line 380: ${obj['id']} ${csf['id']}');
           if (obj['id'] != csf['id']) {
             continue;
           }
           listWorkOrderIds.add(obj['workOrderId']);
           Timestamp tsf = obj['dates']['shiftDateInfo']['shiftDate'];
           DateTime sft = tsf.toDate();
-          print('line 423: ${obj['id']} ${csf['id']}');
-          print('line 387" $tsf $sft');
+          debugPrint('line 423: ${obj['id']} ${csf['id']}');
+          debugPrint('line 387" $tsf $sft');
           sft = sft.subtract(Duration(
               hours: sft.hour,
               minutes: sft.minute,
               seconds: sft.second,
               microseconds: sft.microsecond,
               milliseconds: sft.millisecond));
-          print('line 394 $tsm $sft');
+          debugPrint('line 394 $tsm $sft');
           if (tsm.millisecondsSinceEpoch != sft.millisecondsSinceEpoch) {
-            print('line  396 not = $tsm $sft');
+            debugPrint('line  396 not = $tsm $sft');
             continue;
           }
-          print(
+          debugPrint(
               'line 400: ${csf['shiftCode']} ${obj['dates']['shiftDateInfo']['shiftCode']}');
           if (csf['shiftCode'] != obj['dates']['shiftDateInfo']['shiftCode']) {
-            print(
+            debugPrint(
                 'line 400 shift not = ${csf['shiftCode']} ${obj['dates']['shiftDateInfo']['shiftCode']}');
             continue;
           }
-          print('line 406: ${obj['hcpId']} ${csf['hcpId']}');
+          debugPrint('line 406: ${obj['hcpId']} ${csf['hcpId']}');
 
           obj['cancelReasonCodeId'] = cancelReasonCodeId;
           obj['Conf_Cli_Note'] = reason;
@@ -450,7 +450,7 @@ class _ClientCancelShiftsSchedulingPageState
           }
         }
       }
-      print('line 418 check: ${clientWorkOrders.length} ${workOrders.length}');
+      debugPrint('line 418 check: ${clientWorkOrders.length} ${workOrders.length}');
 
       if (clientWorkOrders.length > 0) {
         String? message = await hts.cancelConfirmedShiftByClients(
@@ -463,7 +463,7 @@ class _ClientCancelShiftsSchedulingPageState
               clientWorkOrders, selectedClientCancelReasonValue);
         }
       }
-      print('line 432: ${workOrders.length}');
+      debugPrint('line 432: ${workOrders.length}');
       if (workOrders.length > 0) {
         String? msg2 =
             await hts.cancelWorkOrdersByClient(workOrders, "Client", ctx);
@@ -485,7 +485,7 @@ class _ClientCancelShiftsSchedulingPageState
       });
       return;
     } catch (e) {
-      print('line 449 error: $e');
+      debugPrint('line 449 error: $e');
       throw Exception('line 450 error: ${e.toString()}');
     }
   }
@@ -614,7 +614,7 @@ class _ClientCancelShiftsSchedulingPageState
     // double smallFontSize = 14;
     smallFontSize /= h!;
 
-    print('line 296: $h! $fontSize');
+    debugPrint('line 296: $h! $fontSize');
 
     return Scaffold(
         backgroundColor: color1,
@@ -656,7 +656,7 @@ class _ClientCancelShiftsSchedulingPageState
                     getAllItems(),
                   ]),
                   builder: (context, snapshot) {
-                    print(
+                    debugPrint(
                         'line 129: ${snapshot.data}  ${snapshot.connectionState} ${snapshot.hasData}');
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
@@ -693,10 +693,10 @@ class _ClientCancelShiftsSchedulingPageState
                       );
                     } else {
                       // dynamic ccl = snapshot.data; // cast to List<Marker>
-                      // print('line 147: $ccl');
+                      // debugPrint('line 147: $ccl');
                       List<dynamic> allItems =
                           snapshot.data[0]; // cast to List<Marker>
-                      print('line 111 ${allItems.length}');
+                      debugPrint('line 111 ${allItems.length}');
                       if (allItems.length == 0) {
                         return Center(
                           child: Container(
@@ -777,11 +777,11 @@ class _ClientCancelShiftsSchedulingPageState
                                           ),
                                         );
                                       } else {
-                                        print(
+                                        debugPrint(
                                             'line 544: ${snapshot.data![0]} ');
                                         List<dynamic> listH = snapshot.data![0];
                                         if (listH.length == 0) {
-                                          print('line 548 check');
+                                          debugPrint('line 548 check');
                                           return Center(
                                             child: Padding(
                                               padding: const EdgeInsets.only(
@@ -804,7 +804,7 @@ class _ClientCancelShiftsSchedulingPageState
                                         } else {
                                           List<dynamic> listH =
                                               snapshot.data![0]!;
-                                          print(
+                                          debugPrint(
                                               'line 564: $selectedClientCancelReasonValue ${listH[0]}');
                                           return Container(
                                             height: 80,
@@ -868,11 +868,11 @@ class _ClientCancelShiftsSchedulingPageState
                                                             .value = value;
                                                     selectedClientCancelReasonValue =
                                                         value;
-                                                    print('line 609: $value');
+                                                    debugPrint('line 609: $value');
                                                     selectedClientCancelReasonIndex =
                                                         await getClientReasonIndex(
                                                             value);
-                                                    print(
+                                                    debugPrint(
                                                         'line 1128: $selectedClientCancelReasonValue $value $selectedClientCancelReasonIndex ');
                                                     setState(() {
                                                       flagShowRed = false;
@@ -981,12 +981,12 @@ class _ClientCancelShiftsSchedulingPageState
                             ),
                           ),
                     onPressed: () async {
-                      print('line 753: $flagPublishedButtonDisabled');
+                      debugPrint('line 753: $flagPublishedButtonDisabled');
                       if (flagPublishedButtonDisabled == true) {
                         flagShowRed = true;
                         return;
                       }
-                      print('line 656: ${selectedList}');
+                      debugPrint('line 656: ${selectedList}');
                       await processCanceledShiftsList(selectedList,
                           selectedClientCancelReasonValue, context);
                     },
@@ -1024,7 +1024,7 @@ class _ClientCancelShiftsSchedulingPageState
                             ),
                           ),
                     onPressed: () async {
-                      print('line 651: $flagPublishedButtonDisabled');
+                      debugPrint('line 651: $flagPublishedButtonDisabled');
                       if (flagPublishedButtonDisabled == true) {
                         return;
                       }
@@ -1043,7 +1043,7 @@ class ShiftCancelDataSource extends DataGridSource {
   /// Creates the employee data source class with required details.
   ShiftCancelDataSource(
       {required List<ShiftCancel> shiftCancelData, required fontS}) {
-    //  print('line 501 in constructor shiftcanceldatasource');
+    //  debugPrint('line 501 in constructor shiftcanceldatasource');
     _shiftCancelData = shiftCancelData
         .map<DataGridRow>((e) => DataGridRow(cells: [
               DataGridCell<String>(columnName: 'shiftDate', value: e.shiftDate),
@@ -1084,7 +1084,7 @@ class ShiftCancelDataSource extends DataGridSource {
   }
 
   void updateDataGridSource({required RowColumnIndex rowColumnIndex}) {
-    // print('line 759: $rowColumnIndex');
+    // debugPrint('line 759: $rowColumnIndex');
     notifyDataSourceListeners(rowColumnIndex: rowColumnIndex);
   }
 }

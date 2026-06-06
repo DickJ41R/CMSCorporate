@@ -25,13 +25,13 @@ class _ClientCannotBeScheduledPageState
   Map<String, dynamic>? client;
   Future<List<Map<String, dynamic>>> getAllItems() async {
     try {
-      print('line 30 in getall items');
+      debugPrint('line 30 in getall items');
       List<Map<String, dynamic>> clients =
           await clientServices.getCannotBeScheduledData(clientId!);
       return clients;
       //_clients = clients;
     } catch (e) {
-      print('line 160 _processhcp error: $e');
+      debugPrint('line 160 _processhcp error: $e');
       rethrow;
 //rethrow
 //throw Exception('Error getting client invoices: $e');
@@ -45,7 +45,7 @@ class _ClientCannotBeScheduledPageState
     super.initState();
     arguments = widget.args;
     clientId = arguments!['clientId'];
-    print('line 75 in initstate $clientId');
+    debugPrint('line 75 in initstate $clientId');
   }
 
   double? screenWidth;
@@ -66,7 +66,7 @@ class _ClientCannotBeScheduledPageState
     fontSize = 16;
     fontSize /= h;
 
-    print('line 128 in client cannot be scheduled $screenWidth $screenHeight');
+    debugPrint('line 128 in client cannot be scheduled $screenWidth $screenHeight');
     return Scaffold(
       resizeToAvoidBottomInset:
           false, // Stops widgets from being moved by keyboard
@@ -97,7 +97,7 @@ class _ClientCannotBeScheduledPageState
             getAllItems(),
           ]),
           builder: (context, snapshot) {
-            print(
+            debugPrint(
                 'line 129: ${snapshot.data}  ${snapshot.connectionState} ${snapshot.hasData}');
             double screenWidth = MediaQuery.sizeOf(context).width;
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -150,7 +150,7 @@ class _ClientCannotBeScheduledPageState
               );
             } else {
               allItems = snapshot.data[0]; // cast to List<Marker>
-              print('line 111 ${allItems!.length}');
+              debugPrint('line 111 ${allItems!.length}');
               if (allItems!.length == 0) {
                 return Center(
                   child: Padding(
@@ -264,7 +264,7 @@ class _ClientNotScheduleTileState extends State<ClientNotScheduleTile> {
       h = 1.0;
     }
     fontSize = 16 / h;
-    print('line 98 in tile building');
+    debugPrint('line 98 in tile building');
     return Container(
       width: 300,
       height: 330,

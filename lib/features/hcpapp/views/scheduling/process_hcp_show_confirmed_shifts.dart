@@ -33,41 +33,41 @@ class _ProcessHCPShowConfirmedShiftsState
   _ProcessHCPShowConfirmedShiftsState();
 
   Future<List<Map<String, dynamic>>> _getAllConfirmedShifts() async {
-    print('line 38 getAll approved shiftgs $hcpId');
+    debugPrint('line 38 getAll approved shiftgs $hcpId');
     try {
       List<Map<String, dynamic>>? lm =
           await clw.getWorkOrderCampaignsConfirmed(hcpId!);
-      print('line 41in get all confirmed');
+      debugPrint('line 41in get all confirmed');
       if (lm == null) {
         return [];
       }
 
       return lm;
     } catch (e) {
-      print('line 66 erro in cancel shifts: $e');
+      debugPrint('line 66 erro in cancel shifts: $e');
       throw Exception(e.toString());
     }
   }
 
   void getHCPUserX() async {
-    print('line 44 in get usrx');
+    debugPrint('line 44 in get usrx');
     await getHCPUser();
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 50 gethcpuser available shfts: $hcpServices');
+    debugPrint('line 50 gethcpuser available shfts: $hcpServices');
     try {
       Map<String, dynamic>? lm = await hcpServices.getHCPUser(hcpId!);
 
       if (lm.isEmpty) {
-        print('line 54 lm i septy');
+        debugPrint('line 54 lm i septy');
         return lm;
       }
-      print('line 57 in available shifts gethcpuser $lm');
+      debugPrint('line 57 in available shifts gethcpuser $lm');
       fullName = lm['legalName'];
       return lm;
     } catch (e) {
-      print('line 63 error: $e');
+      debugPrint('line 63 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -85,7 +85,7 @@ class _ProcessHCPShowConfirmedShiftsState
 
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 63 didchange');
+    debugPrint('line 63 didchange');
 
     getHCPUser();
   }
@@ -111,7 +111,7 @@ class _ProcessHCPShowConfirmedShiftsState
     }
     fontSize = 18;
     fontSize /= h;
-    print('line 40 in show confirmed shifts');
+    debugPrint('line 40 in show confirmed shifts');
     return Scaffold(
       appBar: AppBar(
         title: Text("Scheduled Shifts",
@@ -180,7 +180,7 @@ class _ProcessHCPShowConfirmedShiftsState
               );
             } else {
               List<dynamic> data = snapshot.data![0];
-              print('line 111 ${data.length}');
+              debugPrint('line 111 ${data.length}');
               if (data.length == 0) {
                 return Center(
                   child: Container(
@@ -239,13 +239,13 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
 
     DateTime dt = DateTime.fromMillisecondsSinceEpoch(tms + 18000);
     String sdt = formatter.format(dt);
-    print('line 186: $sdt');
+    debugPrint('line 186: $sdt');
     return sdt;
   }
 
   String getPayrateAsString(dynamic pr) {
     String prs = pr.toString();
-    print('line 254: $pr $prs');
+    debugPrint('line 254: $pr $prs');
     double prd = double.parse(prs);
     prs = prd.toStringAsFixed(2);
 
@@ -259,7 +259,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     Size size = MediaQuery.of(context).size;
     double screenWidth = size.width;
     double height = size.height;
-    // print('line 98 in tile building');
+    // debugPrint('line 98 in tile building');
     // String hoursString = (item.decimalHours - (item.meals/60)).toStringAsFixed(2);
     // hoursString = '7.50';
     return Container(

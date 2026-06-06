@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:cms_web/features/shared/widgets/hcp_show_payment_pdf.dart';
-
+import 'package:cms_web/features/shared/utils/routerconstants.dart';
 final dio = Dio();
 
 class ShowHCPPaymentDetailsScreen extends StatefulWidget {
+  final Map<String,dynamic>args;
   const ShowHCPPaymentDetailsScreen(
       {super.key,
-      required this.paymentItem,
-      required this.orgId,
-      required this.args,
-      required this.ctx});
-
-  final Map<String, dynamic> paymentItem;
-  final String orgId;
-  final Map<String, dynamic> args;
-  final BuildContext ctx;
+       required this.args});
 
   @override
   State<ShowHCPPaymentDetailsScreen> createState() =>
@@ -36,6 +29,8 @@ class _ShowHCPPaymentDetailsScreenState
   //     ),
   //   );
   // }
+
+
   String getShortDate(dte) {
     if (dte == null) {
       return 'No Date';
@@ -57,10 +52,22 @@ class _ShowHCPPaymentDetailsScreenState
     }
     return st;
   }
-
+  bool flagHasData = false;
+  Map<String,dynamic>? arguments;
+  dynamic paymentItem;
+  String? orgId;
+  int? hcpId;
+  BuildContext? ctx;
   @override
   void initState() {
     super.initState();
+    arguments = widget.args;
+    paymentItem = arguments!['paymentItem'];
+    debugPrint('line 65: $paymentItem');
+    hcpId = arguments!['hcpId'];
+    orgId = arguments!['orgId'];
+    ctx = arguments!['ctx'];
+    flagHasData = true;
   }
 
   Color color1 = Color.fromARGB(255, 134, 219, 197); //green from website
@@ -94,7 +101,7 @@ class _ShowHCPPaymentDetailsScreenState
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(widget.ctx);
+            Navigator.pop(ctx!);
           },
         ),
       ),
@@ -102,199 +109,200 @@ class _ShowHCPPaymentDetailsScreenState
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: SingleChildScrollView(
           child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: 36,
-                  width: screenWidth! - 10,
-                  child:
-                      Text('ChkRegId: ${widget.paymentItem['checkRegisterId']}',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: fontSize,
-                            fontWeight: FontWeight.bold,
-                          )),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  height: 36,
-                  width: screenWidth! - 10,
-                  child: Text(
-                    'Chk#: ${widget.paymentItem['checkNumber']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
+            child: flagHasData == true ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      height: 36,
+                      width: screenWidth! - 10,
+                      child:
+                          Text('ChkRegId: ${paymentItem!['checkRegisterId']}',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.bold,
+                              )),
                     ),
                   ),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  height: 36,
-                  width: screenWidth! - 10,
-                  child: Text(
-                    'check Date: ${getShortDate(widget.paymentItem['checkDate'].toString())}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  height: 36,
-                  width: screenWidth! - 10,
-                  child: Text(
-                    'Chk Amount: \$${formatMoney(widget.paymentItem['checkAmount'])}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  height: 36,
-                  width: screenWidth! - 10,
-                  child: Text(
-                    'Gross Wages: \$${formatMoney(widget.paymentItem['grossWages'])}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  height: 36,
-                  width: screenWidth! - 10,
-                  child: Text(
-                    'Pay Period: ${widget.paymentItem['payPeriodId']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  height: 36,
-                  width: screenWidth! - 10,
-                  child: Text(
-                    'Period End: ${getShortDate(widget.paymentItem['periodEnding'].toString())}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  height: 36,
-                  width: screenWidth! - 10,
-                  child: Text(
-                    'hcpId: ${widget.paymentItem['regId']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  height: 36,
-                  width: screenWidth! - 10,
-                  child: Text(
-                    'HCP Name: ${widget.paymentItem['RegName']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  height: 36,
-                  width: 370,
-                  child: Text(
-                    'Employee Id: ${widget.paymentItem['employeeId']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Container(
-                  height: 36,
-                  width: screenWidth! - 10,
-                  child: Text(
-                    'Branch Name: ${widget.paymentItem['branchName']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Visibility(
-                    //    visible: _showCircle,
-                    //   child: CircularProgressIndicator(),
-                    // ),
-                    // Button for getting request
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: Container(
-                        height: 40,
-                        width: screenWidth! - 10,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => HCPShowPaymentPDF(
-                                        hcpId: widget.paymentItem['regId']
-                                            .toString(),
-                                        checkRegisterId: widget
-                                            .paymentItem['checkRegisterId']
-                                            .toString(),
-                                        orgId: widget.orgId,
-                                        args: widget.args),
-                                  ),
-                                );
-                              },
-                              child: Text('Press to Show Check PDF',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: smallFontSize,
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                            )
-                          ],
-                        ),
+                  SizedBox(height: 5),
+                  Container(
+                    height: 36,
+                    width: screenWidth! - 10,
+                    child: Text(
+                      'Chk#: ${paymentItem!['checkNumber']}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    height: 36,
+                    width: screenWidth! - 10,
+                    child: Text(
+                      'check Date: ${getShortDate(paymentItem!['checkDate'].toString())}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    height: 36,
+                    width: screenWidth! - 10,
+                    child: Text(
+                      'Chk Amount: \$${formatMoney(paymentItem!['checkAmount'])}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    height: 36,
+                    width: screenWidth! - 10,
+                    child: Text(
+                      'Gross Wages: \$${formatMoney(paymentItem!['grossWages'])}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    height: 36,
+                    width: screenWidth! - 10,
+                    child: Text(
+                      'Pay Period: ${paymentItem!['payPeriodId']}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    height: 36,
+                    width: screenWidth! - 10,
+                    child: Text(
+                      'Period End: ${getShortDate(paymentItem!['payPeriodEnding'].toString())}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    height: 36,
+                    width: screenWidth! - 10,
+                    child: Text(
+                      'hcpId: ${paymentItem!['regId'].toString()}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    height: 36,
+                    width: screenWidth! - 10,
+                    child: Text(
+                      'HCP Name: ${paymentItem!['regName']}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    height: 36,
+                    width: 370,
+                    child: Text(
+                      'Employee Id: ${paymentItem!['employeeId']}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    height: 36,
+                    width: screenWidth! - 10,
+                    child: Text(
+                      'Branch Name: ${paymentItem!['branchName']}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Visibility(
+                      //    visible: _showCircle,
+                      //   child: CircularProgressIndicator(),
+                      // ),
+                      // Button for getting request
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: Container(
+                          height: 40,
+                          width: screenWidth! - 10,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Map<String,dynamic>mapItem = {
+                                    'hcpId': paymentItem!['regId'],
+                                    'checkRegisterId': paymentItem!['checkRegisterId'],
+                                    'orgId': orgId!,
+                                    'ctx': ctx!,
+                                    'args': arguments!
+                                  };
+                                  final navigator = Navigator.of(context)
+                                      .pushNamed(showPaymentPDF, arguments: mapItem);
+                                },
+                                child: Text('Press to Show Check PDF',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: smallFontSize,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ): SizedBox.shrink()
           ),
         ),
       ),

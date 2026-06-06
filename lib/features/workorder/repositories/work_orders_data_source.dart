@@ -490,7 +490,7 @@ class WorkOrderClassDataSource extends DataGridSource {
         tss = tss.substring(0, idx);
         List<String> tsss = tss.split('-');
         tss = tsss[1] + '-' + tsss[2] + '-' + tsss[0];
-        print('line 216 $ts $tss');
+        debugPrint('line 216 $ts $tss');
         //shiftdatetime
         String srt = ld['startTime'].substring(0, ld['startTime'].length - 1);
         srt = srt.replaceAll(' ', '');
@@ -513,10 +513,10 @@ class WorkOrderClassDataSource extends DataGridSource {
             ld['grossMargin'].toString());
         workOrderClasses.add(wkc);
       }
-      print('line 299: ${workOrderClasses.length}');
+      debugPrint('line 299: ${workOrderClasses.length}');
       return workOrderClasses;
     } catch (e) {
-      print('line 231: ${e.toString()}');
+      debugPrint('line 231: ${e.toString()}');
       throw Exception('line 230 error on converting work orders');
     }
   }

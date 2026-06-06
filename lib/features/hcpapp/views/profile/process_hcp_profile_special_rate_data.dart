@@ -34,7 +34,7 @@ class _ProcessHCPProfileSpecialRateDataState
   String? currentContactId;
 
   Future<List<dynamic>> _getDropDownMenuItems() async {
-    print(
+    debugPrint(
         'line 30 get client address Dropdownitems: ${listOfSpecialRates!.length}');
     dropDownMenuEntries = [];
     menuSpecialRates = [];
@@ -43,7 +43,7 @@ class _ProcessHCPProfileSpecialRateDataState
         listOfSpecialRates =
             await hcpServices.getHCPSpecialRates(arguments!['hcpId']);
       }
-      print('line 35: ${listOfSpecialRates!.length}');
+      debugPrint('line 35: ${listOfSpecialRates!.length}');
       if (listOfSpecialRates!.length > 0) {
         for (int i = 0; i < listOfSpecialRates!.length; i++) {
           Map<String, dynamic> spr = listOfSpecialRates![i];
@@ -58,14 +58,14 @@ class _ProcessHCPProfileSpecialRateDataState
           dropDownMenuEntries.add(me);
           menuSpecialRates!.add(mspr);
         }
-        print('line 48: ${dropDownMenuEntries}');
+        debugPrint('line 48: ${dropDownMenuEntries}');
         return dropDownMenuEntries;
       } else {
         return [];
       }
-      print('line 49: dropdownentries ${dropDownMenuEntries.length}');
+      debugPrint('line 49: dropdownentries ${dropDownMenuEntries.length}');
     } catch (e) {
-      print('line 49: error: ${e.toString()}');
+      debugPrint('line 49: error: ${e.toString()}');
       throw Exception('line 21 error getting dropdown menu items');
     }
   }
@@ -93,7 +93,7 @@ class _ProcessHCPProfileSpecialRateDataState
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 38 gethcpuser address: $hcpServices');
+    debugPrint('line 38 gethcpuser address: $hcpServices');
     Map<String, dynamic> lm = await hcpServices.getHCPUser(hcpId!);
     if (lm.isEmpty) {
       return lm;
@@ -132,23 +132,23 @@ class _ProcessHCPProfileSpecialRateDataState
   }
 
   int getSelectedMenuIndex(value) {
-    print('line 57 getselected contact index : $value');
+    debugPrint('line 57 getselected contact index : $value');
     int index = -1;
 
     for (int i = 0; i < dropDownMenuEntries.length; i++) {
       DropdownMenuEntry de = dropDownMenuEntries[i];
-      print('line 142: $value ${de.value}');
+      debugPrint('line 142: $value ${de.value}');
       if (value == de.value) {
         index = i;
         break;
       }
     }
-    print('line 62: $index $arguments');
+    debugPrint('line 62: $index $arguments');
     if (index != -1) {
       Map<String, dynamic> spr = listOfSpecialRates![index];
 
       currentSpecialRateId = spr['id'];
-      print('line 159: $spr');
+      debugPrint('line 159: $spr');
       specialRateIdController.text = spr['id'];
       billRateController.text = spr['billRate'].toString();
       billRateWEController.text = spr['billRateWE'].toString();
@@ -196,7 +196,7 @@ class _ProcessHCPProfileSpecialRateDataState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 51 ADDRESS  didchange');
+    debugPrint('line 51 ADDRESS  didchange');
     getHCPUserX();
   }
 
@@ -231,7 +231,7 @@ class _ProcessHCPProfileSpecialRateDataState
     }
     fontSize = 16 / h;
 //   double screenHeight = MediaQuery.sizeOf(context).height;
-    print('line 17 screen width: $screenWidth');
+    debugPrint('line 17 screen width: $screenWidth');
     return Scaffold(
       backgroundColor: color1,
       appBar: AppBar(
@@ -329,7 +329,7 @@ class _ProcessHCPProfileSpecialRateDataState
                                       );
                                     } else {
                                       List<dynamic> listH = snapshot.data![0];
-                                      print('line 111 ${listH.length}');
+                                      debugPrint('line 111 ${listH.length}');
                                       if (listH.length == 0) {
                                         return Center(
                                           child: Padding(
@@ -353,7 +353,7 @@ class _ProcessHCPProfileSpecialRateDataState
                                       } else {
                                         List<dynamic> listD =
                                             snapshot.data![0]!;
-                                        print('line 260 ${listD.length}');
+                                        debugPrint('line 260 ${listD.length}');
                                         return Container(
                                           height: 80,
                                           width: 270,
@@ -366,7 +366,7 @@ class _ProcessHCPProfileSpecialRateDataState
                                                 label: const Text(
                                                     'HCP Special Rates Menu'),
                                                 onSelected: (dynamic value) {
-                                                  print(
+                                                  debugPrint(
                                                       'line 278 on selected $value');
                                                   selectedMenu = value;
                                                   selectedMenuIndex =
@@ -792,7 +792,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
 
     _ratio = widget.ratio;
     _ratio = .25;
-    print('line 99: $_ratio');
+    debugPrint('line 99: $_ratio');
   }
 
   @override

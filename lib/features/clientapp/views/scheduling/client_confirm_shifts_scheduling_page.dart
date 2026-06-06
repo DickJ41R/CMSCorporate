@@ -53,7 +53,7 @@ class _ClientConfirmShiftsSchedulingPagesState
         throw Exception('No time cards available');
       }
     } catch (e) {
-      print('line 114: $e');
+      debugPrint('line 114: $e');
       throw Exception(e.toString());
     }
   }
@@ -66,20 +66,20 @@ class _ClientConfirmShiftsSchedulingPagesState
     clw = ClientWorkOrderCampaignService();
     htc = HCPTimeCardService();
     clientId = arguments!['clientId'];
-    print('line 39: $currentUser $clw');
+    debugPrint('line 39: $currentUser $clw');
     // clientUser = ref.read(clientUserNotifierProvider.notifier).fromClientUser;
     // try {
     //   setUpAsyncVariables(clientId!,context,clw,htc);
-    //   print('ine 49: $clientId');
+    //   debugPrint('ine 49: $clientId');
     // } catch(e) {
-    //   print('line 133 error: $e');
+    //   debugPrint('line 133 error: $e');
     //
     // }
   }
 
   bool? isShiftApproved = false;
   void onButtonPressed(Map<String, dynamic> item, BuildContext ctx) async {
-    print(
+    debugPrint(
         'line 91 in onButtonPressed: ${item['shiftDate']} ${item['shiftCode']}');
 
     try {
@@ -87,7 +87,7 @@ class _ClientConfirmShiftsSchedulingPagesState
       isShiftApproved = await clw.updateClientWorkOrderCampaignApproved(
           item, shiftApprover, ctx);
     } catch (e) {
-      print('line 129 error: $e');
+      debugPrint('line 129 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -108,7 +108,7 @@ class _ClientConfirmShiftsSchedulingPagesState
     }
     fontSize = 18;
     fontSize /= h;
-    print('line 99 in showaccepted ashifts');
+    debugPrint('line 99 in showaccepted ashifts');
     return Scaffold(
       resizeToAvoidBottomInset:
           false, // Stops widgets from being moved by keyboard
@@ -136,7 +136,7 @@ class _ClientConfirmShiftsSchedulingPagesState
       body: FutureBuilder<dynamic>(
           future: getAllItems(),
           builder: (context, snapshot) {
-            print(
+            debugPrint(
                 'line 129: ${snapshot.data}  ${snapshot.connectionState} ${snapshot.hasData}');
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -192,7 +192,7 @@ class _ClientConfirmShiftsSchedulingPagesState
               //       Center(child: CircularProgressIndicator()));
               // }
               allItems = snapshot.data; // cast to List<Marker>
-              print('line 111 ${allItems.length}');
+              debugPrint('line 111 ${allItems.length}');
               if (allItems.length == 0) {
                 return Center(
                   child: Container(
@@ -305,7 +305,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
       h = 1.0;
     }
 
-    print('line 98 in tile building');
+    debugPrint('line 98 in tile building');
     return Container(
       width: screenWidth! - 10,
       height: 200,

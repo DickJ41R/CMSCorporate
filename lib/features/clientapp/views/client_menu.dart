@@ -20,7 +20,7 @@ class _ClientMenuState extends State<ClientMenu> {
   @override
   void initState() {
     super.initState();
-    print('line 19 in client menu ${widget.args}');
+    debugPrint('line 19 in client menu ${widget.args}');
     localTitle = 'Client Menu';
     arguments = widget.args;
     clientMap = authServices.clientMap;
@@ -203,7 +203,7 @@ class _ClientMenuState extends State<ClientMenu> {
   }
 
   int getSelectedMenuIndex(value) {
-    print('line 342 getselected branchindex : $value');
+    debugPrint('line 342 getselected branchindex : $value');
 
     for (int i = 0; i < dropDownMenuEntries.length; i++) {
       DropdownMenuEntry de = dropDownMenuEntries[i];
@@ -220,7 +220,7 @@ class _ClientMenuState extends State<ClientMenu> {
   int selectedMenuIndex = -1;
   Future<bool> _showDialog(
       BuildContext context, String title, String? description) async {
-    print('line 12 showdialog');
+    debugPrint('line 12 showdialog');
     // Future.delayed(Duration(seconds: 3), () {
     //   Navigator.of(context).pop(); // Close the dialog
     // });
@@ -290,7 +290,7 @@ class _ClientMenuState extends State<ClientMenu> {
           'Extend the width of your screen to the right until the menu appears on left.';
       flagHasSnackbar = true;
     }
-    print(
+    debugPrint(
         'line build 184: $screenWidth $selectedMenu $showRightSide $flagHaveData $flagHaveCalled');
     screenHeight = MediaQuery.of(context).size.height;
     double? h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
@@ -298,7 +298,7 @@ class _ClientMenuState extends State<ClientMenu> {
       h = 1.0;
     }
     fontSize = 18 / h;
-    print('line 406: $fontSize $h');
+    debugPrint('line 406: $fontSize $h');
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -357,11 +357,11 @@ class _ClientMenuState extends State<ClientMenu> {
                                     requestFocusOnTap: true,
                                     label: const Text('Client Menu'),
                                     onSelected: (dynamic value) {
-                                      print('line 258 on selected $value');
+                                      debugPrint('line 258 on selected $value');
                                       selectedMenu = value;
                                       selectedMenuIndex =
                                           getSelectedMenuIndex(value);
-                                      print('line 262: $selectedMenuIndex');
+                                      debugPrint('line 262: $selectedMenuIndex');
                                       selectedMenuName =
                                           clientMenus[selectedMenuIndex]
                                               ['clientRouteName'];
@@ -438,7 +438,7 @@ class _ClientMenuState extends State<ClientMenu> {
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       final item = clientProfileMenus[index];
-                                      print('line 243: $index ${item}');
+                                      debugPrint('line 243: $index ${item}');
                                       return VerticalTile(
                                         menuItem: clientProfileMenus[index],
                                         arguments: arguments!,
@@ -484,7 +484,7 @@ class _ClientMenuState extends State<ClientMenu> {
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       final item = clientSchedulingMenus[index];
-                                      print('line 402: $index ${item}');
+                                      debugPrint('line 402: $index ${item}');
 
                                       return VerticalTile1(
                                         menuItem: clientSchedulingMenus[index],
@@ -531,7 +531,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
 
     _ratio = widget.ratio;
     _ratio = .25;
-    print('line 99: $_ratio');
+    debugPrint('line 99: $_ratio');
   }
 
   @override

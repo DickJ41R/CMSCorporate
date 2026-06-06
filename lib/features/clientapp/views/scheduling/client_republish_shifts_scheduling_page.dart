@@ -105,18 +105,18 @@ class _ClientRepublishShiftsSchedulingPageState
   }
 
   String _convertFromTimestamp(Timestamp? t) {
-    print('line 75: $t');
+    debugPrint('line 75: $t');
     if (t == null) {
       DateTime d = new DateTime(1970, 1, 1);
       int itt = d.millisecondsSinceEpoch;
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(itt);
       String ss = getFormattedDate(dateTime);
-      print('line 81 null date: $ss');
+      debugPrint('line 81 null date: $ss');
       return ss;
     }
     DateTime date = t.toDate();
     String s = getFormattedDate(date);
-    print('line 85: $s');
+    debugPrint('line 85: $s');
     return s;
   }
 
@@ -124,11 +124,11 @@ class _ClientRepublishShiftsSchedulingPageState
     try {
       List<dynamic> lms = [];
       allItemsTemp = await clw.getWorkOrderRepublishShifts(clientId);
-      print('line 105 ${allItemsTemp!.length} $clientId');
+      debugPrint('line 105 ${allItemsTemp!.length} $clientId');
       if (allItemsTemp == null) {
         flagPublishedButtonDisabled = true;
         flagWaitDisabled = false;
-        print('line 109 check');
+        debugPrint('line 109 check');
         return lms;
         // throw Exception("No available shifts to cancel");
       }
@@ -136,13 +136,13 @@ class _ClientRepublishShiftsSchedulingPageState
         flagPublishedButtonDisabled = true;
         flagWaitDisabled = false;
         // throw Exception("No available shifts to cancel");
-        print('line 117 check');
+        debugPrint('line 117 check');
         return lms;
       }
       List<Map<String, dynamic>> listXbj = [];
       if (selectedList.length > 0) {
         for (int i = 0; i < selectedList.length; i++) {
-          print('line 322: ${selectedList[i]}');
+          debugPrint('line 322: ${selectedList[i]}');
           DataGridRow row = selectedList[i];
           List<DataGridCell> cells = row.getCells();
           Map<String, dynamic> xbj = {};
@@ -184,18 +184,18 @@ class _ClientRepublishShiftsSchedulingPageState
           listXbj.add(xbj);
         }
       }
-      print('line 190: xbj len: ${listXbj.length} ${selectedList.length}');
+      debugPrint('line 190: xbj len: ${listXbj.length} ${selectedList.length}');
       bool flagSkip = false;
       for (int i = 0; i < allItemsTemp!.length; i++) {
         allItemsTemp![i]['cancel'] = false;
         dynamic obj = allItemsTemp![i];
-        print('line 124: ${obj}');
+        debugPrint('line 124: ${obj}');
         flagSkip = false;
         if (listXbj.length > 0) {
           for (int j = 0; j < listXbj.length; j++) {
             Map<String, dynamic> xbj = listXbj[j];
-            print('line 199: $xbj');
-            print('line 200: $obj');
+            debugPrint('line 199: $xbj');
+            debugPrint('line 200: $obj');
             if (xbj['id'] == obj['id']) {
               flagSkip = true;
               break;
@@ -212,15 +212,15 @@ class _ClientRepublishShiftsSchedulingPageState
       if (lms.length == 0) {
         return [];
       }
-      print('line 126: ${lms.length} ${lms[0]}');
+      debugPrint('line 126: ${lms.length} ${lms[0]}');
       listOfRepublishShiftData = lms;
       shiftRepublishes = getRepublishShiftData();
       shiftRepublishDataSource = RepublishShiftDataSource(
           shiftRepublishData: shiftRepublishes, fontS: fts);
-      print('line 131: ${allItemsTemp!.length} ${lms.length}');
+      debugPrint('line 131: ${allItemsTemp!.length} ${lms.length}');
       return lms;
     } catch (e) {
-      print('line 134 error: $e');
+      debugPrint('line 134 error: $e');
       // //    _showDialog(context, 'Shift Cancellation', 'No shifts to cancel.');
       //   final navigator = Navigator.of(context);
       //   navigator.pushReplacement(
@@ -277,7 +277,7 @@ class _ClientRepublishShiftsSchedulingPageState
       };
 
       RepublishShift shift = RepublishShift.fromJson(jst);
-      print('line 206: ${shift.id} ${shift.hcpId}');
+      debugPrint('line 206: ${shift.id} ${shift.hcpId}');
       listC.add(shift);
     }
     return listC;
@@ -285,7 +285,7 @@ class _ClientRepublishShiftsSchedulingPageState
 
   Future<dynamic> _showDialog(
       BuildContext context, String title, String? description) async {
-    print('line 398 showdialog');
+    debugPrint('line 398 showdialog');
     // Future.delayed(Duration(seconds: 3), () {
     //   Navigator.of(context).pop(); // Close the dialog
     // });
@@ -325,7 +325,7 @@ class _ClientRepublishShiftsSchedulingPageState
 
   Future<void> processRepublishShiftsList(
       List<DataGridRow> selList, BuildContext ctx) async {
-    print('line 302 process republished shifts: ${selList.length}');
+    debugPrint('line 302 process republished shifts: ${selList.length}');
     if (selList.length == 0) {
       _showDialog(context, "Process Republish Shifts",
           "You have not selected any shifts to republish.");
@@ -335,7 +335,7 @@ class _ClientRepublishShiftsSchedulingPageState
     try {
       List<Map<String, dynamic>> republishShifts = [];
       for (int i = 0; i < selList.length; i++) {
-        print('line 322: ${selList[i]}');
+        debugPrint('line 322: ${selList[i]}');
         DataGridRow row = selList[i];
         List<DataGridCell> cells = row.getCells();
         Map<String, dynamic> obj = {};
@@ -376,7 +376,7 @@ class _ClientRepublishShiftsSchedulingPageState
         }
         republishShifts.add(obj);
       }
-      print(
+      debugPrint(
           'line 365 check ${republishShifts[0]['id']} ${republishShifts.length}');
       List<Map<String, dynamic>> workOrders = [];
       List<Map<String, dynamic>> clientWorkOrders = [];
@@ -388,45 +388,45 @@ class _ClientRepublishShiftsSchedulingPageState
         List<String> ldts = dts.split('-');
         ldts[2] = '20' + ldts[2];
         dts = ldts[2] + '-' + ldts[0] + '-' + ldts[1];
-        print('line 376 $dts ${csf['shiftCode']}');
+        debugPrint('line 376 $dts ${csf['shiftCode']}');
         DateTime tsm = DateTime.parse(dts);
         for (int i = 0; i < allItemsTemp!.length; i++) {
           Map<String, dynamic> obj = allItemsTemp![i];
-          print('line 380: ${obj['id']} ${csf['id']}');
+          debugPrint('line 380: ${obj['id']} ${csf['id']}');
           if (obj['id'] != csf['id']) {
             continue;
           }
           listWorkOrderIds.add(obj['workOrderId']);
           Timestamp tsf = obj['dates']['shiftDateInfo']['shiftDate'];
           DateTime sft = tsf.toDate();
-          print('line 423: ${obj['id']} ${csf['id']}');
-          print('line 387" $tsf $sft');
+          debugPrint('line 423: ${obj['id']} ${csf['id']}');
+          debugPrint('line 387" $tsf $sft');
           sft = sft.subtract(Duration(
               hours: sft.hour,
               minutes: sft.minute,
               seconds: sft.second,
               microseconds: sft.microsecond,
               milliseconds: sft.millisecond));
-          print('line 394 $tsm $sft');
+          debugPrint('line 394 $tsm $sft');
           if (tsm.millisecondsSinceEpoch != sft.millisecondsSinceEpoch) {
-            print('line  396 not = $tsm $sft');
+            debugPrint('line  396 not = $tsm $sft');
             continue;
           }
-          print(
+          debugPrint(
               'line 400: ${csf['shiftCode']} ${obj['dates']['shiftDateInfo']['shiftCode']}');
           if (csf['shiftCode'] != obj['dates']['shiftDateInfo']['shiftCode']) {
-            print(
+            debugPrint(
                 'line 400 shift not = ${csf['shiftCode']} ${obj['dates']['shiftDateInfo']['shiftCode']}');
             continue;
           }
-          print('line 406: ${obj['hcpId']} ${csf['hcpId']}');
+          debugPrint('line 406: ${obj['hcpId']} ${csf['hcpId']}');
 
           workOrders.add(obj);
         }
       }
-      print('line 418 check: ${clientWorkOrders.length} ${workOrders.length}');
+      debugPrint('line 418 check: ${clientWorkOrders.length} ${workOrders.length}');
 
-      print('line 432: ${workOrders.length}');
+      debugPrint('line 432: ${workOrders.length}');
       if (workOrders.length > 0) {
         String? msg2 =
             await hts.republishWorkOrdersByClient(workOrders, "Client", ctx);
@@ -447,7 +447,7 @@ class _ClientRepublishShiftsSchedulingPageState
           "You have successfully republished the shift");
       return;
     } catch (e) {
-      print('line 449 error: $e');
+      debugPrint('line 449 error: $e');
       throw Exception('line 450 error: ${e.toString()}');
     }
   }
@@ -575,7 +575,7 @@ class _ClientRepublishShiftsSchedulingPageState
     largeFontSize /= h!;
     // double smallFontSize = 14;
     smallFontSize /= h!;
-    print('line 296: $h! $fontSize');
+    debugPrint('line 296: $h! $fontSize');
 
     return Scaffold(
       backgroundColor: color1,
@@ -610,7 +610,7 @@ class _ClientRepublishShiftsSchedulingPageState
                     getAllItems(),
                   ]),
                   builder: (context, snapshot) {
-                    print(
+                    debugPrint(
                         'line 129: ${snapshot.data}  ${snapshot.connectionState} ${snapshot.hasData}');
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
@@ -647,10 +647,10 @@ class _ClientRepublishShiftsSchedulingPageState
                       );
                     } else {
                       // dynamic ccl = snapshot.data; // cast to List<Marker>
-                      // print('line 147: $ccl');
+                      // debugPrint('line 147: $ccl');
                       List<dynamic> allItems =
                           snapshot.data[0]; // cast to List<Marker>
-                      print('line 111 ${allItems.length}');
+                      debugPrint('line 111 ${allItems.length}');
                       if (allItems.length == 0) {
                         return Center(
                           child: Container(
@@ -710,7 +710,7 @@ class _ClientRepublishShiftsSchedulingPageState
                                         if (addedRows.isNotEmpty) {
                                           selectedList.addAll(addedRows);
                                         }
-                                        print('line 641: $selectedList');
+                                        debugPrint('line 641: $selectedList');
                                         // Remove deselected rows from the flag variable.
                                         if (removedRows.isNotEmpty) {
                                           selectedList.removeWhere((row) =>
@@ -762,13 +762,13 @@ class _ClientRepublishShiftsSchedulingPageState
                                           ),
                                           //
                                           onPressed: () async {
-                                            // print(
+                                            // debugPrint(
                                             //     'line 753: $flagPublishedButtonDisabled');
                                             // if (flagPublishedButtonDisabled == true) {
                                             //   flagShowRed = true;
                                             //   return;
                                             // }
-                                            print('line 656: ${selectedList}');
+                                            debugPrint('line 656: ${selectedList}');
                                             if (selectedList.isEmpty) {
                                               return;
                                             }
@@ -812,7 +812,7 @@ class _ClientRepublishShiftsSchedulingPageState
                                                 ),
                                               ),
                                         onPressed: () async {
-                                          print(
+                                          debugPrint(
                                               'line 651: $flagPublishedButtonDisabled');
                                           if (flagPublishedButtonDisabled ==
                                               true) {
@@ -839,7 +839,7 @@ class RepublishShiftDataSource extends DataGridSource {
   /// Creates the employee data source class with required details.
   RepublishShiftDataSource(
       {required List<RepublishShift> shiftRepublishData, required fontS}) {
-    //  print('line 501 in constructor shiftcanceldatasource');
+    //  debugPrint('line 501 in constructor shiftcanceldatasource');
     _shiftRepublishData = shiftRepublishData
         .map<DataGridRow>((e) => DataGridRow(cells: [
               DataGridCell<String>(columnName: 'shiftDate', value: e.shiftDate),
@@ -880,7 +880,7 @@ class RepublishShiftDataSource extends DataGridSource {
   }
 
   void updateDataGridSource({required RowColumnIndex rowColumnIndex}) {
-    // print('line 759: $rowColumnIndex');
+    // debugPrint('line 759: $rowColumnIndex');
     notifyDataSourceListeners(rowColumnIndex: rowColumnIndex);
   }
 }

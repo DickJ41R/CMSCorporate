@@ -66,12 +66,12 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
   List<Map<String, dynamic>>? clm;
   List<Map<String,dynamic>>? holdClm;
   Future<List<Map<String, dynamic>>> _getAllClientData() async {
-    print('line 178 in _getallclientdata: $arguments ${clm!.length}');
+    debugPrint('line 178 in _getallclientdata: $arguments ${clm!.length}');
 
     try {
       if (holdClm != null && holdClm!.length > 0) {
         clm = holdClm;
-        print('line 73 no get $clm');
+        debugPrint('line 73 no get $clm');
 
         return clm!;
       }
@@ -83,16 +83,16 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
        if (clm!.length < _rowsPerPage!) {
          _rowsPerPage = clm!.length;
        }
-       print('line 80');
+       debugPrint('line 80');
        for (int i=0; i < clm!.length; i++) {
          Map<String, dynamic>obj = clm![i];
          _clients.add(ClientClass.fromJson(obj));
        }
        holdClm = clm;
-       print('line 85: $clm');
+       debugPrint('line 85: $clm');
       return clm!;
     } catch (e) {
-      print('line 87: ${e.toString()}');
+      debugPrint('line 87: ${e.toString()}');
       throw Exception('line 124 Error getting client data');
     }
   }
@@ -116,7 +116,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
   void initState() {
     super.initState();
     arguments = widget.args;
-    print('line 272: $arguments!');
+    debugPrint('line 272: $arguments!');
 
     // String? docId;
 //     if (branchId == 0) {
@@ -125,7 +125,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
 //           .orderBy('clientId', descending: false)
 //           .snapshots();
 //     } else {
-//       print('line 278');
+//       debugPrint('line 278');
 //       // docId = getBranchDocumentId(branchId!) as String;
 //       _clientStream = FirebaseFirestore.instance
 //           .collection('Client')
@@ -138,10 +138,10 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
     // clientClasses = getClientData();
 
     //  getDataFromDatabase();
-//    print('line 250 ${clientClasses.length}');
+//    debugPrint('line 250 ${clientClasses.length}');
 //    clientClassDataSource =
 //        ClientClassDataSource(clientClassCollection: clientClasses);
-//    print('line 252: ${clientClassDataSource}');
+//    debugPrint('line 252: ${clientClassDataSource}');
   }
 
   double? screenWidth;
@@ -184,7 +184,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
       h = 1.0;
     }
     clm = [];
-    print('line 87: $screenHeight $screenWidth');
+    debugPrint('line 87: $screenHeight $screenWidth');
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Client From List Screen',
@@ -202,7 +202,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
           icon: const Icon(Icons.arrow_back, size: 20),
           onPressed: () {
             // shiftClasses = shiftClassDataSource.returnShiftClasses();
-            // print('line 99: ${shiftClasses[0].shiftCode} ${shiftClasses[0].shiftCount}');
+            // debugPrint('line 99: ${shiftClasses[0].shiftCode} ${shiftClasses[0].shiftCount}');
             Navigator.of(context).pop(null);
           },
         ),
@@ -216,7 +216,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
       body: FutureBuilder<List<dynamic>>(
           future: Future.wait([_getAllClientData()]),
           builder: (context, snapshot) {
-            // print(
+            // debugPrint(
             //     'line 211: ${snapshot.hasError} ${snapshot.hasData} ${ConnectionState} ');
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -264,7 +264,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
               );
             } else {
               List<dynamic> data = snapshot.data![0];
-              //  print('line 292 ${data.length}');
+              //  debugPrint('line 292 ${data.length}');
               if (data.length == 0) {
                 return Center(
                   child: Container(
@@ -284,13 +284,13 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                 );
               } else {
                 List<Map<String, dynamic>> listH = snapshot.data![0];
-                //   print('line 312: ${listH.length} ${listH[0]}');
+                //   debugPrint('line 312: ${listH.length} ${listH[0]}');
                 clientClassData.clear();
                 listH.forEach((doc) {
-                  //  print('line 307: ${doc.data()}');
+                  //  debugPrint('line 307: ${doc.data()}');
                   clientClassData.add(ClientClass.fromJson(doc));
                 });
-                //   print('line 311: ${clientClassData[0].clientId}');
+                //   debugPrint('line 311: ${clientClassData[0].clientId}');
                 clientClassDataSource = ClientClassDataSource(
                     clientClassData, _rowsPerPage!, _clients, _paginatedClients);
                 return LayoutBuilder(builder: (context, constraint) {
@@ -492,17 +492,17 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                   // rowHeight: 40,
                   selectionMode: SelectionMode.single,
                   onSelectionChanged: (addedRows, removedRows) async {
-                    print(
+                    debugPrint(
                         'line 343: ${addedRows.length} ${addedRows[0].getCells()}');
                     final List<DataGridCell> cells = addedRows[0].getCells();
                     final int colIndex = cells
                         .indexWhere((cell) => cell.columnName == 'Client ID');
-                    print('line 347: $colIndex');
+                    debugPrint('line 347: $colIndex');
                     int currentId = -1;
                     if (colIndex != -1) {
                       // Get and increment the current ID value.
                       currentId = int.parse(cells[colIndex].value);
-                      print('line 351: $currentId');
+                      debugPrint('line 351: $currentId');
                     }
                     final int colIndex2 = cells
                         .indexWhere((cell) => cell.columnName == 'Client Name');
@@ -510,7 +510,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                     if (colIndex2 != -1) {
                       // Get and increment the current ID value.
                       clientName = cells[colIndex2].value;
-                      print('line 358 $clientName');
+                      debugPrint('line 358 $clientName');
                     }
                     for (int i = 0; i < listOfClients.length; i++) {
                       Map<String, dynamic> lc = listOfClients[i];
@@ -523,7 +523,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                     // Map<String, dynamic>? smp =
                     //     await clientServices.getASingleClientUser(
                     //         authServices.clientMap!['clientId']);
-                    // print('line 304: $smp');
+                    // debugPrint('line 304: $smp');
                     // if (smp!.containsKey('clientId') == true) {
                     //   authServices.clientUserMap = smp;
                     // }

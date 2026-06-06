@@ -24,7 +24,7 @@ class _TabsWebState extends State<TabsWeb> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print('line 20: ${widget.route}');
+        debugPrint('line 20: ${widget.route}');
         Navigator.of(context).pushNamed(widget.route,
             arguments: widget.argumentId != -1
                 ? widget.argumentId
@@ -232,18 +232,18 @@ class _VerticalTileState extends State<VerticalTile> {
     menuItem = widget.menuItem;
     routeName = menuItem!['menuRouteName'];
     arguments = widget.arguments;
-    print('line 235: $menuItem $arguments $routeName');
+    debugPrint('line 235: $menuItem $arguments $routeName');
   }
 
   @override
   Widget build(BuildContext context) {
-    //print('line 240 in build context');
+    //debugPrint('line 240 in build context');
     return Container(
       height: 50,
       width: 300,
       child: GestureDetector(
         onTap: () {
-          print('line 20: ${menuItem}');
+          debugPrint('line 20: ${menuItem}');
           Navigator.of(context).pushNamed(routeName, arguments: arguments!);
         },
         child: MouseRegion(
@@ -302,18 +302,18 @@ class _VerticalTile1State extends State<VerticalTile1> {
     menuItem = widget.menuItem;
     routeName = menuItem!['menuRouteName'];
     arguments = widget.arguments;
-    print('line 235: $menuItem $arguments $routeName');
+    debugPrint('line 235: $menuItem $arguments $routeName');
   }
 
   @override
   Widget build(BuildContext context) {
-    //print('line 240 in build context');
+    //debugPrint('line 240 in build context');
     return Container(
       height: 50,
       width: 300,
       child: GestureDetector(
         onTap: () {
-          print('line 20: ${menuItem}');
+          debugPrint('line 20: ${menuItem}');
           Navigator.of(context).pushNamed(routeName, arguments: arguments!);
         },
         child: MouseRegion(

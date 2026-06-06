@@ -27,17 +27,17 @@ class _ProcessHCPProfileDataState extends State<ProcessHCPProfileData> {
   int? hcpId;
   Map<String, dynamic>? hcpMap;
   Future<void> _getHCProfessional() async {
-    print('line 32 in getHcpProfesssional $hcpId');
+    debugPrint('line 32 in getHcpProfesssional $hcpId');
     try {
-      print('line 34 in get hcp professionals');
+      debugPrint('line 34 in get hcp professionals');
       Map<String, dynamic>? lm =
           await hcpServices.getHCProfessionalByHCPId(hcpId!);
-      print('line 37: $lm');
+      debugPrint('line 37: $lm');
       hcpMap = lm!;
       setControllerData();
       return;
     } catch (e) {
-      print('line 39 _getHCProfessional error: $e');
+      debugPrint('line 39 _getHCProfessional error: $e');
       throw Exception('Error hcp profile data: $e');
     }
   }
@@ -47,7 +47,7 @@ class _ProcessHCPProfileDataState extends State<ProcessHCPProfileData> {
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 38 gethcpuser address: $hcpServices');
+    debugPrint('line 38 gethcpuser address: $hcpServices');
     Map<String, dynamic> lm = await hcpServices.getHCPUser(hcpId!);
     if (lm.isEmpty) {
       return lm;
@@ -67,7 +67,7 @@ class _ProcessHCPProfileDataState extends State<ProcessHCPProfileData> {
   }
 
   void setControllerData() {
-    print('line 72 in setcontroller data ${hcpMap}');
+    debugPrint('line 72 in setcontroller data ${hcpMap}');
     try {
       allowDailyPayController.text =
           hcpMap!['allowDailyPay'] == true ? 'Yes' : 'No';
@@ -98,15 +98,15 @@ class _ProcessHCPProfileDataState extends State<ProcessHCPProfileData> {
       hcpIdController.text = hcpMap!['hcpId'].toString();
       lastWorkedController.text =
           utilitiesServices.convertDateFromUnknown(hcpMap!['lastWorked']);
-      print('line 101 check');
+      debugPrint('line 101 check');
       payCheckFullAddressController.text = hcpMap!['paycheckFullAddress'];
       ssnController.text = hcpMap!['SSN'];
       statusController.text = hcpMap!['status'];
-      print('line 105 check');
+      debugPrint('line 105 check');
       usernameController.text = hcpMap!['username'];
       workerTypeController.text = hcpMap!['workerType'];
     } catch (e) {
-      print('line 107 error: ${e.toString()}');
+      debugPrint('line 107 error: ${e.toString()}');
       throw Exception('line 108 error: ${e.toString()}');
     }
   }
@@ -167,7 +167,7 @@ class _ProcessHCPProfileDataState extends State<ProcessHCPProfileData> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 51 ADDRESS  didchange');
+    debugPrint('line 51 ADDRESS  didchange');
     getHCPUserX();
   }
 
@@ -191,7 +191,7 @@ class _ProcessHCPProfileDataState extends State<ProcessHCPProfileData> {
     fontSize = 16;
     fontSize /= h;
     //   double screenHeight = MediaQuery.sizeOf(context).height;
-    print('line 17 screen width: $screenWidth');
+    debugPrint('line 17 screen width: $screenWidth');
     return Scaffold(
       backgroundColor: color1,
       appBar: AppBar(

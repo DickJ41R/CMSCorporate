@@ -19,7 +19,7 @@ class HCPServices {
   Future<List<Map<String, dynamic>>>? getHCPAddresses(int hcpId) async {
     try {
       List<Map<String, dynamic>> hcpAddresses = [];
-      print('line 22 get address: $hcpId');
+      debugPrint('line 22 get address: $hcpId');
       await FirebaseFirestore.instance
           .collection("HCPAddress")
           .where('hcpId', isEqualTo: hcpId)
@@ -31,10 +31,10 @@ class HCPServices {
           hcpAddresses!.add(obj);
         }
       });
-      print('line 34: ${hcpAddresses.length}');
+      debugPrint('line 34: ${hcpAddresses.length}');
       return hcpAddresses;
     } catch (e) {
-      print('line 53 error getting hcpuser: $e');
+      debugPrint('line 53 error getting hcpuser: $e');
       throw Exception(e);
     }
   }
@@ -70,7 +70,7 @@ class HCPServices {
       });
       return hcpContacts;
     } catch (e) {
-      print('line 53 error getting hcpuser: $e');
+      debugPrint('line 53 error getting hcpuser: $e');
       throw Exception(e);
     }
   }
@@ -91,13 +91,13 @@ class HCPServices {
       });
       return hcpEducation;
     } catch (e) {
-      print('line 53 error getting hcpuser: $e');
+      debugPrint('line 53 error getting hcpuser: $e');
       throw Exception(e);
     }
   }
 
   Future<List<Map<String, dynamic>>>? getHCPCredentials(int hcpId) async {
-    print('line 9 get all hcps');
+    debugPrint('line 9 get all hcps');
     //  return realm.all<ClientWorkOrderCampaign>();
     List<Map<String, dynamic>> listOfHCPCredentials = [];
     await FirebaseFirestore.instance
@@ -119,7 +119,7 @@ class HCPServices {
   }
 
   Future<List<Map<String, dynamic>>>? getHCPDNUs(int hcpId) async {
-    print('line 9 get all hcps');
+    debugPrint('line 9 get all hcps');
     //  return realm.all<ClientWorkOrderCampaign>();
     List<Map<String, dynamic>> listOfHCPDNUs = [];
     List<int> clientIds = [];
@@ -155,7 +155,7 @@ class HCPServices {
 
   Future<List<Map<String, dynamic>>>? getClientsFromDNUs(
       List<int> clientIds) async {
-    print('line 9 get all hcps');
+    debugPrint('line 9 get all hcps');
     //  return realm.all<ClientWorkOrderCampaign>()
     List<int> clientIds = [];
     List<Map<String, dynamic>> listOfClientsFromDNUs = [];
@@ -174,7 +174,7 @@ class HCPServices {
   }
 
   Future<Map<String, dynamic>>? getSingleTestFromClientUsers(int hcpId) async {
-    print('line 134 get all singletestclientuser: $hcpId');
+    debugPrint('line 134 get all singletestclientuser: $hcpId');
     //  return realm.all<ClientWorkOrderCampaign>();
     Map<String, dynamic>? mph;
     await FirebaseFirestore.instance
@@ -190,7 +190,7 @@ class HCPServices {
   }
 
   Future<Map<String, dynamic>>? getSingleClientByBranchId(int branchId) async {
-    print('line 148 get single clientbybranchid: $branchId');
+    debugPrint('line 148 get single clientbybranchid: $branchId');
     //  return realm.all<ClientWorkOrderCampaign>();
     Map<String, dynamic>? mph;
     await FirebaseFirestore.instance
@@ -207,7 +207,7 @@ class HCPServices {
 
   Future<List<Map<String, dynamic>>>? getBranchesFromBranchIds(
       List<int> branchIds) async {
-    print('line 163 get branches from breancid: $branchIds');
+    debugPrint('line 163 get branches from breancid: $branchIds');
     //  return realm.all<ClientWorkOrderCampaign>();
     List<Map<String, dynamic>> mph = [];
     await FirebaseFirestore.instance
@@ -223,7 +223,7 @@ class HCPServices {
   }
 
   Future<List<Map<String, dynamic>>>? getAllHCPProfessionals() async {
-    print('line 9 get all hcps');
+    debugPrint('line 9 get all hcps');
     //  return realm.all<ClientWorkOrderCampaign>();
     List<Map<String, dynamic>> listOfHCPs = [];
     await FirebaseFirestore.instance
@@ -239,7 +239,7 @@ class HCPServices {
   }
 
   Future<Map<String, dynamic>>? getSingleHCProfessional(int hcpId) async {
-    print('line 9 get all hcps: $hcpId');
+    debugPrint('line 9 get all hcps: $hcpId');
     //  return realm.all<ClientWorkOrderCampaign>();
     Map<String, dynamic>? mph;
     await FirebaseFirestore.instance
@@ -256,7 +256,7 @@ class HCPServices {
 
   Future<List<Map<String, dynamic>>>? getHCPProfessionalByBranchId(
       int branchId) async {
-    print('line 9 get all hcps: $branchId');
+    debugPrint('line 9 get all hcps: $branchId');
     try {
       //  return realm.all<ClientWorkOrderCampaign>();
       List<Map<String, dynamic>> mph = [];
@@ -271,24 +271,24 @@ class HCPServices {
       });
       return mph;
     } catch (e) {
-      print('line 217 error: $e');
+      debugPrint('line 217 error: $e');
       throw Exception(e.toString());
     }
   }
 
   // Future<List<HCProfessionalDataModel>> getHCPDataFromSearchCNA(
   //     String hcpRecordName) async {
-  //   print('line 309: $hcpRecordName');
+  //   debugPrint('line 309: $hcpRecordName');
   //   await FirebaseFirestore.instance
   //       .collection('HCProfessional')
   //       .where("branchId", isEqualTo: 624)
   //       .where("disciplineId", isEqualTo: 558)
   //       .get()
   //       .then((querySnapshot) {
-  //     print('line 324: ${querySnapshot.docs.length}');
+  //     debugPrint('line 324: ${querySnapshot.docs.length}');
   //     for (var docSnapshot in querySnapshot.docs) {
   //       final obj = docSnapshot.data();
-  //       print('line 327: ${obj['hcpId']} ${obj['fullName']}');
+  //       debugPrint('line 327: ${obj['hcpId']} ${obj['fullName']}');
   //     }
   //   });
   //   return [];
@@ -314,10 +314,10 @@ class HCPServices {
       String dtm = sts[2] + '-' + sts[0] + '-' + sts[1];
       DateTime dte = DateTime.parse(dtm);
       ts = Timestamp.fromDate(dte);
-      print('line 341: $ts $dte');
+      debugPrint('line 341: $ts $dte');
       return ts;
     } catch (e) {
-      print('line 345: error: ${e.toString()}');
+      debugPrint('line 345: error: ${e.toString()}');
       throw Exception('Error: ${e.toString()}');
     }
   }
@@ -340,14 +340,14 @@ class HCPServices {
 
   Future<List<HCProfessionalDataModel>> getHCPDataFromSearch(
       Map<String, String> arguments) async {
-    print('line 379: $arguments');
+    debugPrint('line 379: $arguments');
     try {
       List<HCProfessionalDataModel> hcpms = [];
       Query query = util.buildDynamicQuery(arguments!);
-      print('line 182: $query');
+      debugPrint('line 182: $query');
       QuerySnapshot querySnapshot = await query.get();
       for (var docSnapShot in querySnapshot.docs) {
-        print('line 206: ${querySnapshot.docs.length}');
+        debugPrint('line 206: ${querySnapshot.docs.length}');
         Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
         String bn = obj['branchName'].toLowerCase();
         int hcpId = obj['hcpId'];
@@ -379,7 +379,7 @@ class HCPServices {
         Timestamp dnt = Timestamp.fromDate(dns);
         List<int> sTimes = [];
         List<int> eTimes = [];
-        print(
+        debugPrint(
             'line 474: $dns $dnt $duration ${dns.timeZoneName} ${duration.inHours}');
 
         await FirebaseFirestore.instance
@@ -402,7 +402,7 @@ class HCPServices {
             .orderBy('hcpName', descending: false)
             .get()
             .then((querySnapshot) {
-          print('line 493: ${querySnapshot.docs.length}');
+          debugPrint('line 493: ${querySnapshot.docs.length}');
 
           for (var docSnapshot in querySnapshot.docs) {
             final obj = docSnapshot.data();
@@ -410,10 +410,10 @@ class HCPServices {
             Timestamp ts = obj['shiftDate'];
             DateTime dte = ts.toDate();
 
-            print('line 548: ${obj['branchName']}');
+            debugPrint('line 548: ${obj['branchName']}');
 
-            print('line 574 ${obj['shiftDate']}');
-            print(
+            debugPrint('line 574 ${obj['shiftDate']}');
+            debugPrint(
                 'line 592 ${obj['hcpName']} ${obj['disciplineName']} ${obj['branchName']}');
             var shft = '';
             if (obj['shiftStatus'] == 'Open') {
@@ -429,12 +429,12 @@ class HCPServices {
             } else if (obj['shiftStatus'] == 'SignedOut') {
               shft = 'SgO';
             } else {
-              print(
+              debugPrint(
                   'line 616 **** : ${obj['hcpId']} ${obj['shiftStatus']}');
               shft = obj['shiftStatus'].substring(0, 3);
             }
             counter += 1;
-            print(
+            debugPrint(
                 'line 621 **** : $counter ${obj['hcpId']} ${obj['shiftStatus']}');
             htp = HCProfessionalDataModel(
                 hcpId: obj['hcpId'],
@@ -454,17 +454,17 @@ class HCPServices {
         });
         break;
       }
-      print('line 641: ${hcpms.length}');
+      debugPrint('line 641: ${hcpms.length}');
       return hcpms;
     } catch (e) {
-      print('line 644: ${e.toString()}');
+      debugPrint('line 644: ${e.toString()}');
       return [];
     }
   }
 
   Future<List<Map<String, dynamic>>>? getAllHCProfessionalsFromWorkingSetData(
       int testerUserId) async {
-    print('line 292 in hcpservices get hcs $testerUserId');
+    debugPrint('line 292 in hcpservices get hcs $testerUserId');
     try {
       Map<String, dynamic> wks = {};
       List<Map<String, dynamic>> lst = [];
@@ -479,7 +479,7 @@ class HCPServices {
           wks = obj;
           break;
         }
-        print('line 306 $wks');
+        debugPrint('line 306 $wks');
         if (wks.isEmpty) {
           throw Exception('line 310 WKS is empty');
         }
@@ -494,7 +494,7 @@ class HCPServices {
           hcpIds.add(wks['hcpRNs'][i]);
         }
 
-        print('line 318 ${hcpIds.length}');
+        debugPrint('line 318 ${hcpIds.length}');
         List<int> lst = [];
         List<int> dupIds = [];
         await FirebaseFirestore.instance
@@ -502,7 +502,7 @@ class HCPServices {
             .where("hcpId", whereIn: hcpIds)
             .get()
             .then((querySnapshot) async {
-          print('line 329:');
+          debugPrint('line 329:');
           for (var docSnapshot in querySnapshot.docs) {
             final obj = docSnapshot.data();
             int hcpId = obj['hcpId'];
@@ -514,9 +514,9 @@ class HCPServices {
           }
           // for (int i = 0; i < lst.length; i++) {
           //   int hcpId = lst[i];
-          print('line 340: ${lst.length}');
+          debugPrint('line 340: ${lst.length}');
           if (lst.length > 0) {
-            print('lne 341: ${lst[0]}');
+            debugPrint('lne 341: ${lst[0]}');
           }
           if (lst.length == 0) {
             throw Exception('Line 343: List of HCPs to show is equal to 0.');
@@ -530,7 +530,7 @@ class HCPServices {
               final obj = docSnapshot.data();
               listOfTesters.add(obj);
             }
-            print('line 335 ${listOfTesters.length}');
+            debugPrint('line 335 ${listOfTesters.length}');
           });
           //   }
           return listOfTesters;
@@ -538,7 +538,7 @@ class HCPServices {
       });
       return listOfTesters;
     } catch (e) {
-      print('line 333  error $e');
+      debugPrint('line 333  error $e');
       throw Exception(e.toString());
     }
   }
@@ -548,14 +548,14 @@ class HCPServices {
     // const ura = 'https://api.stafferlink.com/asm/authenticate';
     var url = Uri.https('api.stafferlink.com', 'asm/authenticate');
     var orgId = dotenv.env['ASM_DB1'];
-    print('url:  $url');
+    debugPrint('url:  $url');
     Map data = {
       'key': '30c39597a9604a979e9430ee5794fab6',
       'secret': 'a594b1ede33b48e7bed9418c6fd50e43',
       'orgId': orgId
     };
     var body = json.encode(data);
-    print('body: $body');
+    debugPrint('body: $body');
     // headers: {"Content-Type": "application/json"},
     try {
       http.Response response = await client.post(url,
@@ -566,9 +566,9 @@ class HCPServices {
       if (response.statusCode == 200) {
         String data = response.body;
         var jsonDecodedData = json.decode(data);
-        print('jsonDecodedData with access token: $jsonDecodedData');
+        debugPrint('jsonDecodedData with access token: $jsonDecodedData');
         var token = jsonDecodedData['accessToken'];
-        print('Data:  $token');
+        debugPrint('Data:  $token');
         return token;
       }
     } catch (e) {
@@ -579,7 +579,7 @@ class HCPServices {
   Future<dynamic> getHCPDocuments(int hcpId, int credId) async {
     var client = http.Client();
     dynamic token = await getToken();
-    print('line 701 gethcpdocuments');
+    debugPrint('line 701 gethcpdocuments');
     // List<int> validCodes = [118, 120, 121, 123, 125, 139, 141, 146, 200, 251,
     //   289, 302, 305];
 
@@ -591,12 +591,12 @@ class HCPServices {
       };
 
       //  var encodedHeaders = json.encode(hdrs);
-      print('Hdrs: $hdrs');
+      debugPrint('Hdrs: $hdrs');
       // var url = Uri.https('api.stafferlink.com',
       //     'asm/Registry/28481?IncludeAddresses=true&IncludeContacts=true&IncludeCredentials=true');
       var url =
           "https://api.stafferlink.com/asm/Registry/$hcpId/Credentials/$credId/Documents";
-      print('url: $url');
+      debugPrint('url: $url');
       http.Response response2 = await client.get(
         Uri.parse(url),
         headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
@@ -605,32 +605,32 @@ class HCPServices {
         // },
       );
       if (response2.statusCode == 200) {
-        print('line 767: ${response2.body}');
+        debugPrint('line 767: ${response2.body}');
         String data = response2.body;
-        print('line 770: $data');
+        debugPrint('line 770: $data');
         if (data.isEmpty) {
           return null;
         }
         dynamic jsonDecodedData = json.decode(data);
-        print('line 771: $jsonDecodedData, ${jsonDecodedData[0]}');
-        // print(jsonDecodedData);
+        debugPrint('line 771: $jsonDecodedData, ${jsonDecodedData[0]}');
+        // debugPrint(jsonDecodedData);
         dynamic jd = jsonDecodedData[0];
         dynamic docId = jd['DocumentID'];
-        print('line 774: $docId');
+        debugPrint('line 774: $docId');
         var url =
             "https://api.stafferlink.com/asm/Registry/$hcpId/Credentials/Documents/$docId/GetDocument";
         http.Response response = await client.get(Uri.parse(url), headers: {
           HttpHeaders.authorizationHeader: 'Bearer $token',
           HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8'
         });
-        print('line 788: ${response.headers}');
+        debugPrint('line 788: ${response.headers}');
         if (response.statusCode == 200) {
-          print('line 790: ${response.headers}');
+          debugPrint('line 790: ${response.headers}');
           if (!response.headers['content-type']!.contains('application/pdf')) {
             // Display image
-            print('line 793: ${response.bodyBytes}');
+            debugPrint('line 793: ${response.bodyBytes}');
             final imageData = response.bodyBytes;
-            print('line 795: ${imageData.length}');
+            debugPrint('line 795: ${imageData.length}');
             // File ff = await _localFile;
             //
             // ff.writeAsBytes(imageData);
@@ -638,7 +638,7 @@ class HCPServices {
             return obj;
           } else {
             final imageData = response.bodyBytes;
-            print('line 886: ${imageData.length}');
+            debugPrint('line 886: ${imageData.length}');
             // File ff = await _localFile;
             //
             // ff.writeAsBytes(imageData);
@@ -653,21 +653,21 @@ class HCPServices {
       }
 // Display image
     } catch (e) {
-      print('line 821 $e');
+      debugPrint('line 821 $e');
       return null;
     }
   }
 
   Future<List<Map<String, dynamic>>> getHCPs(int clientId,
       [DateTime? date]) async {
-    print('line 981 in getHCPtimecard');
+    debugPrint('line 981 in getHCPtimecard');
     try {
       DateTime shiftDate = DateTime.now();
       //remove next linine after getrting screens
       //change to
       DateTime newDate = DateTime(
           shiftDate.year, shiftDate.month, shiftDate.day - 2, 0, 0, 0, 0, 0);
-      print('line 986 $newDate');
+      debugPrint('line 986 $newDate');
       List<Map<String, dynamic>> listOfHCPS = [];
       FirebaseFirestore.instance
           .collection('HCPTimeCard')
@@ -680,10 +680,10 @@ class HCPServices {
           listOfHCPS.add(obj);
         }
       });
-      print('line 991: ${listOfHCPS.length}');
+      debugPrint('line 991: ${listOfHCPS.length}');
       return listOfHCPS;
     } catch (e) {
-      print('line 710');
+      debugPrint('line 710');
       throw Exception('Error: $e');
     }
   }
@@ -693,11 +693,11 @@ class HCPServices {
     try {
       List<dynamic> response =
           await callRetrieveHCPWorkOrderCampaignsFunction(hcpId, ctx);
-      print('line 750: ${response.length}');
+      debugPrint('line 750: ${response.length}');
       // for (int i = 0; i < response.length; i++) {
       //   var obj = response[i];
-      //   print('line 753: $i $obj');
-      //   print("******");
+      //   debugPrint('line 753: $i $obj');
+      //   debugPrint("******");
       // }
       // int x = 0;
       // if (x == 0) {
@@ -705,14 +705,14 @@ class HCPServices {
       // }
       return response;
     } catch (e) {
-      print('line 23: ${e.toString()}');
+      debugPrint('line 23: ${e.toString()}');
       return [];
     }
   }
 
   Future<List<dynamic>> callRetrieveHCPWorkOrderCampaignsFunction(
       int hcpId, BuildContext ctx) async {
-    print('line 34: $hcpId');
+    debugPrint('line 34: $hcpId');
     try {
       HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'retrievehcpworkordercampaigns01',
@@ -722,54 +722,54 @@ class HCPServices {
       );
       List<dynamic> result = await callingRetrieveHCPWorkOrderCampaignsFunction(
           callable, hcpId, ctx);
-      print('line 44 after call: $result');
+      debugPrint('line 44 after call: $result');
       if (result.isEmpty) {
         return result;
       }
       if (result[0]['ERROR'] != null) {
-        print('line 46: Error getting htc id to asm');
+        debugPrint('line 46: Error getting htc id to asm');
         return result;
       }
-      print('line 494 successfully retrieved htc');
+      debugPrint('line 494 successfully retrieved htc');
 
       return result;
     } catch (e) {
-      print('line 53 $e');
+      debugPrint('line 53 $e');
       throw Exception('line 54: ${e.toString()}');
     }
   }
 
   Future<List<dynamic>> callingRetrieveHCPWorkOrderCampaignsFunction(
       HttpsCallable callable, int hcpId, BuildContext ctx) async {
-    print('line 782: $hcpId');
+    debugPrint('line 782: $hcpId');
     try {
       var data = {
         "hcpId": hcpId,
       };
       final HttpsCallableResult result = await callable(data);
-      print('line 788: $result');
-      print('line 789 ${result.data}');
+      debugPrint('line 788: $result');
+      debugPrint('line 789 ${result.data}');
       return result.data;
     } catch (e) {
-      print('line 792 error: $e');
+      debugPrint('line 792 error: $e');
       throw Exception('line 739  ${e.toString()}');
     }
   }
   Future<List<Map<String, dynamic>>>? getHCProfessionalsByArgument(
       Map<String, dynamic> arguments) async {
-    print('line 376 get all hcps: $arguments');
+    debugPrint('line 376 get all hcps: $arguments');
     try {
       //  return realm.all<ClientWorkOrderCampaign>();
       List<Map<String, dynamic>> mph = [];
       Query query = util.buildDynamicQuery(arguments!);
-      print('line 381: $query');
+      debugPrint('line 381: $query');
       QuerySnapshot querySnapshot = await query.get();
       List<int> dupIds = [];
-      print('line 384: ${querySnapshot.docs.length}');
+      debugPrint('line 384: ${querySnapshot.docs.length}');
       for (var docSnapShot in querySnapshot.docs) {
         Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
         obj['id'] = docSnapShot.id;
-        print('line 387: ${obj['id']}');
+        debugPrint('line 387: ${obj['id']}');
         Timestamp ts = obj['credsWillWarnDate'];
         DateTime date = ts.toDate();
         var formattedDate = DateFormat('MM/dd/yyyy').format(date);
@@ -779,21 +779,21 @@ class HCPServices {
         formattedDate = DateFormat('MM/dd/yyyy').format(date);
         obj['lastWorked'] = formattedDate;
 
-        //    print('line 184: $formattedDate  ${obj['credsWillWarnDate']}');
+        //    debugPrint('line 184: $formattedDate  ${obj['credsWillWarnDate']}');
 
         mph.add(obj);
       }
-      print('line 402: ${mph.length}');
+      debugPrint('line 402: ${mph.length}');
       return mph;
     } catch (e) {
-      print('line 403 error: $e');
+      debugPrint('line 403 error: $e');
       throw Exception(e.toString());
     }
   }
 
   Future<List<Map<String, dynamic>>>? getHCProfessionalsByBranchId(
       int branchId) async {
-    print('line 9 get all hcps: $branchId');
+    debugPrint('line 9 get all hcps: $branchId');
     try {
       //  return realm.all<ClientWorkOrderCampaign>();
       List<Map<String, dynamic>> mph = [];
@@ -813,19 +813,19 @@ class HCPServices {
           formattedDate = DateFormat('MM/dd/yyyy').format(date);
           obj['lastWorked'] = formattedDate;
 
-          //    print('line 184: $formattedDate  ${obj['credsWillWarnDate']}');
+          //    debugPrint('line 184: $formattedDate  ${obj['credsWillWarnDate']}');
 
           mph.add(obj);
         }
       });
       return mph;
     } catch (e) {
-      print('line 217 error: $e');
+      debugPrint('line 217 error: $e');
       throw Exception(e.toString());
     }
   }
   Future<Map<String, dynamic>> getHCPUser(int hcpId) async {
-    print('line 19 in gethcpuser $hcpId');
+    debugPrint('line 19 in gethcpuser $hcpId');
     try {
       Map<String, dynamic>? hcpUser;
       await FirebaseFirestore.instance
@@ -836,7 +836,7 @@ class HCPServices {
         for (var docSnapshot in querySnapshot.docs) {
           var obj = docSnapshot.data();
           hcpUser = obj;
-          print('line 29: ${hcpUser!['hcpId']}');
+          debugPrint('line 29: ${hcpUser!['hcpId']}');
           await FirebaseFirestore.instance
               .collection('HCPAddress')
               .where('hcpId', isEqualTo: obj['hcpId'])
@@ -852,24 +852,24 @@ class HCPServices {
             }
           });
           if (hcpUser == null) {
-            print('line 48 hcpuser is null ');
+            debugPrint('line 48 hcpuser is null ');
             return {};
           }
-          print('line 50:  ${hcpUser!['latitude']} ${hcpUser!['longitude']}');
+          debugPrint('line 50:  ${hcpUser!['latitude']} ${hcpUser!['longitude']}');
           authServices.hcpId = hcpUser!['hcpId'];
-          print('line 52 in get hcpuser hcpid');
+          debugPrint('line 52 in get hcpuser hcpid');
           return hcpUser!;
         }
       });
       return hcpUser!;
     } catch (e) {
-      print('line 58 error getting hcpuser: $e');
+      debugPrint('line 58 error getting hcpuser: $e');
       throw Exception(e);
     }
   }
 
   Future<Map<String, dynamic>> getHCProfessional(String email) async {
-    print('line 61 in getHCPProfessional: $email');
+    debugPrint('line 61 in getHCPProfessional: $email');
     try {
       Map<String, dynamic>? hcpUser;
       await FirebaseFirestore.instance
@@ -883,15 +883,15 @@ class HCPServices {
         }
       });
 
-      print('line 42: in get hcpuser $email');
+      debugPrint('line 42: in get hcpuser $email');
       return hcpUser!;
     } catch (e) {
-      print('line 53 error getting hcpuser: $e');
+      debugPrint('line 53 error getting hcpuser: $e');
       throw Exception(e);
     }
   }
   Future<Map<String, dynamic>> getASingleHCPUser(int hcpId) async {
-    print('line 185 get a singled hcpuser');
+    debugPrint('line 185 get a singled hcpuser');
     try {
       await FirebaseFirestore.instance
           .collection('users')
@@ -906,13 +906,13 @@ class HCPServices {
       });
       return {};
     } catch (e) {
-      print('line 201 error: ${e.toString()}');
+      debugPrint('line 201 error: ${e.toString()}');
       return {};
     }
   }
 
   Future<Map<String, dynamic>>? getHCProfessionalByHCPId(int hcpId) async {
-    print('line 207 gethcprofessionalbyHCPId $hcpId');
+    debugPrint('line 207 gethcprofessionalbyHCPId $hcpId');
     Map<String, dynamic>? hcpMap;
     try {
       await FirebaseFirestore.instance
@@ -928,7 +928,7 @@ class HCPServices {
       });
       return hcpMap!;
     } catch (e) {
-      print('line 233 error: ${e.toString()}');
+      debugPrint('line 233 error: ${e.toString()}');
       return {};
     }
   }
@@ -954,7 +954,7 @@ class HCPServices {
       });
       return hcpSpecialRates;
     } catch (e) {
-      print('line 56 error getting hcpuser: $e');
+      debugPrint('line 56 error getting hcpuser: $e');
       throw Exception(e);
     }
   }

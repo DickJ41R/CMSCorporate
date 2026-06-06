@@ -23,61 +23,61 @@ class PDFService {
 
   Future<Map<String, dynamic>> createPdfAndPublishPdf(
       Map<String, dynamic> item, isAndroid) async {
-    print('line 30 in create pdf and publish: ${item['hcpId']}');
+    debugPrint('line 30 in create pdf and publish: ${item['hcpId']}');
     try {
       this.isAndroid = isAndroid;
       String pdfFileName = await _convertImageToPDF(item);
       //read and write to storage
-      print('line 32: $pdfFileName');
+      debugPrint('line 32: $pdfFileName');
       pdfFileName = pdfFileName.replaceAll('files\'', 'files');
       File file = File.fromUri(Uri.parse(pdfFileName));
       //  File file = await File(pdfFileName);
-      print('line 36: $file');
+      debugPrint('line 36: $file');
       List<String> splits = pdfFileName.split('/');
       String timesheetFilename = splits[splits.length - 1];
 
-      print('line 34: $timesheetFilename $pdfFileName');
-      print('line 35: ${file} ${file.uri}');
+      debugPrint('line 34: $timesheetFilename $pdfFileName');
+      debugPrint('line 35: ${file} ${file.uri}');
 
       if (!file.existsSync()) {
-        print('line 41: $file');
+        debugPrint('line 41: $file');
         throw 'line 42 File not found';
       }
 // Create the file metadata
 
       Uint8List? bytes = await file.readAsBytes(); //THIS LINE
       if (bytes.length == 0) {
-        print('line 47 read 0 bytes');
+        debugPrint('line 47 read 0 bytes');
         throw Exception('still have 0 bytes');
       }
       final metadata = SettableMetadata(contentType: "application/pdf");
 // Upload file and metadata to the path 'images/mountains.jpg'
-      print('line 53: ${timesheetFilename}');
+      debugPrint('line 53: ${timesheetFilename}');
       await storageRef
           .child('timesheets/${timesheetFilename}')
           .putFile(file, metadata);
-      print('line 57 check');
+      debugPrint('line 57 check');
 // Listen for state changes, errors, and completion of the upload.
 //       uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
 //         switch (taskSnapshot.state) {
 //           case TaskState.running:
-//              print('line 53: ${taskSnapshot.bytesTransferred} ${taskSnapshot.totalBytes}');
+//              debugPrint('line 53: ${taskSnapshot.bytesTransferred} ${taskSnapshot.totalBytes}');
 //             final progress =
 //                 100.0 * (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
-//             print("line 56 Upload is $progress% complete.");
+//             debugPrint("line 56 Upload is $progress% complete.");
 //             break;
 //           case TaskState.paused:
-//             print("line 59 Upload is paused.");
+//             debugPrint("line 59 Upload is paused.");
 //             break;
 //           case TaskState.canceled:
-//             print("line 62 Upload was canceled");
+//             debugPrint("line 62 Upload was canceled");
 //             break;
 //           case TaskState.error:
 //           // Handle unsuccessful uploads
-//           print('line 65 error: ${TaskState.error}');
+//           debugPrint('line 65 error: ${TaskState.error}');
 //             break;
 //           case TaskState.success:
-//             print('line 68 success');
+//             debugPrint('line 68 success');
 //           // Handle successful uploads on complete
 //           // ...
 //             break;
@@ -92,13 +92,13 @@ class PDFService {
         "timesheetFilename": timesheetFilename
       };
     } catch (e) {
-      print('line 82 error storing signature file $e');
+      debugPrint('line 82 error storing signature file $e');
       throw Exception('line 82: ${e.toString()}');
     }
   }
 
   Future<String> _convertImageToPDF(Map<String, dynamic> item) async {
-    print('line 93 in _convertImageToPDF');
+    debugPrint('line 93 in _convertImageToPDF');
     List<String> dayValues = [
       'Monday',
       'Tuesday',
@@ -125,7 +125,7 @@ class PDFService {
     Size size = page.getClientSize();
     double width = size.width;
     width = (width / 2) - 25;
-    print('line 83: $width ${page.getClientSize()}');
+    debugPrint('line 83: $width ${page.getClientSize()}');
     page.graphics.drawImage(PdfBitmap(await _readData('logo.png')),
         Rect.fromLTWH(width, 0, 50, 50));
 
@@ -138,7 +138,7 @@ class PDFService {
     double leftMargin = (size.width / 2) - (ssize.width / 4);
     leftMargin -= 35;
 //Draw the text
-    print('line 64: ${ssize.width} $leftMargin');
+    debugPrint('line 64: ${ssize.width} $leftMargin');
     double startHeight = 50 + (ssize.height / 2);
     page.graphics.drawString(str, font,
         bounds:
@@ -164,9 +164,9 @@ class PDFService {
     startHeight += 10;
     Timestamp tms = item['shiftDate'] as Timestamp;
     DateTime shiftDateTime = tms.toDate();
-    print('line 90: $shiftDateTime');
+    debugPrint('line 90: $shiftDateTime');
     String shiftDateString = getFormattedDate(shiftDateTime);
-    print('line 91: $shiftDateString');
+    debugPrint('line 91: $shiftDateString');
     int weekDay = shiftDateTime.weekday;
     if (weekDay == 0) {
       weekDay = 6;
@@ -178,7 +178,7 @@ class PDFService {
     ssize = font.measureString(str);
     PdfTextElement textElement = PdfTextElement(text: str, font: font);
     startHeight += ssize.height;
-    print('line 112 $startHeight');
+    debugPrint('line 112 $startHeight');
     PdfLayoutResult layoutResult = textElement.draw(
         page: page,
         bounds: Rect.fromLTWH(0, startHeight, ssize.width, ssize.height))!;
@@ -191,7 +191,7 @@ class PDFService {
     layoutResult = textElement.draw(
         page: page,
         bounds: Rect.fromLTWH(0, startHeight, ssize.width, ssize.height))!;
-    print('line 118 $startHeight');
+    debugPrint('line 118 $startHeight');
     str = "Facility Name: ${item['clientName']}";
     ssize = font.measureString(str);
     textElement = PdfTextElement(text: str, font: font);
@@ -201,9 +201,9 @@ class PDFService {
         bounds: Rect.fromLTWH(0, startHeight, ssize.width, ssize.height))!;
     str = "Assigned Department: ${item['departmentName']}";
     ssize = font.measureString(str);
-    print('line 208: $ssize.height');
+    debugPrint('line 208: $ssize.height');
     textElement = PdfTextElement(brush: PdfBrushes.pink, text: str, font: font);
-    print('line 133: $str');
+    debugPrint('line 133: $str');
     startHeight += ssize.height;
     layoutResult = textElement.draw(
         page: page,
@@ -219,9 +219,9 @@ class PDFService {
 //Initialize PdfGrid for drawing the table
     PdfGrid grid = PdfGrid();
     PdfStringFormat format = PdfStringFormat();
-    print('line 225 $format ${layoutResult.bounds.bottom}');
+    debugPrint('line 225 $format ${layoutResult.bounds.bottom}');
     format.alignment = PdfTextAlignment.center;
-    print('line 227 check');
+    debugPrint('line 227 check');
     format.lineAlignment = PdfVerticalAlignment.bottom;
     //Create a grid style
 
@@ -295,7 +295,7 @@ class PDFService {
       PdfGridRow row = grid.rows.add();
       if (weekDay == i) {
         DateTime std = item['signedInDeviceDateTime'].toDate();
-        print('line 302: ${std}');
+        debugPrint('line 302: ${std}');
         String st = DateFormat("MM-dd-yyyy hh:mm a").format(std);
         List<String> sts = st.split(' ');
         // std = item['shiftSignedOutActionDate'].toDate();
@@ -315,12 +315,12 @@ class PDFService {
           row.cells[6].value =
               item['signedOutInitialVerification'] == true ? 'Yes' : 'No';
         } else {
-          print('line 322: ${item['signedInInitialStartTimeChanged']}');
+          debugPrint('line 322: ${item['signedInInitialStartTimeChanged']}');
           String cStartTime = item['signedInInitialStartTimeChanged'];
-          print('line 324: ${item['signedOutInitialEndTimeChanged']}');
+          debugPrint('line 324: ${item['signedOutInitialEndTimeChanged']}');
           String cEndTime = item['signedOutInitialEndTimeChanged'];
           PdfGridRow row1 = grid.rows.add();
-          print('line 327: ${cStartTime} ${cEndTime}');
+          debugPrint('line 327: ${cStartTime} ${cEndTime}');
           row1.cells[0].value = dayValues[i];
           row1.cells[1].value = sts[0];
           row1.cells[2].value = cStartTime; //item['dateTimeSignedOutValue'];
@@ -348,7 +348,7 @@ class PDFService {
           row.cells[0].value = dayValues[i];
           row.cells[0].style = PdfGridCellStyle(
               backgroundBrush: PdfBrushes.green, textPen: PdfPens.white);
-          print('line 265');
+          debugPrint('line 265');
           row.cells[1].value = '';
           row.cells[2].value = '';
           row.cells[3].value = '';
@@ -358,9 +358,9 @@ class PDFService {
           row1.cells[5].style = cellStyle1;
           row.cells[6].value =
               item['signedOutHasInitialVerification'] == true ? 'Yes' : 'No';
-          print('line 272->: ${dayValues.length}');
+          debugPrint('line 272->: ${dayValues.length}');
         } else {
-          print(
+          debugPrint(
               'line 364: ${item['signedOutInitialMealsChanged']} ${item['signedOutInitialDecimalHoursChanged']} ');
           PdfGridRow row1 = grid.rows.add();
           // double mealHours =
@@ -382,7 +382,7 @@ class PDFService {
               item['signedOutHasInitialVerification'] == true ? 'Yes' : 'No';
         }
       } else if (i == 8) {
-        print('line 381: ${item['otHours']}');
+        debugPrint('line 381: ${item['otHours']}');
         if (item['otHours'] != null && item['otHours'] > 0.0) {
           row.cells[0].value = dayValues[i];
           row.cells[0].style = PdfGridCellStyle(
@@ -407,7 +407,7 @@ class PDFService {
         }
       }
     }
-    print('line 257 ${layoutResult.bounds.bottom}');
+    debugPrint('line 257 ${layoutResult.bounds.bottom}');
 //Draws the grid
     layoutResult = grid.draw(
         page: page,
@@ -421,7 +421,7 @@ class PDFService {
 //         page: page,
 //         bounds: Rect.fromLTWH(
 //             0, layoutResult.bounds.bottom + 5, ssize.width, ssize.height))!;
-     print('line 272');
+     debugPrint('line 272');
     font = PdfStandardFont(PdfFontFamily.helvetica, 10);
     const String footerContent0 =
         "Client Company and Consolidated Medical Staffing, each certify that hours stated are correct.  Client Company " +
@@ -434,7 +434,7 @@ class PDFService {
         bounds: Rect.fromLTWH(0, layoutResult.bounds.bottom + 10,
             page.getClientSize().width, page.getClientSize().height))!;
 
-    print(
+    debugPrint(
         'line 286 ${layoutResult.bounds.bottom} ${page.getClientSize().width} ${page.getClientSize().height}');
     font = PdfStandardFont(PdfFontFamily.helvetica, 10);
     str = "Supervisor Signature: ";
@@ -448,8 +448,8 @@ class PDFService {
         bounds: Rect.fromLTWH(
             0, layoutResult.bounds.bottom + 20, ssize.width, ssize.height))!;
     imageFileName = item['signatureFileName'];
-    print('line 299: ${layoutResult.bounds.bottom} $imageFileName');
-    print('line 308: $leftMargin $height');
+    debugPrint('line 299: ${layoutResult.bounds.bottom} $imageFileName');
+    debugPrint('line 308: $leftMargin $height');
     height += 5;
     leftMargin += 100;
     page.graphics.drawImage(PdfBitmap(await _readData2(imageFileName)),
@@ -466,18 +466,18 @@ class PDFService {
         page: page,
         bounds:
             Rect.fromLTWH(leftMargin, dateHeight, ssize.width, ssize.height))!;
-    print('line 328: $dateHeight, $height ${ssize.width} ${ssize.height}');
+    debugPrint('line 328: $dateHeight, $height ${ssize.width} ${ssize.height}');
 
     str = "Supervisor Name: ${item['supervisorName']}";
     height += 30;
     ssize = font.measureString(str);
-    print('line 328: $str $ssize $height');
+    debugPrint('line 328: $str $ssize $height');
     textElement = PdfTextElement(text: str, font: font);
     layoutResult = textElement.draw(
         page: page,
         bounds: Rect.fromLTWH(0, height, ssize.width, ssize.height))!;
     height += 30;
-    print('line 339 $height');
+    debugPrint('line 339 $height');
     font = PdfStandardFont(PdfFontFamily.helvetica, 10);
     const String footerContent1 = "Terms and Conditions: After interview Client Company may not directly or indirectly hire the CMS field employee for any " +
         "position for a period of 90 days for the position without CMS\'s written consent.  Client hereby agrees that if the " +
@@ -490,7 +490,7 @@ class PDFService {
         "above Terms and Conditions.";
 
     ssize = font.measureString(footerContent1);
-    print(
+    debugPrint(
         'line 353: $ssize ${ssize.width} ${ssize.height} ${page.getClientSize().width} ${page.getClientSize().height}');
     textElement = PdfTextElement(text: footerContent1, font: font);
     layoutResult = textElement.draw(
@@ -500,20 +500,20 @@ class PDFService {
     // height += ssize.height;
     height += ssize.height;
     height += 10;
-    print('line 359 height: $height');
+    debugPrint('line 359 height: $height');
     double keepHeight = height;
     // page = document.pages[1];
     // Create a reference with an initial file path and name
 
     if (item['signedOutHCPSignatureFileName'] == null) {
-      print('ine 363 hcpsignarute file name = null');
+      debugPrint('ine 363 hcpsignarute file name = null');
       throw Exception('No registrant signature file');
     }
     List<String> sfns = item['signedOutHCPSignatureFileName'].split('/');
     String sfn = sfns[sfns.length - 1];
     final hcpImageFileName = "images/" + sfn;
 
-    print('line 405: $hcpImageFileName');
+    debugPrint('line 405: $hcpImageFileName');
 
     try {
       height += 100;
@@ -528,9 +528,9 @@ class PDFService {
           bounds: Rect.fromLTWH(0, height, ssize.width, ssize.height))!;
 
       const noBytes = 1024 * 100;
-      print('line 503: $hcpImageFileName');
+      debugPrint('line 503: $hcpImageFileName');
       final signatureRef = storageRef.child(hcpImageFileName);
-      print('line 410: $signatureRef');
+      debugPrint('line 410: $signatureRef');
       final Uint8List? data = await signatureRef.getData(noBytes);
       signatureRef.putData(data!);
       // Data for "images/island.jpg" is returned, use this as needed.
@@ -555,7 +555,7 @@ class PDFService {
       keepHeight = height;
       font = PdfStandardFont(PdfFontFamily.helvetica, 10);
       String stx = "HCP Name: ${item['hcpName']}";
-      print('line 422: $stx');
+      debugPrint('line 422: $stx');
       leftMargin = 0;
       ssize = font.measureString(stx);
       textElement = PdfTextElement(text: stx, font: font);
@@ -643,19 +643,19 @@ class PDFService {
       layoutResult = textElement.draw(
           page: page,
           bounds: Rect.fromLTWH(0, height, ssize.width, ssize.height))!;
-      print('line 603 ${ssize.height} $documentNotesLength');
+      debugPrint('line 603 ${ssize.height} $documentNotesLength');
       height += ssize.height;
       keepHeight = height;
       documentNotesLength += ssize.height;
       if (keepHeight < page.getClientSize().height) {
         //Gets the second page of the document
-        print('line 605 ${keepHeight}');
-        print('line 607: ${document.pages.count}');
+        debugPrint('line 605 ${keepHeight}');
+        debugPrint('line 607: ${document.pages.count}');
         PdfPage page2 = document.pages[1];
-        print('line 624 ${page2}');
+        debugPrint('line 624 ${page2}');
 //Removes the second page from the document
         document.pages.removeAt(1);
-        print('line 627: ${document.pages.count}');
+        debugPrint('line 627: ${document.pages.count}');
       }
       List<int> bytes = await document.save();
 
@@ -665,7 +665,7 @@ class PDFService {
       String fileName =
           '$sdte${item['shiftCode']}${item['hcpId']}timesheet.pdf';
       //Save the file and launch/download.
-      print('line 588: $fileName');
+      debugPrint('line 588: $fileName');
       //put to cloud storate
 
       //end of put to file storage
@@ -676,7 +676,7 @@ class PDFService {
       int idx = pathAndFile.indexOf(':');
       pathAndFile = pathAndFile.substring(idx + 1).trim();
       pathAndFile = pathAndFile.substring(1);
-      print('line 595 $pathAndFile');
+      debugPrint('line 595 $pathAndFile');
 
       //here we should send to asm ******* ASM ******
 
@@ -691,7 +691,7 @@ class PDFService {
 
       return pathAndFile;
     } catch (e) {
-      print('line 374 error: $e');
+      debugPrint('line 374 error: $e');
       return '';
     }
   }
@@ -709,7 +709,7 @@ class PDFService {
   }
 
   Future<List<int>> _readData(String name) async {
-    print('line 384 readdata: $name');
+    debugPrint('line 384 readdata: $name');
     if (name.contains('logo') == true) {
       final ByteData data = await rootBundle.load('assets/$name');
       return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);

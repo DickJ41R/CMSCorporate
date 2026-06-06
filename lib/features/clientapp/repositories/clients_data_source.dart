@@ -12,8 +12,8 @@ class ClientClassDataSource extends DataGridSource {
   List<ClientClass>clients;
   List<ClientClass>paginatedClients;
   ClientClassDataSource(this._clientClassInfo,this.rowsPerPage,this.clients,this.paginatedClients) {
-    //  print('line 11: ${this._clientClassInfo}');
-    print('line 14: $rowsPerPage $clients $paginatedClients');
+    //  debugPrint('line 11: ${this._clientClassInfo}');
+    debugPrint('line 14: $rowsPerPage $clients $paginatedClients');
     paginatedClients = clients.getRange(0,rowsPerPage).toList(growable: false);
     //_addCityState();
     buildPaginatedDataGridRows();
@@ -21,10 +21,10 @@ class ClientClassDataSource extends DataGridSource {
   }
 
   // void _addCityState() {
-  //   print('line 17 addcitystate');
+  //   debugPrint('line 17 addcitystate');
   //   List<dynamic> ld =
   //       _clientClassInfo.map<dynamic>((e) => <dynamic>[e.clientId]).toList();
-  //   print('line 21: $ld');
+  //   debugPrint('line 21: $ld');
   //   for (int i = 0; i < ld.length; i++) {
   //     List<int> li = ld[i];
   //     int cli = li[0];
@@ -218,7 +218,7 @@ class ClientClassDataSource extends DataGridSource {
 
 }
 //   Stream<QuerySnapshot> getStream() {
-//     print('line 50 in getStream');
+//     debugPrint('line 50 in getStream');
 //     return FirebaseFirestore.instance
 //         .collection('Client')
 //         .orderBy('clientId', descending: false)
@@ -683,10 +683,10 @@ class ClientClassDataSource extends DataGridSource {
 //
 //   static List<ClientClass> convertToClientClasses(List<dynamic> listD) {
 //     try {
-//       print('line 473: ${listD.length}');
+//       debugPrint('line 473: ${listD.length}');
 //       for (int i = 0; i < listD.length; i++) {
 //         Map<String, dynamic> ld = listD[i];
-//         //  print('line 474: $ld');
+//         //  debugPrint('line 474: $ld');
 //         if (ld['disciplinesServiced'] == null ||
 //             ld['disciplinesServiced'] == "") {
 //           ld['disciplinesServiced'] = 'UNK';
@@ -710,14 +710,14 @@ class ClientClassDataSource extends DataGridSource {
 //             ld['state'],
 //             convertedBalance,
 //             convertedDollar);
-//         print(
+//         debugPrint(
 //             'line 499: ${wkc.clientId} ${wkc.statusId} ${wkc.clientName}${wkc.branchName} ${wkc.clientType} ${wkc.disciplinesServiced} ${wkc.city} ${wkc.state} ${wkc.balance} ${wkc.openCredit}');
 //         clientClasses.add(wkc);
 //       }
-//       print('line 299: ${clientClasses.length}');
+//       debugPrint('line 299: ${clientClasses.length}');
 //       return clientClasses;
 //     } catch (e) {
-//       print('line 231: ${e.toString()}');
+//       debugPrint('line 231: ${e.toString()}');
 //       throw Exception('line 230 error on converting work orders');
 //     }
 //   }

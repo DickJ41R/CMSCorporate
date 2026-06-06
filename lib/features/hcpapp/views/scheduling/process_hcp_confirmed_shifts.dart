@@ -33,11 +33,11 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
   bool haveAllItems = false;
 
   Future<List<Map<String, dynamic>>> _getAllApprovedShifts() async {
-    print('line 38 getAll approved shifts $hcpId');
+    debugPrint('line 38 getAll approved shifts $hcpId');
     try {
       List<Map<String, dynamic>>? lm = await clw.getWorkOrderCampaignsApproved(
           hcpId!, clientId!);
-      print('line 41 in get all confirmed');
+      debugPrint('line 41 in get all confirmed');
       if (lm.isEmpty) {
         return [];
       }
@@ -50,19 +50,19 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
       }
       return lm;
     } catch (e) {
-      print('line 49 error in getapproved shifts: $e');
+      debugPrint('line 49 error in getapproved shifts: $e');
       throw Exception(e.toString());
     }
   }
 
   void getHCPUserX() async {
-    print('line 44 in get usrx');
+    debugPrint('line 44 in get usrx');
     await getHCPUser();
   }
 
   Future<bool> _showDialog(
       BuildContext context, String title, String? description) async {
-    print('line 67 showdialog');
+    debugPrint('line 67 showdialog');
     // Future.delayed(Duration(seconds: 3), () {
     //   Navigator.of(context).pop(); // Close the dialog
     // });
@@ -124,7 +124,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
 
   void onButtonPressed(
       Map<String, dynamic> item, int el, BuildContext ctx) async {
-    print(
+    debugPrint(
         'line 41 in onButtonPressed: ${item['id']} ${item['shiftDate']} ${item['shiftCode']}');
     String statusText = "Confirmed";
     bool shiftConfirmed = true;
@@ -152,7 +152,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
       };
       String result = await clw.updateClientWorkOrderCampaignConfirmed(
           item, data, item['clientWorkOrderUuid'], ctx);
-      print('line 158: $result');
+      debugPrint('line 158: $result');
       if (result.indexOf("ERROR") != -1) {
         await _showDialog(ctx, "Confirmation Error", result);
       } else {
@@ -201,7 +201,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
       //    Navigator.of(context).pop();
       //  });
     } catch (e) {
-      print('line 179 error $e');
+      debugPrint('line 179 error $e');
       await _showDialog(ctx, "Confirmation Error",
           'There was an error confirming this employee.  Contact CMS');
       final navigator =
@@ -210,19 +210,19 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 50 gethcpuser available shfts: $hcpServices');
+    debugPrint('line 50 gethcpuser available shfts: $hcpServices');
     try {
       Map<String, dynamic>? lm = await hcpServices.getHCPUser(hcpId!);
 
       if (lm.isEmpty) {
-        print('line 54 lm i septy');
+        debugPrint('line 54 lm i septy');
         return lm;
       }
-      print('line 57 in available shifts gethcpuser $lm');
+      debugPrint('line 57 in available shifts gethcpuser $lm');
       fullName = lm['legalName'];
       return lm;
     } catch (e) {
-      print('line 63 error: $e');
+      debugPrint('line 63 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -241,7 +241,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
 
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 63 didchange');
+    debugPrint('line 63 didchange');
 
     getHCPUser();
   }
@@ -260,7 +260,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
   double smallFontSize = 14;
   @override
   Widget build(BuildContext context) {
-    print('line 40 in show confirmed shifts');
+    debugPrint('line 40 in show confirmed shifts');
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
     double? h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
@@ -341,7 +341,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
               );
             } else {
               List<dynamic> data = snapshot.data![0];
-              print('line 325 ${data.length}');
+              debugPrint('line 325 ${data.length}');
               if (data.length == 0) {
                 return Center(
                   child: Container(
@@ -435,7 +435,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
 
     DateTime dt = DateTime.fromMillisecondsSinceEpoch(tms + 18000);
     String sdt = formatter.format(dt);
-    print('line 186: $sdt');
+    debugPrint('line 186: $sdt');
     return sdt;
   }
 
@@ -462,7 +462,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
   }
 
   String getOvertimeString(bool? value) {
-    print('line 450: $value');
+    debugPrint('line 450: $value');
     String str = 'No';
     if (value == null) {
       return str;
@@ -470,7 +470,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     if (value == true) {
       str = 'Yes';
     }
-    print('line 457: $str');
+    debugPrint('line 457: $str');
     return str;
   }
 
@@ -480,7 +480,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     }
     double val = double.parse(value.toString());
     String str = val.toStringAsFixed(2);
-    print('line 466: $str');
+    debugPrint('line 466: $str');
     return str;
   }
 
@@ -507,7 +507,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.sizeOf(context).width;
-    // print('line 98 in tile building');
+    // debugPrint('line 98 in tile building');
     // String hoursString = (item.decimalHours - (item.meals/60)).toStringAsFixed(2);
     // hoursString = '7.50';
     return Container(

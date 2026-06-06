@@ -29,7 +29,7 @@ class _ProcessHCPProfileAddressDataState
           await hcpServices.getHCPAddresses(hcpId!);
       return lm!;
     } catch (e) {
-      print('line 69 _getClientInvoice error: $e');
+      debugPrint('line 69 _getClientInvoice error: $e');
       rethrow;
       //rethrow
       //throw Exception('Error getting client invoices: $e');
@@ -41,7 +41,7 @@ class _ProcessHCPProfileAddressDataState
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 38 gethcpuser address: $hcpServices');
+    debugPrint('line 38 gethcpuser address: $hcpServices');
     Map<String, dynamic> lm = await hcpServices.getHCPUser(hcpId!);
     if (lm.isEmpty) {
       return lm;
@@ -62,7 +62,7 @@ class _ProcessHCPProfileAddressDataState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 51 ADDRESS  didchange');
+    debugPrint('line 51 ADDRESS  didchange');
     getHCPUserX();
   }
 
@@ -86,7 +86,7 @@ class _ProcessHCPProfileAddressDataState
     fontSize = 16;
     fontSize /= h;
     //   double screenHeight = MediaQuery.sizeOf(context).height;
-    print('line 17 screen width: $screenWidth');
+    debugPrint('line 17 screen width: $screenWidth');
     return Scaffold(
       backgroundColor: color1,
       appBar: AppBar(
@@ -122,7 +122,7 @@ class _ProcessHCPProfileAddressDataState
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
-              //    print('line 321 ${snapshot.data!}');
+              //    debugPrint('line 321 ${snapshot.data!}');
               List<dynamic> listH = snapshot.data![0];
               return ListView.builder(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -384,7 +384,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
 
     _ratio = widget.ratio;
     _ratio = .25;
-    print('line 99: $_ratio');
+    debugPrint('line 99: $_ratio');
   }
 
   @override

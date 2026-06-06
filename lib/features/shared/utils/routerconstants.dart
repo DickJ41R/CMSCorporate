@@ -53,6 +53,9 @@ const String hcpProfileSpecialRateData = '/hcpSpecialRateProfilePage';
 const String hcpProcessAvailableShifts = '/hcpAvailableShiftsSchedulingPage';
 const String hcpProcessCancelShifts = '/hcpCancelShiftsSchedulingPage';
 const String hcpPaymentData = '/hcpPaymentRecordsSchedulingPage';
+const String hcpPaymentDetailsData = '/hcpPaymentDetailsSchedulingPage';
+const String showPaymentPDF = '/showPaymentPDF';
+
 const String hcpScheduledView = '/hcpScheduleViewSchedulingPage';
 const String hcpConfirmedShifts = '/hcpConfirmedShiftsSchedulingPage';
 const String hcpListDNUs = '/hcpDNUListSchedulingPage';

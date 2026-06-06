@@ -45,16 +45,16 @@ class _ProcessFunctionsAppState extends State<ProcessFunctionsApp> {
     }
     try {
       //  dynamic result = await loadPdfFileToStafferLink('/Users/richardrovinelli/Downloads/logo.png', 903276);
-      //    print('line 135: $result');
+      //    debugPrint('line 135: $result');
       return;
     } catch (e) {
-      print('line 146 $e');
+      debugPrint('line 146 $e');
     }
     return;
   }
 
   Future<List<int>> _readData(String name, int type) async {
-    print('line 384 readdata: $name');
+    debugPrint('line 384 readdata: $name');
     if (name.contains('logo') == true) {
       final ByteData data = await rootBundle.load('assets/$name');
       return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
@@ -89,13 +89,13 @@ class _ProcessFunctionsAppState extends State<ProcessFunctionsApp> {
 
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
-    print('line 39: ${hcpId!} $clw');
+    debugPrint('line 39: ${hcpId!} $clw');
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 63 didchange');
+    debugPrint('line 63 didchange');
   }
 
   @override
@@ -122,7 +122,7 @@ class _ProcessFunctionsAppState extends State<ProcessFunctionsApp> {
     fontSize /= h;
     double smallFontSize = 14;
     smallFontSize /= h;
-    print('line 40 icall a function');
+    debugPrint('line 40 icall a function');
     return Scaffold(
       backgroundColor: color1,
       appBar: AppBar(
@@ -164,7 +164,7 @@ class _ProcessFunctionsAppState extends State<ProcessFunctionsApp> {
             onPressed: () async {
               // int iv = await callAFunction (context);
               loadPdf();
-              print('line 319');
+              debugPrint('line 319');
             },
             child: Container(
                 height: 32,

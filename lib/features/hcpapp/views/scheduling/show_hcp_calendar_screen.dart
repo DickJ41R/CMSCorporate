@@ -34,7 +34,7 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
   HCPServices hcpServices = HCPServices();
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    print('line 28 onselection chANGED');
+    debugPrint('line 28 onselection chANGED');
 
     /// The argument value will return the changed date as [DateTime] when the
     /// widget [SfDateRangeSelectionMode] set as single.
@@ -48,7 +48,7 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
     /// The argument value will return the changed ranges as
     /// [List<PickerDateRange] when the widget [SfDateRangeSelectionMode] set as
     /// multi range.
-    print('line 59: $args ${args.value}');
+    debugPrint('line 59: $args ${args.value}');
     listOfTempDates = [];
     DateTime rangeEndDate;
 
@@ -61,18 +61,18 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
         rangeEndDate = args.value.startDate;
       }
       listOfTempDates.add(rangeEndDate);
-      print('line 42: $listOfTempDates');
+      debugPrint('line 42: $listOfTempDates');
     } else if (args.value is DateTime) {
       final DateTime selectedDate = args.value;
       listOfTempDates.add(selectedDate);
-      print('line 45: $listOfTempDates');
+      debugPrint('line 45: $listOfTempDates');
     } else if (args.value is List<DateTime>) {
       final List<DateTime> selectedDates = args.value;
       listOfTempDates = selectedDates;
-      print('line 47: $listOfTempDates');
+      debugPrint('line 47: $listOfTempDates');
     } else {
       final List<PickerDateRange> selectedRanges = args.value;
-      print('line 49: $selectedRanges');
+      debugPrint('line 49: $selectedRanges');
       for (int i = 0; i < selectedRanges.length; i++) {
         if (selectedRanges[i].startDate != null) {
           listOfTempDates.add(selectedRanges[i].startDate!);
@@ -82,12 +82,12 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
         }
       }
     }
-    print('line 55: $listOfTempDates');
+    debugPrint('line 55: $listOfTempDates');
   }
 
   Future<String> _showDialog(
       BuildContext context, String title, String? description) async {
-    print('line `12 showdialog');
+    debugPrint('line `12 showdialog');
     // Future.delayed(Duration(seconds: 3), () {
     //   Navigator.of(context).pop(); // Close the dialog
     // });
@@ -122,52 +122,52 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
   }
 
   void _onSubmit(dynamic obj) {
-    print('line 115: $obj');
+    debugPrint('line 115: $obj');
 
     listOfTempDates = [];
     if (obj is PickerDateRange) {
-      print('line 118  $obj');
+      debugPrint('line 118  $obj');
       // final DateTime rangeStartDate = obj.startDate!;
       //  final DateTime rangeEndDate = obj.endDate!;
-      //     print('line 49: $selectedRanges');
+      //     debugPrint('line 49: $selectedRanges');
       DateTime? sdt = obj.startDate;
       DateTime? edt = obj.endDate;
       listOfTempDates.add(sdt!);
       DateTime v = sdt;
-      //    print('line 97: $v $sdt $edt');
+      //    debugPrint('line 97: $v $sdt $edt');
       if (edt != null) {
         while (v != edt) {
           v = v.add(Duration(days: 1));
-          print('line 131: $v');
+          debugPrint('line 131: $v');
           listOfTempDates.add(v);
         }
       }
-      //     print('line 42: $listOfTempDates');
+      //     debugPrint('line 42: $listOfTempDates');
     } else if (obj is DateTime) {
-      print('line 137 ');
+      debugPrint('line 137 ');
       final DateTime selectedDate = obj;
       listOfTempDates.add(selectedDate);
-      //    print('line 45: $listOfTempDates');
+      //    debugPrint('line 45: $listOfTempDates');
     } else if (obj is List<DateTime>) {
-      print('line 142 ');
+      debugPrint('line 142 ');
       final List<DateTime> selectedDates = obj;
       listOfTempDates = selectedDates;
-      //    print('line 47: $listOfTempDates');
+      //    debugPrint('line 47: $listOfTempDates');
     } else {
-      print('line 147 ');
+      debugPrint('line 147 ');
     }
-    print('line 159: $listOfTempDates');
+    debugPrint('line 159: $listOfTempDates');
 
     //   bool isMultiple = false;
     // dynamic fromDate;
     //  dynamic toDate;
     for (int i = 0; i < listOfTempDates.length; i++) {
-      //    print('line 112');
+      //    debugPrint('line 112');
       DateTime dte = listOfTempDates[i];
       Map<String, dynamic> cro = _getColor(dte);
-      //     print('line 115');
+      //     debugPrint('line 115');
       String shortDate = getShortStringDate(dte);
-      //     print('line 116 $cro $shortDate');
+      //     debugPrint('line 116 $cro $shortDate');
 
       // if (_selectedValue != 1) {
       //   isMultiple = true;
@@ -205,7 +205,7 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
       }
     }
 
-    print('line 125: $listOfDates');
+    debugPrint('line 125: $listOfDates');
 
     //   _localRef.read(appServicesNotifierProvider.notifier).updateListOfDates(listOfTempDates);
     //   _localRef.read(calendarServicesNotifierProvider.notifier).updateListOfDates(listOfTempDates);
@@ -217,14 +217,14 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
 
   bool isWeekEnd(DateTime dte) {
     bool yesNo = false;
-    //  print('line 372: $dte');
+    //  debugPrint('line 372: $dte');
     DateFormat formatter = DateFormat('MM/dd/YYYY');
     String stringShiftDate = formatter.format(dte);
     DateTime shiftDate = DateTime.parse(stringShiftDate);
     int saturday = DateTime.saturday;
     int sunday = DateTime.sunday;
     int shiftDay = shiftDate.weekday;
-    //  print('line 379: $saturday $sunday $shiftDay');
+    //  debugPrint('line 379: $saturday $sunday $shiftDay');
     if (shiftDay == saturday || shiftDay == sunday) {
       yesNo = true;
     }
@@ -236,7 +236,7 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
     //   DateFormat formatterx = DateFormat('MM/dd/YYYY');
     // String shortDate = formatterx.format(shiftDate);
     //DateTime ssdte = DateTime.parse(shortDate);
-    //   print('line 394: ${widget.listOfHolidays}');
+    //   debugPrint('line 394: ${widget.listOfHolidays}');
 
     DateTime cte = DateTime.now();
     String sYear = cte.year.toString();
@@ -245,7 +245,7 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
     //   Map<String,dynamic>? foundMap;
     for (int i = 0; i < widget.listOfHolidays.length; i++) {
       Map<String, dynamic> mp = widget.listOfHolidays[i];
-      //    print('line 415: $mp');
+      //    debugPrint('line 415: $mp');
       if (mp['type'] == 'specific') {
         String shortDate = mp['holiDate'];
         shortDate = sYear + shortDate.substring(4, 10);
@@ -270,7 +270,7 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
   }
 
   Map<String, dynamic> _getColor(DateTime dte) {
-//    print('line 173 get color $dte');
+//    debugPrint('line 173 get color $dte');
     bool isWeekendDay = isWeekEnd(dte);
     Color cr = Colors.black87;
     if (isWeekendDay == true) {
@@ -292,7 +292,7 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
   }
 
   String getShortStringDate(DateTime date) {
-    //  print('line 189: in getshortsringdates');
+    //  debugPrint('line 189: in getshortsringdates');
 
     String dts = date.toString();
     List<String> sda = dts.split(' ');
@@ -301,24 +301,24 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
   }
 
   void getHCPUserX() async {
-    print('line 44 in get usrx');
+    debugPrint('line 44 in get usrx');
     await getHCPUser();
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 50 gethcpuser available shfts: $hcpServices');
+    debugPrint('line 50 gethcpuser available shfts: $hcpServices');
     try {
       Map<String, dynamic>? lm = await hcpServices.getHCPUser(hcpId!);
 
       if (lm.isEmpty) {
-        print('line 54 lm i septy');
+        debugPrint('line 54 lm i septy');
         return lm;
       }
-      print('line 57 in available shifts gethcpuser $lm');
+      debugPrint('line 57 in available shifts gethcpuser $lm');
       fullName = lm['legalName'];
       return lm;
     } catch (e) {
-      print('line 63 error: $e');
+      debugPrint('line 63 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -332,13 +332,13 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
     gEmail = currentHCPMap!['email'];
     hcpId =  currentHCPMap!['hcpId'];
 
-    print('check');
+    debugPrint('check');
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 63 didchange');
+    debugPrint('line 63 didchange');
 
     getHCPUserX();
   }
@@ -350,7 +350,7 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
   Widget build(BuildContext context) {
     //  var _localRef = ref;
     double width = MediaQuery.of(context).size.width;
-    //  print('line 54: $width');
+    //  debugPrint('line 54: $width');
     return Scaffold(
       appBar: AppBar(
         title: Text('Date Selection Calendar',
@@ -420,7 +420,7 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
                               _selectedValue, // Use _selectedValue to track the selected option
                           onChanged: (value) {
                             setState(() {
-                              print('line 306 single: $value');
+                              debugPrint('line 306 single: $value');
                               _selectionMode =
                                   DateRangePickerSelectionMode.single;
                               _selectedValue =
@@ -440,7 +440,7 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
                               _selectedValue, // Use _selectedValue to track the selected option
                           onChanged: (value) {
                             setState(() {
-                              print('line 324 multiple: $value');
+                              debugPrint('line 324 multiple: $value');
                               _selectionMode =
                                   DateRangePickerSelectionMode.multiple;
                               _selectedValue =
@@ -460,7 +460,7 @@ class _ShowHCPCalendarScreenState extends State<ShowHCPCalendarScreen> {
                               _selectedValue, // Use _selectedValue to track the selected option
                           onChanged: (value) {
                             setState(() {
-                              print('line 339 range: $value');
+                              debugPrint('line 339 range: $value');
                               _selectionMode =
                                   DateRangePickerSelectionMode.range;
                               _selectedValue =

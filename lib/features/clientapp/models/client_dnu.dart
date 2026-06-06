@@ -1,6 +1,6 @@
 import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:flutter/foundation.dart';
 DropDownCodes dropDownCodes = DropDownCodes();
 
 class ClientDNU {
@@ -59,7 +59,7 @@ class ClientDNU {
     String dms;
     List<dynamic> lutc = [];
     imp.forEach((k, v) {
-      print('line 13 getdnumodel: $k $v');
+      debugPrint('line 13 getdnumodel: $k $v');
       switch (k) {
         case 'DnuID':
           {
@@ -190,7 +190,7 @@ class ClientDNU {
           break;
       }
     });
-    print('line 802 get clident data model exiting...');
+    debugPrint('line 802 get clident data model exiting...');
     dataElements['ownerId'] = imp['ownerId'];
     return dataElements;
   }

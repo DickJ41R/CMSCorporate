@@ -14,7 +14,7 @@ class ShiftWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // obviously this can be any widget you want
-    print('line 16: $model');
+    debugPrint('line 16: $model');
     return Container(
       padding:EdgeInsets.fromLTRB(3, 0, 0, 0),
       height:92,

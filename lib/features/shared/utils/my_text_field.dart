@@ -56,7 +56,7 @@ class MyTextField extends StatelessWidget {
             color: Theme.of(context).primaryColorDark,
           ),
           onPressed: () {
-            print('line 51: $passwordVisible');
+            debugPrint('line 51: $passwordVisible');
               if (passwordVisibleLate == true) {
                 passwordVisibleLate = false;
               } else {
@@ -71,7 +71,7 @@ class MyTextField extends StatelessWidget {
         color: Colors.black
       ),
       validator: (String? value) {
-        print('validataor called');
+        debugPrint('validataor called');
           List<dynamic>rls = inRules;
           switch (rls[0]) {
             case 0: {
@@ -83,7 +83,7 @@ class MyTextField extends StatelessWidget {
               value = 'Enter a valid email';
             }
             }
-            print('lin 53 in text form field: $value');
+            debugPrint('lin 53 in text form field: $value');
               break;
             case 1:
               {
@@ -143,7 +143,7 @@ class MyTextField extends StatelessWidget {
                 if (value == null || value == '') {
                   value = 'Enter valid confirming password.';
                 } else {
-                  print('line 117: ${textEditingController.text},'
+                  debugPrint('line 117: ${textEditingController.text},'
                       ' ${ textEditingControllers[index - 1].text}');
                   if (textEditingController.text !=
                       textEditingControllers[index - 1].text) {
@@ -157,7 +157,7 @@ class MyTextField extends StatelessWidget {
             default: {}
               break;
           }
-      print('line 62 VALIDATOR: $value');
+      debugPrint('line 62 VALIDATOR: $value');
       return value;
     },
     // onChanged: (text) {

@@ -88,13 +88,13 @@ class _HCProfessionalStreamScreenState
       listOfHCPs = hcpm!;
       final rowsCount = listOfHCPs.length as double;
       pageCount = (rowsCount / _rowsPerPage).floorToDouble();
-      print('line 91: $rowCount $pageCount $_rowsPerPage');
+      debugPrint('line 91: $rowCount $pageCount $_rowsPerPage');
       if (pageCount == 0) {
         pageCount =1;
       }
       return listOfHCPs;
     } catch (e) {
-      print('line 123: ${e.toString()}');
+      debugPrint('line 123: ${e.toString()}');
       throw Exception('line 124 Error getting client data');
     }
   }
@@ -103,32 +103,32 @@ class _HCProfessionalStreamScreenState
   void initState() {
     super.initState();
     arguments = widget.args;
-    print('line 272: $arguments!');
+    debugPrint('line 272: $arguments!');
     fontSize = 18;
     // clientClasses = getClientData();
 
     //  getDataFromDatabase();
-//    print('line 250 ${clientClasses.length}');
+//    debugPrint('line 250 ${clientClasses.length}');
 //    clientClassDataSource =
 //        ClientClassDataSource(clientClassCollection: clientClasses);
-//    print('line 252: ${clientClassDataSource}');
+//    debugPrint('line 252: ${clientClassDataSource}');
   }
 
   double pageCount = 0.0;
   double _rowsPerPage = 12;
   void _updatePageCount() {
-    print(
+    debugPrint(
         'line 116 updatepagecount: ${hcpClassDataSource.filterConditions.isNotEmpty}');
 
     final rowsCount = hcpClassDataSource.filterConditions.isNotEmpty
         ? hcpClassDataSource.effectiveRows.length
         : listOfHCPs.length;
-    print('line 121: $rowsCount');
+    debugPrint('line 121: $rowsCount');
     if (rowsCount > 0) {
       pageCount = (rowsCount / _rowsPerPage).floorToDouble();
       //  pageCount = (rowsCount / _rowsPerPage).ceilToDouble();
     }
-    print('line 122: $rowsCount $pageCount');
+    debugPrint('line 122: $rowsCount $pageCount');
   }
 
   static const double dataPagerHeight = 60;
@@ -142,17 +142,17 @@ class _HCProfessionalStreamScreenState
   //   if (len % ppr > 0) {
   //     ac = 1.0;
   //   }
-  //   print('line $dlen $ppr $ac');
+  //   debugPrint('line $dlen $ppr $ac');
   //   double ppa = (dlen ~/ dppr) as double;
   //   ppa += ac;
-  //   print('line 123: $ppa');
+  //   debugPrint('line 123: $ppa');
   //
   //   return ppa;
   // }
   TextEditingController fullNameController = TextEditingController();
 
   void _applyFilter() {
-    print('line 151 applyfileter');
+    debugPrint('line 151 applyfileter');
     final nameFilter = fullNameController.text.trim().toLowerCase();
     final List<HCPClass> filtered = hcpClasses.where((e) {
       bool nameMatch =
@@ -175,7 +175,7 @@ class _HCProfessionalStreamScreenState
     if (h! < 1.0) {
       h = 1.0;
     }
-    print('line 87: $screenHeight $screenWidth');
+    debugPrint('line 87: $screenHeight $screenWidth');
     return Scaffold(
       appBar: AppBar(
         title: Text('Select HCP From List Screen',
@@ -189,7 +189,7 @@ class _HCProfessionalStreamScreenState
           icon: const Icon(Icons.arrow_back, size: 20),
           onPressed: () {
             // shiftClasses = shiftClassDataSource.returnShiftClasses();
-            // print('line 99: ${shiftClasses[0].shiftCode} ${shiftClasses[0].shiftCount}');
+            // debugPrint('line 99: ${shiftClasses[0].shiftCode} ${shiftClasses[0].shiftCount}');
             Navigator.of(context).pop(null);
           },
         ),
@@ -203,7 +203,7 @@ class _HCProfessionalStreamScreenState
       body: FutureBuilder<List<dynamic>>(
           future: Future.wait([_getAllHCPsData()]),
           builder: (context, snapshot) {
-            // print(
+            // debugPrint(
             //     'line 211: ${snapshot.hasError} ${snapshot.hasData} ${ConnectionState} ');
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -249,7 +249,7 @@ class _HCProfessionalStreamScreenState
               );
             } else {
               List<dynamic> data = snapshot.data![0];
-              print('line 292 ${data.length}');
+              debugPrint('line 292 ${data.length}');
               if (data.length == 0) {
                 return Center(
                   child: Container(
@@ -268,13 +268,13 @@ class _HCProfessionalStreamScreenState
                 );
               } else {
                 List<Map<String, dynamic>> listH = snapshot.data![0];
-                //    print('line 312: ${listH.length} ${listH[0]}');
+                //    debugPrint('line 312: ${listH.length} ${listH[0]}');
                 HCPClassData.clear();
                 listH.forEach((doc) {
-                  //   print('line 307: ${doc}');
+                  //   debugPrint('line 307: ${doc}');
                   hcpClassData.add(HCPClass.fromJson(doc));
                 });
-                print('line 205: check');
+                debugPrint('line 205: check');
                 hcpClassDataSource =
                     HCPClassDataSource(hcpClassCollection: hcpClassData);
                 return Column(
@@ -285,7 +285,7 @@ class _HCProfessionalStreamScreenState
                       child: SfDataGrid(
                         allowFiltering: false,
                         onFilterChanged: (details) {
-                          print('line 283');
+                          debugPrint('line 283');
                           _applyFilter();
                         },
                         rowsPerPage: _rowsPerPage.toInt(),
@@ -479,22 +479,22 @@ class _HCProfessionalStreamScreenState
                                       )))),
                         ],
                         onSelectionChanged: (addedRows, removedRows) async {
-                          print(
+                          debugPrint(
                               'line 343: ${addedRows.length} ${addedRows[0].getCells()}');
                           final List<DataGridCell> cells =
                               addedRows[0].getCells();
                           // for (int q = 0; q < cells.length; q++) {
-                          //   print('line 483: $q ${cells[q].columnName}');
+                          //   debugPrint('line 483: $q ${cells[q].columnName}');
                           // }
                           final int colIndex = cells
                               .indexWhere((cell) => cell.columnName == 'ID');
-                          print('line 347: $colIndex');
+                          debugPrint('line 347: $colIndex');
                           int currentId = -1;
                           if (colIndex != -1) {
                             // Get and increment the current ID value.
                             currentId =
                                 int.parse(cells[colIndex].value.toString());
-                            print('line 351: $currentId');
+                            debugPrint('line 351: $currentId');
                           }
                           final int colIndex2 = cells.indexWhere(
                               (cell) => cell.columnName == 'HCP Name');
@@ -502,7 +502,7 @@ class _HCProfessionalStreamScreenState
                           if (colIndex2 != -1) {
                             // Get and increment the current ID value.
                             hcpName = cells[colIndex2].value;
-                            print('line 358 $currentId $hcpName');
+                            debugPrint('line 358 $currentId $hcpName');
                           }
                           for (int i = 0; i < listOfHCPs.length; i++) {
                             Map<String, dynamic> lc = listOfHCPs[i];
@@ -518,7 +518,7 @@ class _HCProfessionalStreamScreenState
                           authServices.targetType = "HCProfessional";
                           Map<String, dynamic>? smp = await hcpServices
                               .getASingleHCPUser(authServices.hcpMap!['hcpId']);
-                          print('line 356: $smp');
+                          debugPrint('line 356: $smp');
                           if (smp!.containsKey('hcpId') == true) {
                             authServices.hcpUserMap = smp;
                           }

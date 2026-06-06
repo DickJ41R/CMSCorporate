@@ -60,10 +60,10 @@ class ClientUserServices {
 //         }
 //       });
 //
-//       print('line 48: in get clientuser $email $clientUser');
+//       debugPrint('line 48: in get clientuser $email $clientUser');
 //       return clientUser;
 //     } catch (e) {
-//       print('line 57 error getting client user: ${e.toString()}');
+//       debugPrint('line 57 error getting client user: ${e.toString()}');
 //       throw Exception(e.toString());
 //     }
 //   }
@@ -87,7 +87,7 @@ class ClientUserServices {
 //     ];
 //     List<int> disciplineIds = [558, 559, 560, 561, 567, 614, 643, 659];
 //
-//     print('line 42 clusrnotifction');
+//     debugPrint('line 42 clusrnotifction');
 //     List<dynamic> clientList = [];
 //     List<dynamic> hcpClientList = [];
 //     List<int> lBranchCntIds = [];
@@ -106,15 +106,15 @@ class ClientUserServices {
 //         }
 //       });
 //     } catch (e) {
-//       print('line 57 error getting client user: ${e.toString()}');
+//       debugPrint('line 57 error getting client user: ${e.toString()}');
 //       throw Exception(e.toString());
 //     }
 //     int len = localList.length;
-//     print('line 61: $len');
+//     debugPrint('line 61: $len');
 //     List<int> rnds = [];
 //     clientList = localList;
 //     clientList.sort((a, b) => a['clientId'].compareTo(b['clientId']));
-//     print('line 45 gen list: $rnds ${clientList.length}');
+//     debugPrint('line 45 gen list: $rnds ${clientList.length}');
 //     //now hcps
 //     List<int> dp = [];
 //     List<dynamic> ep = [];
@@ -139,24 +139,24 @@ class ClientUserServices {
 //         }
 //       });
 //     } catch (e) {
-//       print('line 57 error getting client user: ${e.toString()}');
+//       debugPrint('line 57 error getting client user: ${e.toString()}');
 //       throw Exception(e.toString());
 //     }
-//     print('line 119: ${hcpLocalList.length}');
+//     debugPrint('line 119: ${hcpLocalList.length}');
 //     List<int> branchCnt = [];
 //     for (int i = 0; i < branchIds.length; i++) {
 //       branchCnt.add(0);
 //     }
 //     // if (branchIds[0] != 0) {
-//     print('line 131 not 0');
+//     debugPrint('line 131 not 0');
 //     for (int i = 0; i < hcpLocalList.length; i++) {
 //       dynamic cd = hcpLocalList[i];
 //       int idx = listOfBranchIds.indexOf(cd['branchId']);
 //       ;
 //       int idy = disciplineIds.indexOf(cd['disciplineId']);
-//       //   print('line 136: $idx $idy');
+//       //   debugPrint('line 136: $idx $idy');
 //       if (i < 10) {
-//         print('line 145: $idx, $idy');
+//         debugPrint('line 145: $idx, $idy');
 //       }
 //       if (idx != -1 && idy != -1) {
 //         dp = disciplineCnts[idy];
@@ -173,16 +173,16 @@ class ClientUserServices {
 //       }
 //     }
 //     hcpLocalList = hcpClientList;
-//     print('line 146: ${hcpLocalList.length}');
-//     print('line 172');
-//     print('line 157: ${hcpClientList.length} ${lBranchCntIds}');
-//     print('line 166: ${disciplineCnts}');
+//     debugPrint('line 146: ${hcpLocalList.length}');
+//     debugPrint('line 172');
+//     debugPrint('line 157: ${hcpClientList.length} ${lBranchCntIds}');
+//     debugPrint('line 166: ${disciplineCnts}');
 //     dynamic obj = {"clients": clientList, "hcps": hcpFinds};
 //     return obj;
 //   }
 //
 //   Future<dynamic> getCurrentWorkingSet(clientUserId) async {
-//     print('line 218 getcurrent workingset');
+//     debugPrint('line 218 getcurrent workingset');
 //     Map<String, dynamic>? workingSet;
 //     try {
 //       await FirebaseFirestore.instance
@@ -196,7 +196,7 @@ class ClientUserServices {
 //         }
 //       });
 //     } catch (e) {
-//       print('line 57 error getting client user: ${e.toString()}');
+//       debugPrint('line 57 error getting client user: ${e.toString()}');
 //       throw Exception(e.toString());
 //     }
 //
@@ -205,8 +205,8 @@ class ClientUserServices {
 //
 //   Future<dynamic> saveWorkingSet(dynamic clientUser, String selectedValue,
 //       List<String> selectedItems) async {
-//     print('line 219 saveworkigset: ${clientUser}');
-//     print('line 220: ${clientUser['clientUserId']}');
+//     debugPrint('line 219 saveworkigset: ${clientUser}');
+//     debugPrint('line 220: ${clientUser['clientUserId']}');
 //     try {
 //       int i1 = -1;
 //       int i2 = -1;
@@ -214,23 +214,23 @@ class ClientUserServices {
 //       List<dynamic> hcpData = [];
 //       for (int i = 0; i < selectedItems.length; i++) {
 //         String str = selectedItems[i];
-//         print('line 233: $str');
+//         debugPrint('line 233: $str');
 //         i1 = str.indexOf('-');
 //         String sHcpId = str.substring(0, i1).trim();
-//         print('line 246: $i1 $sHcpId');
+//         debugPrint('line 246: $i1 $sHcpId');
 //         int hcpId = int.parse(sHcpId);
 //         i2 = i1 + 1;
 //         i1 = str.indexOf('-', i2);
 //         String email = str.substring(i2, i1).trim();
-//         print('line 240: $i1 $i2 $email');
+//         debugPrint('line 240: $i1 $i2 $email');
 //         i2 = i1 + 1;
 //         i1 = str.indexOf('-', i2);
 //         String pw = str.substring(i2, i1).trim();
-//         print('line 246:$i1 $i2 $pw');
+//         debugPrint('line 246:$i1 $i2 $pw');
 //         i2 = i1 + 1;
 //         i1 = str.indexOf('-', i2);
 //         String sBranchId = str.substring(i2, i1).trim();
-//         print('line 249: $i1 $i2 $sBranchId');
+//         debugPrint('line 249: $i1 $i2 $sBranchId');
 //         int branchId = int.parse(sBranchId);
 //         i2 = i1 + 1;
 //         i1 = str.indexOf('-', i2);
@@ -238,7 +238,7 @@ class ClientUserServices {
 //           i1 = str.length;
 //         }
 //         String disciplineCode = str.substring(i2, i1).trim();
-//         print('line 257: $i1 $i2 $disciplineCode');
+//         debugPrint('line 257: $i1 $i2 $disciplineCode');
 //         dynamic obj = {
 //           "hcpId": hcpId,
 //           "email": email,
@@ -248,9 +248,9 @@ class ClientUserServices {
 //         };
 //         hcpData.add(obj);
 //       }
-//       print('line 259: ${hcpData.length}');
+//       debugPrint('line 259: ${hcpData.length}');
 //       String stc = selectedValue;
-//       print('line 261: $stc');
+//       debugPrint('line 261: $stc');
 //       i1 = stc.indexOf('-');
 //       String sClientId = stc.substring(0, i1).trim();
 //       int clientId = int.parse(sClientId);
@@ -274,7 +274,7 @@ class ClientUserServices {
 //         "clientData": clientData,
 //         "hcpData": hcpData
 //       };
-//       print('line 281 check');
+//       debugPrint('line 281 check');
 //       await FirebaseFirestore.instance
 //           .collection("TestingWorkingSet")
 //           .where('clientUserId', isEqualTo: clientUserId)
@@ -306,13 +306,13 @@ class ClientUserServices {
 //           }
 //         });
 //       } catch (e) {
-//         print('line 57 error getting clientr: ${e.toString()}');
+//         debugPrint('line 57 error getting clientr: ${e.toString()}');
 //         throw Exception(e.toString());
 //       }
-//       print('line 300: $client');
+//       debugPrint('line 300: $client');
 //       return client;
 //     } catch (e) {
-//       print('line 289 error $e');
+//       debugPrint('line 289 error $e');
 //       throw Exception(e.toString());
 //     }
 //   }

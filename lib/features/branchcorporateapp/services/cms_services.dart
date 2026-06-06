@@ -21,7 +21,7 @@ class CMSServices {
         .get()
         .then((snapshot) {
       lm = [];
-      print('line 158 cmsuser ${snapshot.docs.length}');
+      debugPrint('line 158 cmsuser ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         lm!.add(snp.data());
       }
@@ -36,7 +36,7 @@ class CMSServices {
         .where("genId", isEqualTo: cmsBranchUserId)
         .get()
         .then((snapshot) {
-      print('line 158 getclient ${snapshot.docs.length}');
+      debugPrint('line 158 getclient ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         lm = snp.data();
         break;
@@ -54,7 +54,7 @@ class CMSServices {
           .collection('CMSBranchUser')
           .get()
           .then((snapshot) {
-        print('line 225 getclientbybrnchid ${snapshot.docs.length}');
+        debugPrint('line 225 getclientbybrnchid ${snapshot.docs.length}');
         for (var snp in snapshot.docs) {
           final obj = snp.data();
           if (branchIds.indexOf(obj['branchId']) == true) {
@@ -64,7 +64,7 @@ class CMSServices {
       });
       return lm;
     } catch (e) {
-      print('line 258 error $e');
+      debugPrint('line 258 error $e');
       throw Exception(e.toString());
     }
   }
@@ -115,7 +115,7 @@ class CMSServices {
             new DateTime.fromMillisecondsSinceEpoch(dtt).toIso8601String();
         final dateTime = DateTime.parse(ds);
         xt = format.format(dateTime); // 2021-08-11 11:38
-        print('line 217 $xt');
+        debugPrint('line 217 $xt');
         List<String> xts = xt.split(' ');
         xt = xts[1];
         xts = xt.split(':');
@@ -125,18 +125,18 @@ class CMSServices {
         } else {
           xt += ' AM';
         }
-        print('line 230: $xt');
+        debugPrint('line 230: $xt');
         return xt;
       }
     } catch (e) {
-      print('line 233: $e');
+      debugPrint('line 233: $e');
       throw Exception('line 222 get ts ${e.toString()}');
     }
   }
 
   Future<CMSBranchUser>? getCMSBranchUserMapData(String userEmail) async {
     CMSBranchUser? lm;
-    print('line 747 in get clientUser: $userEmail');
+    debugPrint('line 747 in get clientUser: $userEmail');
     try {
       final docRef =
           FirebaseFirestore.instance.collection("CMSBranchUser").doc(userEmail);
@@ -175,7 +175,7 @@ class CMSServices {
               obj['userType']);
           lm = cmsb;
         },
-        onError: (e) => print("Error getting document: $e"),
+        onError: (e) => debugPrint("Error getting document: $e"),
       );
 
       if (lm == null) {
@@ -183,13 +183,13 @@ class CMSServices {
       }
       return lm!;
     } catch (e) {
-      print('line 761 error: $e');
+      debugPrint('line 761 error: $e');
       throw Exception(e.toString());
     }
   }
 
   String getStringDate2(Timestamp ts, dynamic dayValue) {
-    print('line 920 getstringdate2 $ts $dayValue');
+    debugPrint('line 920 getstringdate2 $ts $dayValue');
     try {
       List<String> days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       int dv = int.parse(dayValue.toString());
@@ -201,14 +201,14 @@ class CMSServices {
       dte += ' ( ' + dvs + ')';
       return dte;
     } catch (e) {
-      print('line 1248 $e');
+      debugPrint('line 1248 $e');
       throw Exception('Error line 1248: ${e.toString()}');
     }
   }
 
   Map<String, dynamic> convertObjToHbj(Map<String, dynamic> obj) {
-    print('line 1251 ${obj['dates']['shiftDateInfo']}');
-    print(
+    debugPrint('line 1251 ${obj['dates']['shiftDateInfo']}');
+    debugPrint(
         'line 927 convertobjtohobj ${obj['dates']['shiftDateInfo']['shiftDate'].runtimeType}');
     //      var od= 0;
     Timestamp shiftDate =
@@ -216,7 +216,7 @@ class CMSServices {
     DateTime nwd = DateTime.now();
     Timestamp ts = Timestamp.fromDate(nwd);
     Map<String, dynamic> hobj = {};
-    print('line 932');
+    debugPrint('line 932');
     try {
       hobj = {
         "orderId": 0,
@@ -332,7 +332,7 @@ class CMSServices {
       };
       return hobj;
     } catch (e) {
-      print('line 1041 catch error:  $hobj $e');
+      debugPrint('line 1041 catch error:  $hobj $e');
       throw Exception(e.toString());
     }
   }
@@ -345,7 +345,7 @@ class CMSServices {
         .where("genId", isEqualTo: cmsBranchId)
         .get()
         .then((snapshot) async {
-      print('line 88 ${snapshot.docs.length}');
+      debugPrint('line 88 ${snapshot.docs.length}');
       for (var i = 0; i < snapshot.docs.length; i++) {
         objId = snapshot.docs[i].id;
         obj = snapshot.docs[i].data();
@@ -367,7 +367,7 @@ class CMSServices {
         .where("genId", isEqualTo: cmsBranchUserId)
         .get()
         .then((snapshot) {
-      print('line 88 ${snapshot.docs.length}');
+      debugPrint('line 88 ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         lm = snp.data();
         break;
@@ -391,7 +391,7 @@ class CMSServices {
       });
       return listCMSBranchIds;
     } catch (e) {
-      print('line 394 error: ${e.toString()}');
+      debugPrint('line 394 error: ${e.toString()}');
       return [];
     }
   }
@@ -401,7 +401,7 @@ class CMSServices {
   //   List<dynamic> listData = [];
   //   List<int> listClientIds = [];
   //   try {
-  //     print('line 418: ${listClientIds.length}');
+  //     debugPrint('line 418: ${listClientIds.length}');
   //     if (selectedMenuOption == 'Work Orders') {
   //       //all by data
   //       if (selectedBranchNumber != 0) {
@@ -409,7 +409,7 @@ class CMSServices {
   //             await clientServices.getClientIds(selectedBranchNumber);
   //       }
   //       listData = await callGetWorkOrdersFirestore(ctx, listClientIds);
-  //       print('line 421: ${listData.length}');
+  //       debugPrint('line 421: ${listData.length}');
   //     } else if (selectedMenuOption == 'Clients') {
   //       if (selectedBranchNumber != 0) {
   //         listClientIds =
@@ -417,22 +417,22 @@ class CMSServices {
   //       }
   //       listData =
   //           await clientServices.callGetClientsFirestore(ctx, listClientIds);
-  //       print('line 424: ${listData.length}');
+  //       debugPrint('line 424: ${listData.length}');
   //     } else if (selectedMenuOption == 'HCPs') {
   //       listData =
   //           await hcpServices.callGetHCPsFirestore(ctx, selectedBranchNumber);
-  //       print('line 424: ${listData.length}');
+  //       debugPrint('line 424: ${listData.length}');
   //     } else if (selectedMenuOption == 'Time Cards') {}
   //     return listData;
   //   } catch (e) {
-  //     print('line 402: ${e.toString()}');
+  //     debugPrint('line 402: ${e.toString()}');
   //     return [];
   //   }
   // }
 
   Future<List<Map<String, dynamic>>> callGetWorkOrdersFirestore(
       BuildContext ctx, List<int> listClientIds) async {
-    print('line 434 in getworkorders firestore: ${listClientIds.length}');
+    debugPrint('line 434 in getworkorders firestore: ${listClientIds.length}');
     List<Map<String, dynamic>> listLm = [];
     try {
       if (listClientIds.length > 0) {
@@ -447,7 +447,7 @@ class CMSServices {
           }
           return;
         });
-        print('line 448: ${listLm.length}');
+        debugPrint('line 448: ${listLm.length}');
         return listLm;
       } else {
         await FirebaseFirestore.instance
@@ -459,11 +459,11 @@ class CMSServices {
             listLm.add(lm);
           }
         });
-        print('line 460: ${listLm.length}');
+        debugPrint('line 460: ${listLm.length}');
         return listLm;
       }
     } catch (e) {
-      print('line 464 error: ${e.toString()}');
+      debugPrint('line 464 error: ${e.toString()}');
       return [];
     }
   }
@@ -483,12 +483,12 @@ class CMSServices {
           timeout: const Duration(seconds: 290),
         ),
       );
-      print('line 441 in call A  function: $callable');
+      debugPrint('line 441 in call A  function: $callable');
       result = await callingGetWorkOrders(callable, ctx, listClientIds);
-      print('line 443: ${result.length}');
+      debugPrint('line 443: ${result.length}');
       return result;
     } catch (e) {
-      print('line 446: $e');
+      debugPrint('line 446: $e');
       return [];
     }
   }
@@ -497,14 +497,14 @@ class CMSServices {
       HttpsCallable callable, BuildContext ctx, List<int> listClientIds) async {
     try {
       Map<String, dynamic> data = {'data': listClientIds};
-      print('line 457: ${data}');
+      debugPrint('line 457: ${data}');
 
       final HttpsCallableResult result = await callable(data);
-      print('line 458 $result');
-      //  print('line 459: ${result.data}');
+      debugPrint('line 458 $result');
+      //  debugPrint('line 459: ${result.data}');
       return result.data;
     } catch (e) {
-      print('line 462 error: $e');
+      debugPrint('line 462 error: $e');
       return [];
     }
   }
@@ -522,10 +522,10 @@ class CMSServices {
           listClientIds.add(lm['clientId']);
         }
       });
-      print('line 5424: ${listClientIds.length}');
+      debugPrint('line 5424: ${listClientIds.length}');
       return listClientIds;
     } catch (e) {
-      print('line 527 error: ${e.toString()}');
+      debugPrint('line 527 error: ${e.toString()}');
       return [];
     }
   }
@@ -543,10 +543,10 @@ class CMSServices {
           listClientIds.add(lm['clientId']);
         }
       });
-      print('line 544: ${listClientIds.length}');
+      debugPrint('line 544: ${listClientIds.length}');
       return listClientIds;
     } catch (e) {
-      print('line 547 error: ${e.toString()}');
+      debugPrint('line 547 error: ${e.toString()}');
       return [];
     }
   }
@@ -556,14 +556,14 @@ class CMSServices {
     List<dynamic> listData = [];
     List<int> listClientIds = [];
     try {
-      print('line 558: $selectedBranchNumber $selectedMenuOption ');
+      debugPrint('line 558: $selectedBranchNumber $selectedMenuOption ');
       if (selectedMenuOption == 'Work Orders') {
         //all by data
         if (selectedBranchNumber != 0) {
           listClientIds = await getClientIds(selectedBranchNumber);
         }
         listData = await callGetWorkOrdersFirestore(ctx, listClientIds);
-        print('line 565: ${listData.length}');
+        debugPrint('line 565: ${listData.length}');
       } else if (selectedMenuOption == 'Clients') {
         if (selectedBranchNumber != 0) {
           listClientIds = await getClientIds(selectedBranchNumber);
@@ -571,26 +571,26 @@ class CMSServices {
           listClientIds = await getCorporateBranchClientIds();
         }
         listData = await callGetClientsFirestore(ctx, listClientIds);
-        print('line 573: ${listData.length}');
+        debugPrint('line 573: ${listData.length}');
       } else if (selectedMenuOption == 'HCPs') {
         listData = await callGetHCPsFirestore(ctx, selectedBranchNumber);
-        print('line 576: ${listData.length}');
+        debugPrint('line 576: ${listData.length}');
       } else if (selectedMenuOption == 'Time Cards') {}
-      print('line 578: ${listData.length}');
+      debugPrint('line 578: ${listData.length}');
       return listData;
     } catch (e) {
-      print('line 581: ${e.toString()}');
+      debugPrint('line 581: ${e.toString()}');
       return [];
     }
   }
 
   Future<List<Map<String, dynamic>>> callGetClientsFirestore(
       BuildContext ctx, List<int> listClientIds) async {
-    print('line 588 in getclients firestore: ${listClientIds.length}');
+    debugPrint('line 588 in getclients firestore: ${listClientIds.length}');
     List<Map<String, dynamic>> listLm = [];
     double loops = num.parse(listClientIds.length.toString()) / 10;
     int lops = loops.truncate();
-    print('ine 592: $lops $loops');
+    debugPrint('ine 592: $lops $loops');
     List<int> loopCounter = [];
     if (lops > 0) {
       for (int i = 0; i < lops; i++) {
@@ -604,11 +604,11 @@ class CMSServices {
       } else {
         lp = lops + 1;
       }
-      print('line 606: $lp $loops $lops');
+      debugPrint('line 606: $lp $loops $lops');
 
       loopCounter.add(listClientIds.length % 10);
     }
-    print('line 610: ${loopCounter}');
+    debugPrint('line 610: ${loopCounter}');
     try {
       if (listClientIds.length > 0) {
         Map<String, dynamic> lm = {};
@@ -619,11 +619,11 @@ class CMSServices {
           iss += 10;
           ie += loopCounter[i];
           ids = [];
-          print('line 621: $iss $ie');
+          debugPrint('line 621: $iss $ie');
           for (int j = iss; j < ie; j++) {
             ids.add(listClientIds[j]);
           }
-          print('lint 625: $i ${ids.length}');
+          debugPrint('lint 625: $i ${ids.length}');
           await FirebaseFirestore.instance
               .collection('Client')
               .where('clientId', whereIn: ids)
@@ -646,7 +646,7 @@ class CMSServices {
                 } else {
                   lm['openCredit'] = "0.0";
                 }
-                print('line 648 ${lm['clientId']}');
+                debugPrint('line 648 ${lm['clientId']}');
                 Map<String, dynamic>? im = null;
                 await FirebaseFirestore.instance
                     .collection('ClientInvoice')
@@ -666,7 +666,7 @@ class CMSServices {
                     lm['balance'] = "0.0";
                   }
                 });
-                print('line 668: ${lm['clientId']}');
+                debugPrint('line 668: ${lm['clientId']}');
                 lm['city'] = "Unknown";
                 lm['state'] = "UKN";
                 Map<String, dynamic>? adr = null;
@@ -685,7 +685,7 @@ class CMSServices {
                     lm['city'] = adr!['city'];
                     lm['state'] = adr['state'];
                   } else {
-                    print('line 687 not address data for : ${lm['clientId']}');
+                    debugPrint('line 687 not address data for : ${lm['clientId']}');
                   }
                 });
               });
@@ -694,7 +694,7 @@ class CMSServices {
             }
           });
         }
-        print('line 692: ${listLm.length}');
+        debugPrint('line 692: ${listLm.length}');
         return listLm;
       } else {
         Map<String, dynamic> lm = {};
@@ -720,7 +720,7 @@ class CMSServices {
                 lm['openCredit'] = "0.0";
               }
             });
-            print('line  718: ${lm['clientId']}');
+            debugPrint('line  718: ${lm['clientId']}');
             Map<String, dynamic>? im = null;
             await FirebaseFirestore.instance
                 .collection('ClientInvoice')
@@ -758,18 +758,18 @@ class CMSServices {
             listLm.add(lm);
           }
         });
-        print('line 756 ${listLm.length}');
+        debugPrint('line 756 ${listLm.length}');
         return listLm;
       }
     } catch (e) {
-      print('line  760 error: ${e.toString()}');
+      debugPrint('line  760 error: ${e.toString()}');
       return [];
     }
   }
 
   Future<List<Map<String, dynamic>>> callGetHCPsFirestore(
       BuildContext ctx, int branchId) async {
-    print('line 434 in getHCPs firestore: ${branchId}');
+    debugPrint('line 434 in getHCPs firestore: ${branchId}');
     List<Map<String, dynamic>> listLm = [];
     try {
       if (branchId == 0) {
@@ -799,10 +799,10 @@ class CMSServices {
           }
         });
       }
-      print('line 460: ${listLm.length}');
+      debugPrint('line 460: ${listLm.length}');
       return listLm;
     } catch (e) {
-      print('line 464 error: ${e.toString()}');
+      debugPrint('line 464 error: ${e.toString()}');
       return [];
     }
   }

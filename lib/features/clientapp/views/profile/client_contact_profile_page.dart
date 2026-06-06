@@ -22,7 +22,7 @@ class _ClientContactProfilePageState extends State<ClientContactProfilePage> {
   List<DropdownMenuEntry<dynamic>> dropDownMenuOptionEntries = [];
 
   Future<List<dynamic>> _getDropDownMenuItems() async {
-    print('line 30 get client contact Dropdownitems: $arguments');
+    debugPrint('line 30 get client contact Dropdownitems: $arguments');
     dropDownMenuEntries = [];
     menuContacts = [];
     try {
@@ -30,7 +30,7 @@ class _ClientContactProfilePageState extends State<ClientContactProfilePage> {
         listOfContacts = await clientServices
             .getClientContactDataClass(arguments!['clientId']);
       }
-      print('line 35: ${listOfContacts!.length}');
+      debugPrint('line 35: ${listOfContacts!.length}');
 
       if (listOfContacts.length > 0) {
         for (int i = 0; i < listOfContacts!.length; i++) {
@@ -45,14 +45,14 @@ class _ClientContactProfilePageState extends State<ClientContactProfilePage> {
           dropDownMenuEntries.add(me);
           menuContacts!.add(mcon);
         }
-        print('line 48: ${dropDownMenuEntries}');
+        debugPrint('line 48: ${dropDownMenuEntries}');
         return dropDownMenuEntries;
       } else {
         return [];
       }
-      print('line 49: dropdownentries ${dropDownMenuEntries.length}');
+      debugPrint('line 49: dropdownentries ${dropDownMenuEntries.length}');
     } catch (e) {
-      print('line 49: error: ${e.toString()}');
+      debugPrint('line 49: error: ${e.toString()}');
       throw Exception('line 21 error getting dropdown menu items');
     }
   }
@@ -104,7 +104,7 @@ class _ClientContactProfilePageState extends State<ClientContactProfilePage> {
   TextEditingController menuController = TextEditingController();
 
   int getSelectedMenuIndex(value) {
-    print('line 57 getselected contact index : $value');
+    debugPrint('line 57 getselected contact index : $value');
     int index = -1;
 
     for (int i = 0; i < dropDownMenuEntries.length; i++) {
@@ -114,7 +114,7 @@ class _ClientContactProfilePageState extends State<ClientContactProfilePage> {
         break;
       }
     }
-    print('line 62: $index $arguments');
+    debugPrint('line 62: $index $arguments');
     if (index != -1) {
       Map<String, dynamic> con = listOfContacts![index];
       contactTypeDescriptionController.text = con['contactTypeDescription'];
@@ -219,7 +219,7 @@ class _ClientContactProfilePageState extends State<ClientContactProfilePage> {
     super.initState();
     arguments = widget.args;
     localTitle = 'Client Contacts for: ' + arguments!['clientName'];
-    print('line 72 arguments $arguments');
+    debugPrint('line 72 arguments $arguments');
   }
 
   double? screenHeight;
@@ -244,7 +244,7 @@ class _ClientContactProfilePageState extends State<ClientContactProfilePage> {
     const title = 'Client Contact Form';
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    print('line 115: $screenWidth $screenHeight');
+    debugPrint('line 115: $screenWidth $screenHeight');
     double? hh = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
     h = hh!;
     if (h < 1.0) {
@@ -329,7 +329,7 @@ class _ClientContactProfilePageState extends State<ClientContactProfilePage> {
                                     );
                                   } else {
                                     List<dynamic> listH = snapshot.data![0];
-                                    print('line 111 ${listH.length}');
+                                    debugPrint('line 111 ${listH.length}');
                                     if (listH.length == 0) {
                                       return Center(
                                         child: Padding(
@@ -351,7 +351,7 @@ class _ClientContactProfilePageState extends State<ClientContactProfilePage> {
                                       );
                                     } else {
                                       List<dynamic> listD = snapshot.data![0]!;
-                                      print('line 260 ${listD.length}');
+                                      debugPrint('line 260 ${listD.length}');
 
                                       return Container(
                                         height: 80,
@@ -365,12 +365,12 @@ class _ClientContactProfilePageState extends State<ClientContactProfilePage> {
                                               label: const Text(
                                                   'Client Contact Menu'),
                                               onSelected: (dynamic value) {
-                                                print(
+                                                debugPrint(
                                                     'line 278 on selected $value');
                                                 selectedMenu = value;
                                                 selectedMenuIndex =
                                                     getSelectedMenuIndex(value);
-                                                print(
+                                                debugPrint(
                                                     'line 283: $selectedMenuIndex');
                                                 selectedMenuName = menuContacts![
                                                         selectedMenuIndex!]
@@ -1132,7 +1132,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
 
     _ratio = widget.ratio;
     _ratio = .25;
-    print('line 99: $_ratio');
+    debugPrint('line 99: $_ratio');
   }
 
   @override

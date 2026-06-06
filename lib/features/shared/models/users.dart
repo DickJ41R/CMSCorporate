@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 //import 'package:intl/intl.dart';
 class Users {
@@ -71,7 +72,7 @@ class Users {
 //
 
   static Users convertToUser(dynamic ld) {
-    print('line 65 in convertouser');
+    debugPrint('line 65 in convertouser');
     List<String> sroles = [];
     for (int i = 0; i < ld['roles'].length; i++) {
       String st = ld['roles'][i] as String;
@@ -112,7 +113,7 @@ class Users {
           loginCounter: ld['loginCounter']);
       return wkc;
     } catch (e) {
-      print('line 87 error: ${e.toString()}');
+      debugPrint('line 87 error: ${e.toString()}');
       throw Exception('line 88 error: ${e.toString()}');
     }
   }

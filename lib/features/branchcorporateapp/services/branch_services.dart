@@ -2,6 +2,7 @@
 
 //import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class BranchServices {
   final int? branchId;
@@ -15,7 +16,7 @@ class BranchServices {
   // }
 
   Future<List<dynamic>> getBranches(List<int> branchIds) async {
-    print('line 28 getbranches: $branchIds');
+    debugPrint('line 28 getbranches: $branchIds');
     try {
       List<Map<String, dynamic>> branches = [];
       await FirebaseFirestore.instance
@@ -40,10 +41,10 @@ class BranchServices {
           i += 1;
         }
       }
-      print('line 33 $branches');
+      debugPrint('line 33 $branches');
       return branches;
     } catch (e) {
-      print('line 38 error: $e');
+      debugPrint('line 38 error: $e');
       throw Exception(e);
     }
   }

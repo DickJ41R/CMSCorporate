@@ -110,8 +110,8 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
   TextEditingController noteHTMLController = TextEditingController();
   TextEditingController otTemplateIdController = TextEditingController();
   TextEditingController overtimeRuleController = TextEditingController();
-  TextEditingController printImagesController = TextEditingController();
-  TextEditingController printQueueController = TextEditingController();
+  TextEditingController debugPrintImagesController = TextEditingController();
+  TextEditingController debugPrintQueueController = TextEditingController();
   TextEditingController salesTaxIdController = TextEditingController();
   TextEditingController schoolDistrictController = TextEditingController();
   TextEditingController schoolDistrictIdController = TextEditingController();
@@ -171,10 +171,10 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
   int? clientId;
 
   Future<void> getClientMap() async {
-    print('line 57 get client : $clientId');
+    debugPrint('line 57 get client : $clientId');
     List<Map<String, dynamic>>? listClients;
     Map<String, dynamic>? cli = await clientServices.getClient(clientId!);
-    //   print('line 177: ${cli!}');
+    //   debugPrint('line 177: ${cli!}');
     clientIdController.text = cli!['clientId'].toString();
     clientNameController.text = cli['clientName'];
     clientNumberController.text = cli['clientNumber'];
@@ -343,8 +343,8 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
         cli['otTemplateId'] == null ? "0" : cli['otTemplateId'].toString();
     overtimeRuleController.text =
         cli['overtimeRule'] == null ? "" : cli['overtimeRule'];
-    printImagesController.text = cli['printImages'] == false ? 'false' : 'true';
-    printQueueController.text = cli['printQueue'] == false ? 'false' : 'true';
+    debugPrintImagesController.text = cli['debugPrintImages'] == false ? 'false' : 'true';
+    debugPrintQueueController.text = cli['debugPrintQueue'] == false ? 'false' : 'true';
     salesTaxIdController.text =
         cli['salesTaxId'] == null ? "" : cli['salesTaxId'];
     schoolDistrictController.text =
@@ -527,8 +527,8 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
     noteHTMLController.dispose();
     otTemplateIdController.dispose();
     overtimeRuleController.dispose();
-    printImagesController.dispose();
-    printQueueController.dispose();
+    debugPrintImagesController.dispose();
+    debugPrintQueueController.dispose();
     salesTaxIdController.dispose();
     schoolDistrictController.dispose();
     schoolDistrictIdController.dispose();
@@ -587,7 +587,7 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
     arguments = widget.args;
     clientId = arguments!['clientId'];
     localTitle = 'Client Profile for: ' + arguments!['clientName'];
-    print('line 72 arguments $arguments');
+    debugPrint('line 72 arguments $arguments');
     getClientMap();
   }
 
@@ -613,7 +613,7 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
     const title = 'Client Profile Form';
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    print('line 115: $screenWidth $screenHeight');
+    debugPrint('line 115: $screenWidth $screenHeight');
     double? hh = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
     h = hh!;
     if (h < 1.0) {
@@ -1477,7 +1477,7 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
-                            controller: printImagesController,
+                            controller: debugPrintImagesController,
                             maxLength: 10,
                             decoration:
                                 InputDecoration(label: Text('Print Images')),
@@ -1549,7 +1549,7 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
-                            controller: printQueueController,
+                            controller: debugPrintQueueController,
                             maxLength: 10,
                             decoration:
                                 InputDecoration(label: Text('Print Queue')),

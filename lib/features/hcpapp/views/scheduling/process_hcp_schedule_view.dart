@@ -36,7 +36,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
   }
 
   Future<void> getRawDataForDataSource(int hcpId, BuildContext ctx) async {
-    print('line 37 in getrawdatasource');
+    debugPrint('line 37 in getrawdatasource');
     try {
       bool working = false;
       Center(
@@ -53,16 +53,16 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
       lstApts = await hcpServices.getHCPWorkOrderCampaigns(hcpId, ctx);
       working = true;
       if (lstApts!.isNotEmpty) {
-        print('line 36: ${lstApts![0]}');
+        debugPrint('line 36: ${lstApts![0]}');
         setState(() {
           flagHaveData = true;
           dataSource = getCalendarDataSource();
         });
       }
-      print('line 47 just before return');
+      debugPrint('line 47 just before return');
       return;
     } catch (e) {
-      print('line 46 error: ${e.toString()}');
+      debugPrint('line 46 error: ${e.toString()}');
       return null;
     }
   }
@@ -93,7 +93,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
   }
 
   Future<void> setOrientationPreferenceX(int c) async {
-    print('line 32 setorientationprefx');
+    debugPrint('line 32 setorientationprefx');
     if (c == 0) {
       await SystemChrome.setPreferredOrientations(
           [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
@@ -113,7 +113,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
     }
     double fontSize = 16;
     fontSize /= h;
-    print('line 40 after setorientation pref: $flagHaveData');
+    debugPrint('line 40 after setorientation pref: $flagHaveData');
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
@@ -122,14 +122,14 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
               //   IconButton(
               //     icon: Icon(Icons.arrow_back),
               //     onPressed: () {
-              //       print('line 41: in onpressed back');
+              //       debugPrint('line 41: in onpressed back');
               //       calendarController.backward!();
               //     },
               //   ),
               //   IconButton(
               //     icon: Icon(Icons.arrow_forward),
               //     onPressed: () {
-              //       print('line 48 in onpressed forward');
+              //       debugPrint('line 48 in onpressed forward');
               //
               //       calendarController.forward!();
               //     },
@@ -387,7 +387,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
   }
 
   void getSelectedDateAppointments(DateTime? selectedDate) {
-    print('line 259: $selectedDate');
+    debugPrint('line 259: $selectedDate');
 
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
       setState(() {
@@ -405,7 +405,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
         final Appointment? occurrenceAppointment =
             dataSource.getOccurrenceAppointment(appointment, selectedDate!, '');
 
-        print(
+        debugPrint(
             'line 276: $appointment  ${appointment.startTime} ${appointment.startTime.year}');
         if ((DateTime(appointment.startTime.year, appointment.startTime.month,
                     appointment.startTime.day) ==
@@ -423,13 +423,13 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
   Appointment buildAppointment(dynamic obj) {
     Appointment? apt;
     try {
-      print('line 290: buildapt $obj');
+      debugPrint('line 290: buildapt $obj');
       int secs = obj['shiftDate']['_seconds'];
       secs *= 1000;
       DateTime dtm = DateTime.fromMillisecondsSinceEpoch(secs);
-      print('line 299: $secs');
+      debugPrint('line 299: $secs');
       Timestamp stm = Timestamp.fromDate(dtm);
-      print('line 301: $stm');
+      debugPrint('line 301: $stm');
       DateTime st = stm.toDate();
       Color color1 = Colors.pinkAccent; //green from website
       Color color2 = Colors.purpleAccent; //green from logo
@@ -456,7 +456,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
       et = et.add(Duration(
           hours: endHoursMinutes['hours'],
           minutes: endHoursMinutes['minutes']));
-      print('line 318: $st $et');
+      debugPrint('line 318: $st $et');
       int fi = obj['clientName'].toString().indexOf(' ');
       if (fi == -1) {
         if (obj['clientName'].toString().length < 8) {
@@ -479,10 +479,10 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
         }
         sts += obj['shiftStatuses'][j];
       }
-      print('line 463: $sts');
+      debugPrint('line 463: $sts');
       statuses = obj['shiftStatuses'][0];
       int index = disciplines.indexOf(obj['disciplineName']);
-      print('line 329: $clN $subjectText ${index.toString()}');
+      debugPrint('line 329: $clN $subjectText ${index.toString()}');
       String notes = "Statuses: " + statuses;
       notes += ' Client: ' + clN;
       Appointment apt = Appointment(
@@ -501,7 +501,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
       // }
 
       // int index = disciplines.indexOf(obj['disciplineName']);
-      // print('line 329: $subjectText ${index.toString()}');
+      // debugPrint('line 329: $subjectText ${index.toString()}');
       // Appointment apt = Appointment(
       //     startTime: st,
       //     endTime: et,
@@ -511,18 +511,18 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
       //     notes: 'Statuses: ' + statuses);
       return apt;
     } catch (e) {
-      print('line 333 error: ${e.toString()}');
+      debugPrint('line 333 error: ${e.toString()}');
       throw Exception('line 334 errro: ${e.toString()}');
     }
   }
 
   _DataSource getCalendarDataSource() {
     final List<Appointment> appointments = <Appointment>[];
-    print('line 313 in getCalendarDataSource');
+    debugPrint('line 313 in getCalendarDataSource');
     try {
       for (int i = 0; i < lstApts!.length; i++) {
         var obj = lstApts![i];
-        print('line 346: $obj');
+        debugPrint('line 346: $obj');
         Appointment apt = buildAppointment(obj);
         appointments.add(apt);
         // DateTime startTime = apt.startTime;
@@ -590,7 +590,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
       }
       return _DataSource(appointments);
     } catch (e) {
-      print('line 405 error: ${e.toString()}');
+      debugPrint('line 405 error: ${e.toString()}');
       throw Exception('line 406 error: ${e.toString()}');
     }
   }
@@ -615,7 +615,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
   }
 
   void calendarTapped(CalendarTapDetails details) {
-    print('line 490: $details');
+    debugPrint('line 490: $details');
     // if (details.targetElement == CalendarElement.appointment ||
     //     details.targetElement == CalendarElement.agenda) {
     //   final Appointment appointmentDetails = details.appointments![0];
@@ -922,7 +922,7 @@ class _DataSource extends CalendarDataSource {
 //
 //   @override
 //   DateTime getStartTime(int index) {
-//     print('line 217: $index');
+//     debugPrint('line 217: $index');
 //     return appointments![index].from as DateTime;
 //   }
 //

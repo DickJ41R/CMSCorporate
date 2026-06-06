@@ -56,7 +56,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
   AuthService authService = AuthService();
 
   Future<List<String>> _getClientUserMenuData() async {
-    print('line 30 get client user Dropdownitems ${listOfClientUsers.length}');
+    debugPrint('line 30 get client user Dropdownitems ${listOfClientUsers.length}');
     dropDownMenuEntries = [];
     menuClientUsers = [];
     listOfClientUserItems = [];
@@ -67,7 +67,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
       }
       int largestId = -1;
       listOfClientUserItems.add('Add New Client User');
-      print('line 35: ${listOfClientUsers.length}');
+      debugPrint('line 35: ${listOfClientUsers.length}');
       for (int i = 0; i < listOfClientUsers.length; i++) {
         Map<String, dynamic> clu = listOfClientUsers[i];
         gclu = clu;
@@ -78,7 +78,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
           'clientUserId': clu['clientUserId'].toString(),
           'fullName': clu['fullName']
         };
-        print('line 65: $mclu');
+        debugPrint('line 65: $mclu');
         DropdownMenuEntry me = DropdownMenuEntry(
             value: mclu['clientUserId'], label: mclu['fullName']);
         dropDownMenuEntries.add(me);
@@ -92,11 +92,11 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
       } else {
         nextId = largestId + 1;
       }
-      print('line 80: $nextId $largestId ${dropDownMenuEntries}');
+      debugPrint('line 80: $nextId $largestId ${dropDownMenuEntries}');
 
       return listOfClientUserItems;
     } catch (e) {
-      print('line 91: error: ${e.toString()}');
+      debugPrint('line 91: error: ${e.toString()}');
       throw Exception('line 21 error getting dropdown menu items');
     }
   }
@@ -179,7 +179,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
   int? selectedClientUserIndex;
 
   int _getClientUserId(dynamic val) {
-    print('line 183: $val');
+    debugPrint('line 183: $val');
     int clientUserIndex = -1;
     int idx = val.indexOf(')');
     if (idx == -1) {
@@ -194,7 +194,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
         break;
       }
     }
-    print('line 198: $selectedClientUserIndex');
+    debugPrint('line 198: $selectedClientUserIndex');
     if (selectedClientUserIndex! != -1) {
       setState(() {
         clientUserIdController.text =
@@ -215,23 +215,23 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     }
     final form = formKey.currentState!;
     if (form.validate()) {
-      print('line 219 form validated');
+      debugPrint('line 219 form validated');
       return true;
     }
-    print('line 222 form did not validate');
+    debugPrint('line 222 form did not validate');
     return false;
   }
 
   Future<void> _submit() async {
-    print(
+    debugPrint(
         'line 202 in submit: $roleMultiValueListenable $disciplineMultiValueListenable');
     bool bl = false;
     List<String> lRoles = roleMultiValueListenable.value;
     List<String> lDisciplines = disciplineMultiValueListenable.value;
-    print('line 230: $lRoles $lDisciplines ');
+    debugPrint('line 230: $lRoles $lDisciplines ');
 
     bl = checkForm(lRoles, lDisciplines);
-    print('line 235: $bl');
+    debugPrint('line 235: $bl');
     if (bl == false) {
       return;
     }
@@ -243,7 +243,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     String? title;
 
     try {
-      print('line 221 $currentPassword');
+      debugPrint('line 221 $currentPassword');
 
       List<String> disciplineNames = [];
       List<int> disciplineIds = [];
@@ -268,7 +268,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
           }
         }
       }
-      print('line 272: $roles');
+      debugPrint('line 272: $roles');
       String? bls;
       String userType = 'ClientUser';
       firstNameController.text =
@@ -385,7 +385,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
       }
       return;
     } catch (e) {
-      print('line 219 error: ${e.toString()}');
+      debugPrint('line 219 error: ${e.toString()}');
       title = 'Error Submitting Form Data';
       AlertDialog alert = AlertDialog(
         backgroundColor: Colors.yellowAccent,
@@ -434,7 +434,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 
   int? nextId;
   int getSelectedClientUser(value) {
-    print('line 155 getselected client user index : $value');
+    debugPrint('line 155 getselected client user index : $value');
     int index = value;
     if (index == -1) {
       setState(() {
@@ -448,21 +448,21 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
       //   int idx = st.indexOf(')');
       //   idx += 1;
       //   st = st.substring(idx).trim();
-      //   print('line 154: $st $value ');
+      //   debugPrint('line 154: $st $value ');
       //   if (value == st) {
       //     index = i;
       //     break;
       //   }
       // }
 
-      print('line 453: $index ');
+      debugPrint('line 453: $index ');
       List<Map<String, dynamic>> listOfSelectedDisciplines = [];
       List<String> listOfSelectedRoles = [];
 
       if (index != -1) {
-        print('line 458: $listOfClientUsers');
+        debugPrint('line 458: $listOfClientUsers');
         Map<String, dynamic> clu = listOfClientUsers[index];
-        print('line 459: $clu');
+        debugPrint('line 459: $clu');
         _selectedDisciplines = [];
         for (int z = 0; z < clu['disciplineNames'].length; z++) {
           _selectedDisciplines.add(clu['disciplineNames'][z]);
@@ -470,9 +470,9 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
           //   for (int y = 0; y < disciplineItems.length; y++) {
           //     DropdownItem<Discipline> di = disciplineItems[y];
           //     Discipline disc = di.value;
-          //     print('line 387: ${disc.disciplineId} $iDisciplineId');
+          //     debugPrint('line 387: ${disc.disciplineId} $iDisciplineId');
           //     if (disc.disciplineId == iDisciplineId) {
-          //       print('line 389 got hit: ${disc.disciplineId} $iDisciplineId');
+          //       debugPrint('line 389 got hit: ${disc.disciplineId} $iDisciplineId');
           //       // disciplinesController.selectAtIndex(y);
           //       disciplinesController.setSelectedItems([]);
           //     }
@@ -500,11 +500,11 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 
           listOfSelectedRoles.add(sRole);
         }
-        print('line 497: $_selectedRoles');
+        debugPrint('line 497: $_selectedRoles');
         roleMultiValueListenable.value = List.from(_selectedRoles);
         _selectedDisciplines = [];
         _selectedRoles = [];
-        print('line 500: $listRoles ${roleMultiValueListenable.value}');
+        debugPrint('line 500: $listRoles ${roleMultiValueListenable.value}');
         // DateFormat formatter = DateFormat('MM-dd-yyyy');
         String formatted = '';
         if (clu['dateLastLoggedIn'] != null) {
@@ -512,10 +512,10 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
               utilityServices.convertFromTimestamp(clu['dateLastLoggedIn']);
         }
         dateLastLoggedInController.text = formatted;
-        print('line 507: $clu');
+        debugPrint('line 507: $clu');
         documentId = clu['id'];
         currentPassword = clu['password'];
-        print('line 510: $documentId ${clu['lastName']}');
+        debugPrint('line 510: $documentId ${clu['lastName']}');
         clientUserIdController.text = clu['clientUserId'].toString();
         if (clu['active'] == true) {
           activeController.text = 'true';
@@ -524,7 +524,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
           activeController.text = 'false';
           isActiveChecked = false;
         }
-        print('line 519');
+        debugPrint('line 519');
         firstNameController.text = clu['firstName'];
         lastNameController.text = clu['lastName'];
         fullNameController.text = clu['fullName'];
@@ -545,7 +545,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
           st = clu['ssn'].substring(idx);
         }
         ssnController.text = st;
-        print('line 540 $st');
+        debugPrint('line 540 $st');
         isAdministratorController.text = clu['isAdministrator'] == null
             ? "false"
             : clu['isAdministrator'].toString();
@@ -558,15 +558,15 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
             : telephoneExtensionController.text;
         departmentController.text =
         clu['department'] == null ? "" : clu['department'];
-        print('line 553 ${dateLastLoggedInController.text}');
+        debugPrint('line 553 ${dateLastLoggedInController.text}');
 
-        print('line 555 ');
+        debugPrint('line 555 ');
         return index;
       } else {
         throw Exception('line 558 did not find a client user');
       }
     } catch (e) {
-      print('line 561 error: ${e.toString()}');
+      debugPrint('line 561 error: ${e.toString()}');
       throw Exception('line 562 ${e.toString()}');
     }
   }
@@ -584,7 +584,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     client = authService.client;
     clientId = authService.clientId;
     arguments = widget.args;
-    print('line 72 arguments $arguments');
+    debugPrint('line 72 arguments $arguments');
     // myFocusNode = FocusNode();
   }
 
@@ -615,7 +615,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
   }
 
   void insertAddTemplateData() {
-    print('line 246: $nextId');
+    debugPrint('line 246: $nextId');
     currentPassword = '';
     clientUserIdController.text = nextId.toString();
     firstNameController.text = "";
@@ -691,10 +691,10 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
       if (st.length != 10) {
         return false;
       }
-      print('line 540 $st');
+      debugPrint('line 540 $st');
       return true;
     } catch (e) {
-      print('line 519 bad telephone value');
+      debugPrint('line 519 bad telephone value');
       return bl;
     }
   }
@@ -737,8 +737,8 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     double height2 = 55;
     double width3 = 760;
     double width2 = 370; //(screenWidth - 10) - vWidth1;
-    print('line 672: $vWidth1 $width2 $screenWidth, $screenHeight');
-    print(
+    debugPrint('line 672: $vWidth1 $width2 $screenWidth, $screenHeight');
+    debugPrint(
         'line 700: ${flagShowForm} ${ssnController.text} ${clientUserIdController.text}');
     fontSize = 24 / h;
 //    double smallFontSize = 24 / h;
@@ -820,7 +820,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                           );
                         } else {
                           List<String> listH = snapshot.data![0];
-                          print('line 111 ${listH.length}');
+                          debugPrint('line 111 ${listH.length}');
                           if (listH.length == 0) {
                             return Center(
                               child: Container(
@@ -835,7 +835,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                             );
                           } else {
                             List<String> listX = snapshot.data![0];
-                            print('line 331: $listX }');
+                            debugPrint('line 331: $listX }');
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -880,7 +880,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                             .toList(),
                                         valueListenable: valueListenable,
                                         onChanged: (dynamic value) {
-                                          print('line 827 $value');
+                                          debugPrint('line 827 $value');
                                           setState(() {
                                             if (value !=
                                                 'Add New Client User') {
@@ -891,7 +891,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                                       selectedValueClientUser);
                                               if (selectedClientUserId !=
                                                   -1) {
-                                                print(
+                                                debugPrint(
                                                     'line 851 ${selectedClientUserId}');
                                                 getSelectedClientUser(
                                                     selectedClientUserId!);
@@ -1070,7 +1070,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                             checkColor: color2,
                                             onChanged: (value) {
                                               setState(() {
-                                                print('line 1026 $value');
+                                                debugPrint('line 1026 $value');
                                                 isActiveChecked = value!;
                                               });
                                             }),
@@ -1580,10 +1580,10 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                                 return "You must enter a telephone number.";
                                               }
 
-                                              print('line 1028: $value');
+                                              debugPrint('line 1028: $value');
                                               bool isValidTelephone =
                                               checkTelephone(value);
-                                              print(
+                                              debugPrint(
                                                   'line 1031: $isValidTelephone');
                                               if (isValidTelephone == false) {
                                                 return "Invalid telephone format";
@@ -1636,7 +1636,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                                     ),
                                                   )),
                                               onSaved: (value) {
-                                                print('line 1556 $value');
+                                                debugPrint('line 1556 $value');
                                               }),
                                         ),
                                       ),
@@ -1670,7 +1670,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                                 ),
                                               ),
                                               items: listRoles.map((item) {
-                                                print('line 1659: $item');
+                                                debugPrint('line 1659: $item');
                                                 return DropdownItem(
                                                   value: item,
                                                   key: Key(Random()
@@ -1981,7 +1981,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                           width: (width3 - 20) / 3,
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              print('line 1083 ');
+                                              debugPrint('line 1083 ');
 
                                               _submit();
                                             },
@@ -2008,7 +2008,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                           width: (width3 - 20) / 3,
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              print('line 662 reset');
+                                              debugPrint('line 662 reset');
                                               resetData();
                                             },
                                             child: Text('Reset Form',
@@ -2027,7 +2027,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                           width: (width3 - 20) / 3,
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              print('line 2157 cancel');
+                                              debugPrint('line 2157 cancel');
                                               setState(() {
                                                 flagShowForm = false;
                                               });
@@ -2092,7 +2092,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //   List<DropdownMenuEntry<dynamic>> dropDownMenuOptionEntries = [];
 //   List<DropdownItem<Role>>? selectedItems;
 //   Future<List<dynamic>> _getDropDownMenuItems() async {
-//     print('line 30 get client address Dropdownitems');
+//     debugPrint('line 30 get client address Dropdownitems');
 //     dropDownMenuEntries = [];
 //     menuClientUsers = [];
 //     try {
@@ -2101,7 +2101,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //             await clientServices.getClientUsers(arguments!['clientId']);
 //       }
 //       int largestId = -1;
-//       print('line 35: ${listOfClientUsers!.length}');
+//       debugPrint('line 35: ${listOfClientUsers!.length}');
 //       if (listOfClientUsers.length > 0) {
 //         for (int i = 0; i < listOfClientUsers!.length; i++) {
 //           Map<String, dynamic> clu = listOfClientUsers![i];
@@ -2118,16 +2118,16 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //           menuClientUsers!.add(mclu);
 //         }
 //         nextId = largestId + 1;
-//         print('line 48: $nextId $largestId ${dropDownMenuEntries}');
+//         debugPrint('line 48: $nextId $largestId ${dropDownMenuEntries}');
 //         return dropDownMenuEntries;
 //       } else {
 //         nextId = 1;
 //         insertAddTemplateData();
 //         return [];
 //       }
-//       print('line 49: dropdownentries ${dropDownMenuEntries.length}');
+//       debugPrint('line 49: dropdownentries ${dropDownMenuEntries.length}');
 //     } catch (e) {
-//       print('line 49: error: ${e.toString()}');
+//       debugPrint('line 49: error: ${e.toString()}');
 //       throw Exception('line 21 error getting dropdown menu items');
 //     }
 //   }
@@ -2166,7 +2166,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //   }
 //
 //   Future<bool> _submit() async {
-//     print('line 110 in submit');
+//     debugPrint('line 110 in submit');
 //     bool bl = false;
 //     //regex email
 //     // final bool emailValid = RegExp(
@@ -2199,21 +2199,21 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //         "dateOfLastLogin": dte,
 //         "roles": roles
 //       };
-//       print('line 142 $clt');
+//       debugPrint('line 142 $clt');
 //       await clientServices.insertClientUser(clt);
 //       listOfClientUsers.clear();
 //       await _getDropDownMenuItems();
 //       resetData();
 //       return bl;
 //     } catch (e) {
-//       print('line 148 error: ${e.toString()}');
+//       debugPrint('line 148 error: ${e.toString()}');
 //       return bl;
 //     }
 //   }
 //
 //   int? nextId;
 //   int getSelectedMenuIndex(value) {
-//     print('line 155 getselected address index : $value');
+//     debugPrint('line 155 getselected address index : $value');
 //     int index = -1;
 //     setState(() {
 //       resetData();
@@ -2222,19 +2222,19 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //     try {
 //       for (int i = 0; i < dropDownMenuEntries.length; i++) {
 //         DropdownMenuEntry de = dropDownMenuEntries[i];
-//         print('line 154: $value ${de.value}');
+//         debugPrint('line 154: $value ${de.value}');
 //         if (value == de.value) {
 //           index = i;
 //           break;
 //         }
 //       }
 //
-//       print('line 167: $index $arguments');
+//       debugPrint('line 167: $index $arguments');
 //
 //       if (index != -1) {
 //         Map<String, dynamic> clu = listOfClientUsers[index];
 //         documentId = clu['id'];
-//         print('line 172: $documentId ${clu['lastName']}');
+//         debugPrint('line 172: $documentId ${clu['lastName']}');
 //         clientUserIdController.text = clu['clientUserId'].toString();
 //         firstNameController.text = clu['firstName'];
 //         lastNameController.text = clu['lastName'];
@@ -2250,16 +2250,16 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //             clu['username'] == null ? '0' : clu['username'];
 //         dateOfLastLoginController.text =
 //             utilityServices.convertFromTimestamp(clu['dateOfLastLogin']);
-//         print('line 188 ${dateOfLastLoginController.text}');
+//         debugPrint('line 188 ${dateOfLastLoginController.text}');
 //         for (int i = 0; i < clu['roles'].length; i++) {
 //           String srole = clu['roles'][i];
-//           //   print('line 133: ${clu['roles'].length} $srole');
+//           //   debugPrint('line 133: ${clu['roles'].length} $srole');
 //           for (int j = 0; j < items.length; j++) {
 //             DropdownItem di = items[j];
 //             Role role = di.value;
-//             //   print('line 137: $srole ${role.role}');
+//             //   debugPrint('line 137: $srole ${role.role}');
 //             // if (srole == role.role) {
-//             //   //     print('line 139 got hit: $srole $role');
+//             //   //     debugPrint('line 139 got hit: $srole $role');
 //             //   di.selected = true;
 //             // }
 //           }
@@ -2269,7 +2269,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //         throw Exception('line 196 did not find a client user');
 //       }
 //     } catch (e) {
-//       print('line 206 error: ${e.toString()}');
+//       debugPrint('line 206 error: ${e.toString()}');
 //       throw Exception('line 207 ${e.toString()}');
 //     }
 //   }
@@ -2295,7 +2295,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //     super.initState();
 //     arguments = widget.args;
 //     clientId = arguments!['clientId'];
-//     print('line 72 arguments $arguments');
+//     debugPrint('line 72 arguments $arguments');
 //   }
 //
 //   void resetData() {
@@ -2315,7 +2315,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //   }
 //
 //   void insertAddTemplateData() {
-//     print('line 246: $nextId');
+//     debugPrint('line 246: $nextId');
 //     clientUserIdController.text = nextId.toString();
 //     firstNameController.text = "";
 //     lastNameController.text = "";
@@ -2441,7 +2441,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //                                       );
 //                                     } else {
 //                                       List<dynamic> listH = snapshot.data![0];
-//                                       print('line 111 ${listH.length}');
+//                                       debugPrint('line 111 ${listH.length}');
 //                                       if (listH.length == 0) {
 //                                         return Center(
 //                                           child: Padding(
@@ -2465,7 +2465,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //                                       } else {
 //                                         List<dynamic> listD =
 //                                             snapshot.data![0]!;
-//                                         print('line 260 ${listD.length}');
+//                                         debugPrint('line 260 ${listD.length}');
 //
 //                                         return Container(
 //                                           height: 80,
@@ -2479,13 +2479,13 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //                                                 label: const Text(
 //                                                     'Client User Menu'),
 //                                                 onSelected: (dynamic value) {
-//                                                   print(
+//                                                   debugPrint(
 //                                                       'line 278 on selected $value');
 //                                                   selectedMenu = value;
 //                                                   selectedMenuIndex =
 //                                                       getSelectedMenuIndex(
 //                                                           value);
-//                                                   print(
+//                                                   debugPrint(
 //                                                       'line 283: $selectedMenuIndex');
 //                                                   selectedMenuName =
 //                                                       menuClientUsers![
@@ -2527,7 +2527,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //                     SizedBox(height: 30),
 //                     ElevatedButton(
 //                       onPressed: () {
-//                         print('line 662 insert add template');
+//                         debugPrint('line 662 insert add template');
 //                         insertAddTemplateData();
 //                       },
 //                       child: Text('Insert Add Template'),
@@ -2847,9 +2847,9 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //                                             bool? bl = formKey.currentState
 //                                                 ?.validate();
 //                                             if (bl != null && bl == false) {
-//                                               print('line 789: $bl');
+//                                               debugPrint('line 789: $bl');
 //                                             } else {
-//                                               print('line 791 bl is null');
+//                                               debugPrint('line 791 bl is null');
 //                                               selectedItems =
 //                                                   rolesController.selectedItems;
 //                                               await _submit();
@@ -2860,7 +2860,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //                                         SizedBox(width: 5),
 //                                         ElevatedButton(
 //                                           onPressed: () {
-//                                             print('line 662 reset');
+//                                             debugPrint('line 662 reset');
 //                                             resetData();
 //                                           },
 //                                           child: Text('Reset Form'),
@@ -2911,7 +2911,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //
 //     _ratio = widget.ratio;
 //     // _ratio = .25;
-//     print('line 99: $_ratio');
+//     debugPrint('line 99: $_ratio');
 //   }
 //
 //   @override
@@ -2921,7 +2921,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 //       if (_maxWidth != constraints.maxWidth) {
 //         _maxWidth = constraints.maxWidth - _dividerWidth;
 //       }
-//       print('line 622: $_maxWidth');
+//       debugPrint('line 622: $_maxWidth');
 //       return SizedBox(
 //         width: constraints.maxWidth,
 //         child: Row(

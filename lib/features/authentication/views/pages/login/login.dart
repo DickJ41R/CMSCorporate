@@ -37,10 +37,10 @@ class LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    print('line 37 login initstate');
+    debugPrint('line 37 login initstate');
 
     setAuthSingleton();
-    print('line 42 loging after singleton get');
+    debugPrint('line 42 loging after singleton get');
     myPasswordFocusNode = FocusNode();
     myEmailFocusNode = FocusNode();
     myPasswordFocusNode.addListener(_handlePasswordFocusChange);
@@ -48,10 +48,10 @@ class LoginState extends State<Login> {
 
     flagGetAPNS = widget.flagGetAPNS;
     showLogOutButton = false;
-    print('line login 45: ${FirebaseAuth.instance.currentUser}');
+    debugPrint('line login 45: ${FirebaseAuth.instance.currentUser}');
 // Run a task after the first frame is displayed
 //     SchedulerBinding.instance.addPostFrameCallback((_) {
-//       print("First frame rendered! Let's load some data.");
+//       debugPrint("First frame rendered! Let's load some data.");
 //       // Perform data loading or other tasks here
 //     });
     if (FirebaseAuth.instance.currentUser != null) {
@@ -130,7 +130,7 @@ class LoginState extends State<Login> {
   Color color1 = Color.fromARGB(255, 134, 219, 197); //green from website
   Color color2 = Color.fromARGB(255, 19, 125, 103); //green from logo
   Future<int> _getLoginCount() async {
-    print('line 80 getlogincount');
+    debugPrint('line 80 getlogincount');
     try {
       if (_emailController.text == '') {
         AlertDialog alert = AlertDialog(
@@ -155,7 +155,7 @@ class LoginState extends State<Login> {
       }
       String email = _emailController.text;
       int lc = await authService!.getCMSBranchUserLoginCount(email);
-      print('line 106: $lc');
+      debugPrint('line 106: $lc');
       if (lc == 0) {
         AlertDialog alert = AlertDialog(
           backgroundColor: Colors.yellowAccent,
@@ -178,7 +178,7 @@ class LoginState extends State<Login> {
       }
       return lc;
     } catch (e) {
-      print('line 129 error $e');
+      debugPrint('line 129 error $e');
       return 0;
     }
   }
@@ -202,7 +202,7 @@ class LoginState extends State<Login> {
     fontSize /= h!;
     authService!.screenRatio = screenWidth! / screenHeight!;
     fcmToken = authService!.fcmToken;
-    //  print('line 60 $h, ${MediaQuery.maybeOf(context)?.textScaler.scale(1.0)}');
+    //  debugPrint('line 60 $h, ${MediaQuery.maybeOf(context)?.textScaler.scale(1.0)}');
     return Scaffold(
       backgroundColor: color1,
       resizeToAvoidBottomInset: true,
@@ -283,7 +283,7 @@ class LoginState extends State<Login> {
                             //   title: Text('Branch User'),
                             //   value: isBranchUser,
                             //   onChanged: (bool? newValue) {
-                            //     print('line 286 $newValue');
+                            //     debugPrint('line 286 $newValue');
                             //     if (newValue == false) {
                             //      _branchUserController.text  = 'false';
                             //      } else {
@@ -356,7 +356,7 @@ class LoginState extends State<Login> {
   //                   decoration: InputDecoration(
   //                       suffixIcon: IconButton(
   //                           onPressed: () async {
-  //                             print('line 273 in button press for search');
+  //                             debugPrint('line 273 in button press for search');
   //                             String? clientN = await Navigator.push(
   //                                 context,
   //                                 MaterialPageRoute(
@@ -365,15 +365,15 @@ class LoginState extends State<Login> {
   //                                             ctx: context,
   //                                             clientName:
   //                                                 _clientIdController.text)));
-  //                             print('line 281: ${clientN}');
+  //                             debugPrint('line 281: ${clientN}');
   //                             if (clientN == null) {
-  //                               print(
+  //                               debugPrint(
   //                                   'line 293 error no data returned from shift screen');
   //                               // throw Exception(
   //                               _clientIdController.text = "No clients found.";
   //                               //     'Lisnt No data returned from search screen.');
   //                             } else {
-  //                               print(
+  //                               debugPrint(
   //                                   'line 288: $clientN, ${_clientIdController.text.length}');
   //                               int n1 = 28;
   //                               if (clientN.length < 28) {
@@ -711,7 +711,7 @@ class LoginState extends State<Login> {
           ),
           onPressed: () async {
             try {
-              print('line 621: $flagHasEmail $flagHasPassword');
+              debugPrint('line 621: $flagHasEmail $flagHasPassword');
               if (flagHasEmail == false || flagHasPassword == false) {
                 AlertDialog alert = AlertDialog(
                   backgroundColor: Colors.yellowAccent,
@@ -787,7 +787,7 @@ class LoginState extends State<Login> {
       //     )
       //     );
     } catch (e) {
-      print('line 217 $e');
+      debugPrint('line 217 $e');
       return Container();
     }
   }

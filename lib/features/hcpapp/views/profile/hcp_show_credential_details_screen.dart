@@ -31,7 +31,7 @@ class _ShowHCPCredentialDetailsScreenState
   }
 
   String getFormattedDate(dynamic dte) {
-    print('line 32 detauks: $dte');
+    debugPrint('line 32 detauks: $dte');
     if (dte == null) {
       return 'No Date';
     }
@@ -62,7 +62,7 @@ class _ShowHCPCredentialDetailsScreenState
   Widget build(BuildContext context) {
     double width = MediaQuery.sizeOf(context).width;
     double screenHeight = MediaQuery.sizeOf(context).height;
-    print('line 61 $width');
+    debugPrint('line 61 $width');
     return Scaffold(
       appBar: AppBar(
         title:

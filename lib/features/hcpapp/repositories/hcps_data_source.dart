@@ -274,7 +274,7 @@ class HCPClassDataSource extends DataGridSource {
         creds = creds.substring(0, idx);
         List<String> tsss = creds.split('-');
         creds = tsss[1] + '-' + tsss[2] + '-' + tsss[0];
-        //print('line 216 $ts $creds');
+        //debugPrint('line 216 $ts $creds');
         //last worked
         Timestamp lw = ld['lastWorked'];
         DateTime dtw = lw.toDate();
@@ -283,7 +283,7 @@ class HCPClassDataSource extends DataGridSource {
         lwk = lwk.substring(0, idx);
         List<String> slwk = lwk.split('-');
         lwk = slwk[1] + '-' + slwk[2] + '-' + slwk[0];
-        // print('line 216 $lw $lwk');
+        // debugPrint('line 216 $lw $lwk');
         String? ssn;
         if (ld['SSN'] == null || ld['SSN'] == '') {
           ssn = "UNK";
@@ -316,10 +316,10 @@ class HCPClassDataSource extends DataGridSource {
             lwk);
         hcpClasses.add(wkc);
       }
-      print('line 299: ${hcpClasses.length}');
+      debugPrint('line 299: ${hcpClasses.length}');
       return hcpClasses;
     } catch (e) {
-      print('line 231: ${e.toString()}');
+      debugPrint('line 231: ${e.toString()}');
       throw Exception('line 230 error on converting hcp classes');
     }
   }

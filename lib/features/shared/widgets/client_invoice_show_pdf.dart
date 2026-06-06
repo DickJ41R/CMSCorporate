@@ -27,7 +27,7 @@ class _ClientInvoiceShowPDFState extends State<ClientInvoiceShowPDF> {
   void initState() {
     super.initState();
     // createFileOfPdfUrl().then((f) {
-    //   print('line 34: ${f.path}');
+    //   debugPrint('line 34: ${f.path}');
     //   setState(() {
     //     remotePDFPath = f.path;
     //   });
@@ -37,7 +37,7 @@ class _ClientInvoiceShowPDFState extends State<ClientInvoiceShowPDF> {
 
   // Future<File> createFileOfPdfUrl() async {
   //   Completer<File> completer = Completer();
-  //   print("Start download file from internet!");
+  //   debugPrint("Start download file from internet!");
   //   try {
   //     // "https://berlin2017.droidcon.cod.newthinking.net/sites/global.droidcon.cod.newthinking.net/files/media/documents/Flutter%20-%2060FPS%20UI%20of%20the%20future%20%20-%20DroidconDE%2017.pdf";
   //     // final url = "https://pdfkit.org/docs/guide.pdf";
@@ -46,23 +46,23 @@ class _ClientInvoiceShowPDFState extends State<ClientInvoiceShowPDF> {
   // final filename = url.substring(url.lastIndexOf("/") + 1);
   // var request = await HttpClient().getUrl(Uri.parse(url));
   // var response = await request.close();
-  // print('line 50: $response');
+  // debugPrint('line 50: $response');
   // var bytes = await consolidateHttpClientResponseBytes(response);
   // var dir = await getApplicationDocumentsDirectory();
-  // print("line 52 Download files $url $dir");
-  // print("${dir.path}/$filename");
+  // debugPrint("line 52 Download files $url $dir");
+  // debugPrint("${dir.path}/$filename");
   // File file = File("${dir.path}/$filename");
-  // print('line 60: ${bytes.length}');
+  // debugPrint('line 60: ${bytes.length}');
   // await file.writeAsBytes(bytes, flush: true);
   // completer.complete(file);
   //   completer.future.then( (value) {
-  //     print('line 60 completerutue: $value');
+  //     debugPrint('line 60 completerutue: $value');
   //   }).catchError( (error) {
-  //     print('error: $error');
+  //     debugPrint('error: $error');
   // });
-  //     print('line 63 exiting');
+  //     debugPrint('line 63 exiting');
   //   } catch (e) {
-  //     print('line 65 error: $e');
+  //     debugPrint('line 65 error: $e');
   //     throw Exception('Error parsing pdf file!');
   //   }
   //
@@ -267,7 +267,7 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
               onRender: (_pages) {
                 setState(() {
                   pages = _pages;
-                  print('line 173: $_pages');
+                  debugPrint('line 173: $_pages');
                   currentPage = 0;
                   isReady = true;
                 });
@@ -276,22 +276,22 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
                 setState(() {
                   errorMessage = error.toString();
                 });
-                print(error.toString());
+                debugPrint(error.toString());
               },
               onPageError: (page, error) {
                 setState(() {
                   errorMessage = '$page: ${error.toString()}';
                 });
-                print('$page: ${error.toString()}');
+                debugPrint('$page: ${error.toString()}');
               },
               onViewCreated: (PDFViewController pdfViewController) {
                 _controller.complete(pdfViewController);
               },
               onLinkHandler: (String? uri) {
-                print('goto uri: $uri');
+                debugPrint('goto uri: $uri');
               },
               onPageChanged: (int? page, int? total) {
-                //  print('page change: $page/$total');
+                //  debugPrint('page change: $page/$total');
                 setState(() {
                   currentPage = page;
                 });

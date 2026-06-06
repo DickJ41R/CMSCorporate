@@ -36,7 +36,7 @@
 //     });
 //   }
 //   Widget _createListTile(String text, Widget screen1) {
-//     print('line 49 createlisttile: $screen1');
+//     debugPrint('line 49 createlisttile: $screen1');
 //    if (MediaQuery.of(context).size.width > 400) {
 //      // double width2 = MediaQuery
 //      //     .of(context)

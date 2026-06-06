@@ -38,7 +38,7 @@ class _ClientScheduleViewSchedulingPageState
 
   Future<bool> _showDialog(
       BuildContext context, String title, String? description) async {
-    print('line 67 showdialog');
+    debugPrint('line 67 showdialog');
     // Future.delayed(Duration(seconds: 3), () {
     //   Navigator.of(context).pop(); // Close the dialog
     // });
@@ -103,15 +103,15 @@ class _ClientScheduleViewSchedulingPageState
       lstApts = await clientServices.getClientWorkOrders(clientId, ctx);
       if (lstApts!.isNotEmpty) {
         var mp = lstApts![0];
-        print('line 38: $mp');
+        debugPrint('line 38: $mp');
         if (mp['error'] == 'No Data') {
-          print('line 40 no data');
+          debugPrint('line 40 no data');
           await _showDialog(ctx, "Schedule View Error", 'No Scheduling Data!');
           Navigator.of(context)
               .pushNamed(clientSchedulingMenu, arguments: arguments!);
           return;
         }
-        print('line 43 data: ${lstApts![0]}');
+        debugPrint('line 43 data: ${lstApts![0]}');
         setState(() {
           flagHaveData = true;
           dataSource = getCalendarDataSource();
@@ -119,7 +119,7 @@ class _ClientScheduleViewSchedulingPageState
       }
       return;
     } catch (e) {
-      print('line 46 error: ${e.toString()}');
+      debugPrint('line 46 error: ${e.toString()}');
       return null;
     }
   }
@@ -151,7 +151,7 @@ class _ClientScheduleViewSchedulingPageState
   }
 
   Future<void> setOrientationPreferenceX(int c) async {
-    print('line 32 setorientationprefx');
+    debugPrint('line 32 setorientationprefx');
     if (c == 0) {
       await SystemChrome.setPreferredOrientations(
           [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
@@ -171,7 +171,7 @@ class _ClientScheduleViewSchedulingPageState
     }
     double fontSize = 16;
     fontSize /= h;
-    print('line 40 after setorientation pref');
+    debugPrint('line 40 after setorientation pref');
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -279,7 +279,7 @@ class _ClientScheduleViewSchedulingPageState
   }
 
   void getSelectedDateAppointments(DateTime? selectedDate) {
-    print('line 259: $selectedDate');
+    debugPrint('line 259: $selectedDate');
 
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
       setState(() {
@@ -297,7 +297,7 @@ class _ClientScheduleViewSchedulingPageState
         final Appointment? occurrenceAppointment =
             dataSource.getOccurrenceAppointment(appointment, selectedDate!, '');
 
-        print(
+        debugPrint(
             'line 276: $appointment  ${appointment.startTime} ${appointment.startTime.year}');
         if ((DateTime(appointment.startTime.year, appointment.startTime.month,
                     appointment.startTime.day) ==
@@ -315,13 +315,13 @@ class _ClientScheduleViewSchedulingPageState
   Appointment buildAppointment(dynamic obj) {
     Appointment? apt;
     try {
-      print('line 290: buildapt $obj');
+      debugPrint('line 290: buildapt $obj');
       int secs = obj['shiftDate']['_seconds'];
       secs *= 1000;
       DateTime dtm = DateTime.fromMillisecondsSinceEpoch(secs);
-      print('line 299: $secs');
+      debugPrint('line 299: $secs');
       Timestamp stm = Timestamp.fromDate(dtm);
-      print('line 301: $stm');
+      debugPrint('line 301: $stm');
       DateTime st = stm.toDate();
       Color color1 = Colors.pinkAccent; //green from website
       Color color2 = Colors.purpleAccent; //green from logo
@@ -348,7 +348,7 @@ class _ClientScheduleViewSchedulingPageState
       et = et.add(Duration(
           hours: endHoursMinutes['hours'],
           minutes: endHoursMinutes['minutes']));
-      print('line 318: $st $et');
+      debugPrint('line 318: $st $et');
       String subjectText = "Shift: " + obj['shiftCode'];
       subjectText += "   Discipline: " + obj['disciplineName'];
       subjectText += "   Count: " + obj['shiftCount'].toString();
@@ -360,10 +360,10 @@ class _ClientScheduleViewSchedulingPageState
       //   }
       //   sts += obj['shiftStatuses'][j];
       // }
-      // print('line 360: $sts');
+      // debugPrint('line 360: $sts');
       statuses = obj['shiftStatuses'][0];
       int index = disciplines.indexOf(obj['disciplineName']);
-      print('line 329: $subjectText ${index.toString()}');
+      debugPrint('line 329: $subjectText ${index.toString()}');
       Appointment apt = Appointment(
           startTime: st,
           endTime: et,
@@ -372,24 +372,24 @@ class _ClientScheduleViewSchedulingPageState
           notes: 'Statuses: ' + statuses);
       return apt;
     } catch (e) {
-      print('line 333 error: ${e.toString()}');
+      debugPrint('line 333 error: ${e.toString()}');
       throw Exception('line 334 errro: ${e.toString()}');
     }
   }
 
   _DataSource getCalendarDataSource() {
     final List<Appointment> appointments = <Appointment>[];
-    print('line 313 in getCalendarDataSource');
+    debugPrint('line 313 in getCalendarDataSource');
     try {
       for (int i = 0; i < lstApts!.length; i++) {
         var obj = lstApts![i];
-        print('line 346: $obj');
+        debugPrint('line 346: $obj');
         Appointment apt = buildAppointment(obj);
         appointments.add(apt);
       }
       return _DataSource(appointments);
     } catch (e) {
-      print('line 405 error: ${e.toString()}');
+      debugPrint('line 405 error: ${e.toString()}');
       throw Exception('line 406 error: ${e.toString()}');
     }
   }

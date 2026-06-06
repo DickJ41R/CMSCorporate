@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:flutter/foundation.dart';
 class ClientClass {
   /// Creates the order class with required details.
   ClientClass(
@@ -50,7 +50,7 @@ class ClientClass {
   //       break;
   //     }
   //   });
-  //   print('line 53')
+  //   debugPrint('line 53')
   //   return city;
   // }
   //
@@ -112,7 +112,7 @@ class ClientClass {
       String? state,
       String? balance,
       String? openCredit}) {
-    print('line 115');
+    debugPrint('line 115');
     return ClientClass(
         clientId ?? this.clientId,
         statusId ?? this.statusId,

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 class DropDownCodes {
   DropDownCodes();
 
@@ -5109,8 +5110,8 @@ class DropDownCodes {
     },
     {
       "CodeID": 248,
-      "CodeDescription": 'Fingerprints',
-      "CodeValue": 'Fingerprints',
+      "CodeDescription": 'FingerdebugPrints',
+      "CodeValue": 'FingerdebugPrints',
       "CodeKey": 'Credential',
       "CredentialType": 'YESNO'
     },
@@ -5807,7 +5808,7 @@ class DropDownCodes {
     bool haveValue = false;
     for (Map<String, dynamic> item in rateGroupTypes) {
       item.forEach((key, value) {
-        //print('line 2620: $key $value $v');
+        //debugPrint('line 2620: $key $value $v');
         if (key == "CodeID" && value == v) {
           st = item;
           haveValue = true;
@@ -5825,7 +5826,7 @@ class DropDownCodes {
     bool haveValue = false;
     for (Map<String, dynamic> item in rateGroupTypes) {
       item.forEach((key, value) {
-        //print('line 2620: $key $value $v');
+        //debugPrint('line 2620: $key $value $v');
         if (key == "CodeID" && value == v) {
           st = item;
           haveValue = true;
@@ -6098,7 +6099,7 @@ class DropDownCodes {
     bool haveValue = false;
     for (Map<String, dynamic> item in contactTypes) {
       item.forEach((key, value) {
-        //print('line 2620: $key $value $v');
+        //debugPrint('line 2620: $key $value $v');
         if (key == "CodeID" && value == v) {
           st = item;
           haveValue = true;
@@ -6188,10 +6189,10 @@ class DropDownCodes {
   }
 
   List<dynamic> convertUtcToInt(String sutc) {
-    print('line 10 converutc: $sutc');
+    debugPrint('line 10 converutc: $sutc');
     List<dynamic> iutc = [];
     List<String> lutc = sutc.split('-');
-    print('line 13 convert utc $lutc');
+    debugPrint('line 13 convert utc $lutc');
     iutc.add(int.tryParse(lutc[0].toString()));
     iutc.add(int.tryParse(lutc[1].toString()));
     String sday = lutc[2].toString().substring(0, 2);
@@ -6215,25 +6216,25 @@ class DropDownCodes {
     if (dateString.length < 9) {
       int si = dateString.indexOf(':', 0);
       if (si == -1) {
-        print('line 3049 did not find a :');
+        debugPrint('line 3049 did not find a :');
         return [];
       }
-      //  print('line 10 $si');
+      //  debugPrint('line 10 $si');
       String hrs = dateString.substring(0, si);
       int hr = int.parse(hrs);
-      //  print('line 13');
+      //  debugPrint('line 13');
       String mns = dateString.substring(si + 1, 4);
       int mn = int.parse(mns);
-      //  print('line 16');
+      //  debugPrint('line 16');
       if (dateString.indexOf('PM', 0) != -1) {
         hr += 12;
       }
-      //   print('line 18');
+      //   debugPrint('line 18');
       List<dynamic> xtc = [1900, 1, 1, hr, mn, 0, 0, 0];
       return xtc;
-      //print('line 18 $xtc');
+      //debugPrint('line 18 $xtc');
     }
-    print('line 2716 $dateString $isTime');
+    debugPrint('line 2716 $dateString $isTime');
     //possible results
     //mm/dd/yyyy  mm/d/yyyy  m/d/yyyy
     dateString = dateString.replaceAll(RegExp('/'), '-');
@@ -6257,23 +6258,23 @@ class DropDownCodes {
 
     if (dateString.length <= 8) {
       //mo/day/yr
-      print('line 2735: $dateString ? mo-day-yr');
+      debugPrint('line 2735: $dateString ? mo-day-yr');
       mon = dateString.substring(0, fdx);
       fdy = dateString.indexOf('-', fdx + 1);
       day = dateString.substring(fdx + 1, fdy);
       fdz = fdy + 1;
-      print('line 2739: $fdx $fdy $fdz');
+      debugPrint('line 2739: $fdx $fdy $fdz');
       yr = dateString.substring(fdz);
       if (yr.length == 2) {
         yr = '20$yr';
       }
-      print('line 2744: $mon $day $yr');
+      debugPrint('line 2744: $mon $day $yr');
     } else {
       List<String> sp = dateString.split('-');
       if (sp[0].length == 4) {
         //year-mo-day
-        print('line 2749: $dateString ? year-mo-day');
-        print('line 2750: $fdx $fdy $fdz');
+        debugPrint('line 2749: $dateString ? year-mo-day');
+        debugPrint('line 2750: $fdx $fdy $fdz');
         day = dateString.substring(fdx + 1, fdy);
         if (day.trim().length == 1) {
           day = '0${day.trim()}';
@@ -6284,25 +6285,25 @@ class DropDownCodes {
         fdz = fdy + 1;
         yr = dateString.substring(fdz, fdz + 4);
         fdz += 4;
-        print('line 2761: $yr $mon $day');
+        debugPrint('line 2761: $yr $mon $day');
       } else {
         //mo-yr-year
         mon = dateString.substring(0, fdx);
         fdy = dateString.indexOf('-', fdx + 1);
         day = dateString.substring(fdx + 1, fdy);
         fdz = fdy + 1;
-        print('line 2770: $fdx $fdy $fdz');
+        debugPrint('line 2770: $fdx $fdy $fdz');
         yr = dateString.substring(fdz);
         fdz += 4;
-        print('line 2773 $yr $mon $day');
+        debugPrint('line 2773 $yr $mon $day');
       }
     }
-    print('line 2765: $fdx $fdy $fdz ${dateString.length}');
+    debugPrint('line 2765: $fdx $fdy $fdz ${dateString.length}');
     String ending = dateString.substring(fdz, dateString.length);
     ending = ending.trim();
     ending = ending.replaceAll(' ', ':');
     List<String> eds = ending.split(':');
-    //  print('line 34:  $yr $mon $day $ending');
+    //  debugPrint('line 34:  $yr $mon $day $ending');
     dateString = '$yr-$mon-$day';
     if (isTime == false) {
       if (convertUtc == true) {
@@ -6321,8 +6322,8 @@ class DropDownCodes {
         }
       }
       dateString = '$yr-$mon-$day ${eds[0]}:${eds[1]}:00.${eds[2]}0';
-      // print(dateString);
-      // print(DateTime.now());
+      // debugPrint(dateString);
+      // debugPrint(DateTime.now());
       // return DateFormat.yMEd().add_jms().format(DateTime.parse(dateString));
 
       if (convertUtc == true) {

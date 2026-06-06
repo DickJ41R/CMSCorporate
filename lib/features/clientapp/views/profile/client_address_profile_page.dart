@@ -23,7 +23,7 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
   List<DropdownMenuEntry<dynamic>> dropDownMenuOptionEntries = [];
 
   Future<List<dynamic>> _getDropDownMenuItems() async {
-    print(
+    debugPrint(
         'line 30 get client address Dropdownitems: ${listOfAddresses.length}');
     dropDownMenuEntries = [];
     menuAddresses = [];
@@ -32,7 +32,7 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
         listOfAddresses =
             await clientServices.getClientAddressData(arguments!['clientId']);
       }
-      print('line 35: ${listOfAddresses!.length}');
+      debugPrint('line 35: ${listOfAddresses!.length}');
       if (listOfAddresses.length > 0) {
         for (int i = 0; i < listOfAddresses!.length; i++) {
           Map<String, dynamic> adr = listOfAddresses![i];
@@ -46,20 +46,20 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
           dropDownMenuEntries.add(me);
           menuAddresses!.add(madr);
         }
-        print('line 48: ${dropDownMenuEntries}');
+        debugPrint('line 48: ${dropDownMenuEntries}');
         return dropDownMenuEntries;
       } else {
         return [];
       }
-      print('line 49: dropdownentries ${dropDownMenuEntries.length}');
+      debugPrint('line 49: dropdownentries ${dropDownMenuEntries.length}');
     } catch (e) {
-      print('line 49: error: ${e.toString()}');
+      debugPrint('line 49: error: ${e.toString()}');
       throw Exception('line 21 error getting dropdown menu items');
     }
   }
 
   Future<void> _update() async {
-    print(
+    debugPrint(
         'line 60 in address update:$isPrimary ${addressLine1Controller.text} ${addressLine2Controller.text} ${cityController.text} ${stateController.text} ${zipCodeController.text} ${countyController.text} ${latitudeController.text} ${longitudeController.text}');
     try {
       Map<String, dynamic> data = {
@@ -75,17 +75,17 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
         "longitude":
             isPrimary == true ? double.parse(longitudeController.text) : null,
       };
-      print('line 76 just call ${currentAddressId!} ${data}');
+      debugPrint('line 76 just call ${currentAddressId!} ${data}');
       bool? bl =
           await clientServices.updateClientAddressForm(currentAddressId!, data);
-      print('line 85');
+      debugPrint('line 85');
       formKey.currentState?.reset();
       _initializeControllers();
       listOfAddresses = [];
       _getDropDownMenuItems();
       return;
     } catch (e) {
-      print('line 76 error: ${e.toString()}');
+      debugPrint('line 76 error: ${e.toString()}');
     }
   }
 
@@ -135,12 +135,12 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
   }
 
   int getSelectedMenuIndex(value) {
-    print('line 57 getselected address index : $value');
+    debugPrint('line 57 getselected address index : $value');
     int index = -1;
     isPrimary = false;
     for (int i = 0; i < dropDownMenuEntries.length; i++) {
       DropdownMenuEntry de = dropDownMenuEntries[i];
-      print('line 142: $value ${de.value}');
+      debugPrint('line 142: $value ${de.value}');
       if (value == de.value) {
         if (value == 'Primary') {
           isPrimary = true;
@@ -149,12 +149,12 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
         break;
       }
     }
-    print('line 62: $isPrimary $index $arguments');
+    debugPrint('line 62: $isPrimary $index $arguments');
     if (index != -1) {
       clientNameController.text = arguments!['clientName'];
 
       Map<String, dynamic> adr = listOfAddresses![index];
-      print('line 104: $adr');
+      debugPrint('line 104: $adr');
       currentAddressId = adr['id'];
       addressTypeController.text = adr['addressType'];
       addressNameController.text =
@@ -166,14 +166,14 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
       stateController.text = adr['state'];
       zipCodeController.text = adr['zipCode'].toString();
       countyController.text = adr['county'] == null ? "" : adr['county'];
-      print('line 113 $isPrimary');
+      debugPrint('line 113 $isPrimary');
 
       if (adr['addressType'] == 'Primary') {
         isPrimary = true;
         latitudeController.text = adr['latitude'].toString();
         longitudeController.text = adr['longitude'].toString();
       }
-      print('line 118 ${latitudeController.text}');
+      debugPrint('line 118 ${latitudeController.text}');
     } else {
       throw Exception('line 177 index = -1');
     }
@@ -184,7 +184,7 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
   void initState() {
     super.initState();
     arguments = widget.args;
-    print('line 72 arguments $arguments');
+    debugPrint('line 72 arguments $arguments');
   }
 
   double? screenHeight;
@@ -297,7 +297,7 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
                                       );
                                     } else {
                                       List<dynamic> listH = snapshot.data![0];
-                                      print('line 111 ${listH.length}');
+                                      debugPrint('line 111 ${listH.length}');
                                       if (listH.length == 0) {
                                         return Center(
                                           child: Padding(
@@ -321,7 +321,7 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
                                       } else {
                                         List<dynamic> listD =
                                             snapshot.data![0]!;
-                                        print('line 260 ${listD.length}');
+                                        debugPrint('line 260 ${listD.length}');
 
                                         return Container(
                                           height: 80,
@@ -335,13 +335,13 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
                                                 label: const Text(
                                                     'Client Address Menu'),
                                                 onSelected: (dynamic value) {
-                                                  print(
+                                                  debugPrint(
                                                       'line 278 on selected $value');
                                                   selectedMenu = value;
                                                   selectedMenuIndex =
                                                       getSelectedMenuIndex(
                                                           value);
-                                                  print(
+                                                  debugPrint(
                                                       'line 283: $isPrimary $selectedMenuIndex');
                                                   selectedMenuName =
                                                       menuAddresses![
@@ -577,10 +577,10 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
                               onPressed: () {
                                 bool? bl = formKey.currentState?.validate();
                                 if (bl != null && bl == false) {
-                                  print('line 529: $bl');
+                                  debugPrint('line 529: $bl');
                                   return;
                                 }
-                                print('line 570: ${bl!}');
+                                debugPrint('line 570: ${bl!}');
                                 _update();
                               },
                               child: Text('Update'),
@@ -611,7 +611,7 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
 //   List<Widget> _buildForm(BuildContext context) {
 //     bool isPrimary = true;
 //     double screenWidth = MediaQuery.of(context).size.width;
-//     print('line 240: $screenWidth $clientName');
+//     debugPrint('line 240: $screenWidth $clientName');
 //     return [
 //         children: [
 //           Container(
@@ -771,7 +771,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
 
     _ratio = widget.ratio;
     _ratio = .25;
-    print('line 99: $_ratio');
+    debugPrint('line 99: $_ratio');
   }
 
   @override

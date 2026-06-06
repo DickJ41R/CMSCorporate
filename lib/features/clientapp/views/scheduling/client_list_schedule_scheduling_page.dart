@@ -36,7 +36,7 @@ class _ClientListScheduleSchedulingPageState
   AuthService authService = AuthService();
 
   Future<List<Map<String, dynamic>>> _getAllScheduledShifts() async {
-    print('line 40 in getallscheduleshifts asm and mobile');
+    debugPrint('line 40 in getallscheduleshifts asm and mobile');
     List<Map<String, dynamic>>? lm =
         await clw.getClientWorkOrdersAll(clientId!);
     listLength = lm!.length;
@@ -48,7 +48,7 @@ class _ClientListScheduleSchedulingPageState
   void initState() {
     super.initState();
     arguments = widget.args;
-    print('line 51: $arguments');
+    debugPrint('line 51: $arguments');
     clientId = arguments!['clientId'];
     client = authService.clientMap!;
     userEmail = client!['email'];
@@ -70,7 +70,7 @@ class _ClientListScheduleSchedulingPageState
     }
     fontSize = 18;
     fontSize /= h;
-    print('line 73 in build list schedule $screenWidth $screenHeight');
+    debugPrint('line 73 in build list schedule $screenWidth $screenHeight');
     return Scaffold(
       backgroundColor: color1,
       appBar: AppBar(
@@ -89,7 +89,7 @@ class _ClientListScheduleSchedulingPageState
                 color: Colors.black,
               ),
               onPressed: () {
-                print('line 92 in list schedule: $clientSchedulingMenu');
+                debugPrint('line 92 in list schedule: $clientSchedulingMenu');
                 Navigator.of(context)
                     .pushNamed(clientSchedulingMenu, arguments: arguments!);
 
@@ -105,7 +105,7 @@ class _ClientListScheduleSchedulingPageState
       body: FutureBuilder(
           future: Future.wait([_getAllScheduledShifts()]),
           builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-            // print(
+            // debugPrint(
             //     'line 91: ${snapshot.data}  ${snapshot.connectionState} ${snapshot.hasData}');
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
@@ -154,7 +154,7 @@ class _ClientListScheduleSchedulingPageState
               //       Center(child: CircularProgressIndicator()));
               // }
               List<dynamic> listH = snapshot.data![0];
-              print('line 111 ${listH.length}');
+              debugPrint('line 111 ${listH.length}');
               if (listH.length == 0) {
                 return Center(
                   child: Container(
@@ -212,7 +212,7 @@ class _ClientScheduleTileState extends State<ClientScheduleTile> {
   initState() {
     super.initState();
     item = widget.itemm;
-    print('line 215: ${item} ${item['hcpId']}  ${item['shiftStatus']}');
+    debugPrint('line 215: ${item} ${item['hcpId']}  ${item['shiftStatus']}');
   }
 
   // String convertFromTimestamp(Timestamp? timestamp) {
@@ -220,10 +220,10 @@ class _ClientScheduleTileState extends State<ClientScheduleTile> {
   //     return "No Date";
   //   }
   //   int ts = timestamp.millisecondsSinceEpoch;
-  //   print('line 184: $ts');
+  //   debugPrint('line 184: $ts');
   //   DateTime dt = DateTime.fromMillisecondsSinceEpoch(ts);
   //   String sdt = formatter.format(dt);
-  //   print('line 186: $sdt');
+  //   debugPrint('line 186: $sdt');
   //   return sdt;
   // }
 
@@ -271,7 +271,7 @@ class _ClientScheduleTileState extends State<ClientScheduleTile> {
     }
     fontSize = 16;
     fontSize /= h;
-    print('line 98 in tile building');
+    debugPrint('line 98 in tile building');
     return Container(
       width: 300,
       height: 330,
@@ -488,10 +488,10 @@ class _ClientScheduleTileState extends State<ClientScheduleTile> {
       String char = String.fromCharCode(8239);
       String startTime = sT.replaceAll(char, ' ');
       String endTime = eT.replaceAll(char, ' ');
-      //   print('line 1059: $startTime $endTime');
+      //   debugPrint('line 1059: $startTime $endTime');
       List<String> sts = startTime.split(' ');
       List<String> ets = endTime.split(' ');
-      //   print('line 49: $sts $ets');
+      //   debugPrint('line 49: $sts $ets');
       String st = sts[0];
       String et = ets[0];
       List<String> stl = st.split(':');
@@ -500,7 +500,7 @@ class _ClientScheduleTileState extends State<ClientScheduleTile> {
       double dsm = double.parse(stl[1]);
       double esh = double.parse(etl[0]);
       double esm = double.parse(etl[1]);
-      //   print('line 61: $dsh $dsm $esh $esm');
+      //   debugPrint('line 61: $dsh $dsm $esh $esm');
       dsm = dsm;
       esm = esm;
 
@@ -527,7 +527,7 @@ class _ClientScheduleTileState extends State<ClientScheduleTile> {
         } else if (ets[1].toLowerCase() == 'pm') {
           //pm to pm
           // 11:00 pm to 3:00 pm
-          //     print('line 84: $dsh $esh');
+          //     debugPrint('line 84: $dsh $esh');
           if (dsh == 12) {
             th = esh;
           } else if (dsh >= esh) {
@@ -571,7 +571,7 @@ class _ClientScheduleTileState extends State<ClientScheduleTile> {
       thm = thm.abs();
       String thms = thm.toString(); //convert to minutes
       String ths = th.toString();
-      //     print('line 120: $th ');
+      //     debugPrint('line 120: $th ');
       String tls = ths + '.' + thms;
       List<String> stz = tls.split('.');
       String xt = stz[1];
@@ -584,7 +584,7 @@ class _ClientScheduleTileState extends State<ClientScheduleTile> {
       tls = vt + '.' + xt;
       return tls;
     } catch (e) {
-      print('line 1131 error: $e');
+      debugPrint('line 1131 error: $e');
       throw Exception(e.toString());
     }
   }

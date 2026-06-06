@@ -45,20 +45,22 @@ import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_cancel_shif
 import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_confirmed_shifts.dart';
 import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_list_dnu.dart';
 import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_payments.dart';
+import 'package:cms_web/features/hcpapp/views/scheduling/show_hcp_payment_details_screen.dart';
+import 'package:cms_web/features/shared/widgets/hcp_show_payment_pdf.dart';
 import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_schedule_view.dart';
 import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_show_confirmed_shifts.dart';
-
+import 'package:cms_web/features/shared/widgets/show_hcp_document_pdf.dart';
 class MyRoutes {
   //AuthService authService = AuthService();
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    print('line 10: $settings ${settings.name}');
+    debugPrint('line 10: $settings ${settings.name}');
     switch (settings.name) {
       case homePage:
-        print('line 36 routes ');
+        debugPrint('line 36 routes ');
         return MaterialPageRoute(
             builder: (context) => Login(flagGetAPNS: false));
       case loginPage:
-        print('line 40 routes');
+        debugPrint('line 40 routes');
         return MaterialPageRoute(
             builder: (context) => Login(flagGetAPNS: false));
       case workOrderPage:
@@ -72,7 +74,7 @@ class MyRoutes {
         return MaterialPageRoute(
             builder: (context) => HCProfessionalStreamScreen(args: mp));
       case clientMenu:
-        print('line 67 client menu');
+        debugPrint('line 67 client menu');
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(builder: (context) => ClientMenu(args: mp));
       case clientProfilePage:
@@ -100,7 +102,7 @@ class MyRoutes {
         return MaterialPageRoute(
             builder: (context) => ClientDepartmentProfilePage(args: mp));
       case clientCredentialsProfilePage:
-        print('line 83 clientcredentialsprofilepage');
+        debugPrint('line 83 clientcredentialsprofilepage');
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (context) => ProcessClientRequestSchedule(args: mp));
@@ -111,11 +113,11 @@ class MyRoutes {
 
       //scheduling
       case clientSchedulingMenu:
-        print('line 105: cancel shift');
+        debugPrint('line 105: cancel shift');
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(builder: (context) => ClientMenu(args: mp));
       case clientCancelShiftsSchedulingPage:
-        print('line 105: cancel shift');
+        debugPrint('line 105: cancel shift');
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (context) => ClientCancelShiftsSchedulingPage(args: mp));
@@ -167,7 +169,7 @@ class MyRoutes {
         return MaterialPageRoute(builder: (context) => LandingPageWeb());
       //hcp
       case hcpMenu:
-        print('line 67 client menu');
+        debugPrint('line 67 client menu');
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(builder: (context) => HCPMenu(args: mp));
 
@@ -209,6 +211,15 @@ class MyRoutes {
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPPayments(args: mp));
+      case hcpPaymentDetailsData:
+        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+            builder: (context) => ShowHCPPaymentDetailsScreen(args: mp));
+      case showPaymentPDF:
+        debugPrint('line 219: ${settings.arguments}');
+        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+            builder: (context) => HCPShowPaymentPDF (args: mp));
       case hcpScheduledView:
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(

@@ -73,13 +73,13 @@ class ClientDepartment {
   required this.chargeIncrement,
   required this.chargeWhenInvoiced,
   required this.invoiceFormatCodeId,
-  required this.printQueue,
-  required this.printQueueCopies,
+  required this.debugPrintQueue,
+  required this.debugPrintQueueCopies,
   required this.omrQueue,
   required this.emailQueue,
   required this.emailQueuePDF,
   required this.emailQueueXLS,
-  required this.printImages,
+  required this.debugPrintImages,
   required this.imagesPerPage,
   required this.invoiceComments,
   required this.invoiceEmailTemplateId,
@@ -165,13 +165,13 @@ final String? cardHolderName;
 final double? chargeIncrement;
 final bool chargeWhenInvoiced;
 final String? invoiceFormatCodeId;
-final String? printQueue;
-final int? printQueueCopies;
+final String? debugPrintQueue;
+final int? debugPrintQueueCopies;
 final bool omrQueue;
 final bool emailQueue;
 final bool emailQueuePDF;
 final bool emailQueueXLS;
-final bool printImages;
+final bool debugPrintImages;
 final int? imagesPerPage;
 final String? invoiceComments;
 final String? invoiceEmailTemplateId;
@@ -261,13 +261,13 @@ final List<dynamic>?rateGroups;
         chargeIncrement: lc?['chargeIncrement'],
         chargeWhenInvoiced: lc?['chargeWhenInvoiced'],
         invoiceFormatCodeId: lc?['invoiceFormatCodeId'],
-        printQueue: lc?['printQueue'],
-        printQueueCopies: lc?['printQueueCopies'],
+        debugPrintQueue: lc?['debugPrintQueue'],
+        debugPrintQueueCopies: lc?['debugPrintQueueCopies'],
         omrQueue: lc?['omrQueue'],
         emailQueue: lc?['emailQueue'],
         emailQueuePDF: lc?['emailQueuePDF'],
         emailQueueXLS: lc?['emailQueueXLS'],
-        printImages: lc?['printImages'],
+        debugPrintImages: lc?['debugPrintImages'],
         imagesPerPage: lc?['imagesPerPage'],
         invoiceComments: lc?['invoiceComments'],
         invoiceEmailTemplateId: lc?['invoiceEmailTemplateId'],
@@ -354,13 +354,13 @@ final List<dynamic>?rateGroups;
       "chargeIncrement" : chargeIncrement,
       "chargeWhenInvoiced" : chargeWhenInvoiced,
       "invoiceFormatCodeId" : invoiceFormatCodeId,
-      "printQueue" : printQueue,
-      "printQueueCopies" : printQueueCopies,
+      "debugPrintQueue" : debugPrintQueue,
+      "debugPrintQueueCopies" : debugPrintQueueCopies,
       "omrQueue" : omrQueue,
       "emailQueue" : emailQueue,
       "emailQueuePDF" : emailQueuePDF,
       "emailQueueXLS" : emailQueueXLS,
-      "printImages" : printImages,
+      "debugPrintImages" : debugPrintImages,
       "imagesPerPage" : imagesPerPage,
       "invoiceComments" : invoiceComments,
       "invoiceEmailTemplateId" : invoiceEmailTemplateId,

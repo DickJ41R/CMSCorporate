@@ -18,7 +18,7 @@ class _ShowHCPDocumentImageState extends State<ShowHCPDocumentImage> {
   // }
   // Future<File> get _localFile async {
   //   final path = await _localPath;
-  //   print('line 24: $path');
+  //   debugPrint('line 24: $path');
   //   return File('$path/my_image.jpg');
   // }
 
@@ -26,7 +26,7 @@ class _ShowHCPDocumentImageState extends State<ShowHCPDocumentImage> {
   void initState() {
     super.initState();
 //SystemChannels.textInput.invokeMethod("TextInput.show");
-    print('line in init state of show docu image');
+    debugPrint('line in init state of show docu image');
   }
 
   @override
@@ -43,7 +43,7 @@ class _ShowHCPDocumentImageState extends State<ShowHCPDocumentImage> {
     //     .width;;
     double screenWidth = MediaQuery.of(context).size.width;
 
-    print('line 32: ${widget.imageData}');
+    debugPrint('line 32: ${widget.imageData}');
     return Scaffold(
       appBar: AppBar(
         leading: null,
@@ -69,7 +69,7 @@ class _ShowHCPDocumentImageState extends State<ShowHCPDocumentImage> {
               child: Center(
                 child: TextButton(
                   onPressed: (() {
-                    print('line 62 in show image ${widget.imageData.length}');
+                    debugPrint('line 62 in show image ${widget.imageData.length}');
                     Navigator.push(
                       context,
                       MaterialPageRoute(

@@ -44,13 +44,13 @@ class _ClientDoNotScheduleListSchedulingPageState
       client = await clientServices.getClient(clientId!);
       return;
     } catch (e) {
-      print('line 133 gethcps error: $e');
+      debugPrint('line 133 gethcps error: $e');
       throw Exception('line 67 error gethcps: $e');
     }
   }
 
   Future<List<dynamic>> _getDNUs(BuildContext ctx) async {
-    print('line 86 enterig gethcps: ');
+    debugPrint('line 86 enterig gethcps: ');
     List<dynamic> lst = [];
     try {
       //hanged for app 5/27/2025 switch next 2 lines
@@ -59,7 +59,7 @@ class _ClientDoNotScheduleListSchedulingPageState
 
       return lst;
     } catch (e) {
-      print('line 133 gethcps error: $e');
+      debugPrint('line 133 gethcps error: $e');
       throw Exception('line 67 error gethcps: $e');
     }
   }
@@ -78,8 +78,8 @@ class _ClientDoNotScheduleListSchedulingPageState
     if (authService.clientMap == null) {
       _getClient();
     }
-    print('line 39:  $clw');
-    print('lint 55: $clientId');
+    debugPrint('line 39:  $clw');
+    debugPrint('lint 55: $clientId');
 
     foundShifts = true;
   }
@@ -92,7 +92,7 @@ class _ClientDoNotScheduleListSchedulingPageState
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.sizeOf(context).width;
-    print('line 40 in showavailashifts');
+    debugPrint('line 40 in showavailashifts');
     double? h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
     if (h! < 1.0) {
       h = 1.0;
@@ -121,7 +121,7 @@ class _ClientDoNotScheduleListSchedulingPageState
         child: FutureBuilder(
             future: Future.wait([_getDNUs(context)]),
             builder: (context, snapshot) {
-              print('line 144: ${snapshot.connectionState}');
+              debugPrint('line 144: ${snapshot.connectionState}');
               // if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
@@ -173,7 +173,7 @@ class _ClientDoNotScheduleListSchedulingPageState
                 );
               } else {
                 List<dynamic> listH = snapshot.data![0]; // cast to List<Marker>
-                print('line 111 ${listH.length}');
+                debugPrint('line 111 ${listH.length}');
                 if (listH.length == 0) {
                   return Center(
                     child: Padding(
@@ -267,7 +267,7 @@ class ClientDNUTileState extends State<ClientDNUTile> {
 
     fontSize = 18 / h;
 
-    print('line 98 in tile building');
+    debugPrint('line 98 in tile building');
     return Container(
       width: screenWidth - 10,
       height: 240,

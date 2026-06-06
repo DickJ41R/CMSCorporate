@@ -32,7 +32,7 @@ class _ProcessHCPProfileEducationDataState
 
   Future<List<Map<String, dynamic>>> _getHCPProfileEducationData(
       BuildContext context) async {
-    print('line 33 in _getHCPEducation Date');
+    debugPrint('line 33 in _getHCPEducation Date');
     try {
       List<Map<String, dynamic>>? list =
           await hcpServices.getHCPEducation(hcpId!);
@@ -43,14 +43,14 @@ class _ProcessHCPProfileEducationDataState
           obj['state'] ?? 'NP';
           obj['zip'] ?? 'NP';
           obj['address1'] ?? 'NP';
-          print('line 49 $obj');
+          debugPrint('line 49 $obj');
           obj['graduationDate'] = DateTime.tryParse(obj['graduationDate']);
           list[i] = obj;
         }
       }
       return list;
     } catch (e) {
-      print('line 69 error gettin contacts: $e');
+      debugPrint('line 69 error gettin contacts: $e');
       throw Exception(e.toString());
     }
   }
@@ -69,13 +69,13 @@ class _ProcessHCPProfileEducationDataState
     super.initState();
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
-    print('line 66 initstate: $hcpId');
+    debugPrint('line 66 initstate: $hcpId');
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 63 didchange');
+    debugPrint('line 63 didchange');
 
     getHCPUser();
     ;
@@ -137,7 +137,7 @@ class _ProcessHCPProfileEducationDataState
         //               return Home();
         //             }));
         //       } catch (error) {
-        //         print("Error during logout ${error}");
+        //         debugPrint("Error during logout ${error}");
         //         throw Exception('Error logging out. ${error.toString()}');
         //       }
         //     },

@@ -43,25 +43,25 @@ class ProcessClientDNUState extends State<ProcessHCPDNU> {
   String? fullName;
   Map<String, dynamic>? hcProfessional;
   void getHCPUserX() async {
-    print('line 44 in get usrx');
+    debugPrint('line 44 in get usrx');
     hcProfessional = await getHCPUser();
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 50 gethcpuser available shfts: $hcpServices');
+    debugPrint('line 50 gethcpuser available shfts: $hcpServices');
     try {
       Map<String, dynamic>? lm = await hcpServices.getHCPUser(hcpId!);
 
       if (lm.isEmpty) {
-        print('line 54 lm i septy');
+        debugPrint('line 54 lm i septy');
         return lm;
       }
-      print('line 57 in available shifts gethcpuser $lm');
+      debugPrint('line 57 in available shifts gethcpuser $lm');
       fullName = lm['legalName'];
       hcpId = lm['hcpId'];
       return lm;
     } catch (e) {
-      print('line 63 error: $e');
+      debugPrint('line 63 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -70,7 +70,7 @@ class ProcessClientDNUState extends State<ProcessHCPDNU> {
   @override
   void initState() {
     // _loggedInUser = ref.read(globalUserModel.notifier).state;
-    // print('line 54: $_loggedInUser ${ref.read(globalUserModel.notifier).state}');
+    // debugPrint('line 54: $_loggedInUser ${ref.read(globalUserModel.notifier).state}');
     super.initState();
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
@@ -83,7 +83,7 @@ class ProcessClientDNUState extends State<ProcessHCPDNU> {
           await hcpTimeCardService.getHCPTimeCardsWithClients(hcpId!);
       return dnus!;
     } catch (e) {
-      print('line 94 error: $e');
+      debugPrint('line 94 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -91,7 +91,7 @@ class ProcessClientDNUState extends State<ProcessHCPDNU> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 63 didchange');
+    debugPrint('line 63 didchange');
 
     getHCPUser();
   }
@@ -199,7 +199,7 @@ class ProcessClientDNUState extends State<ProcessHCPDNU> {
                             );
                           } else {
                             List<dynamic> data = snapshot.data![0];
-                            print('line 111 ${data.length}');
+                            debugPrint('line 111 ${data.length}');
                             if (data.length == 0) {
                               return Center(
                                 child: Container(
@@ -217,7 +217,7 @@ class ProcessClientDNUState extends State<ProcessHCPDNU> {
                             } else {
                               List<Map<String, dynamic>> listH =
                                   snapshot.data![0];
-                              print(
+                              debugPrint(
                                   'line 255: $selectedValueClient ${listH.length}');
                               return ListView.builder(
                                 restorationId: 'HCPDNUListView',
@@ -283,7 +283,7 @@ class _HCPDNUTileState extends State<HCPDNUTile> {
         ? formatter.format(item['ncpDNUDate'])
         : formatter.format(item['clientDNUDate']);
     var dnuSetter = item['flagHCPDNU'] == true ? "NCP" : "Clienbt";
-// print('line 98 in tile building');
+// debugPrint('line 98 in tile building');
 // String hoursString = (item.decimalHours - (item.meals/60)).toStringAsFixed(2);
 // hoursString = '7.50';
     return Container(

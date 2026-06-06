@@ -16,7 +16,7 @@ class _HCPMenuState extends State<HCPMenu> {
   @override
   void initState() {
     super.initState();
-    print('line 19 in hcp menu ${widget.args}');
+    debugPrint('line 19 in hcp menu ${widget.args}');
     localTitle = 'HCP Menu';
     arguments = widget.args;
     _setMenus();
@@ -180,7 +180,7 @@ class _HCPMenuState extends State<HCPMenu> {
   }
 
   int getSelectedMenuIndex(value) {
-    print('line 342 getselected branchindex : $value');
+    debugPrint('line 342 getselected branchindex : $value');
 
     for (int i = 0; i < dropDownMenuEntries.length; i++) {
       DropdownMenuEntry de = dropDownMenuEntries[i];
@@ -199,7 +199,7 @@ class _HCPMenuState extends State<HCPMenu> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    print(
+    debugPrint(
         'line build 184: $screenWidth $selectedMenu $showRightSide $flagHaveData $flagHaveCalled');
     screenHeight = MediaQuery.of(context).size.height;
     double? h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
@@ -207,7 +207,7 @@ class _HCPMenuState extends State<HCPMenu> {
       h = 1.0;
     }
     fontSize = 18 / h;
-    print('line 406: $fontSize $h');
+    debugPrint('line 406: $fontSize $h');
     bool flagHasSnackbar = false;
     if (screenWidth < 1220) {
       double dif = 1220 - screenWidth;
@@ -275,11 +275,11 @@ class _HCPMenuState extends State<HCPMenu> {
                                     requestFocusOnTap: true,
                                     label: const Text('HCP Menu'),
                                     onSelected: (dynamic value) {
-                                      print('line 258 on selected $value');
+                                      debugPrint('line 258 on selected $value');
                                       selectedMenu = value;
                                       selectedMenuIndex =
                                           getSelectedMenuIndex(value);
-                                      print('line 262: $selectedMenuIndex');
+                                      debugPrint('line 262: $selectedMenuIndex');
                                       selectedMenuName =
                                           hcpMenus[selectedMenuIndex]
                                               ['clientRouteName'];
@@ -355,7 +355,7 @@ class _HCPMenuState extends State<HCPMenu> {
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       final item = hcpProfileMenus[index];
-                                      print('line 243: $index ${item}');
+                                      debugPrint('line 243: $index ${item}');
                                       return VerticalTile(
                                         menuItem: hcpProfileMenus[index],
                                         arguments: arguments!,
@@ -401,7 +401,7 @@ class _HCPMenuState extends State<HCPMenu> {
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       final item = hcpSchedulingMenus[index];
-                                      print('line 402: $index ${item}');
+                                      debugPrint('line 402: $index ${item}');
 
                                       return VerticalTile1(
                                         menuItem: hcpSchedulingMenus[index],
@@ -447,7 +447,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
 
     _ratio = widget.ratio;
     _ratio = .25;
-    print('line 99: $_ratio');
+    debugPrint('line 99: $_ratio');
   }
 
   @override

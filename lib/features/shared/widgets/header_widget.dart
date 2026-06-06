@@ -8,7 +8,7 @@ class HeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    print('line 13 $screenWidth $screenHeight');
+    debugPrint('line 13 $screenWidth $screenHeight');
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

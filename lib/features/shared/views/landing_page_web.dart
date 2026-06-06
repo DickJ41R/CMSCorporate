@@ -22,7 +22,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   void initState() {
     super.initState();
 
-    print('line 26 landingpage web');
+    debugPrint('line 26 landingpage web');
     localTitle = 'CMS Primary Menu';
     listOfCurrentUserBranches = authServices.listOfCMSUserBranches;
     _setBranches();
@@ -99,7 +99,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     switch (index) {
       case 0:
         {
-          print('line 96: ${clientFields!.length}');
+          debugPrint('line 96: ${clientFields!.length}');
           for (int i = 0; i < clientFields!.length; i++) {
             Map<String, String> obj = clientFields![i];
             DropdownMenuEntry me =
@@ -193,10 +193,10 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   List<Map<String, dynamic>>? userBranches;
 
   void _setBranches() {
-    print('line 50 in _setBranches');
+    debugPrint('line 50 in _setBranches');
     userBranches = dropDownCodes.getUserBranches();
     bool flagHaveCorporate = false;
-    print(
+    debugPrint(
         'line 60: ${userBranches!.length} ${listOfCurrentUserBranches!.length}');
     if (authServices.corporateOrBranch == 'Corporate') {
       Map<String, dynamic> mp = {"branchId": 0, "branchName": "Corporate"};
@@ -236,7 +236,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   }
 
   int getSelectedBranchIndex(value) {
-    print('line 342 getselected branchindex : $value');
+    debugPrint('line 342 getselected branchindex : $value');
 
     for (int i = 0; i < dropDownBranchEntries.length; i++) {
       DropdownMenuEntry de = dropDownBranchEntries[i];
@@ -249,7 +249,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
 
   String _getSelectedSearchFieldIndex(int index, String value) {
     String ivv = '';
-    print('line 252: $index $value');
+    debugPrint('line 252: $index $value');
     if (index == 0) {
       for (int i=0; i < clientFields!.length; i++) {
         if (clientFields![i]['value'] == value) {
@@ -272,14 +272,14 @@ class _LandingPageWebState extends State<LandingPageWeb> {
         }
       }
     }
-    print('line 253 $ivv');
+    debugPrint('line 253 $ivv');
     return ivv;
   }
 
   bool _validateCurrentArguments() {
     bool bl = true;
 
-    print('line 263: ${currentArgument}');
+    debugPrint('line 263: ${currentArgument}');
     if (currentArgument!['searchValue'] == null ||
         currentArgument!['searchValue'] == 'Unknown') {
       bl = false;
@@ -308,7 +308,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   }
 
   void setDataElements() {
-    print("line 295 edit ${searchTermsController.text}");
+    debugPrint("line 295 edit ${searchTermsController.text}");
     currentArgument!['searchValue'] = currentTermsValue.toString();
     currentArgument!['branchValue'] = selectedBranchNumber.toString();
     if (currentArgument!['searchCriteria'] == 'All') {
@@ -324,11 +324,11 @@ class _LandingPageWebState extends State<LandingPageWeb> {
 
       }
     }
-    print('line 298: ${currentArgument}');
+    debugPrint('line 298: ${currentArgument}');
     bool bl = _validateCurrentArguments();
-    print('line 300: $bl');
+    debugPrint('line 300: $bl');
     if (bl == false) {
-      print('line 302 bl == false');
+      debugPrint('line 302 bl == false');
       return;
     }
     setState(() {
@@ -350,7 +350,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
-    print(
+    debugPrint(
         'line build 321: $screenWidth $selectedBranch $selectedMenuOption $flagHaveData $flagHaveCalled');
     screenHeight = MediaQuery.of(context).size.height;
     double? h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
@@ -358,7 +358,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       h = 1.0;
     }
     fontSize = 1;
-    print('line 328: $screenWidth $screenHeight $fontSize $h');
+    debugPrint('line 328: $screenWidth $screenHeight $fontSize $h');
 
     return Scaffold(
       backgroundColor: color1,
@@ -418,13 +418,13 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                     //         ['branchId'];
                                     //
                                     flagHasTopLevelBranch = true;
-                                    print('line 386:  ${selectedBranchNumber}');
+                                    debugPrint('line 386:  ${selectedBranchNumber}');
                                   }
                                 });
 
                                 if (selectedMenuOption != null &&
                                     flagHaveCalled == false) {
-                                  print(
+                                  debugPrint(
                                       'line 393 in show circular progress indicator');
                                   flagHaveData == false
                                       ? Center(
@@ -445,7 +445,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                     ),
                                   )
                                       : Container();
-                                  print('line 413 just before get rows');
+                                  debugPrint('line 413 just before get rows');
                                 }
                               },
 
@@ -502,7 +502,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                   selectedSearchCriteria = value;
                                   currentArgument!['searchCriteria'] = value;
 
-                                  print(
+                                  debugPrint(
                                       'line 165: $currentArgument ${selectedSearchCriteria}');
                                 });
                               },
@@ -588,7 +588,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                         suffixIcon: Checkbox(
                           value: isCheckedHCP,
                           onChanged: (value) {
-                            print('line 389: $value');
+                            debugPrint('line 389: $value');
                             setState(() {
                               isCheckedHCP = value!;
                               haveFields = true;
@@ -693,7 +693,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                                   selectedSearchField = value;
                                   currentArgument!['searchField'] = ivv;
 
-                                  print(
+                                  debugPrint(
                                       'line 165: $ivv ${selectedSearchField}');
                                 });
                               },
@@ -850,18 +850,18 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
 
     _ratio = widget.ratio;
     _ratio = 0.25;
-    print('line 99:  $_ratio');
+    debugPrint('line 99:  $_ratio');
   }
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, BoxConstraints constraints) {
-      print('line 296: ${constraints.maxWidth}');
+      debugPrint('line 296: ${constraints.maxWidth}');
       if (_maxWidth == null) _maxWidth = constraints.maxWidth - _dividerWidth;
       if (_maxWidth != constraints.maxWidth) {
         _maxWidth = constraints.maxWidth - _dividerWidth;
       }
-      print('line 300: ${_maxWidth!}');
+      debugPrint('line 300: ${_maxWidth!}');
       return SizedBox(
         width: constraints.maxWidth,
         child: Row(

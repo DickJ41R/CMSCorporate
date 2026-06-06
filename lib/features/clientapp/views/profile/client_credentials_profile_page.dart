@@ -54,12 +54,12 @@ class ProcessClientHCPDocumentationState
   List<dynamic> listOfCredentialCategories = [];
 
   Future<List<dynamic>> _getCredentialCategories() async {
-    print('line 61 get credentials categories list');
+    debugPrint('line 61 get credentials categories list');
     listOfCredentialCategories =
     await dropDownCodes.getHCPDocumentationCategories();
     List<dynamic> lst = [];
     for (int i = 0; i < listOfCredentialCategories.length; i++) {
-      // print('line 66 ${listOfCredentialCategories[i]}');
+      // debugPrint('line 66 ${listOfCredentialCategories[i]}');
       lst.add(listOfCredentialCategories[i]['description']);
     }
     return lst;
@@ -67,14 +67,14 @@ class ProcessClientHCPDocumentationState
 
   Future<void> _getHCPDocument(context) async {
     try {
-      print('line 72 gethcpdocs: $selectedHCPId ');
+      debugPrint('line 72 gethcpdocs: $selectedHCPId ');
       if (selectedHCPId == -1 || selectedHCPId == 0) {
         return;
       }
       dynamic obj = await hcpServices.getHCPDocuments(
           selectedHCPId, selectedCredentialCodeId);
 
-      print('line 79 $obj');
+      debugPrint('line 79 $obj');
       if (obj == null) {
         _showDialog(
             context, "Credentials", "No Credential $selectedCredentialCodeId");
@@ -87,7 +87,7 @@ class ProcessClientHCPDocumentationState
             "The requested document does not exist for the current professional");
         Navigator.pop(context);
       }
-      print('line 58 get docs:$route ${imageData.length}');
+      debugPrint('line 58 get docs:$route ${imageData.length}');
       if (route == 'image') {
         Navigator.push(
             context,
@@ -104,7 +104,7 @@ class ProcessClientHCPDocumentationState
       _hasDocuments = true;
       return;
     } catch (e) {
-      print('line 98 gethcps error: $e');
+      debugPrint('line 98 gethcps error: $e');
       throw Exception('line 67 error gethcps: $e');
     }
   }
@@ -112,7 +112,7 @@ class ProcessClientHCPDocumentationState
   List<dynamic> listOfHcps = [];
 
   Future<List<dynamic>> _getHCPs(context) async {
-    print('line 104 ethcps: $clientId');
+    debugPrint('line 104 ethcps: $clientId');
     try {
       List<Map<String, dynamic>>? lst =
       await hcpTimecardService.getHCPs(clientId!);
@@ -134,7 +134,7 @@ class ProcessClientHCPDocumentationState
         dups.add(lst[i]['hcpId']);
         i += 1;
       }
-      print('line 127: ${lst.length}');
+      debugPrint('line 127: ${lst.length}');
       //  selectedValueHCP = lst[0]['hcpName'];
       //  selectedHCPId = int.parse(lst[0]['hcpId'].toString());
 
@@ -146,16 +146,16 @@ class ProcessClientHCPDocumentationState
       hasHCPData = true;
       return listx;
     } catch (e) {
-      print('line 152 gethcps docs error: $e');
+      debugPrint('line 152 gethcps docs error: $e');
       throw Exception('line 131 error gethcps: $e');
     }
   }
 
   int getHcpId(dynamic itm) {
-    print('line 160: $itm');
+    debugPrint('line 160: $itm');
     int hcpId = -1;
     for (int i = 0; i < listOfHcps.length; i++) {
-      print(
+      debugPrint(
           'line 164: ${listOfHcps[i]['hcpName']} ${listOfHcps[i]['hcpId']} $itm');
       if (itm == listOfHcps[i]['hcpName']) {
         hcpId = listOfHcps[i]['hcpId'];
@@ -169,7 +169,7 @@ class ProcessClientHCPDocumentationState
 
   Future<void> _showDialog(
       BuildContext context, String title, String? description) async {
-    print('line 12 showdialog');
+    debugPrint('line 12 showdialog');
     // Future.delayed(Duration(seconds: 3), () {
     //   Navigator.of(context).pop(); // Close the dialog
     // });
@@ -222,7 +222,7 @@ class ProcessClientHCPDocumentationState
   int _getDocumentCodeId(dynamic value) {
     int codeId = 0;
     for (int j = 0; j < listOfCredentialCategories.length; j++) {
-      print('line 407 $j ${listOfCredentialCategories[j]['codeId']}');
+      debugPrint('line 407 $j ${listOfCredentialCategories[j]['codeId']}');
       if (value == listOfCredentialCategories[j]['description']) {
         codeId = listOfCredentialCategories[j]['codeId'];
         break;
@@ -339,7 +339,7 @@ class ProcessClientHCPDocumentationState
                             child: TextButton(
                               onPressed: () {
                                 //onPressed for button 1
-                                print('line 367:  $selectedItems');
+                                debugPrint('line 367:  $selectedItems');
                                 _getHCPDocument(context);
                               },
                               child: Text('Get Documentation',
@@ -378,7 +378,7 @@ class ProcessClientHCPDocumentationState
               width: 50,
               child: Center(child: CircularProgressIndicator()));
         }
-        print('line 332: ${snapshot.data} ${snapshot.data![0]}');
+        debugPrint('line 332: ${snapshot.data} ${snapshot.data![0]}');
         List<dynamic> listD = snapshot.data![0];
         return Container(
           height: 50,
@@ -450,9 +450,9 @@ class ProcessClientHCPDocumentationState
                 width: 50,
                 child: Center(child: CircularProgressIndicator()));
           } else {
-            print('line 406: ${snapshot.data} ${snapshot.data![0]}');
-            //   print('line 165: ${snapshot.data![1]}');
-            //  print('line 201: ${snapshot.data![2]}');
+            debugPrint('line 406: ${snapshot.data} ${snapshot.data![0]}');
+            //   debugPrint('line 165: ${snapshot.data![1]}');
+            //  debugPrint('line 201: ${snapshot.data![2]}');
             List<dynamic> listH = snapshot.data![0];
             return Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -496,11 +496,11 @@ class ProcessClientHCPDocumentationState
                             .toList(),
                         valueListenable: selectedValueHCP,
                         onChanged: (dynamic value) {
-                          print('line 349: $value');
+                          debugPrint('line 349: $value');
                           setState(() {
                             selectedValueHCP = value!;
                             selectedHCPId = getHcpId(value);
-                            //         print('line 454: $selectedValueHCP $selectedHCPId');
+                            //         debugPrint('line 454: $selectedValueHCP $selectedHCPId');
                           });
                         },
                       ),

@@ -42,24 +42,24 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
   int? hcpId;
 
   void getHCPUserX() async {
-    print('line 44 in get usrx');
+    debugPrint('line 44 in get usrx');
     await getHCPUser();
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 50 gethcpuser available shfts: $hst');
+    debugPrint('line 50 gethcpuser available shfts: $hst');
     try {
       Map<String, dynamic>? lm = await hst.getHCPUser(hcpId!);
-      print('line 54: $lm');
+      debugPrint('line 54: $lm');
       if (lm.isEmpty) {
-        print('line 54 lm i septy');
+        debugPrint('line 54 lm i septy');
         return lm;
       }
-      print('line 57 in available shifts gethcpuser $lm');
+      debugPrint('line 57 in available shifts gethcpuser $lm');
       fullName = lm['legalName'];
       return lm;
     } catch (e) {
-      print('line 63 error: $e');
+      debugPrint('line 63 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -73,13 +73,13 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
     getHCPUserX();
-    print('line 80 check');
+    debugPrint('line 80 check');
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 63 didchange');
+    debugPrint('line 63 didchange');
   }
 
   @override
@@ -117,27 +117,27 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
   }
 
   Future<List<Map<String, dynamic>>> _getAllAvailableShifts() async {
-    print('line 122 in getAvailable shiftgs ${hcpId!}');
+    debugPrint('line 122 in getAvailable shiftgs ${hcpId!}');
     try {
       //    Map<String,dynamic>?hcp = await hst.getSingleHCProfessional(hcpId!);
       //  String disciplineName = hcp!['disciplineName'];
       List<Map<String, dynamic>>? lm = [];
       lm = await clw.getWorkOrderCampaignsAllNotAccepted(hcpId!);
-      print('line 127 $lm');
+      debugPrint('line 127 $lm');
       if (lm == null) {
         return [];
       }
 
       return lm;
     } catch (e) {
-      print('line 128 erro in gtavailable shifts: $e');
+      debugPrint('line 128 erro in gtavailable shifts: $e');
       throw Exception(e.toString());
     }
   }
 
   void onButtonPressed(
       Map<String, dynamic> item, int el, BuildContext ctx) async {
-    print(
+    debugPrint(
         'line 144 in onButtonPressed: ${item['id']} ${item['shiftDate']} ${item['shiftCode']}');
 
     String statusText = "Accepted";
@@ -188,7 +188,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
   int gridAxisCount = 1;
   @override
   Widget build(BuildContext context) {
-    print('line 180 in showavailashifts');
+    debugPrint('line 180 in showavailashifts');
     final windowSize = MediaQuery.sizeOf(context);
     screenWidth = windowSize.width;
     screenHeight = windowSize.height;
@@ -197,7 +197,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
     if (h! < 1.0) {
       h = 1.0;
     }
-    print('line 201: $h $screenWidth $screenHeight');
+    debugPrint('line 201: $h $screenWidth $screenHeight');
     if (screenWidth! <= 650 || screenHeight! <= 650) {
       //portrait mode
       if (screenWidth! < screenHeight!) {
@@ -234,7 +234,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
     if (imageHeight > containerHeight!) {
       imageHeight = containerHeight!;
     }
-    print('line 240: $gridAxisCount');
+    debugPrint('line 240: $gridAxisCount');
     return Scaffold(
       backgroundColor: color1,
       resizeToAvoidBottomInset: true,
@@ -306,7 +306,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
                   );
                 } else {
                   List<Map<String, dynamic>> data = snapshot.data![0];
-                  print('line 111 ${data.length}');
+                  debugPrint('line 111 ${data.length}');
                   if (data.length == 0) {
                     return Center(
                       child: Container(
@@ -400,7 +400,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
   //
   //   DateTime dt = DateTime.fromMillisecondsSinceEpoch(tms + 18000);
   //   String sdt = formatter.format(dt);
-  //   print('line 186: $sdt');
+  //   debugPrint('line 186: $sdt');
   //   return sdt;
   // }
 
@@ -443,7 +443,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
   }
 
   String getOvertimeString(bool? value) {
-    print('line 450: $value');
+    debugPrint('line 450: $value');
     String str = 'No';
     if (value == null) {
       return str;
@@ -451,7 +451,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     if (value == true) {
       str = 'Yes';
     }
-    print('line 457: $str');
+    debugPrint('line 457: $str');
     return str;
   }
 
@@ -461,12 +461,12 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     }
     double val = double.parse(value.toString());
     String str = val.toStringAsFixed(2);
-    print('line 466: $str');
+    debugPrint('line 466: $str');
     return str;
   }
 
   Widget build(BuildContext context) {
-    print('line 323 in tile building: ${item['shiftStatus']}');
+    debugPrint('line 323 in tile building: ${item['shiftStatus']}');
     Size size = MediaQuery.of(context).size;
     double screenWidth = size.width;
     double tileHeight = 380;
@@ -802,7 +802,7 @@ class _ClientCampaignTile1State extends State<ClientCampaignTile1> {
 
     DateTime dt = DateTime.fromMillisecondsSinceEpoch(tms + 18000);
     String sdt = formatter.format(dt);
-    print('line 186: $sdt');
+    debugPrint('line 186: $sdt');
     return sdt;
   }
 
@@ -825,7 +825,7 @@ class _ClientCampaignTile1State extends State<ClientCampaignTile1> {
   }
 
   Widget build(BuildContext context) {
-    print('line 323 in tile building');
+    debugPrint('line 323 in tile building');
     final windowSize = MediaQuery.sizeOf(context);
     double screenWidth = windowSize.width;
     return SafeArea(

@@ -1,4 +1,4 @@
-import 'package:cms_web/features/shared/utils/routerConstants.dart';
+
 import 'package:flutter/material.dart';
 import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
 import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
@@ -8,6 +8,9 @@ import 'package:cms_web/features/hcpapp/models/users.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+
+import '../../../shared/utils/routerconstants.dart';
 
 class ProcessHCPPayments extends StatefulWidget {
   final Map<String, dynamic> args;
@@ -42,7 +45,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
   late List<dynamic> paymentDate;
   String? orgId;
   Future<List<dynamic>> _getHCPPaymentData(BuildContext ctx) async {
-    print('line 42 in _getHCPPaymentDate $fromDate $toDate');
+    debugPrint('line 42 in _getHCPPaymentDate $fromDate $toDate');
     List<dynamic>? list =
         await paymentService.getPaymentData(fromDate, toDate, hcpId, ctx);
     return list;
@@ -50,12 +53,12 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
 
   Future<void> _onSubmit() async {
     //  String dte = _selectionDateController.text;
-    print('line 139 on submit: ${dateTimeList}');
+    debugPrint('line 139 on submit: ${dateTimeList}');
     fromDate = dateTimeList[0].toString();
     toDate = dateTimeList[1].toString();
 
     //use hcpid to restict findings in gethcppayme;nt
-    print('line 106: $fromDate $toDate');
+    debugPrint('line 106: $fromDate $toDate');
     //  paymentDate = await _getHCPPaymentData();
     setState(() {
       hasDates = true;
@@ -68,20 +71,20 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
     List<Map<String, dynamic>>? listD;
 //        await paymentService.getListOfHCPHolidays();
     listD = await clientServices.getClientHolidays(clientId!);
-    print('line 177: $listD');
+    debugPrint('line 177: $listD');
     // listD.then((item) {
     //   item.forEach((element) {
     //     listOfHolidays.add(element);
     //   });
     // });
     listOfHolidays = listD!;
-    print('line 111: $listOfHolidays');
+    debugPrint('line 111: $listOfHolidays');
     // }
   }
 
   Future<dynamic> _showDialog(
       BuildContext context, String title, String? description) async {
-    print('line 68 showdialog');
+    debugPrint('line 68 showdialog');
     await showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -119,12 +122,11 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
   Future<void>getHCPUser() async {
     currentHCPMap = await hcpServices.getHCPUser(hcpId!);
     gEmail = currentHCPMap!['email'];
-    orgId = dotenv.env['PRIMARY_ORGID'];
     DateTime cd = DateTime.now();
     startDate = new DateTime(cd.year, cd.month, 1);
     endDate = getLastDayOfMonth(cd);
-    print('line 157: $startDate $endDate');
-    print('line 143: ${orgId!}');
+    debugPrint('line 129: $startDate $endDate');
+    debugPrint('line 130: ${orgId!}');
     return;
   }
 
@@ -155,6 +157,10 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
     paymentService = HCPPaymentDataService();
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
+    orgId = dotenv.env['ASM_DB1'];
+    if (orgId == null) {
+      throw Exception('line 162 orgid is null');
+    }
     getHCPUser();
 
     //listOfHolidays = paymentService.getListOfHCPHolidays();
@@ -189,9 +195,8 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 63 didchange');
+    debugPrint('line 63 didchange');
 
-    getHCPUser();
   }
 
   String getShortDate(String dt) {
@@ -229,10 +234,10 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
           IconButton(
             onPressed: () async {
               try {
-                final navigator = Navigator.of(context)
-                    .pushNamed(clientSchedulingMenu, arguments: arguments!);
+                Navigator.of(context)
+                    .pushNamed(hcpSchedulingMenu, arguments: arguments!);
               } catch (error) {
-                print("Error during logout ${error}");
+                debugPrint("Error during logout ${error}");
                 throw Exception('Error logging out. ${error.toString()}');
               }
             },
@@ -265,7 +270,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
                               height: 24,
                               width: screenWidth! - 10,
                               child: Text(
-                                'Select Payment Week (Must be 7 days)',
+                                'Select Check Date (Must be >= 2 and <= 7 days)',
                                 style: TextStyle(
                                   fontSize: fontSize,
                                   fontWeight: FontWeight.bold,
@@ -280,7 +285,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
                           height: 32,
                           width: screenWidth! - 10,
                           child: Center(
-                            child: Text('Select Payment Dates',
+                            child: Text('Select Check Dates',
                                 style: TextStyle(
                                   fontSize: fontSize,
                                   fontWeight: FontWeight.bold,
@@ -310,7 +315,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
                                         onViewChanged:
                                             ((DateRangePickerViewChangedArgs
                                                 args) {
-                                          print(
+                                          debugPrint(
                                               'line 315 on view changed ${args.view}');
                                           dateTimeList = [];
                                           _controller.selectedRange = null;
@@ -318,7 +323,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
                                         onSelectionChanged:
                                             (DateRangePickerSelectionChangedArgs
                                                 args) async {
-                                          print(
+                                          debugPrint(
                                               'line 387: ${dateTimeList.length} ${args} ${args.value}');
                                           if (args.value is PickerDateRange) {
                                             hasData = false;
@@ -328,7 +333,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
                                                     null &&
                                                 selectedRange.endDate != null) {
                                               // A date range has been selected
-                                              print(
+                                              debugPrint(
                                                   'line 303 Selected range: ${selectedRange.startDate} - ${selectedRange.endDate}');
 
                                               DateTime start =
@@ -337,15 +342,15 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
                                               int difference =
                                                   end.difference(start).inDays +
                                                       1;
-                                              print('line 311: $difference');
+                                              debugPrint('line 311: $difference');
                                               // if (difference == 1) {
                                               //   return;
                                               // }
-                                              if (difference != 7) {
+                                              if (difference < 2 || difference > 7) {
                                                 _showDialog(
                                                     context,
                                                     'Days In Range',
-                                                    'Selected range not equal to 7!');
+                                                    'Selected range must be >= 2 and <= to 7');
                                                 dateTimeList = [];
                                                 _controller.selectedRange =
                                                     null;
@@ -380,13 +385,13 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
                                             //           .startDate !=
                                             //       null) {
                                             //     // A single date might be selected
-                                            //     print(
+                                            //     debugPrint(
                                             //         'Selected date: ${selectedRange.startDate}');
                                             //   }
                                             //
-                                            //   print(
+                                            //   debugPrint(
                                             //       'Selected start date: ${selectedRange.startDate}');
-                                            //   print(
+                                            //   debugPrint(
                                             //       'Selected end date: ${selectedRange.endDate}');
                                           }
                                         },
@@ -544,7 +549,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
                                     );
                                   } else {
                                     List<dynamic> data = snapshot.data![0];
-                                    print('line 111 ${data.length}');
+                                    debugPrint('line 111 ${data.length}');
                                     if (data.length == 0) {
                                       return Center(
                                         child: Container(
@@ -617,7 +622,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
                                                             ),
                                                             SizedBox(width: 5),
                                                             Text(
-                                                              'End: ${getShortDate(item['periodEnding'])}',
+                                                              'Period Ending: ${getShortDate(item['periodEnding'])}',
                                                               style: TextStyle(
                                                                   fontSize:
                                                                       fontSize,
@@ -671,54 +676,62 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
                                                               color: color2)),
                                                       child: ElevatedButton(
                                                         onPressed: () {
+
                                                           dynamic cim =
                                                               listH[index];
-                                                          print(
-                                                              'line 619: $cim');
-                                                          dynamic paymentItem =
-                                                              {
-                                                            'checkRegisterId': cim[
-                                                                'checkRegisterId'],
-                                                            'checkNumber': cim[
-                                                                'checkNumber'],
-                                                            'checkDate': cim[
-                                                                'checkDate'],
-                                                            'checkAmount': cim[
-                                                                'checkAmount'],
-                                                            'grossWages': cim[
-                                                                'grossWages'],
-                                                            'payPeriodId': cim[
-                                                                'payPerodId'],
-                                                            'payPeriodEnding': cim[
-                                                                'payPeriodEnding'],
-                                                            'use1099':
-                                                                cim['use1099'],
-                                                            'void': cim['void'],
-                                                            'regId':
-                                                                cim['regId'],
-                                                            'RegName':
-                                                                cim['RegName'],
-                                                            'ssn4': cim['ssn4'],
-                                                            'employeeId': cim[
-                                                                'employeeName'],
-                                                            'branchName': cim[
-                                                                'branchName'],
-                                                            'index': index
-                                                          };
-                                                          print(
-                                                              'line 247: $paymentItem');
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder: (context) => ShowHCPPaymentDetailsScreen(
-                                                                      paymentItem:
-                                                                          paymentItem,
-                                                                      orgId:
-                                                                          orgId!,
-                                                                      args: widget
-                                                                          .args,
-                                                                      ctx:
-                                                                          context)));
+                                                          debugPrint(
+                                                              'line 681: $cim');
+                                                            dynamic paymentItem =
+                                                            {
+                                                              'checkRegisterId': cim[
+                                                              'checkRegisterId'],
+                                                              'checkNumber': cim[
+                                                              'checkNumber'],
+                                                              'checkDate': cim[
+                                                              'checkDate'],
+                                                              'checkAmount': cim[
+                                                              'checkAmount'],
+                                                              'grossWages': cim[
+                                                              'grossWages'],
+                                                              'payPeriodId': cim[
+                                                              'payPeriodId'],
+                                                              'payPeriodEnding': cim[
+                                                              'periodEnding'],
+                                                              'use1099':
+                                                              cim['use1099'],
+                                                              'void': cim['void'],
+                                                              'regId':
+                                                              cim['regId'],
+                                                              'regName':
+                                                              cim['regName'],
+                                                              'ssn4': cim['ssn4'],
+                                                              'employeeId': cim[
+                                                              'employeeId'],
+                                                              'branchName': cim[
+                                                              'branchName'],
+                                                              'index': index
+                                                            };
+                                                            debugPrint(
+                                                                'line 713: $paymentItem ');
+                                                             debugPrint('line 714: ${orgId!} ');
+                                                             debugPrint('line 715: $hcpId ');
+                                                             debugPrint('line 715: ${arguments!}');
+                                                             debugPrint('ine 717: ${context}');
+                                                            Map<String,
+                                                                dynamic> mapItem = {
+                                                              'paymentItem': paymentItem!,
+                                                              'orgId': orgId!,
+                                                              'hcpId': hcpId,
+                                                              'ctx': context,
+                                                              'args': arguments!
+                                                            };
+                                                            debugPrint('line 722');
+                                                            Navigator
+                                                                .of(context)
+                                                                .pushNamed(
+                                                                hcpPaymentDetailsData,
+                                                                arguments: mapItem);
+
                                                         },
                                                         style: ElevatedButton
                                                             .styleFrom(

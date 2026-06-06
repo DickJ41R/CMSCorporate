@@ -1,9 +1,13 @@
+//import 'dart:nativewrappers/_internal/vm/lib/typed_data_patch.dart';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import 'dart:js_interop';
+import 'package:web/web.dart';
 
 class HCPPaymentDataService {
   HCPPaymentDataService();
@@ -18,17 +22,17 @@ class HCPPaymentDataService {
     try {
       List<dynamic> result = await callGetPayDataFromCheckRegisterFunction(
           hcpId, fromDate, toDate, ctx);
-      print('line 22: $result');
+      debugPrint('line 22: $result');
       var retv = result[0];
-      print('line 24: $retv');
+      debugPrint('line 24: $retv');
       if (retv['error'] != null) {
-        print('line 26 $retv');
+        debugPrint('line 26 $retv');
         return [];
       }
       List<dynamic> ld = retv['payData'];
       return ld;
     } catch (e) {
-      print('line 32 error: ${e.toString()}');
+      debugPrint('line 32 error: ${e.toString()}');
       return [];
     }
   }
@@ -38,113 +42,113 @@ class HCPPaymentDataService {
     try {
       dynamic result = await callGetPayDataPDFFromCheckRegisterFunction(
           checkRegisterId, orgId, ctx);
-      print('line 43: $result');
+     // debugPrint('line 43: $result');
       return result;
     } catch (e) {
-      print('line 46 error: ${e.toString()}');
+      debugPrint('line 46 error: ${e.toString()}');
       return [];
     }
   }
 
-  Future<dynamic>? getToken(String orgId) async {
-    var client = http.Client();
-    // const ura = 'https://api.stafferlink.com/asm/authenticate';
-    // var orgId = dotenv.env['ASM_DB2'];
-    var url = Uri.https('api.stafferlink.com', 'asm/authenticate');
-    print('url:  $url');
-
-    Map data = {
-      'key': '30c39597a9604a979e9430ee5794fab6',
-      'secret': 'a594b1ede33b48e7bed9418c6fd50e43',
-      'orgId': orgId
-    };
-    var body = json.encode(data);
-    print('body: $body');
-    // headers: {"Content-Type": "application/json"},
+  // Future<dynamic>? getToken(String orgId) async {
+  //   var client = http.Client();
+  //   // const ura = 'https://api.stafferlink.com/asm/authenticate';
+  //   // var orgId = dotenv.env['ASM_DB2'];
+  //   var url = Uri.https('api.stafferlink.com', 'asm/authenticate');
+  //   debugPrint('url:  $url');
+  //
+  //   Map data = {
+  //     'key': '30c39597a9604a979e9430ee5794fab6',
+  //     'secret': 'a594b1ede33b48e7bed9418c6fd50e43',
+  //     'orgId': orgId
+  //   };
+  //   var body = json.encode(data);
+  //   debugPrint('body: $body');
+  //   // headers: {"Content-Type": "application/json"},
+  //   try {
+  //     http.Response response = await client.post(url,
+  //         headers: {"Content-Type": "application/json", 'Access-Control-Allow-Origin': 'true', "Accept": "*/*"}, body: body);
+  //     if (response.statusCode == 200) {
+  //       String data = response.body;
+  //       var jsonDecodedData = json.decode(data);
+  //       debugPrint('jsonDecodedData with access token: $jsonDecodedData');
+  //       var token = jsonDecodedData['accessToken'];
+  //       debugPrint('Data:  $token');
+  //       return token;
+  //     }
+  //   } catch (e) {
+  //     debugPrint('line 76: ${e.toString()}');
+  //     return null;
+  //   }
+  // }
+  Future<dynamic> callGetPayDataPDFFromCheckRegisterFunction(
+      String checkRegisterId,String orgId, ctx) async {
+    Uint8List? uint;
     try {
-      http.Response response = await client.post(url,
-          headers: {"Content-Type": "application/json"}, body: body);
-      if (response.statusCode == 200) {
-        String data = response.body;
-        var jsonDecodedData = json.decode(data);
-        print('jsonDecodedData with access token: $jsonDecodedData');
-        var token = jsonDecodedData['accessToken'];
-        print('Data:  $token');
-        return token;
-      }
+      HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+        'getCheckRegisterPdfFile16',
+        options: HttpsCallableOptions(
+          timeout: const Duration(seconds: 5),
+        ),
+      );
+
+      debugPrint('line 95 in call A  function: $callable');
+      debugPrint('line 96: $checkRegisterId');
+
+      dynamic imageData = await callingGetPayDataPDFFromCheckRegisterFunction(callable, checkRegisterId.toString(), ctx);
+    //  debugPrint('line 99 : ${imageData} ');
+        return imageData;
+
     } catch (e) {
-      return null;
+      debugPrint('line 1986: $e');
+      return  uint;
+      // throw Exception('line 1168: ${e.toString()}');
     }
   }
 
-  Future<dynamic> callGetPayDataPDFFromCheckRegisterFunction(
-      String checkRegisterId, String orgId, BuildContext ctx) async {
+  Future<dynamic> callingGetPayDataPDFFromCheckRegisterFunction(HttpsCallable callable,
+      String checkRegisterId, BuildContext ctx) async {
     try {
-      var client = http.Client();
-      dynamic token = await getToken(orgId);
-      Map<String, String>? hdrs = {
-        "Accept": "*/*",
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token"
+      var data = {
+        'checkRegisterId': checkRegisterId
       };
-
-      //  var encodedHeaders = json.encode(hdrs);
-      print('Hdrs: $hdrs');
-
-      var url = 'https://api.stafferlink.com/asm/Payroll/Stub/$checkRegisterId';
-      http.Response response = await client.get(Uri.parse(url), headers: {
-        HttpHeaders.authorizationHeader: 'Bearer $token',
-        HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8'
-      });
-      print('line 107: ${response.headers}');
-      dynamic imageData;
-      if (response.statusCode == 200) {
-        print('line 110: ${response.headers}');
-        print('line 111: ${response.headers['content-type']}');
-        if (response.headers['content-type'] == 'application/pdf') {
-          // Display image
-          print('line 114: ${response.bodyBytes}');
-          imageData = response.bodyBytes;
-
-          return imageData;
-        } else {
-          print('line 119: ${response.bodyBytes}');
-          imageData = response.bodyBytes;
-          // File ff = await _localFile;
-          //
-          // ff.writeAsBytes(imageData);
-          return imageData;
-        }
-      } else {
-        throw Exception('line 127 bad status code: ${response.statusCode}');
-      }
-// Display image
+      final HttpsCallableResult result = await callable(data);
+   //   debugPrint('line 116 returned with data: ${result.data}');
+      debugPrint('line 117:  ${result.data.runtimeType}');
+      final bytes = List<int>.from(result.data.values);
+      dynamic uint = Uint8List.fromList(bytes);
+      print('line 120 $uint');
+      return uint;
+      // dynamic imageData = result.data;
+      //
+      // Uint8List uint8List = Uint8List.view(imageData);
+      // return  uint8List;
     } catch (e) {
-      print('line 131 $e');
-      throw Exception(e);
+      debugPrint('line 122 error: $e');
+      throw Exception('line 123  ${e.toString()}');
     }
   }
 
   // Future<List<dynamic>> callingGetPayDataPDFFromCheckRegisterFunction(
   //     HttpsCallable callable, String checkRegisterId, BuildContext ctx) async {
   //   try {
-  //     print('line 133 $checkRegisterId ');
+  //     debugPrint('line 133 $checkRegisterId ');
   //     var data = {"checkRegisterId": checkRegisterId};
   //
   //     final HttpsCallableResult result = await callable(data);
-  //     print('line 137 ${result.data}');
+  //     debugPrint('line 137 ${result.data}');
   //     var convertedResult = result.data;
-  //     print('line 139 $convertedResult');
+  //     debugPrint('line 139 $convertedResult');
   //     return convertedResult;
   //   } catch (e) {
-  //     print('line 142 error: $e');
+  //     debugPrint('line 142 error: $e');
   //     throw Exception('line 143  ${e.toString()}');
   //   }
   // }
 
   Future<List<dynamic>> callGetPayDataFromCheckRegisterFunction(
       int regId, String fromDate, String toDate, BuildContext ctx) async {
-    print('line 1936: $regId ');
+    debugPrint('line 1936: $regId ');
     try {
       HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'getHCPPaymentData06',
@@ -153,13 +157,13 @@ class HCPPaymentDataService {
         ),
       );
 
-      print('line 90 in call A  function: $callable');
+      debugPrint('line 90 in call A  function: $callable');
       dynamic result = await callingGetPayDataFromCheckRegisterFunction(
           callable, regId, fromDate, toDate, ctx);
-      print('line 93: $result');
+      debugPrint('line 93: $result');
       return result;
     } catch (e) {
-      print('line 96 error : $e');
+      debugPrint('line 96 error : $e');
       throw Exception('line 97: ${e.toString()}');
     }
   }
@@ -171,17 +175,35 @@ class HCPPaymentDataService {
       String toDate,
       BuildContext ctx) async {
     try {
-      print('line 108 $regId ');
+      debugPrint('line 108 $regId ');
       var data = {"hcpId": regId, "fromDate": fromDate, 'toDate': toDate};
 
       final HttpsCallableResult result = await callable(data);
-      print('line 112 ${result.data}');
+      debugPrint('line 112 ${result.data}');
       var convertedResult = result.data;
-      print('line 114 $convertedResult');
+      debugPrint('line 114 $convertedResult');
       return convertedResult;
     } catch (e) {
-      print('line 117 error: $e');
+      debugPrint('line 117 error: $e');
       throw Exception('line 118  ${e.toString()}');
+    }
+  }
+  Future<Uint8List> convertBlobToUint8List(Blob blob) async {
+    // 1. Get the ArrayBuffer from the Blob (returns a JSPromise)
+    try {
+      debugPrint('line 189');
+
+      final jsPromise = blob.arrayBuffer();
+      debugPrint('line 192');
+      // 2. Await the JS promise and convert it to a Dart object
+      final jsArrayBuffer = await jsPromise.toDart;
+      debugPrint('line 195');
+      // 3. Cast the ArrayBuffer buffer directly into a Dart Uint8List view
+      return Uint8List.view(jsArrayBuffer.toDart);
+      debugPrint('line 198');
+    } catch(e) {
+      debugPrint('line 200: ${e.toString()}');
+      throw Exception(e.toString());
     }
   }
 
@@ -196,10 +218,10 @@ class HCPPaymentDataService {
 //     };
 //
 //     //  var encodedHeaders = json.encode(hdrs);
-//     print('Hdrs: $hdrs');
+//     debugPrint('Hdrs: $hdrs');
 //
 //     var url = 'https://api.stafferlink.com/asm/Payroll/Stub/$checkRegisterId';
-//     print('url: $url');
+//     debugPrint('url: $url');
 //     http.Response response2 = await client.get(
 //       Uri.parse(url),
 //       headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
@@ -207,21 +229,21 @@ class HCPPaymentDataService {
 //       //   HttpHeaders.authorizationHeader: 'Bearer $token',
 //       // },
 //     );
-//     print('line 64:res list prvd getRegistrant ${response2.statusCode}');
+//     debugPrint('line 64:res list prvd getRegistrant ${response2.statusCode}');
 //     dynamic jsonDecodedData;
 //     if (response2.statusCode == 200) {
 //       String data = response2.body;
 //       jsonDecodedData = json.decode(data);
-//       // print(jsonDecodedData);
+//       // debugPrint(jsonDecodedData);
 //       dynamic paymentData = jsonDecodedData[0];
-//       print('payments: $paymentData');
+//       debugPrint('payments: $paymentData');
 //       dynamic details = {
 //         "paymentData": paymentData,
 //       };
 //       return details;
 //     } else {
-//       print('rsp2 body: ${response2.body}');
-//       print('Error: ${response2.statusCode} : ${response2.reasonPhrase}');
+//       debugPrint('rsp2 body: ${response2.body}');
+//       debugPrint('Error: ${response2.statusCode} : ${response2.reasonPhrase}');
 //       return null;
 //     }
 //   }

@@ -27,13 +27,13 @@ class _ClientCannotBeScheduledProfilePageState
 
   Future<List<Map<String, dynamic>>> getAllItems() async {
     try {
-      print('line 30 in getall items');
+      debugPrint('line 30 in getall items');
       List<Map<String, dynamic>> clients =
           await clientServices.getCannotBeScheduledData(clientId!);
       return clients;
       //_clients = clients;
     } catch (e) {
-      print('line 160 _processhcp error: $e');
+      debugPrint('line 160 _processhcp error: $e');
       rethrow;
 //rethrow
 //throw Exception('Error getting client invoices: $e');
@@ -67,7 +67,7 @@ class _ClientCannotBeScheduledProfilePageState
     fontSize = 16;
     fontSize /= h;
 
-    print('line 128 in client cannot be scheduled $screenWidth $screenHeight');
+    debugPrint('line 128 in client cannot be scheduled $screenWidth $screenHeight');
     return Scaffold(
       resizeToAvoidBottomInset:
           false, // Stops widgets from being moved by keyboard
@@ -97,7 +97,7 @@ class _ClientCannotBeScheduledProfilePageState
             getAllItems(),
           ]),
           builder: (context, snapshot) {
-            print(
+            debugPrint(
                 'line 129: ${snapshot.data}  ${snapshot.connectionState} ${snapshot.hasData}');
             double screenWidth = MediaQuery.sizeOf(context).width;
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -150,7 +150,7 @@ class _ClientCannotBeScheduledProfilePageState
               );
             } else {
               allItems = snapshot.data[0]; // cast to List<Marker>
-              print('line 111 ${allItems!.length}');
+              debugPrint('line 111 ${allItems!.length}');
               if (allItems!.length == 0) {
                 return Center(
                   child: Padding(
@@ -231,7 +231,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
   }
 
   String getOvertimeString(bool? value) {
-    print('line 450: $value');
+    debugPrint('line 450: $value');
     String str = 'No';
     if (value == null) {
       return str;
@@ -239,7 +239,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     if (value == true) {
       str = 'Yes';
     }
-    print('line 457: $str');
+    debugPrint('line 457: $str');
     return str;
   }
 
@@ -249,7 +249,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     }
     double val = double.parse(value.toString());
     String str = val.toStringAsFixed(2);
-    print('line 466: $str');
+    debugPrint('line 466: $str');
     return str;
   }
 
@@ -296,7 +296,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     fontSize = 16;
     fontSize /= h;
     double height = 300; // * (screenHeight! / 800);
-    print('line 98 in tile building');
+    debugPrint('line 98 in tile building');
     return Container(
       width: screenWidth! - 10,
       height: height,

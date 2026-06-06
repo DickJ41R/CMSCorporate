@@ -47,7 +47,7 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
   @override
   void initState() {
     // _loggedInUser = ref.read(globalUserModel.notifier).state;
-    // print('line 54: $_loggedInUser ${ref.read(globalUserModel.notifier).state}');
+    // debugPrint('line 54: $_loggedInUser ${ref.read(globalUserModel.notifier).state}');
     super.initState();
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
@@ -59,7 +59,7 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 38 gethcpuser CREDENGTIALS: $hcpServices');
+    debugPrint('line 38 gethcpuser CREDENGTIALS: $hcpServices');
     Map<String, dynamic> lm = await hcpServices.getHCPUser(hcpId!);
     if (lm.isEmpty) {
       return lm;
@@ -72,7 +72,7 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 63 didchange');
+    debugPrint('line 63 didchange');
     getHCPUserX();
   }
 
@@ -93,14 +93,14 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
   }
 
   Future<List<Map<String, dynamic>>> _getHCPCredentials() async {
-    print('line 62 _getHCPcredentials');
+    debugPrint('line 62 _getHCPcredentials');
 
     try {
       List<Map<String, dynamic>>? lm =
           await hcpServices.getHCPCredentials(hcpId!);
       return lm!;
     } catch (e) {
-      print('line 69 _getClientInvoice error: $e');
+      debugPrint('line 69 _getClientInvoice error: $e');
       rethrow;
       //rethrow
       //throw Exception('Error getting client invoices: $e');
@@ -114,7 +114,7 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
   // }
 
   String getFormattedDate(dynamic dte) {
-    print('line 96: $dte');
+    debugPrint('line 96: $dte');
     if (dte == null) {
       return 'No Date';
     }
@@ -186,7 +186,7 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
                   ),
                 );
               } else {
-                //    print('line 321 ${snapshot.data!}');
+                //    debugPrint('line 321 ${snapshot.data!}');
                 List<dynamic> listH = snapshot.data![0];
                 return GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -305,7 +305,7 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
                                     'yesNoLabel': cim['yesNoLabel'],
                                     'index': index
                                   };
-                                  print('line 247: $credentialItem');
+                                  debugPrint('line 247: $credentialItem');
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(

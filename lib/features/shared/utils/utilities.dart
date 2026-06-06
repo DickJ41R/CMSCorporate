@@ -13,21 +13,21 @@ import 'package:path/path.dart';
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
-
+import 'package:flutter/foundation.dart';
 class UtilitiesServices {
   UtilitiesServices();
 
 
   String getHoursString(String sT, String eT) {
     try {
-      print('line 416: $sT $eT');
+      debugPrint('line 416: $sT $eT');
       String char = String.fromCharCode(8239);
       String startTime = sT.replaceAll(char, ' ');
       String endTime = eT.replaceAll(char, ' ');
-      print('line 418: $startTime $endTime');
+      debugPrint('line 418: $startTime $endTime');
       List<String> sts = startTime.split(' ');
       List<String> ets = endTime.split(' ');
-      print('line 421: $sts $ets');
+      debugPrint('line 421: $sts $ets');
       String st = sts[0];
       String et = ets[0];
       List<String> stl = st.split(':');
@@ -36,7 +36,7 @@ class UtilitiesServices {
       double dsm = double.parse(stl[1]);
       double esh = double.parse(etl[0]);
       double esm = double.parse(etl[1]);
-      print('line 430: $dsh $dsm $esh $esm');
+      debugPrint('line 430: $dsh $dsm $esh $esm');
       dsm = dsm;
       esm = esm;
 
@@ -63,7 +63,7 @@ class UtilitiesServices {
         } else if (ets[1].toLowerCase() == 'pm') {
           //pm to pm
           // 11:00 pm to 3:00 pm
-          print('line 457: $dsh $esh');
+          debugPrint('line 457: $dsh $esh');
           if (dsh == 12) {
             th = esh;
           } else if (dsh >= esh) {
@@ -108,11 +108,11 @@ class UtilitiesServices {
       String vt = '';
       String tls = '';
       if (thm != 0) {
-        print('line 502: $thm');
+        debugPrint('line 502: $thm');
         thm = thm.abs();
         String thms = thm.toString(); //convert to minutes
         String ths = th.toString();
-        print('line 505: $th $ths');
+        debugPrint('line 505: $th $ths');
         tls = ths + '.' + thms;
         List<String> stz = tls.split('.');
         xt = stz[1];
@@ -123,7 +123,7 @@ class UtilitiesServices {
           i += 1;
         }
       } else {
-        print('line 517: $thm');
+        debugPrint('line 517: $thm');
         xt = '00';
         vt = th.toString();
         int idx = vt.indexOf('.');
@@ -132,10 +132,10 @@ class UtilitiesServices {
         }
       }
       tls = vt + '.' + xt;
-      print('line 519: $tls $vt $xt');
+      debugPrint('line 519: $tls $vt $xt');
       return tls;
     } catch (e) {
-      print('line 521 error: $e');
+      debugPrint('line 521 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -160,12 +160,12 @@ class UtilitiesServices {
          String char = String.fromCharCode(8239);
          String startTime = sT.replaceAll(char, ' ');
          String endTime = eT.replaceAll(char, ' ');
-         print('line 61: $startTime $endTime');
+         debugPrint('line 61: $startTime $endTime');
          List<String> sts = startTime.split(' ');
          List<String> ets = endTime.split(' ');
          double dmeals = meals.toDouble();
          dmeals /= 60;
-         print('line 66: $sts $ets $dmeals');
+         debugPrint('line 66: $sts $ets $dmeals');
          String sDmeals = dmeals.toStringAsFixed(2);
          dmeals = double.parse(sDmeals);
          String st = sts[0];
@@ -176,7 +176,7 @@ class UtilitiesServices {
          double dsm = double.parse(stl[1]);
          double esh = double.parse(etl[0]);
          double esm = double.parse(etl[1]);
-         print('line 77: $dsh $dsm $esh $esm');
+         debugPrint('line 77: $dsh $dsm $esh $esm');
 
          double th = 0;
          double tm = 0;
@@ -208,7 +208,7 @@ class UtilitiesServices {
            } else if (ets[1].toLowerCase() == 'pm') {
              //pm to pm
              // 3:00 pm to 11:00 pm
-             print('line 102: $dsh $esh');
+             debugPrint('line 102: $dsh $esh');
              if (dsh == 12  && esh == 12) {
                 if (dsm == 0 && esm == 0) {
                   return -1;
@@ -232,9 +232,9 @@ class UtilitiesServices {
            }
          } else {
            //dsh = am
-           print('line 88 starttime is am');
+           debugPrint('line 88 starttime is am');
            if (ets[1].toLowerCase() == 'am') {
-             print('line 90 endtime is am');
+             debugPrint('line 90 endtime is am');
              //am to am
              if (dsh == 12 && esh == 12) {
                 return -1;
@@ -257,7 +257,7 @@ class UtilitiesServices {
            } else {
              //am to pm
 
-            print('line endtiem is pm');
+            debugPrint('line endtiem is pm');
             if (dsh == 12 && esh == 12) {
               th = 12;
             } else {
@@ -278,62 +278,62 @@ class UtilitiesServices {
          }
 
          double thm = esm - dsm;
-         print('line 123: $th $thm');
+         debugPrint('line 123: $th $thm');
          th *= 60; //convert to minutes
          th += thm;
 
-         print('line 120: $th $dmeals');
+         debugPrint('line 120: $th $dmeals');
 
          th /= 60; //back to hours;
        if (th > dmeals) {
            th -= dmeals;
          }
-         print('line 150: $th');
+         debugPrint('line 150: $th');
          if (th > 0) {
            th = double.parse(th.toStringAsFixed(3));
            String ths = th.toStringAsFixed(3);
-           print('line 154: $ths');
+           debugPrint('line 154: $ths');
            th = double.parse(ths);
          } else {
            th = 0.0;
          }
-         print('line 159 $th');
+         debugPrint('line 159 $th');
          return th;
        } catch (e) {
-         print('line 162 error: $e');
+         debugPrint('line 162 error: $e');
          throw Exception(e.toString());
        }
      }
 
   int getMinutes(String ts) {
-    print('line 355 in getminutes: $ts');
+    debugPrint('line 355 in getminutes: $ts');
     try {
       String char = String.fromCharCode(8239);
       String startTime = ts.replaceAll(char, ' ');
-      //  print('line 361 getminutes: $startTime');
+      //  debugPrint('line 361 getminutes: $startTime');
       List<String> sts = startTime.split(' ');
       String st = sts[0];
       List<String> stl = st.split(':');
       int ish = int.parse(stl[0]);
       int ism = int.parse(stl[1]);
-      //  print('line 367 getminutes: $ish $ism');
+      //  debugPrint('line 367 getminutes: $ish $ism');
       if (sts[1].toLowerCase() == 'pm') {
         //pm am  11:00 pm to 7:00 am
         ish += 12;
       }
       ish *= 60;
       ish += ism;
-      //   print('line 374: $ish');
+      //   debugPrint('line 374: $ish');
       return ish;
     } catch (e) {
-      print('line 376 error $e');
+      debugPrint('line 376 error $e');
       return 0;
     }
   }
 
   int calculateShiftHours(
       int sMin, int eMin, String startTime, String endTime, dynamic mealss) {
-    print('line 381 Calculate Hours: $sMin $eMin $startTime $endTime $mealss');
+    debugPrint('line 381 Calculate Hours: $sMin $eMin $startTime $endTime $mealss');
     int eDiff = 0;
 //  638 1845 PA 1:15 PM 1:30 PM 795 810: ** 15
     try {
@@ -519,10 +519,10 @@ class UtilitiesServices {
       if (eDiff > 29) {
         eDiff = eDiff - meals;
       }
-      print('line 567: $meals $eDiff');
+      debugPrint('line 567: $meals $eDiff');
       return eDiff;
     } catch (e) {
-      print('line 569: error->${e.toString()}');
+      debugPrint('line 569: error->${e.toString()}');
       throw Exception('line 570 error->${e.toString()}');
     }
   }
@@ -532,7 +532,7 @@ class UtilitiesServices {
       String char = String.fromCharCode(8239);
       String startTime = sT.replaceAll(char, ' ');
       String endTime = eT.replaceAll(char, ' ');
-      print('line 1059: $startTime $endTime');
+      debugPrint('line 1059: $startTime $endTime');
       List<String> sts = startTime.split(' ');
       List<String> ets = endTime.split(' ');
 
@@ -596,8 +596,8 @@ class UtilitiesServices {
       int esmm = esm.toInt();
 
       DateTime dt1 = dt;
-      print('line 170: $dshm $dsmm $eshm $esmm');
-      print('line 171: $sT $eT');
+      debugPrint('line 170: $dshm $dsmm $eshm $esmm');
+      debugPrint('line 171: $sT $eT');
       dt = dt.add(Duration(hours: dshm, minutes: dsmm));
       if (eshm == 0) {
         idv = 1;
@@ -615,7 +615,7 @@ class UtilitiesServices {
       };
       return mp;
     } catch (e) {
-      print('line 1131 error: $e');
+      debugPrint('line 1131 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -624,7 +624,7 @@ class UtilitiesServices {
     String zt1 = dt1.timeZoneName;
     String zt2 = dt2.timeZoneName;
 
-    print('line 94: $zt1 $zt2');
+    debugPrint('line 94: $zt1 $zt2');
     //1st one will be client
     //we subtract emplyee from client
     Duration of1 = dt1.timeZoneOffset;
@@ -718,7 +718,7 @@ class UtilitiesServices {
           .set(genericMail);
       return;
     } catch (e) {
-      print('line 576 error: ${e.toString()}');
+      debugPrint('line 576 error: ${e.toString()}');
       throw Exception(e.toString());
     }
   }
@@ -726,7 +726,7 @@ class UtilitiesServices {
   Future<bool> sendEmailFromGMail() async {
     // Future<void> sendEmailFromGMail(List<String> tos, String from,
     //     String fromUserName, String subject, String text) async {
-    //   print('line 252 tuil send an gmail.');
+    //   debugPrint('line 252 tuil send an gmail.');
     //   String username = dotenv.env['GMAIL_USERNAME']!;
     //   String password = dotenv.env['GMAIL_PASSWORD']!;
     //   //final outlookSmtp =
@@ -746,16 +746,16 @@ class UtilitiesServices {
     //   //     "<h1>Test</h1>\n<p> Here\'s <h1 style=\"background-color:DodgerBlue;\">HTML</h1> content</p>";
     //
     //   try {
-    //     print('line 206 sendanemail');
+    //     debugPrint('line 206 sendanemail');
     //     final sendReport = await send(message, smtpServer);
-    //     print('line 209 Message sent: ' + sendReport.toString());
+    //     debugPrint('line 209 Message sent: ' + sendReport.toString());
     //   } on MailerException catch (e) {
-    //     print('line 211 Message not sent. $e');
+    //     debugPrint('line 211 Message not sent. $e');
     //     for (var p in e.problems) {
-    //       print('Problem: ${p.code}: ${p.msg}');
+    //       debugPrint('Problem: ${p.code}: ${p.msg}');
     //     }
     //   } catch (e) {
-    //     print('line 215 error: $e');
+    //     debugPrint('line 215 error: $e');
     //   }
     return true;
   }
@@ -783,31 +783,31 @@ class UtilitiesServices {
     var client = http.Client();
     var url = Uri.https('api.stafferlink.com', 'asm/authenticate');
     var orgId = dotenv.env['ASM_DB1'];
-    print('line 550 url:  $url $orgId');
+    debugPrint('line 550 url:  $url $orgId');
     Map data = {
       'key': '30c39597a9604a979e9430ee5794fab6',
       'secret': 'a594b1ede33b48e7bed9418c6fd50e43',
       'orgId': orgId
     };
     var body = json.encode(data);
-    print('line 557 body: $body');
+    debugPrint('line 557 body: $body');
     // headers: {"Content-Type": "application/json"},
     try {
       http.Response response = await client.post(url,
           headers: {"Content-Type": "application/json"}, body: body);
-      print('line 562 ${response.statusCode}');
+      debugPrint('line 562 ${response.statusCode}');
       if (response.statusCode == 200) {
         String data = response.body;
         var jsonDecodedData = json.decode(data);
-        print('jsonDecodedData with access token: $jsonDecodedData');
+        debugPrint('jsonDecodedData with access token: $jsonDecodedData');
         var token = jsonDecodedData['accessToken'];
-        print('Data:  $token');
+        debugPrint('Data:  $token');
         return token;
       } else {
         throw Exception('Non 200 status code returned');
       }
     } catch (e) {
-      print('line 574: ${e.toString()}');
+      debugPrint('line 574: ${e.toString()}');
       throw Exception(e.toString());
     }
   }
@@ -819,7 +819,7 @@ class UtilitiesServices {
 
     bool bl = false;
     String? token = await getToken();
-    print('line 571: $token');
+    debugPrint('line 571: $token');
     Map<String, String>? hdrs = {
       "Accept": "*/*",
       "Content-Type": "application/json",
@@ -837,12 +837,12 @@ class UtilitiesServices {
       jsonObject['Conf_Cli_Time'] = dte;
       dte = dte.replaceAll(nbsp, ' ');
       jsonObject['Conf_Cli_Time'] = dte;
-      print('line 577: ${jsonEncode(jsonObject)}');
-      print('line 578 just before put: $url');
+      debugPrint('line 577: ${jsonEncode(jsonObject)}');
+      debugPrint('line 578 just before put: $url');
       final jsn = jsonEncode(jsonObject);
-      print('line 581: $jsn');
+      debugPrint('line 581: $jsn');
       await http.put(Uri.parse(url), headers: hdrs, body: jsn).then((response) {
-        print('line 583: ${response.statusCode}');
+        debugPrint('line 583: ${response.statusCode}');
         if (response.statusCode == 200 || response.statusCode == 201) {
           bl = true;
         } else {
@@ -851,7 +851,7 @@ class UtilitiesServices {
       });
       return bl;
     } catch (er) {
-      print('line 576 error: $er');
+      debugPrint('line 576 error: $er');
       return bl;
     }
   }
@@ -915,7 +915,7 @@ class UtilitiesServices {
 
   Future<Map<String, dynamic>> checkWeeklyHours(int hcpId, String weekStartDay,
       DateTime targetDate, int clientId, Timestamp createdShiftDate) async {
-    print('line 1086 checkweek: $hcpId  $weekStartDay $targetDate');
+    debugPrint('line 1086 checkweek: $hcpId  $weekStartDay $targetDate');
     List<String> listDays = [
       'offset',
       'Mon',
@@ -999,17 +999,17 @@ class UtilitiesServices {
           microseconds: edate.microsecond,
           milliseconds: edate.millisecond));
       Timestamp tse = Timestamp.fromDate(edate);
-      print('line 1159: $startWeek  $ndays ${targetDate.weekday}');
+      debugPrint('line 1159: $startWeek  $ndays ${targetDate.weekday}');
       // if (targetDate.weekday == 1) {
       //   fdate = targetDate.subtract(Duration(days: 1));
       // }
-      print('line 1163 fdate: $fdate');
+      debugPrint('line 1163 fdate: $fdate');
       List<int> listOfScheduledMinutes = [0, 0, 0, 0, 0, 0, 0];
       List<Map<String, dynamic>> listOfDaysAndMinutes = [];
       DateTime startDate = listOfDates[0];
       DateTime endDate = listOfDates[listOfDates.length - 1];
       int meals = 30;
-      print('line 1169: $startDate $ts $endDate $tse $listOfDates');
+      debugPrint('line 1169: $startDate $ts $endDate $tse $listOfDates');
       List<Map<String, dynamic>> listASMs = [];
       await FirebaseFirestore.instance
           .collection('HCPTimeCard')
@@ -1022,11 +1022,11 @@ class UtilitiesServices {
           Map<String, dynamic> obj = docSnapshot.data();
           //  String shiftDateString = obj['shiftDate'];
 
-          print('line 1182 keeping asms');
+          debugPrint('line 1182 keeping asms');
           listASMs.add(obj);
         }
       });
-      print('line 1186 check ${listASMs.length}');
+      debugPrint('line 1186 check ${listASMs.length}');
       tvs['dailyScheduledMinutes'] = [0, 0, 0, 0, 0, 0, 0];
       tvs['weeklyScheduledMinutes'] = 0;
       tvs['shiftData'] = [];
@@ -1034,7 +1034,7 @@ class UtilitiesServices {
       if (listASMs.length > 0) {
         for (int i = 0; i < listASMs.length; i++) {
           Map<String, dynamic> obj = listASMs[i];
-          print('line 1205: ${obj}');
+          debugPrint('line 1205: ${obj}');
           String? startTime;
           String? endTime;
           String? woShiftCode;
@@ -1052,19 +1052,19 @@ class UtilitiesServices {
 
           for (int q = 0; q < listOfDates.length; q++) {
             Timestamp txs = obj['shiftDate'] as Timestamp;
-            print('line 1223: ${txs.millisecondsSinceEpoch} ${sfDate.millisecondsSinceEpoch}');
+            debugPrint('line 1223: ${txs.millisecondsSinceEpoch} ${sfDate.millisecondsSinceEpoch}');
             if (txs.millisecondsSinceEpoch ==
                 sfDate.millisecondsSinceEpoch) {
               nday = q;
               break;
             }
           }
-          print('line 1216 $nday');
+          debugPrint('line 1216 $nday');
           if (nday == -1) {
 
             throw Exception('line 1217 invalid nday value');
           }
-                print('line 1275 ${obj['shiftStatus']} ${obj['signedOutInitialDecimalHoursChanged']}');
+                debugPrint('line 1275 ${obj['shiftStatus']} ${obj['signedOutInitialDecimalHoursChanged']}');
           if (obj['shiftStatus'] == 'SignedOut') {
             scheduledMinutes = int.parse(
                 (60 * obj['signedOutInitialDecimalHoursChanged'])
@@ -1073,7 +1073,7 @@ class UtilitiesServices {
             if (scheduledMinutes > obj['meals']) {
               scheduledMinutes -= int.parse(obj['meals'].toString());
             }
-            print('line 1284 $sfDate $scheduledMinutes, $woShiftCode $nday');
+            debugPrint('line 1284 $sfDate $scheduledMinutes, $woShiftCode $nday');
             Map<String, dynamic> mp = {
               'shiftDate': sfDate,
               'minutes': scheduledMinutes,
@@ -1083,13 +1083,13 @@ class UtilitiesServices {
             listOfDaysAndMinutes.add(mp);
             listOfScheduledMinutes[nday] += scheduledMinutes;
           } else {
-          print('line 1296');
+          debugPrint('line 1296');
             startTime = obj['shiftStartTime'];
             endTime = obj['shiftEndTime'];
-            print('line 1252: $woShiftCode $startTime $endTime');
+            debugPrint('line 1252: $woShiftCode $startTime $endTime');
             int sMin = getMinutes(startTime!);
             int eMin = getMinutes(endTime!);
-            print('line 1255: $sMin $eMin');
+            debugPrint('line 1255: $sMin $eMin');
             scheduledMinutes =
                 calculateShiftHours(sMin, eMin, startTime, endTime, meals);
             Map<String, dynamic> mp = {
@@ -1098,7 +1098,7 @@ class UtilitiesServices {
               'shiftCode': woShiftCode,
               'nDay': nday
             };
-            print('line 1263: $sMin $eMin $scheduledMinutes');
+            debugPrint('line 1263: $sMin $eMin $scheduledMinutes');
             listOfDaysAndMinutes.add(mp);
             listOfScheduledMinutes[nday] += scheduledMinutes;
           }
@@ -1112,11 +1112,11 @@ class UtilitiesServices {
         tvs['shiftData'] = listOfDaysAndMinutes;
       }
       tvs['listOfDates'] = listOfDates;
-      print('line  1277: $tvs');
+      debugPrint('line  1277: $tvs');
 
       return tvs;
     } catch (e) {
-      print('line 1282 error: ${e.toString()}');
+      debugPrint('line 1282 error: ${e.toString()}');
       throw Exception('line 1283 error in checkweekly hours');
     }
   }
@@ -1137,7 +1137,7 @@ class UtilitiesServices {
       bool flagSkip = false;
       String url =
           "https://api.stafferlink.com/asm/Orders/${orderId}/transactions";
-      print('url: $url');
+      debugPrint('url: $url');
       http.Response response2 = await client.get(
         Uri.parse(url),
         headers: hdrs,
@@ -1148,7 +1148,7 @@ class UtilitiesServices {
       if (response2.statusCode == 200) {
         String data = response2.body;
         var jsonDecodedData = json.decode(data);
-        print('jsonDecodedData with access token: $jsonDecodedData');
+        debugPrint('jsonDecodedData with access token: $jsonDecodedData');
         var actionDesc = jsonDecodedData['actionDesc'];
         if (actionDesc == 'Canceled' || actionDesc == 'Deleted') {
           flagSkip = true;
@@ -1158,20 +1158,20 @@ class UtilitiesServices {
       }
       return flagSkip;
     } catch (e) {
-      print('line 733 error: ${e.toString()}');
+      debugPrint('line 733 error: ${e.toString()}');
       return false;
     }
   }
 
   Future<int> getDayBeforeMinutes(int hcpId, DateTime ctd) async {
-    print('line 880: $hcpId $ctd');
+    debugPrint('line 880: $hcpId $ctd');
     int month = ctd.month;
     int year = ctd.year;
     int day = ctd.day;
     int priorMinutes = 0;
     int pmin = ctd.millisecondsSinceEpoch;
     pmin -= (24 * 60 * 60 * 1000);
-    print('line 887: $pmin');
+    debugPrint('line 887: $pmin');
     try {
       await FirebaseFirestore.instance
           .collection('ClientWorkOrder')
@@ -1183,8 +1183,8 @@ class UtilitiesServices {
             for (var docSnapshot in querySnapshot.docs) {
               var obj = docSnapshot.data();
               Timestamp stm = obj['dates']['shiftDateInfo']['shiftDate'];
-              print('line 897: $stm');
-              print('line 898 ${stm.millisecondsSinceEpoch} $pmin');
+              debugPrint('line 897: $stm');
+              debugPrint('line 898 ${stm.millisecondsSinceEpoch} $pmin');
               if ((stm.millisecondsSinceEpoch >= pmin &&
                       pmin <=
                           stm.millisecondsSinceEpoch + (24 * 60 * 60 * 1000)) ||
@@ -1195,7 +1195,7 @@ class UtilitiesServices {
                     obj['dates']['rates']['rateDetails']['startTime']);
                 int eMin =
                     getMinutes(obj['dates']['rates']['rateDetails']['endTime']);
-                print('line 908: $sMin $eMin');
+                debugPrint('line 908: $sMin $eMin');
                 if (sMin >= 720 && sMin > eMin) {
                   eMin += 1440;
                   priorMinutes += (eMin - sMin);
@@ -1212,10 +1212,10 @@ class UtilitiesServices {
               }
             }
           });
-      print('line 925: $priorMinutes');
+      debugPrint('line 925: $priorMinutes');
       return priorMinutes;
     } catch (e) {
-      print('line 928 error: ${e.toString()}');
+      debugPrint('line 928 error: ${e.toString()}');
       return 0;
     }
   }
@@ -1223,7 +1223,7 @@ class UtilitiesServices {
   Future<int> checkTimeLimits(int clientId, int hcpId, int meals,
       String clientWorkOrderUuid, Timestamp shiftDate) async {
     int scheduledHours = 0;
-    print('line 882: $hcpId $shiftDate');
+    debugPrint('line 882: $hcpId $shiftDate');
     try {
       DateTime dtm = shiftDate.toDate();
       dtm = dtm.subtract(Duration(
@@ -1244,7 +1244,7 @@ class UtilitiesServices {
         for (var docSnapshot in querySnapshot.docs) {
           var obj = docSnapshot.data();
           Timestamp stm = obj['dates']['shiftDateInfo']['shiftDate'];
-          print('line 902: $stm');
+          debugPrint('line 902: $stm');
           DateTime std = stm.toDate();
           std = std.subtract(Duration(
               hours: std.hour,
@@ -1252,18 +1252,18 @@ class UtilitiesServices {
               seconds: std.second,
               microseconds: std.microsecond,
               milliseconds: std.millisecond));
-          print(
+          debugPrint(
               'line 909: ${dtm.millisecondsSinceEpoch} ${std.millisecondsSinceEpoch}');
           if (dtm.millisecondsSinceEpoch == std.millisecondsSinceEpoch) {
             String startTime =
                 obj['dates']['rates']['rateDetails']['startTime'];
             String endTime = obj['dates']['rates']['rateDetails']['endTime'];
-            print('line 916: $startTime $endTime ${obj['meals']}');
+            debugPrint('line 916: $startTime $endTime ${obj['meals']}');
             lmeals = obj['meals'];
-            print('line 965 $lmeals');
+            debugPrint('line 965 $lmeals');
             int sMin = getMinutes(startTime);
             int eMin = getMinutes(endTime);
-            print('line 918: $sMin $eMin');
+            debugPrint('line 918: $sMin $eMin');
             if (sMin >= 720 && sMin > eMin) {
               eMin += 1440;
               totalMinutes += (eMin - sMin);
@@ -1286,13 +1286,13 @@ class UtilitiesServices {
       }
       return totalMinutes;
     } catch (e) {
-      print('line 926 $e');
+      debugPrint('line 926 $e');
       return 0;
     }
   }
 
   DateTime getValidDate(String dte) {
-    print('line 825: $dte');
+    debugPrint('line 825: $dte');
     try {
       int index = dte.indexOf('-');
       if (index != -1) {
@@ -1300,22 +1300,22 @@ class UtilitiesServices {
       }
       DateTime? tempDate;
       List<String> sts = dte.split('/');
-      print('line 832: $sts');
+      debugPrint('line 832: $sts');
       if (sts[0].length == 4) {
         tempDate = new DateFormat("yyyy/MM/dd").parse(dte);
       } else {
         tempDate = new DateFormat("MM/dd/yyyy").parse(dte);
       }
-      print('line 839: template');
+      debugPrint('line 839: template');
       return tempDate;
     } catch (e) {
-      print('line 843: ${e.toString()}');
+      debugPrint('line 843: ${e.toString()}');
       return new DateFormat("yyyy/MM/dd").parse('1970/1/1');
     }
   }
 
   String checkTimeValidation(String st) {
-    print('line 401: $st');
+    debugPrint('line 401: $st');
     String hst = st;
     int idx;
     if (st.length < 5) {
@@ -1345,7 +1345,7 @@ class UtilitiesServices {
       st = st.substring(0, idx) + ' ' + st.substring(idx);
     }
 
-    print('line 442: $st');
+    debugPrint('line 442: $st');
     if (st.indexOf(':') == -1) {
       return "Invalid Time Entry.";
     }
@@ -1365,9 +1365,9 @@ class UtilitiesServices {
     }
 
     int reti = getMinutes(hst);
-    print('line 445: $reti');
+    debugPrint('line 445: $reti');
     if (reti < 0) {
-      print('line 464: $reti');
+      debugPrint('line 464: $reti');
       return "Invalid Time Entry!";
     }
     return st;
@@ -1402,9 +1402,9 @@ class UtilitiesServices {
       dayValue = 7;
     }
     try {
-    print('line 1427: $pr $dayValue $prwe $payOTRate $sOT');
+    debugPrint('line 1427: $pr $dayValue $prwe $payOTRate $sOT');
     List<String> listOfDays = ['00', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
-    print('line 1565 getpayrate: $pr $dayValue');
+    debugPrint('line 1565 getpayrate: $pr $dayValue');
     double rePr = 0.0;
     if (holiday == true) {
       if (dayValue == 6 || dayValue == 7) {
@@ -1426,15 +1426,15 @@ class UtilitiesServices {
       }
     }
  val = '\$' + rePr.toStringAsFixed(2);
- print('line 1449: $val');
+ debugPrint('line 1449: $val');
       return val;
  } catch (e) {
-      print('line 1590: $dayValue ${e.toString()}');
+      debugPrint('line 1590: $dayValue ${e.toString()}');
         double dbl = 0.0;
         val = '\$' + dbl.toStringAsFixed(2);
 
     }
-    print('line 1465 in error routine: $val');
+    debugPrint('line 1465 in error routine: $val');
     return val;
   }
 
@@ -1445,7 +1445,7 @@ class UtilitiesServices {
   }
 
   String getOvertimeString(bool? value) {
-    print('line 450: $value');
+    debugPrint('line 450: $value');
     String str = 'No';
     if (value == null) {
       return str;
@@ -1453,7 +1453,7 @@ class UtilitiesServices {
     if (value == true) {
       str = 'Yes';
     }
-    print('line 457: $str');
+    debugPrint('line 457: $str');
     return str;
   }
 
@@ -1467,7 +1467,7 @@ class UtilitiesServices {
       // decMin = double.parse((decMin / 60).toStringAsFixed(2));
       // double sdph = decHours + decMin;
       // if (otHours > sdph) {
-      print('line 1641 othours: $sphh $rphh');
+      debugPrint('line 1641 othours: $sphh $rphh');
       if (rphh == null) {
         return '0.0';
       }
@@ -1480,13 +1480,13 @@ class UtilitiesServices {
       String sRegHours = (regHours / 60).toStringAsFixed(2);
       return sRegHours;
     } catch (e) {
-      print('line 1501 error: ${e.toString()}');
+      debugPrint('line 1501 error: ${e.toString()}');
       throw Exception('Error: ${e.toString()}');
     }
   }
 
   String getOTHours(dynamic sphh) {
-    print('line 1486 getOTHours: ${sphh}');
+    debugPrint('line 1486 getOTHours: ${sphh}');
     if (sphh == null) {
       return '0.0';
     }
@@ -1502,7 +1502,7 @@ class UtilitiesServices {
       String sDecHours = (decMin / 60).toStringAsFixed(2);
       return sDecHours;
     } catch (e) {
-      print('line 1501 error: ${e.toString()}');
+      debugPrint('line 1501 error: ${e.toString()}');
       throw Exception('Error: ${e.toString()}');
     }
   }
@@ -1513,7 +1513,7 @@ class UtilitiesServices {
     }
     double val = double.parse(value.toString());
     String str = val.toStringAsFixed(2);
-    print('line 466: $str');
+    debugPrint('line 466: $str');
     return str;
   }
 
@@ -1525,7 +1525,7 @@ class UtilitiesServices {
   }
 
   String getRegularHours(dynamic sphh, dynamic decimalHourss) {
-    print('line 1560: $sphh $decimalHourss');
+    debugPrint('line 1560: $sphh $decimalHourss');
     try {
       if (sphh == null) {
         double dech = double.parse(decimalHourss.toString());
@@ -1553,17 +1553,17 @@ class UtilitiesServices {
         dmd = double.parse((dmd / 60).toStringAsFixed(2));
       }
       drg += dmd;
-      print('line 1588 ${drg.toStringAsFixed(2)}');
+      debugPrint('line 1588 ${drg.toStringAsFixed(2)}');
       return drg.toStringAsFixed(2);
     } catch (e) {
-      print('line 1590 error: ${e.toString()}');
+      debugPrint('line 1590 error: ${e.toString()}');
       throw Exception('line 1592 error: ${e.toString()}');
     }
   }
   Future<Map<String,dynamic>> checkForOvertime(
     int hcpId, int clientId, String shiftCode, Timestamp shiftDate,
     Timestamp shiftCreatedDate, int sDiff,List<String>listOfStatuses,int meals) async  {
-      print('line 1774: in checkforovertime $hcpId, $clientId');
+      debugPrint('line 1774: in checkforovertime $hcpId, $clientId');
       try {
         //get beginning and ending of week dates
         DateTime date = shiftDate.toDate();
@@ -1592,7 +1592,7 @@ class UtilitiesServices {
         DateTime ets = sts.add(Duration(days: 1));
         Timestamp tsts = Timestamp.fromDate(sts);
         Timestamp tets = Timestamp.fromDate(ets);
-        print('line 1793: $sts $ets $tsts $tets $listOfStatuses');
+        debugPrint('line 1793: $sts $ets $tsts $tets $listOfStatuses');
         double otHours = 0;
         double totalHours = 0;
         double forwardHours = 0;
@@ -1608,7 +1608,7 @@ class UtilitiesServices {
           'totalHours': 0.0,
           'shiftOvertime': false,
         };
-        print('line 1811 ${hoursMap}');
+        debugPrint('line 1811 ${hoursMap}');
         await FirebaseFirestore.instance
             .collection('ClientWorkOrderCampaign')
             .where('hcpId', isEqualTo: hcpId)
@@ -1623,7 +1623,7 @@ class UtilitiesServices {
           if (querySnapshot.docs.isNotEmpty) {
             for (var docSnapshot in querySnapshot.docs) {
               Map<String, dynamic> obj = docSnapshot.data();
-              print('line 1822: ${obj}');
+              debugPrint('line 1822: ${obj}');
               //  String shiftDateString = obj['shiftDate'];
               Timestamp ts = obj['shiftDate'] as Timestamp;
               DateTime dts = ts.toDate();
@@ -1643,7 +1643,7 @@ class UtilitiesServices {
               if (index == -1) {
                 listOfClientIds.add(obj['clientId']);
               }
-              print('line 1843: $index');
+              debugPrint('line 1843: $index');
               int sMin = getMinutes(obj['startTime']);
               int eMin = getMinutes(obj['endTime']);
               if (sMin > eMin) {
@@ -1663,7 +1663,7 @@ class UtilitiesServices {
                 otHours = 0.0;
                 regularHours = currentHours;
               }
-              print('line 1862: $otHours $regularHours $totalHours');
+              debugPrint('line 1862: $otHours $regularHours $totalHours');
               if (index == -1) {
                 hoursMap['clientId'] = obj['clientId'];
                 hoursMap['regularHours'] = regularHours;
@@ -1689,7 +1689,7 @@ class UtilitiesServices {
               }
             }
           } else {
-            print('line 1892 no data');
+            debugPrint('line 1892 no data');
           }
         });
 
@@ -1723,39 +1723,39 @@ class UtilitiesServices {
           hoursMap['shiftOvertime'] = false;
           hoursMap['totalHours'] += hcpCurrentHours;
         }
-          print('line 1862: $hoursMap');
+          debugPrint('line 1862: $hoursMap');
           return hoursMap;
       } catch(e) {
 
-        print('line 1917 error: ${e.toString()}');
+        debugPrint('line 1917 error: ${e.toString()}');
         throw Exception('Error: ${e.toString()}');
       }
 
   }  //shift minutes
   String convertDateFromUnknown(dynamic t) {
-    print('line 18: in convert from unknown $t');
+    debugPrint('line 18: in convert from unknown $t');
     try {
       if (t == null) {
         DateTime d = new DateTime(1970, 1, 1);
         int itt = d.millisecondsSinceEpoch;
         DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(itt);
         String ss = getFormattedDate(dateTime);
-        print('line 24: $ss');
+        debugPrint('line 24: $ss');
         return ss;
       } else if (t is String) {
-        print('line 27: $t');
+        debugPrint('line 27: $t');
         return t;
       } else if (t is Timestamp) {
         DateTime date = t.toDate();
         String s = getFormattedDate(date);
-        print('line 32: $s');
+        debugPrint('line 32: $s');
         return s;
       } else {
-        print('line 35 null');
+        debugPrint('line 35 null');
         return "";
       }
     } catch (e) {
-      print('line 40 error ${e.toString()}');
+      debugPrint('line 40 error ${e.toString()}');
       throw Exception('line 41 error in cvt from ukn');
     }
   }
@@ -1763,7 +1763,7 @@ class UtilitiesServices {
     Query? query;
     //check search criteria
     //all
-    print('line 926 $arg');
+    debugPrint('line 926 $arg');
     try {
       Map<String, String>? baseArg;
       bool flagHaveBaseArgument = true;
@@ -1775,7 +1775,7 @@ class UtilitiesServices {
       FirebaseFirestore.instance.collection(arg['searchCollection']!);
 
       if (arg['searchCriteria'] == 'All') {
-        print('line 938');
+        debugPrint('line 938');
         int value = int.parse(arg['searchValue']!);
         int branchId = int.parse(stringBranchId);
         if (branchId == 0) {
@@ -1789,11 +1789,11 @@ class UtilitiesServices {
         return query;
       }
       //isequalto
-      print('line 942');
+      debugPrint('line 942');
       if (arg['searchCriteria'] == 'Is Equal To') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
-          print('line 84: $value ${arg['searchField']}');
+          debugPrint('line 84: $value ${arg['searchField']}');
           if (flagHaveBaseArgument == true) {
             int branchId = int.parse(stringBranchId);
             query = contentsRef
@@ -1815,7 +1815,7 @@ class UtilitiesServices {
         }
       }
       //less than
-      print('line 968');
+      debugPrint('line 968');
       if (arg['searchCriteria'] == 'Is Less Than') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
@@ -1841,7 +1841,7 @@ class UtilitiesServices {
         }
       }
       //greater than
-      print('line 994');
+      debugPrint('line 994');
       if (arg['searchCriteria'] == 'Is Greater Than') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
@@ -1867,7 +1867,7 @@ class UtilitiesServices {
         }
       }
       // Is greater Than or Equal To,
-      print('line 1020');
+      debugPrint('line 1020');
       if (arg['searchCriteria'] == 'Is Greater Than Or Equal To') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
@@ -1928,7 +1928,7 @@ class UtilitiesServices {
           for (int i = 0; i < lst.length; i++) {
             values.add(int.parse(lst[i]));
           }
-          print('line 143: $values');
+          debugPrint('line 143: $values');
           if (flagHaveBaseArgument == true) {
             int branchId = int.parse(stringBranchId);
             query = contentsRef
@@ -1999,7 +1999,7 @@ class UtilitiesServices {
       if (arg['searchCriteria'] == 'Is In (colon separated list)') {
         String sx = arg['searchValue']!.replaceAll(',', ':');
         List<String> lsx = sx.split(':');
-        print('line 1046 $lsx');
+        debugPrint('line 1046 $lsx');
         if (arg['searchField']!.indexOf('Id') != -1) {
           List<int> lvalues = [];
           for (int i = 0; i < lsx.length; i++) {
@@ -2030,10 +2030,10 @@ class UtilitiesServices {
           }
         }
       }
-      print('line 1183 $query');
+      debugPrint('line 1183 $query');
       return query!;
     } catch (e) {
-      print('line 1186: ${e.toString()}');
+      debugPrint('line 1186: ${e.toString()}');
       throw Exception(e.toString());
     }
   }

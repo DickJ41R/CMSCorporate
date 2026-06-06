@@ -1,4 +1,5 @@
 import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
+import 'package:flutter/foundation.dart';
 
 class HCPCredential {
   HCPCredential(
@@ -154,7 +155,7 @@ class HCPCredential {
     Map<String, dynamic> dataElements = {};
     List<dynamic> lutc = [];
     imp.forEach((k, v) {
-      // print('line 13: $k $v');
+      // debugPrint('line 13: $k $v');
       switch (k) {
         case 'DeptID':
           {
@@ -197,7 +198,7 @@ class HCPCredential {
               String bn = dropDownCodes.getBranchNames(int.parse(v.toString()));
               dataElements['branchName'] = bn;
             } catch (e) {
-              print('line 54: $v $imp');
+              debugPrint('line 54: $v $imp');
               throw Exception('line 55 error for int');
             }
           }
@@ -206,7 +207,7 @@ class HCPCredential {
         //   bool b = dropDownCodes.isNullEmptyOrFalse(v);
         //   if (b == false) {
         //     dynamic dte = dropDownCodes.reformatDate(v,isTime:false);
-        //      print('line 55: $v $dte');
+        //      debugPrint('line 55: $v $dte');
         //     if (dte != null) {
         //       dataElements[5] = DateTime.parse(dte);
         //    } else {
@@ -877,9 +878,9 @@ class HCPCredential {
             //dymamic 61
             bool b = dropDownCodes.isNullEmptyOrFalse(v);
             if (b == false) {
-              dataElements['printQueue'] = v;
+              dataElements['debugPrintQueue'] = v;
             } else {
-              dataElements['printQueue'] = '';
+              dataElements['debugPrintQueue'] = '';
             }
           }
           break;
@@ -888,9 +889,9 @@ class HCPCredential {
             //dymamic  64
             bool b = dropDownCodes.isNullEmptyOrFalse(v);
             if (b == false) {
-              dataElements['printQueueCopies'] = int.parse(v.toString());
+              dataElements['debugPrintQueueCopies'] = int.parse(v.toString());
             } else {
-              dataElements['printQueueCopies'] = 0;
+              dataElements['debugPrintQueueCopies'] = 0;
             }
           }
           break;
@@ -916,7 +917,7 @@ class HCPCredential {
           }
         case "PrintImages":
           {
-            dataElements['printImages'] = (v == true);
+            dataElements['debugPrintImages'] = (v == true);
           }
           break;
         case "ImagesPerPage":
@@ -1048,7 +1049,7 @@ class HCPCredential {
           break;
       }
     });
-    print('line 802 get clident data model exiting...');
+    debugPrint('line 802 get clident data model exiting...');
     return dataElements;
   }
 }

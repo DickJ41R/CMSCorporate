@@ -30,28 +30,28 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
   late DataGridSource hcpDataClassSource;
   Map<String, String>? arguments;
   Future<List<HCProfessionalDataModel>> getAllHCPs() async {
-    print('line 40: $arguments!');
+    debugPrint('line 40: $arguments!');
 
     try {
       List<HCProfessionalDataModel>? hcpData =
           await hcpServices.getHCPDataFromSearch(arguments!);
-      print('line 46: $arguments! $hcpData');
+      debugPrint('line 46: $arguments! $hcpData');
       //_clients = clients;
       if (hcpData.isEmpty || hcpData == []) {
-        print('line 48:');
+        debugPrint('line 48:');
         return [];
       }
-      print('line 51 ${hcpData.length}');
+      debugPrint('line 51 ${hcpData.length}');
 
       dynamic ds = HCPDataSource(hcps: hcpData);
       hcpDataClassSource = ds;
       List<DataGridRow> rows = ds.getDataGridRows();
       List<DataGridCell> cells = rows[0].getCells();
-      print('line 56: ${cells[0].columnName}');
+      debugPrint('line 56: ${cells[0].columnName}');
 
       return hcpData;
     } catch (e) {
-      print('line 60 _processhcp error: $e');
+      debugPrint('line 60 _processhcp error: $e');
       return [];
 //rethrow
 //throw Exception('Error getting client invoices: $e');
@@ -69,12 +69,12 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
   void initState() {
     super.initState();
     arguments = widget.args;
-    print('line 75 in initstate ${arguments!}');
+    debugPrint('line 75 in initstate ${arguments!}');
     // getClientsX(context);
 
     //dataRetrievalAndFiltering = getHCPList();
     // dataRetrievalAndFiltering.then(  (value) {
-    //   print('line 91: $value');
+    //   debugPrint('line 91: $value');
     //    return value;
     // });
   }
@@ -176,7 +176,7 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
     if (h! < 1.0) {
       h = 1.0;
     }
-    print('line 182 screenheight: $screenHeight');
+    debugPrint('line 182 screenheight: $screenHeight');
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -209,7 +209,7 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
                 getAllHCPs(),
               ]),
               builder: (context, snapshot) {
-                print(
+                debugPrint(
                     'line 129: ${snapshot.data}  ${snapshot.connectionState} ${snapshot.hasData}');
                 if (snapshot.connectionState == ConnectionState.done &&
                     (snapshot.hasData == false || snapshot.data == [[]])) {
@@ -268,7 +268,7 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
                   );
                 } else {
                   hcpDataSource = snapshot.data![0]; // cast to List<Marker>
-                  print('line 111 ${hcpDataSource!.length}');
+                  debugPrint('line 111 ${hcpDataSource!.length}');
                   if (hcpDataSource!.length == 0) {
                     return Center(
                       child: Padding(
@@ -339,8 +339,8 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
 
                     //SelectedRow
                     _selectedRow = _dataGridController.selectedRow;
-                    print('line 306: $_selectedRow');
-                    print('line 307: $_selectedIndex');
+                    debugPrint('line 306: $_selectedRow');
+                    debugPrint('line 307: $_selectedIndex');
                     if (_selectedRow == null) {
                       Widget exitButton = TextButton(
                           child: const Text(
@@ -349,7 +349,7 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
                                 color: Color.fromARGB(255, 19, 125, 103)),
                           ),
                           onPressed: () {
-                            print('line 265 exit button');
+                            debugPrint('line 265 exit button');
                             Navigator.of(context).pop(null);
                           });
                       Widget cancelButton = TextButton(
@@ -382,7 +382,7 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
                       );
                     } else {
                       List<DataGridCell> cells = _selectedRow.getCells();
-                      print(
+                      debugPrint(
                           'line 353: ${cells[0].columnName}, ${cells[0].value}');
                       String hName = cells[0].value;
                       HCProfessionalDataModel? fnr;
@@ -397,9 +397,9 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
                       //     cells[0].value.toString() +
                       //     ") " +
                       //     cells[1].value.toString();
-                      // print('line 361 $selectedName');
+                      // debugPrint('line 361 $selectedName');
                       if (fnr != null) {
-                        print('line 403 $fnr ${fnr.hcpName}');
+                        debugPrint('line 403 $fnr ${fnr.hcpName}');
                       }
                       Navigator.of(context).pop(fnr);
                     }
@@ -415,7 +415,7 @@ class _ProcessSearchHCPsScreenState extends State<ProcessSearchHCPsScreen> {
 class HCPDataSource extends DataGridSource {
   final List<HCProfessionalDataModel> hcps;
   HCPDataSource({required this.hcps}) {
-    print('line 183: ${hcps[0].hcpId}');
+    debugPrint('line 183: ${hcps[0].hcpId}');
     _hcpdata = hcps
         .map<DataGridRow>((e) => DataGridRow(cells: [
               DataGridCell<String>(columnName: 'Name', value: e.hcpName),

@@ -26,7 +26,7 @@ class ClientWorkOrderCampaignService {
 
   Future<List<Map<String, dynamic>>>? getClientASMHCPWorkOrdersAll(
       int clientId) async {
-    print('line 22 getallitemsfrom clienthcpwo; $clientId');
+    debugPrint('line 22 getallitemsfrom clienthcpwo; $clientId');
     //  return realm.all<ClientWorkOrderCampaign>();
     try {
       List<Map<String, dynamic>> listOfCWOMap = [];
@@ -76,7 +76,7 @@ class ClientWorkOrderCampaignService {
       DateTime lastDate =
           new DateTime(workDate.year, workDate.month, lastDayInMonth);
 
-      print('line 120: in getallworkorders');
+      debugPrint('line 120: in getallworkorders');
       await FirebaseFirestore.instance
           .collection('ClientHCPWorkOrder')
           .where('clientId', isEqualTo: clientId)
@@ -109,9 +109,9 @@ class ClientWorkOrderCampaignService {
               listOfCWOMap.add(obj);
             }
           });
-      print('line 153 get cmp all ${listOfCWOMap.length}');
+      debugPrint('line 153 get cmp all ${listOfCWOMap.length}');
       listOfCWOMap.sort((a, b) {
-        print('line 155: ${a['shiftDate']}');
+        debugPrint('line 155: ${a['shiftDate']}');
         int sd = a['shiftDate'].compareTo(b['shiftDate']);
         if (sd == 0) {
           return a['shiftCode'].compareTo(b['shiftCode']); // '-' for descending
@@ -120,19 +120,19 @@ class ClientWorkOrderCampaignService {
       });
       return listOfCWOMap;
     } catch (e) {
-      print('line 164 in get all clienthcpwos: $e');
+      debugPrint('line 164 in get all clienthcpwos: $e');
       throw Exception(e.toString());
     }
   }
 
   Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsAll(
       int hcpId) async {
-    print('line 16 getallitems; $hcpId');
+    debugPrint('line 16 getallitems; $hcpId');
     //  return realm.all<ClientWorkOrderCampaign>();
 
     DateTime time = DateTime.now();
     int timestamp = time.millisecondsSinceEpoch;
-    print('line 21 tiemstamp $timestamp');
+    debugPrint('line 21 tiemstamp $timestamp');
     List<Map<String, dynamic>> listOfCWOMap = [];
     DateTime currentDate = DateTime.now(); //DateTime
     DateTime newDate = currentDate.subtract(Duration(
@@ -167,8 +167,8 @@ class ClientWorkOrderCampaignService {
         bFlag = false;
         for (int j = 0; j < hld.length; j++) {
           Map<dynamic, dynamic> lh = hld[j];
-          //     print('line 45: ${lh['shiftDate']} ${lw['shiftDate']}');
-          //      print('line 46: ${lh['shiftCode']} ${lw['shiftCode']}');
+          //     debugPrint('line 45: ${lh['shiftDate']} ${lw['shiftDate']}');
+          //      debugPrint('line 46: ${lh['shiftCode']} ${lw['shiftCode']}');
           if (lh['shiftDate'] == lw['shiftDate'] &&
               lh['shiftCode'] == lw['shiftCode']) {
             listOfCWOMap.removeAt(i);
@@ -183,14 +183,14 @@ class ClientWorkOrderCampaignService {
       hld.add(lw);
       i += 1;
     }
-    print('line 38 get cmp all ${listOfCWOMap.length}');
+    debugPrint('line 38 get cmp all ${listOfCWOMap.length}');
 
     return listOfCWOMap;
   }
 
   Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsAllNotAccepted(
       int hcpId) async {
-    print('line 74 get all not accepted; $hcpId');
+    debugPrint('line 74 get all not accepted; $hcpId');
     //  return realm.all<ClientWorkOrderCampaign>();
 
     DateTime currentDate = DateTime.now(); //DateTime
@@ -201,8 +201,8 @@ class ClientWorkOrderCampaignService {
         milliseconds: currentDate.millisecond,
         microseconds: currentDate.microsecond));
     Timestamp myTimeStamp = Timestamp.fromDate(newDate);
-    print('line 81: ${newDate.timeZoneName} ${newDate.timeZoneOffset}');
-    print('line 82: $newDate $myTimeStamp');
+    debugPrint('line 81: ${newDate.timeZoneName} ${newDate.timeZoneOffset}');
+    debugPrint('line 82: $newDate $myTimeStamp');
     List<Map<String, dynamic>> listOfCWOMap = [];
     await FirebaseFirestore.instance
         .collection('ClientWorkOrderCampaign')
@@ -217,7 +217,7 @@ class ClientWorkOrderCampaignService {
         var doc_id = docSnapshot.id;
         var obj = docSnapshot.data();
         obj['id'] = doc_id;
-        print(
+        debugPrint(
             'line 97: $doc_id ${obj['id']} ${obj['shiftCode']} ${obj['shiftDate']}');
         listOfCWOMap.add(obj);
       }
@@ -227,7 +227,7 @@ class ClientWorkOrderCampaignService {
 
   Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsAccepted(
       int hcpId) async {
-    print('line 99 accept shift $hcpId');
+    debugPrint('line 99 accept shift $hcpId');
     //  return realm.all<ClientWorkOrderCampaign>();
     DateTime currentDate = DateTime.now(); //DateTime
     DateTime newDate = currentDate.subtract(Duration(
@@ -251,24 +251,24 @@ class ClientWorkOrderCampaignService {
         .then((querySnapshot) {
       for (var docSnapshot in querySnapshot.docs) {
         var doc_id = docSnapshot.id;
-        print('line 249: doc_id: $doc_id');
+        debugPrint('line 249: doc_id: $doc_id');
         var obj = docSnapshot.data();
         obj['id'] = doc_id;
         listOfCWOMap.add(obj);
       }
       return listOfCWOMap;
     });
-    print('line 255: ${listOfCWOMap.length}');
+    debugPrint('line 255: ${listOfCWOMap.length}');
     if (listOfCWOMap.length > 0) {
       Map<String, dynamic> mp = listOfCWOMap[0];
-      print('line 258: ${mp['id']}');
+      debugPrint('line 258: ${mp['id']}');
     }
     return listOfCWOMap;
   }
 
   Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsConfirmed(
       int clientId) async {
-    print('line 623 in getworkordersconfirmed $clientId');
+    debugPrint('line 623 in getworkordersconfirmed $clientId');
     DateTime currentDate = DateTime.now(); //DateTime
     Timestamp curDateTime = Timestamp.fromDate(currentDate);
     int weekDay = currentDate.weekday;
@@ -285,11 +285,11 @@ class ClientWorkOrderCampaignService {
     DateTime lastDate = newDate.add(Duration(days: 8 - weekDay));
     Timestamp eds = Timestamp.fromDate(lastDate);
     Timestamp myTimeStamp = Timestamp.fromDate(newDate);
-    print('line 654: $firstDate $fds');
-    print('line 655 $lastDate $eds');
+    debugPrint('line 654: $firstDate $fds');
+    debugPrint('line 655 $lastDate $eds');
     // String fmt = DateFormat.yMEd().add_jms().format(DateTime.now());
     // int adv =0;
-    // print('line 647: $fmt');
+    // debugPrint('line 647: $fmt');
     // if (fmt.contains('PM') == true) {
     //   adv = 12;
     // }
@@ -315,7 +315,7 @@ class ClientWorkOrderCampaignService {
           .orderBy('shiftDate', descending: false)
           .get()
           .then((querySnapshot) async {
-            print('line 313: ${querySnapshot.docs.length}');
+            debugPrint('line 313: ${querySnapshot.docs.length}');
             for (var docSnapshot in querySnapshot.docs) {
               var doc_id = docSnapshot.id;
               var obj = docSnapshot.data();
@@ -348,7 +348,7 @@ class ClientWorkOrderCampaignService {
           .orderBy('shiftDate', descending: false)
           .get()
           .then((querySnapshot) async {
-            print('line 345: ${querySnapshot.docs.length}');
+            debugPrint('line 345: ${querySnapshot.docs.length}');
             for (var docSnapshot in querySnapshot.docs) {
               var doc_id = docSnapshot.id;
               var obj = docSnapshot.data();
@@ -367,7 +367,7 @@ class ClientWorkOrderCampaignService {
               listOfCWOs[index] = listh;
             }
           });
-      print('line 361: ${listOfCWOs.length} ${listOfCWOs[0].length}');
+      debugPrint('line 361: ${listOfCWOs.length} ${listOfCWOs[0].length}');
       int x = 0;
 
       int totalWeeklyMinutes = 0;
@@ -376,7 +376,7 @@ class ClientWorkOrderCampaignService {
       int sMin = 0;
       int eMin = 0;
 
-      print('line 697 debug check');
+      debugPrint('line 697 debug check');
       for (int h = 0; h < listOfCWOs.length; h++) {
         listOfCWOMap = listOfCWOs[h];
         for (int i = 0; i < listOfCWOMap.length; i++) {
@@ -390,14 +390,14 @@ class ClientWorkOrderCampaignService {
             eMin = utilitiesServices.getMinutes(obj['endTime']);
             sDiff = utilitiesServices.calculateShiftHours(
                 sMin, eMin, obj['startTime'], obj['endTime'], obj['meals']);
-            print('line 697 debug check: $sDiff');
+            debugPrint('line 697 debug check: $sDiff');
             if (sDiff == -1) {
               continue;
             }
             totalWeeklyMinutes += sDiff;
           }
         }
-        print('line 716 $totalWeeklyMinutes');
+        debugPrint('line 716 $totalWeeklyMinutes');
         int overtimeMinutes = 0;
         int regularMinutes = 0;
         if (totalWeeklyMinutes > 2400) {
@@ -406,7 +406,7 @@ class ClientWorkOrderCampaignService {
         } else {
           regularMinutes = totalWeeklyMinutes;
         }
-        print('line 369: $totalWeeklyMinutes $overtimeMinutes $regularMinutes');
+        debugPrint('line 369: $totalWeeklyMinutes $overtimeMinutes $regularMinutes');
         listOfCWOMap.sort(
             (a, b) => b['shiftCreatedDate'].compareTo(a['shiftCreatedDate']));
         for (int i = 0; i < listOfCWOMap.length; i++) {
@@ -415,8 +415,8 @@ class ClientWorkOrderCampaignService {
           eMin = utilitiesServices.getMinutes(obj['endTime']);
           sDiff = utilitiesServices.calculateShiftHours(
               sMin, eMin, obj['startTime'], obj['endTime'], obj['meals']);
-          print('line 378: $i ${obj['clientId']} ${obj['shiftCreatedDate']}');
-          print('line 379: $sDiff $overtimeMinutes');
+          debugPrint('line 378: $i ${obj['clientId']} ${obj['shiftCreatedDate']}');
+          debugPrint('line 379: $sDiff $overtimeMinutes');
           if (overtimeMinutes > 0) {
             if (overtimeMinutes >= sDiff) {
               listOfCWOMap[i]['otMinutes'] = sDiff;
@@ -458,14 +458,14 @@ class ClientWorkOrderCampaignService {
       }
       return lmp;
     } catch (e) {
-      print('line 779 error $e');
+      debugPrint('line 779 error $e');
       throw Exception(e.toString());
     }
   }
 
   Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsConfirmedLegacy(
       int clientId) async {
-    print('line 460 in getworkordercampain confirmed $clientId');
+    debugPrint('line 460 in getworkordercampain confirmed $clientId');
     DateTime currentDate = DateTime.now(); //DateTime
     DateTime newDate = currentDate.subtract(Duration(
         hours: currentDate.hour,
@@ -489,7 +489,7 @@ class ClientWorkOrderCampaignService {
         for (var docSnapshot in querySnapshot.docs) {
           var doc_id = docSnapshot.id;
           var obj = docSnapshot.data();
-          print('line 158: $obj');
+          debugPrint('line 158: $obj');
           obj['id'] = doc_id;
           int hcpId = obj['hcpId'];
           Timestamp ts = obj['shiftDate'];
@@ -501,12 +501,12 @@ class ClientWorkOrderCampaignService {
               microseconds: dts.microsecond,
               milliseconds: dts.millisecond));
           int? totalMinutes = await getClosedClientWorkOrders(hcpId, dts);
-          print('line 1381: $totalMinutes');
+          debugPrint('line 1381: $totalMinutes');
           int totalOTMinutes = totalMinutes!;
-          print('line 1386: ${totalOTMinutes}');
+          debugPrint('line 1386: ${totalOTMinutes}');
           obj['requiresOvertime'] = false;
           obj['shiftOvertime'] = false;
-          print('line 1400 check');
+          debugPrint('line 1400 check');
           //   List<int> sTimes = getHoursAndMinutes(obj['startTime']);
           int startMinutes = utilitiesServices.getMinutes(obj['startTime']);
           int endMinutes = utilitiesServices.getMinutes(obj['endTime']);
@@ -516,7 +516,7 @@ class ClientWorkOrderCampaignService {
           if (sDiff == -1) {
             throw Exception('line 1397: Invalid shift times');
           }
-          print('line 1265: $sDiff $startMinutes $endMinutes');
+          debugPrint('line 1265: $sDiff $startMinutes $endMinutes');
           //    List<int> eTimes = getHoursAndMinutes(obj['endTime']);
           //     if (startMinutes >= 720 && startMinutes > endMinutes) {
           //       eTimes[0] += 24;
@@ -524,13 +524,13 @@ class ClientWorkOrderCampaignService {
           int cMinutes = totalOTMinutes % 60;
           int cHours = totalOTMinutes ~/ 60;
           int shiftPriorHours = totalOTMinutes;
-          print('line 1445: $shiftPriorHours');
+          debugPrint('line 1445: $shiftPriorHours');
           String sMinutes = cMinutes.toString();
           if (sMinutes.length == 1) {
             sMinutes = '0' + sMinutes;
           }
           String sTime = cHours.toString() + ":" + sMinutes;
-          print('line 1422: ${cHours} ${sMinutes}');
+          debugPrint('line 1422: ${cHours} ${sMinutes}');
 
           if (sDiff + totalOTMinutes > 2400) {
             obj['requiresOvertime'] = true;
@@ -543,7 +543,7 @@ class ClientWorkOrderCampaignService {
             obj['shiftPriorHoursString'] = '0.0';
             obj['shiftPriorHours'] = 0;
           }
-          print(
+          debugPrint(
               'line 1466: ${obj['shiftPriorHours']} ${obj['requiresOvertime']} $sTime ${obj['shiftPriorHoursString']} ${obj['shiftOvertime']}');
 
           listOfCWOMap.add(obj);
@@ -551,7 +551,7 @@ class ClientWorkOrderCampaignService {
       });
       return listOfCWOMap;
     } catch (e) {
-      print('line 164 error $e');
+      debugPrint('line 164 error $e');
       throw Exception(e.toString());
     }
   }
@@ -559,7 +559,7 @@ class ClientWorkOrderCampaignService {
   Future<List<Map<String, dynamic>>> getWorkOrderCampaignsApproved(
       int hcpId, clientId) async {
     //List<Map<String,dynamic>> mapData = [];
-    print('line 165 in get approved by $hcpId');
+    debugPrint('line 165 in get approved by $hcpId');
     List<Map<String, dynamic>> listC = [];
     DateTime currentDate = DateTime.now(); //DateTime
     DateTime newDate = currentDate.subtract(Duration(
@@ -569,7 +569,7 @@ class ClientWorkOrderCampaignService {
         milliseconds: currentDate.millisecond,
         microseconds: currentDate.microsecond));
     Timestamp myTimeStamp = Timestamp.fromDate(newDate);
-    print('line 171: $newDate ${myTimeStamp}');
+    debugPrint('line 171: $newDate ${myTimeStamp}');
     await FirebaseFirestore.instance
         .collection('ClientWorkOrderCampaign')
         .where('hcpId', isEqualTo: hcpId)
@@ -591,10 +591,10 @@ class ClientWorkOrderCampaignService {
         //   ClientWorkOrderCampaign cwn = ClientWorkOrderCampaign.fromFirestore(
         //       docSnapshot, null);
         listC.add(obj);
-        print('line 90 ${listC.length}');
+        debugPrint('line 90 ${listC.length}');
       }
     });
-    print('ine 193: ${listC.length}');
+    debugPrint('ine 193: ${listC.length}');
     return listC;
 
     //  return mapData;
@@ -642,7 +642,7 @@ class ClientWorkOrderCampaignService {
     String? documentId = item['id'];
     DateTime currentDate = DateTime.now(); //DateTime
     Timestamp myTimeStamp = Timestamp.fromDate(currentDate);
-    print('line 371 cancelworkordershift: $shiftcanceledNote');
+    debugPrint('line 371 cancelworkordershift: $shiftcanceledNote');
     FirebaseFirestore.instance
         .collection("ClientWorkOrderCampaign")
         .doc(documentId)
@@ -704,7 +704,7 @@ class ClientWorkOrderCampaignService {
       });
       return tcs;
     } catch (e) {
-      print('line 387 error: $e');
+      debugPrint('line 387 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -772,7 +772,7 @@ class ClientWorkOrderCampaignService {
 
       endDate = endDate
           .add(Duration(days: addEndDay, hours: endHours, minutes: endMinutes));
-      print('line 503: $newStartDate $endDate');
+      debugPrint('line 503: $newStartDate $endDate');
       return {
         "startDate": newStartDate,
         "endDate": endDate,
@@ -785,14 +785,14 @@ class ClientWorkOrderCampaignService {
         "addEndDay": addEndDay
       };
     } catch (e) {
-      print('line 502 error: $e');
+      debugPrint('line 502 error: $e');
       throw Exception(e.toString());
     }
   }
 
   Future<Map<String, dynamic>>? getSingleWorkOrderCampaignsForClient(
       int userId, String shiftStatus) async {
-    print('line 440 getallitems; $userId');
+    debugPrint('line 440 getallitems; $userId');
     //  return realm.all<ClientWorkOrderCampaign>();
     DateTime dte = DateTime.now();
     // DateTime dte1 = DateTime(dte.year,dte.month,dte.day,dte.hour,dte.minute,0,0,0);
@@ -807,8 +807,8 @@ class ClientWorkOrderCampaignService {
     Timestamp myTimeStamp = Timestamp.fromDate(currentDate);
     DateTime newDate = new DateTime(2024, 12, 23, 15, 0, 0);
     Timestamp myTimeStamp1 = Timestamp.fromDate(newDate);
-    print('line 454: $currentDate $newDate');
-    print('line 455: $myTimeStamp $myTimeStamp1');
+    debugPrint('line 454: $currentDate $newDate');
+    debugPrint('line 455: $myTimeStamp $myTimeStamp1');
     Map<String, dynamic> cw = {};
     try {
       //"hcpId == \$0 SORT(shiftDate ASC, shiftCode ASC)",[userId]);
@@ -822,7 +822,7 @@ class ClientWorkOrderCampaignService {
           var obj = docSnapshot.data();
           Map<String, dynamic> dates =
               getStartEndDates(obj['startTime'], obj['endTime']);
-          print('line 467: ${obj['shiftDate']} $myTimeStamp $myTimeStamp1');
+          debugPrint('line 467: ${obj['shiftDate']} $myTimeStamp $myTimeStamp1');
           Timestamp tms = obj['shiftDate'] as Timestamp;
           DateTime sd = DateTime.parse(tms.toDate().toString());
           sd = sd.subtract(Duration(
@@ -843,13 +843,13 @@ class ClientWorkOrderCampaignService {
             break;
           }
         }
-        print('line 482: $cw');
+        debugPrint('line 482: $cw');
         return cw;
       });
-      print('line 485: $cw');
+      debugPrint('line 485: $cw');
       return cw;
     } catch (e) {
-      print('line 488 error: $e');
+      debugPrint('line 488 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -875,7 +875,7 @@ class ClientWorkOrderCampaignService {
 
   Future<bool>? updateClientWorkOrderCampaignApproved(
       Map<String, dynamic> item, String shiftApprover, BuildContext ctx) async {
-    print('line 614 update approved: ${item['id']}');
+    debugPrint('line 614 update approved: ${item['id']}');
     try {
       DateTime time = DateTime.now();
       Timestamp myTimeStamp = Timestamp.fromDate(time);
@@ -897,29 +897,29 @@ class ClientWorkOrderCampaignService {
         'flagWillOweOT': item['flagWillOweOT'],
         'totalPay': item['totalPay']
       });
-      print('line 635 shift approved');
+      debugPrint('line 635 shift approved');
       Future.delayed(const Duration(seconds: 1), () {
-        print('Hello, after 1 seconds of delay');
+        debugPrint('Hello, after 1 seconds of delay');
       });
-      print('line 639: ${item['clientId']}');
+      debugPrint('line 639: ${item['clientId']}');
       Map<String, dynamic>? clc = await clientServices.getSingleClientUser(
           item['clientId'], item['clientUserId']);
       if (clc!.isEmpty) {
-        print('line 900 clc is empty');
+        debugPrint('line 900 clc is empty');
         return false;
       }
-      print('line 903: ${item['hcpId']}');
+      debugPrint('line 903: ${item['hcpId']}');
       Map<String, dynamic>? usc =
           await clientServices.getSingleHCPUser(item['hcpId']);
       if (usc!.isEmpty) {
-        print('line 905 usc is empty');
+        debugPrint('line 905 usc is empty');
         return false;
       }
       if (clc.isEmpty) {
-        print('line 1293 did not get clientuser record');
+        debugPrint('line 1293 did not get clientuser record');
         return true;
       }
-      print('line 911: ${usc}');
+      debugPrint('line 911: ${usc}');
       List<String> listOfTokens = [];
       if (usc['iosFcmToken'] != null && usc['iosFcmToken'] != 'Placeholder') {
         listOfTokens.add(usc['iosFcmToken']);
@@ -940,7 +940,7 @@ class ClientWorkOrderCampaignService {
           listOfTokens.add(usc['androidFcmTabletToken']);
         }
       }
-      print('line 923: $listOfTokens');
+      debugPrint('line 923: $listOfTokens');
       if (listOfTokens.length > 0) {
         Timestamp ts = item['shiftDate'];
         String shiftDate = convertFromTimestamp(ts);
@@ -948,27 +948,27 @@ class ClientWorkOrderCampaignService {
             '${clc['fullName']} has approved shift ${item['shiftCode']} for $shiftDate';
         for (int z = 0; z < listOfTokens.length; z++) {
           String fcmToken = listOfTokens[z];
-          print('line 1301: $fcmToken ${body}');
+          debugPrint('line 1301: $fcmToken ${body}');
           Map<String, dynamic> parameters = {
             "title": "Shift Approval",
             "body": body,
             "fcmToken": fcmToken
           };
-          print('line 663 ${parameters}');
+          debugPrint('line 663 ${parameters}');
           await htc.sendSingleMessage(parameters, ctx);
         }
       }
 
       return true;
     } catch (e) {
-      print('line 953 error: $e');
+      debugPrint('line 953 error: $e');
       throw Exception(e.toString());
     }
   }
 
   Future<bool>? updateClientWorkOrderCampaignDeclined(Map<String, dynamic> item,
       String shiftApprover, String clientEmail, BuildContext ctx) async {
-    print('line 612 update shift declined: ${item['id']} $shiftApprover');
+    debugPrint('line 612 update shift declined: ${item['id']} $shiftApprover');
     try {
       DateTime time = DateTime.now();
       Timestamp myTimeStamp = Timestamp.fromDate(time);
@@ -982,23 +982,23 @@ class ClientWorkOrderCampaignService {
         'shiftStatusDate': myTimeStamp,
         'shiftDeclinedBy': shiftApprover
       });
-      print('line 633 shift declined ${authServices.clientId!}');
+      debugPrint('line 633 shift declined ${authServices.clientId!}');
       Map<String, dynamic>? clc =
           await clientServices.getSingleUserFromEmail(clientEmail);
       if (clc!.isEmpty) {
         return false;
       }
-      print('line 983 debug: ${item['hcpId']}');
+      debugPrint('line 983 debug: ${item['hcpId']}');
       Map<String, dynamic>? usc =
           await clientServices.getSingleHCPUser(item['hcpId']);
       if (usc!.isEmpty) {
         return false;
       }
-      print('line 571: ${clc}');
+      debugPrint('line 571: ${clc}');
 
       Timestamp ts = item['shiftDate'];
       String shiftDate = convertFromTimestamp(ts);
-      print('line 575 just before body creation');
+      debugPrint('line 575 just before body creation');
       List<String> listOfTokens = [];
       if (usc['iosFcmToken'] != null && usc['iosFcmToken'] != 'Placeholder') {
         listOfTokens.add(usc['iosFcmToken']);
@@ -1019,13 +1019,13 @@ class ClientWorkOrderCampaignService {
           listOfTokens.add(usc['androidFcmTabletToken']);
         }
       }
-      print('line 1623: $listOfTokens');
+      debugPrint('line 1623: $listOfTokens');
       if (listOfTokens.length > 0) {
         Timestamp ts = item['shiftDate'];
         String shiftDate = convertFromTimestamp(ts);
         String body =
             '${clc['fullName']},  ${clc['hcpName']} has declined shift ${item['shiftCode']} for $shiftDate';
-        print('line 1301: $listOfTokens ${body}');
+        debugPrint('line 1301: $listOfTokens ${body}');
         Map<String, dynamic> parameters = {
           "title": "Shift Acceptance",
           "body": body,
@@ -1036,14 +1036,14 @@ class ClientWorkOrderCampaignService {
 
       return true;
     } catch (e) {
-      print('line 636 error: $e');
+      debugPrint('line 636 error: $e');
       throw Exception(e.toString());
     }
   }
 
   Future<List<Map<String, dynamic>>>? getWorkOrderRepublishShifts(
       int clientId) async {
-    print('line 633 shifts; $clientId');
+    debugPrint('line 633 shifts; $clientId');
     //  return realm.all<ClientWorkOrderCampaign>();
     DateTime currentDate = DateTime.now(); //DateTime
     DateTime newDate = currentDate.subtract(Duration(
@@ -1053,7 +1053,7 @@ class ClientWorkOrderCampaignService {
         microseconds: currentDate.microsecond,
         milliseconds: currentDate.millisecond));
     Timestamp myTimeStamp = Timestamp.fromDate(newDate);
-    print('line 687: $myTimeStamp $newDate ');
+    debugPrint('line 687: $myTimeStamp $newDate ');
     try {
       List<Map<String, dynamic>> listOfCWOMap = [];
       List<String> listWorkOrderIds = [];
@@ -1073,10 +1073,10 @@ class ClientWorkOrderCampaignService {
           .orderBy("dates.shiftDateInfo.shiftCode", descending: false)
           .get()
           .then((querySnapshot) async {
-        print('line 949: ${querySnapshot.docs.length}');
+        debugPrint('line 949: ${querySnapshot.docs.length}');
         for (var docSnapshot in querySnapshot.docs) {
           var doc_id = docSnapshot.id;
-          print('line 958: $doc_id');
+          debugPrint('line 958: $doc_id');
           var obj = docSnapshot.data();
           obj['id'] = doc_id;
           // Timestamp tms = obj['shiftDateInfo']['shiftDate'];
@@ -1111,11 +1111,11 @@ class ClientWorkOrderCampaignService {
                         seconds: pnw.second,
                         microseconds: pnw.microsecond,
                         milliseconds: pnw.millisecond));
-                    print('line 1011: $dnw $pnw');
+                    debugPrint('line 1011: $dnw $pnw');
                     if (dnw.millisecondsSinceEpoch ==
                         pnw.millisecondsSinceEpoch) {
                       flagIsDuplicate = true;
-                      print('line 1014 have a dup');
+                      debugPrint('line 1014 have a dup');
                       break;
                     }
                   }
@@ -1127,19 +1127,19 @@ class ClientWorkOrderCampaignService {
             listOfCWOMap.add(obj);
           }
         }
-        print('line 836 ${listOfCWOMap.length}');
+        debugPrint('line 836 ${listOfCWOMap.length}');
         return listOfCWOMap;
       });
       return listOfCWOMap;
     } catch (e) {
-      print('line 841 error: $e');
+      debugPrint('line 841 error: $e');
       throw Exception(e.toString());
     }
   }
 
   Future<List<Map<String, dynamic>>>? getWorkOrderCancelShifts(
       int clientId) async {
-    print('line 633 shifts; $clientId');
+    debugPrint('line 633 shifts; $clientId');
     //  return realm.all<ClientWorkOrderCampaign>();
     DateTime currentDate = DateTime.now(); //DateTime
     DateTime newDate = currentDate.subtract(Duration(
@@ -1149,7 +1149,7 @@ class ClientWorkOrderCampaignService {
         microseconds: currentDate.microsecond,
         milliseconds: currentDate.millisecond));
     Timestamp myTimeStamp = Timestamp.fromDate(newDate);
-    print('line 687: $myTimeStamp $newDate ');
+    debugPrint('line 687: $myTimeStamp $newDate ');
     try {
       List<Map<String, dynamic>> listOfCWOMap = [];
       List<String> listWorkOrderIds = [];
@@ -1172,10 +1172,10 @@ class ClientWorkOrderCampaignService {
           .orderBy("dates.shiftDateInfo.shiftCode", descending: false)
           .get()
           .then((querySnapshot) async {
-        print('line 949: ${querySnapshot.docs.length}');
+        debugPrint('line 949: ${querySnapshot.docs.length}');
         for (var docSnapshot in querySnapshot.docs) {
           var doc_id = docSnapshot.id;
-          print('line 958: $doc_id');
+          debugPrint('line 958: $doc_id');
           var obj = docSnapshot.data();
           if (obj['shiftStatus'] == 'Canceled') {
             continue;
@@ -1196,11 +1196,11 @@ class ClientWorkOrderCampaignService {
           // }
           listOfCWOMap.add(obj);
         }
-        print('line 972: ${listOfCWOMap.length} ${listHCPWorkOrderIds.length}');
+        debugPrint('line 972: ${listOfCWOMap.length} ${listHCPWorkOrderIds.length}');
         if (listHCPWorkOrderIds.length > 0) {
           for (int i = 0; i < listHCPWorkOrderIds.length; i++) {
             String workOrderId = listHCPWorkOrderIds[i];
-            print('line 1012: $workOrderId');
+            debugPrint('line 1012: $workOrderId');
             await FirebaseFirestore.instance
                 .collection('ClientWorkOrderCampaign')
                 .where('woWorkOrderId', isEqualTo: workOrderId)
@@ -1208,8 +1208,8 @@ class ClientWorkOrderCampaignService {
                 .then((querySnapshot) async {
               for (var docSnapshot in querySnapshot.docs) {
                 Map<String, dynamic>? hcpCpg = docSnapshot.data();
-                print('line 1018: ${hcpCpg}');
-                print('line 1019: ${hcpCpg['shiftStatus']}');
+                debugPrint('line 1018: ${hcpCpg}');
+                debugPrint('line 1019: ${hcpCpg['shiftStatus']}');
                 var woWorkOrderId = hcpCpg['woWorkOrderId'];
                 if (hcpCpg['shiftStatus'] == 'SignedOut' ||
                     hcpCpg['shiftStatus'] == 'Canceled') {
@@ -1239,12 +1239,12 @@ class ClientWorkOrderCampaignService {
           }
         }
 
-        print('line 836 ${listOfCWOMap.length}');
+        debugPrint('line 836 ${listOfCWOMap.length}');
         return listOfCWOMap;
       });
       return listOfCWOMap;
     } catch (e) {
-      print('line 841 error: $e');
+      debugPrint('line 841 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -1301,7 +1301,7 @@ class ClientWorkOrderCampaignService {
       };
       return cm;
     } catch (e) {
-      print('line 1214 error: ${e.toString()}');
+      debugPrint('line 1214 error: ${e.toString()}');
       throw Exception('line 1215 ${e.toString()}');
     }
   }
@@ -1352,7 +1352,7 @@ class ClientWorkOrderCampaignService {
   }
 
   Future<int>? getClosedClientWorkOrders(int hcpId, DateTime newDate) async {
-    print('line 1214: getclosedworkorders: $hcpId $newDate');
+    debugPrint('line 1214: getclosedworkorders: $hcpId $newDate');
     try {
       int totalOTMinutes = 0;
       int cday = newDate.weekday;
@@ -1383,14 +1383,14 @@ class ClientWorkOrderCampaignService {
       endDate = endDate.add(Duration(days: addDays));
       int totalMinutes = 0;
       List<Map<String, dynamic>> listClosedShifts = [];
-      print('line 1204: $newDate $startDate $endDate');
+      debugPrint('line 1204: $newDate $startDate $endDate');
       await FirebaseFirestore.instance
           .collection('ClientWorkOrder')
           .where('hcpId', isEqualTo: hcpId)
           .where('shiftStatus', isEqualTo: 'Closed')
           .get()
           .then((querySnapshot) async {
-        print('line 1200: ${querySnapshot.docs.length}');
+        debugPrint('line 1200: ${querySnapshot.docs.length}');
         if (querySnapshot.docs.length > 0) {
           for (var docSnapShot in querySnapshot.docs) {
             var obj = docSnapShot.data();
@@ -1415,8 +1415,8 @@ class ClientWorkOrderCampaignService {
               ts = obj['shiftDate'];
             }
             DateTime shiftDate = ts!.toDate();
-            print('line 1230 ${shiftDate} ${newDate}');
-            print(
+            debugPrint('line 1230 ${shiftDate} ${newDate}');
+            debugPrint(
                 'line 1231 ${shiftDate.millisecondsSinceEpoch} ${newDate.millisecondsSinceEpoch}');
 
             if (shiftDate.millisecondsSinceEpoch <
@@ -1439,7 +1439,7 @@ class ClientWorkOrderCampaignService {
             //  totalOTMinutes += (eMin - sMin);
             int tl = utilitiesServices.calculateShiftHours(
                 sMin, eMin, objStartTime, objEndTime, meals);
-            print('line 1288: $tl');
+            debugPrint('line 1288: $tl');
             if (tl == -1) {
               throw Exception('line 1290: Invalid shfift time');
             }
@@ -1457,7 +1457,7 @@ class ClientWorkOrderCampaignService {
             //       bool flagSkip = false;
             //       Map<String, dynamic>? sbj;
             //       DateTime? stt;
-            //       print('line 1225 ${listClosedShifts.length}');
+            //       debugPrint('line 1225 ${listClosedShifts.length}');
             //       if (listClosedShifts.length > 0) {
             //         for (int j = 0; j < listClosedShifts.length; j++) {
             //           sbj = listClosedShifts[j];
@@ -1495,7 +1495,7 @@ class ClientWorkOrderCampaignService {
             //           }
             //         }
             //       } else {
-            //         print('line 1319');
+            //         debugPrint('line 1319');
             //         Map<String, dynamic> sbj = Map.from(obj);
             //         sbj['calculatedShiftCount'] = 1;
             //         sbj['shiftDate'] = shiftDate;
@@ -1506,7 +1506,7 @@ class ClientWorkOrderCampaignService {
             //           sbj['shiftCount'] = obj['shiftCount'];
             //           sbj['shiftCode'] = obj['shiftCode'];
             //         }
-            //         print('line 1330');
+            //         debugPrint('line 1330');
             //         listClosedShifts.add(sbj);
             //       }
             //     }
@@ -1518,17 +1518,17 @@ class ClientWorkOrderCampaignService {
           }
         }
       });
-      print('line 1378: $totalMinutes');
+      debugPrint('line 1378: $totalMinutes');
       return totalMinutes;
     } catch (e) {
-      print('line 1342: ${e.toString()}');
+      debugPrint('line 1342: ${e.toString()}');
       throw Exception('line 1254 in closed cwos');
     }
   }
 
   Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsAcceptedShifts(
       int clientId, String startWeekDay) async {
-    print('line 1192 get accepted shifts; $clientId');
+    debugPrint('line 1192 get accepted shifts; $clientId');
     //  return realm.all<ClientWorkOrderCampaign>();
     List<Map<String, dynamic>> listOfCWOMap = [];
 
@@ -1556,12 +1556,12 @@ class ClientWorkOrderCampaignService {
           .get()
           .then((querySnapshot) async {
             //   int count = 0;
-            print('line 1389 ${querySnapshot.docs.length}');
+            debugPrint('line 1389 ${querySnapshot.docs.length}');
             if (querySnapshot.docs.length > 0) {
               for (var docSnapShot in querySnapshot.docs) {
                 String doc_id = docSnapShot.id;
                 var obj = docSnapShot.data();
-                print('line 1633 ${obj}');
+                debugPrint('line 1633 ${obj}');
                 obj['id'] = doc_id;
                 int hcpId = obj['hcpId'];
                 Timestamp ts = obj['shiftDate'];
@@ -1574,7 +1574,7 @@ class ClientWorkOrderCampaignService {
                     milliseconds: dts.millisecond));
 
                 int min = utilitiesServices.getMinutes(obj['endTime']);
-                print('line 1636: $min');
+                debugPrint('line 1636: $min');
                 dts = dts.add(Duration(minutes: min));
                 Timestamp tsm = Timestamp.fromDate(dts);
                 //get current time
@@ -1600,7 +1600,7 @@ class ClientWorkOrderCampaignService {
                   obj['shiftOvertime'] = false;
                   obj['shiftPriorHoursString'] = '0.0';
                 }
-                print('line 1679 check: ${obj}');
+                debugPrint('line 1679 check: ${obj}');
                 //   List<int> sTimes = getHoursAndMinutes(obj['startTime']);
                 // int startMinutes =
                 //     utilitiesServices.getMinutes(obj['startTime']);
@@ -1615,13 +1615,13 @@ class ClientWorkOrderCampaignService {
                 // int cMinutes = totalOTMinutes % 60;
                 // int cHours = totalOTMinutes ~/ 60;
                 // int shiftPriorHours = totalOTMinutes;
-                // print('line 1445: $shiftPriorHours');
+                // debugPrint('line 1445: $shiftPriorHours');
                 // String sMinutes = cMinutes.toString();
                 // if (sMinutes.length == 1) {
                 //   sMinutes = '0' + sMinutes;
                 // }
                 // String sTime = cHours.toString() + ":" + sMinutes;
-                // print('line 1422: ${cHours} ${sMinutes}');
+                // debugPrint('line 1422: ${cHours} ${sMinutes}');
                 //
                 // if (sDiff + totalOTMinutes > 2400) {
                 //   obj['requiresOvertime'] = true;
@@ -1631,16 +1631,16 @@ class ClientWorkOrderCampaignService {
                 // } else {
 
                 //}
-                // print(
+                // debugPrint(
                 //     'line 1466: ${obj['shiftPriorHours']} ${obj['requiresOvertime']} $sTime ${obj['shiftPriorHoursString']} ${obj['shiftOvertime']}');
                 listOfCWOMap.add(obj);
               }
             }
           });
-      print('line 1412 : ${listOfCWOMap.length}');
+      debugPrint('line 1412 : ${listOfCWOMap.length}');
       return listOfCWOMap;
     } catch (e) {
-      print('line 1415 error: $e');
+      debugPrint('line 1415 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -1654,19 +1654,19 @@ class ClientWorkOrderCampaignService {
           timeout: const Duration(seconds: 5),
         ),
       );
-      print('line 1291 in call A  function: $callable');
+      debugPrint('line 1291 in call A  function: $callable');
       dynamic result = await htc.callingUploadTimesheetFromStorageFunction(
           callable, '916029', '04102025223261timesheet.pdf', ctx);
-      print('line 1294: $result');
+      debugPrint('line 1294: $result');
       return result;
     } catch (e) {
-      print('line 1297: $e');
+      debugPrint('line 1297: $e');
       throw Exception('line 1298: ${e.toString()}');
     }
   }
 
   Future<int> checkForPotentialOT(Map<String, dynamic> item) async {
-    print('line 1721 in checkforpotential ot');
+    debugPrint('line 1721 in checkforpotential ot');
     try {
       int potentialOTMinutes = 0;
       DateTime cdt = DateTime.now();
@@ -1687,7 +1687,7 @@ class ClientWorkOrderCampaignService {
           : item['shiftCreatedDate'];
       DateTime scrdt = item['shiftCreatedDate'].toDate();
       int scrdtmin = scrdt.millisecondsSinceEpoch;
-      print('line 1738: $scrdtmin $shiftMinutes');
+      debugPrint('line 1738: $scrdtmin $shiftMinutes');
       DateTime shiftDate = sed.subtract(Duration(
         hours: sed.hour,
         minutes: sed.minute,
@@ -1704,34 +1704,34 @@ class ClientWorkOrderCampaignService {
           .where('startOfWorkWeekTimestamp', isEqualTo: stmps)
           .get()
           .then((querySnapshot) async {
-        print('line 1484: ${querySnapshot.docs.length}');
+        debugPrint('line 1484: ${querySnapshot.docs.length}');
         if (querySnapshot.docs.length > 0) {
           var docSnapshot = querySnapshot.docs[0];
           var obj = docSnapshot.data();
           obj['id'] = docSnapshot.id;
-          print('line 1490: ${obj['cumulativePriorMinutes']}');
+          debugPrint('line 1490: ${obj['cumulativePriorMinutes']}');
           if (obj['cumulativePriorMinutes'] + shiftMinutes > 2400) {
             List<dynamic> listCreatedDates = obj['listOfCreatedDateTimestamps'];
             listCreatedDates.sort((a, b) {
               return b['createdDateTimestamp']
                   .compareTo(a['createdDateTimestamp']);
             });
-            print('line 1497: ${listCreatedDates.length}');
+            debugPrint('line 1497: ${listCreatedDates.length}');
             for (int i = 0; i < listCreatedDates.length; i++) {
               var tbj = listCreatedDates[i];
-              print('line 1500: ${tbj['createdDateTimestamp']}');
+              debugPrint('line 1500: ${tbj['createdDateTimestamp']}');
               int dtms = int.parse(tbj['createdDateTimestamp'].toString());
               if (dtms >= scrdtmin) {
                 continue;
               }
-              print('line 1505: $dtms $scrdtmin');
+              debugPrint('line 1505: $dtms $scrdtmin');
               List<dynamic> listOfClients = tbj['listOfClients'];
               for (int j = 0; j < listOfClients.length; j++) {
                 var cbj = listOfClients[j];
-                print('line 1509 check');
+                debugPrint('line 1509 check');
                 List<dynamic> listOfWorkShiftDays = cbj['listOfWorkShiftDays'];
                 List<dynamic>? listOfShifts;
-                print('line 1512 check ${listOfWorkShiftDays.length}');
+                debugPrint('line 1512 check ${listOfWorkShiftDays.length}');
                 for (int k = 0; k < listOfWorkShiftDays.length; k++) {
                   var lbj = listOfWorkShiftDays[k];
                   listOfShifts = lbj['listOfShifts'];
@@ -1750,16 +1750,16 @@ class ClientWorkOrderCampaignService {
         }
       });
 
-      print('line 1808: $potentialOTMinutes');
+      debugPrint('line 1808: $potentialOTMinutes');
       return potentialOTMinutes;
     } catch (e) {
-      print('line 1804: error ${e.toString()}');
+      debugPrint('line 1804: error ${e.toString()}');
       throw Exception('line 1532 error: ${e.toString()}');
     }
   }
 
   Future<int> clearHCPWeeklyData(int hcpId, Timestamp shiftDate) async {
-    print('line 1535 in clearHCPWeeklyShiftData');
+    debugPrint('line 1535 in clearHCPWeeklyShiftData');
     try {
       String? documentId;
       DateTime dtm = shiftDate.toDate();
@@ -1794,17 +1794,17 @@ class ClientWorkOrderCampaignService {
       });
       return stsm;
     } catch (e) {
-      print('line 1571: error ${e.toString()}');
+      debugPrint('line 1571: error ${e.toString()}');
       throw Exception('line 1540 error: ${e.toString()}');
     }
   }
 
   // Future<bool> recalculateHCPWeeklyShift(int hcpId, int stsm) async {
-  //   print('line 1850 in recalculatedhcpweeklyshift');
+  //   debugPrint('line 1850 in recalculatedhcpweeklyshift');
   //   Timestamp sday = Timestamp.fromMillisecondsSinceEpoch(stsm);
   //   DateTime sdtm = sday.toDate();
   //   DateTime edtm = sdtm.add(Duration(days: 6));
-  //   print('line 1581: $sdtm $edtm');
+  //   debugPrint('line 1581: $sdtm $edtm');
   //   final db = FirebaseFirestore.instance;
   //   try {
   //     await FirebaseFirestore.instance
@@ -1816,10 +1816,10 @@ class ClientWorkOrderCampaignService {
   //         .get()
   //         .then((querySnapshot) async {
   //           if (querySnapshot.docs.length == 0) {
-  //             print('line 1576 error not documents returned');
+  //             debugPrint('line 1576 error not documents returned');
   //             throw Exception('line 1577 Error: No CWOC documents returned');
   //           }
-  //           print('line 1597: ${querySnapshot.docs.length}');
+  //           debugPrint('line 1597: ${querySnapshot.docs.length}');
   //           for (var snapShot in querySnapshot.docs) {
   //             var obj = snapShot.data();
   //             obj['id'] = snapShot.id;
@@ -1834,7 +1834,7 @@ class ClientWorkOrderCampaignService {
   //                 milliseconds: dstm.millisecond));
   //             if (dstm.millisecondsSinceEpoch < stsm ||
   //                 dstm.millisecondsSinceEpoch > edtm.millisecondsSinceEpoch) {
-  //               print(
+  //               debugPrint(
   //                   'line 1593 skipping on dates: ${stsm} ${dstm.millisecondsSinceEpoch}');
   //               continue;
   //             }
@@ -1844,12 +1844,12 @@ class ClientWorkOrderCampaignService {
   //             if (sMin > eMin) {
   //               eMin += 1440;
   //             }
-  //             print('line 1614 $sMin $eMin');
+  //             debugPrint('line 1614 $sMin $eMin');
   //             int shiftMinutes = eMin - sMin;
   //             if (obj['shiftMinutes'] != null) {
   //               shiftMinutes = obj['shiftMinutes'];
   //             }
-  //             print('line 1619: ${obj['clientId']} $shiftMinutes');
+  //             debugPrint('line 1619: ${obj['clientId']} $shiftMinutes');
   //             bl1 = await insertHCPWorkOrderData(item, shiftMinutes, batch);
   //             batch.commit();
   //           }
@@ -1863,10 +1863,10 @@ class ClientWorkOrderCampaignService {
   //         .get()
   //         .then((querySnapshot) async {
   //           if (querySnapshot.docs.length == 0) {
-  //             print('line 1576 error not documents returned');
+  //             debugPrint('line 1576 error not documents returned');
   //             throw Exception('line 1577 Error: No CWOC documents returned');
   //           }
-  //           print('line 1597: ${querySnapshot.docs.length}');
+  //           debugPrint('line 1597: ${querySnapshot.docs.length}');
   //           for (var snapShot in querySnapshot.docs) {
   //             var obj = snapShot.data();
   //             obj['id'] = snapShot.id;
@@ -1881,7 +1881,7 @@ class ClientWorkOrderCampaignService {
   //                 milliseconds: dstm.millisecond));
   //             if (dstm.millisecondsSinceEpoch < stsm ||
   //                 dstm.millisecondsSinceEpoch > edtm.millisecondsSinceEpoch) {
-  //               print(
+  //               debugPrint(
   //                   'line 1593 skipping on dates: ${stsm} ${dstm.millisecondsSinceEpoch}');
   //               continue;
   //             }
@@ -1891,12 +1891,12 @@ class ClientWorkOrderCampaignService {
   //             if (sMin > eMin) {
   //               eMin += 1440;
   //             }
-  //             print('line 1614 $sMin $eMin');
+  //             debugPrint('line 1614 $sMin $eMin');
   //             int shiftMinutes = eMin - sMin;
   //             if (obj['shiftMinutes'] != null) {
   //               shiftMinutes = obj['shiftMinutes'];
   //             }
-  //             print('line 1619: $shiftMinutes');
+  //             debugPrint('line 1619: $shiftMinutes');
   //             await assignOTToShifts(obj);
   //             await updateHCPTimeCard(obj);
   //           }
@@ -1904,13 +1904,13 @@ class ClientWorkOrderCampaignService {
   //
   //     return true;
   //   } catch (e) {
-  //     print('line 1628 error: ${e.toString()}');
+  //     debugPrint('line 1628 error: ${e.toString()}');
   //     throw Exception('line 1628 error: ${e.toString()}');
   //   }
   // }
 
   Future<void> updateHCPTimeCard(Map<String, dynamic> item) async {
-    print('line 1685 updateHCPTimeCard');
+    debugPrint('line 1685 updateHCPTimeCard');
     try {
       await FirebaseFirestore.instance
           .collection('HCPTimeCard')
@@ -1918,13 +1918,13 @@ class ClientWorkOrderCampaignService {
           .set(item, SetOptions(merge: true));
       return;
     } catch (e) {
-      print('line 1689 error: ${e.toString()}');
+      debugPrint('line 1689 error: ${e.toString()}');
       throw Exception('line 1690 error: ${e.toString()}');
     }
   }
 
   Future<bool> assignOTToShifts(Map<String, dynamic> item) async {
-    print('line 1636 assign ot to shifts');
+    debugPrint('line 1636 assign ot to shifts');
     try {
       bool? bl1;
       DateTime cdt = DateTime.now();
@@ -1977,60 +1977,60 @@ class ClientWorkOrderCampaignService {
           ? item['createdDate']
           : item['shiftCreatedDate'];
 
-      print('line 2022: $shiftMinutes $shrs ${item['shiftCreatedDate']}');
+      debugPrint('line 2022: $shiftMinutes $shrs ${item['shiftCreatedDate']}');
       Timestamp crt = item['shiftCreatedDate'];
       DateTime crtd = crt.toDate();
       int createdDateTimestamp = crtd.millisecondsSinceEpoch;
       String? documentId;
-      print('line 2027 ${item['hcpId']} $stmps ${createdDateTimestamp}');
+      debugPrint('line 2027 ${item['hcpId']} $stmps ${createdDateTimestamp}');
       await FirebaseFirestore.instance
           .collection('HCPWeeklyShift')
           .where('hcpId', isEqualTo: item['hcpId'])
           .where('startOfWorkWeekTimestamp', isEqualTo: stmps)
           .get()
           .then((querySnapshot) async {
-        print('line 2034: ${querySnapshot.docs.length}');
+        debugPrint('line 2034: ${querySnapshot.docs.length}');
         if (querySnapshot.docs.length == 0) {
           throw Exception('Line 2036 no HCPWeeklyShifts returned from query');
         }
         var docSnapshot = querySnapshot.docs[0];
         documentId = docSnapshot.id;
         var obj = docSnapshot.data();
-        print('line 2041: $obj');
+        debugPrint('line 2041: $obj');
         obj['id'] = docSnapshot.id;
         if (obj['cumulativePriorMinutes'] <= obj['baseMinutes']) {
-          print('line 2044 skipping on minutes');
+          debugPrint('line 2044 skipping on minutes');
           return true;
         }
-        print('line 2047');
+        debugPrint('line 2047');
         List<dynamic> listOfCreatedDateTimestamps =
             obj['listOfCreatedDateTimestamps'];
-        print('line 2050: ${listOfCreatedDateTimestamps.length}');
+        debugPrint('line 2050: ${listOfCreatedDateTimestamps.length}');
         listOfCreatedDateTimestamps.sort((a, b) {
           return b['createdDateTimestamp'].compareTo(a['createdDateTimestamp']);
         });
-        print('line 2054');
+        debugPrint('line 2054');
         int otMinutes = obj['cumulativePriorMinutes'] - obj['baseMinutes'];
         obj['otMinutes'] = otMinutes;
         double oth = double.parse((obj['otMinutes'] / 60).toStringAsFixed(2));
-        print('line 2058: ${oth}');
+        debugPrint('line 2058: ${oth}');
         obj['otHours'] = oth;
         obj['weeklyOT'] = true;
-        print('line 2061 ${otMinutes} ${obj['otHours']}');
+        debugPrint('line 2061 ${otMinutes} ${obj['otHours']}');
         obj['cumulativePriorMinutes'] -= otMinutes;
-        print('line 2063 ${otMinutes} ${obj['otHours']}');
+        debugPrint('line 2063 ${otMinutes} ${obj['otHours']}');
         obj['cumulativePriorHours'] -= obj['otHours'];
         obj['cumulativeRegularHours'] -= obj['otHours'];
-        print('line 2066 ${otMinutes}');
+        debugPrint('line 2066 ${otMinutes}');
         obj['cumulativeRegularMinutes'] -= otMinutes;
-        print(
+        debugPrint(
             'line 2069" ${obj['cumulativePriorMinutes']} ${otMinutes} ${obj['otHours']} ${obj['weeklyOT']}');
         for (int i = 0; i < listOfCreatedDateTimestamps.length; i++) {
           if (otMinutes <= 0) {
             break;
           }
           var tbj = listOfCreatedDateTimestamps[i];
-          print('line 2075: $tbj');
+          debugPrint('line 2075: $tbj');
           if (tbj == null) {
             continue;
           }
@@ -2046,7 +2046,7 @@ class ClientWorkOrderCampaignService {
             if (rbj['clientId'] != item['clientId']) {
               continue;
             }
-            print('line 2091: ${rbj}');
+            debugPrint('line 2091: ${rbj}');
             List<dynamic> listOfWorkShiftDays = rbj['listOfWorkShiftDays'];
             for (int l = 0; l < listOfWorkShiftDays.length; l++) {
               if (otMinutes == 0) {
@@ -2059,32 +2059,32 @@ class ClientWorkOrderCampaignService {
               if (qbj.containsKey('dayOT') == false) {
                 continue;
               }
-              print('line 2104 $l ${qbj}');
+              debugPrint('line 2104 $l ${qbj}');
               List<dynamic> listOfShifts = qbj['listOfShifts'];
-              print('line 2106: ${listOfShifts}');
+              debugPrint('line 2106: ${listOfShifts}');
               if (listOfShifts.length > 1) {
                 listOfShifts.sort((a, b) {
                   return b['createdDateTimestamp']
                       .compareTo(a['createdDateTimestamp']);
                 });
               }
-              print('line 2113: $otMinutes ${listOfShifts.length}');
+              debugPrint('line 2113: $otMinutes ${listOfShifts.length}');
               for (int m = 0; m < listOfShifts.length; m++) {
                 if (otMinutes == 0) {
                   break;
                 }
-                print('line 2118: ${listOfShifts[m]}');
+                debugPrint('line 2118: ${listOfShifts[m]}');
                 var wbj = listOfShifts[m];
-                print('line 2120: ${wbj}');
+                debugPrint('line 2120: ${wbj}');
                 if (wbj == null) {
-                  print('line 2122 skipping');
+                  debugPrint('line 2122 skipping');
                   continue;
                 }
                 if (wbj.containsKey('shiftMinutes') == false) {
-                  print('line 2126 skipping');
+                  debugPrint('line 2126 skipping');
                   continue;
                 }
-                print('line 2129 $wbj');
+                debugPrint('line 2129 $wbj');
                 if (wbj['shiftMinutes'] > otMinutes) {
                   wbj['otMinutes'] = otMinutes;
                   wbj['otHours'] =
@@ -2135,14 +2135,14 @@ class ClientWorkOrderCampaignService {
       });
       return true;
     } catch (e) {
-      print('line 2180 error: ${e.toString()}');
+      debugPrint('line 2180 error: ${e.toString()}');
       throw Exception('line 2181 error: ${e.toString()}');
     }
   }
   Future<bool> insertHCPWorkOrderData(
       Map<String, dynamic> item, int shiftMinutes, WriteBatch batch) async {
     bool? bl1;
-    print('line 1383 in insertHPWOrkOrderdata: $shiftMinutes');
+    debugPrint('line 1383 in insertHPWOrkOrderdata: $shiftMinutes');
     try {
       DateTime cdt = DateTime.now();
       Timestamp cdts = Timestamp.fromDate(cdt);
@@ -2152,7 +2152,7 @@ class ClientWorkOrderCampaignService {
       int shiftDay = sed.weekday;
 
       int diff = shiftDay - 1;
-      print('line 1789: $cdts $tsx $sed $shiftDay $diff');
+      debugPrint('line 1789: $cdts $tsx $sed $shiftDay $diff');
       DateTime weekStartDate = sed.subtract(Duration(days: diff));
       // weekStartDate = weekStartDate.subtract(Duration(
       //     hours: weekStartDate.hour,
@@ -2160,9 +2160,9 @@ class ClientWorkOrderCampaignService {
       //     seconds: weekStartDate.second,
       //     microseconds: weekStartDate.microsecondsSinceEpoch,
       //     milliseconds: weekStartDate.millisecondsSinceEpoch));
-      print('ine 1797: $weekStartDate');
+      debugPrint('ine 1797: $weekStartDate');
       Timestamp tsStartDate = Timestamp.fromDate(weekStartDate);
-      print('line 1798: $tsStartDate');
+      debugPrint('line 1798: $tsStartDate');
       int stmps = tsStartDate.millisecondsSinceEpoch;
       DateTime shiftDate = sed.subtract(Duration(
         hours: sed.hour,
@@ -2171,7 +2171,7 @@ class ClientWorkOrderCampaignService {
         microseconds: sed.microsecond,
         milliseconds: sed.millisecond,
       ));
-      print('line 1799 $stmps');
+      debugPrint('line 1799 $stmps');
 
       int shiftPosition = 0;
       switch (item['shiftCode']) {
@@ -2208,7 +2208,7 @@ class ClientWorkOrderCampaignService {
       int holdOTMinutes = 0;
       double holdOTHours = 0.0;
       Future.delayed(Duration(seconds: 2), () async {
-        print('line 1832 ${item['hcpId']} $stmps');
+        debugPrint('line 1832 ${item['hcpId']} $stmps');
         await FirebaseFirestore.instance
             .collection('HCPWeeklyShift')
             .where('hcpId', isEqualTo: item['hcpId'])
@@ -2216,29 +2216,29 @@ class ClientWorkOrderCampaignService {
             .get()
             .then((querySnapshot) async {
           if (querySnapshot.docs.length > 0) {
-            print('line 1851 docs leng > 0');
+            debugPrint('line 1851 docs leng > 0');
             var docSnapshot = querySnapshot.docs[0];
             var obj = docSnapshot.data();
             obj['id'] = docSnapshot.id;
-            print('line 1840 ${docSnapshot.id}');
+            debugPrint('line 1840 ${docSnapshot.id}');
             obj['numberOfConfirmedShifts'] += 1;
             obj['cumulativePriorHours'] += shrs;
             obj['cumulativePriorMinutes'] += shiftMinutes;
             obj['cumulativeRegularHours'] += shrs;
             obj['cumulativeRegularMinutes'] += shiftMinutes;
-            print('line 1790: ${obj}');
+            debugPrint('line 1790: ${obj}');
             if (obj['cumulativePriorMinutes'] > 2400) {
               obj['weeklyOT'] == true;
               int settledOTMinutes = 0;
               double settledOTHours = 0;
-              print('line 1457');
+              debugPrint('line 1457');
               if (obj['listOfSettledOTMinutes'].length > 0) {
                 List<dynamic> lsot = obj['listOfSettledOTMinutes'];
                 settledOTMinutes = int.parse(lsot[lsot.length - 1].toString());
                 List<dynamic> ldot = obj['listOfSettledOTHours'];
                 settledOTHours = double.parse(ldot[ldot.length - 1].toString());
               }
-              print('line 1464');
+              debugPrint('line 1464');
               obj['otMinutes'] += (obj['cumulativePriorMinutes'] -
                   (obj['baseMinutes'] + settledOTMinutes));
               holdOTMinutes = (obj['cumulativePriorMinutes'] -
@@ -2259,10 +2259,10 @@ class ClientWorkOrderCampaignService {
             }
             List<dynamic> listOfCreatedDates =
             obj['listOfCreatedDateTimestamps'];
-            print('line 1478: ${listOfCreatedDates.length}');
+            debugPrint('line 1478: ${listOfCreatedDates.length}');
             Map<String, dynamic>? createdDate;
 
-            print('line 1486: $createdDate');
+            debugPrint('line 1486: $createdDate');
             //  if (createdDate == null) {
             //need created date, client , day shift
             Map<String, dynamic> shift = {
@@ -2288,7 +2288,7 @@ class ClientWorkOrderCampaignService {
               'otHours': holdOTHours,
               'otMinutes': holdOTMinutes,
             };
-            print('line 1512: check');
+            debugPrint('line 1512: check');
             List<Map<String, dynamic>> listOfShifts = [];
             listOfShifts.add(shift);
             Map<String, dynamic> day = {
@@ -2303,7 +2303,7 @@ class ClientWorkOrderCampaignService {
             };
             List<Map<String, dynamic>> listDays = [];
             listDays.add(day);
-            print('line 1867 debug');
+            debugPrint('line 1867 debug');
             Map<String, dynamic> clm = {
               'clientId': item['clientId'],
               'numberOfConfirmedShifts': 1,
@@ -2324,7 +2324,7 @@ class ClientWorkOrderCampaignService {
               'createdDateTimestamp': createdDateTimestamp,
               'listOfClients': []
             };
-            print('line 1548:');
+            debugPrint('line 1548:');
             createdDate['listOfClients'].add(clm);
             obj['listOfCreatedDateTimestamps'].add(createdDate);
             final docRefx = await FirebaseFirestore.instance
@@ -2339,7 +2339,7 @@ class ClientWorkOrderCampaignService {
             // });
           } else {
             //no match on weekly data
-            print('line 1632 no match for weekly data');
+            debugPrint('line 1632 no match for weekly data');
             List<dynamic> listOfCreatedDates = [];
             List<dynamic> listDays = [{}, {}, {}, {}, {}, {}, {}];
             List<Map<String, dynamic>> listOfShifts = [];
@@ -2364,7 +2364,7 @@ class ClientWorkOrderCampaignService {
               'otHOurs': 0,
               'otMinutes': 0,
             };
-            print('line 1655 ${shift}');
+            debugPrint('line 1655 ${shift}');
             listOfShifts.add(shift);
             Map<String, dynamic> day = {
               'numberOfConfirmedShifts': 1,
@@ -2376,7 +2376,7 @@ class ClientWorkOrderCampaignService {
               'otMinutes': 0,
               'listOfShifts': listOfShifts
             };
-            print('lihe 1667: ${day}');
+            debugPrint('lihe 1667: ${day}');
             listDays[shiftDay - 1] = day;
             Map<String, dynamic> clm = {
               'clientId': item['clientId'],
@@ -2394,7 +2394,7 @@ class ClientWorkOrderCampaignService {
               'otHours': 0,
               'otMinutes': 0
             };
-            print('line 1685: ${clm}');
+            debugPrint('line 1685: ${clm}');
             Map<String, dynamic> crtdate = {
               'createdDateTimestamp': createdDateTimestamp,
               'listOfClients': [clm]
@@ -2418,7 +2418,7 @@ class ClientWorkOrderCampaignService {
               'otMinutes': 0,
               'listOfCreatedDateTimestamps': [crtdate],
             };
-            print('line 1706: ${hcpWo}');
+            debugPrint('line 1706: ${hcpWo}');
             final docRefp = await FirebaseFirestore.instance
                 .collection('HCPWeeklyShift')
                 .doc();
@@ -2431,14 +2431,14 @@ class ClientWorkOrderCampaignService {
       //   });
       return true;
     } catch (e) {
-      print('line 2052: error ${e.toString()}');
+      debugPrint('line 2052: error ${e.toString()}');
       throw Exception('Error inserting HCP work order data');
     }
   }
 
   Future<bool> updateClientWorkOrderCampaign(
       String documentId, String startTime, String endTime) async {
-    print('line 1889 in updateCWOC');
+    debugPrint('line 1889 in updateCWOC');
     try {
       await FirebaseFirestore.instance
           .collection('ClientWorkOrderCampaign')
@@ -2446,14 +2446,14 @@ class ClientWorkOrderCampaignService {
           .update({'startTime': startTime, 'endTime': endTime});
       return true;
     } catch (e) {
-      print('line 1893: error ${e.toString()}');
+      debugPrint('line 1893: error ${e.toString()}');
       throw Exception('line 1895 error: ${e.toString()}');
     }
   }
 
   Future<Map<String, dynamic>> determineIfShiftRequiresOT(
       Map<String, dynamic> item, int potentialOTMinutes) async {
-    print('line 1212 determine ot:  ${item}');
+    debugPrint('line 1212 determine ot:  ${item}');
 
     double otHours = 0.0;
     try {
@@ -2467,7 +2467,7 @@ class ClientWorkOrderCampaignService {
       }
       var shours = (eDiff / 60).toStringAsFixed(2);
       double rhrs = double.parse(shours);
-      print('line 1146 check ');
+      debugPrint('line 1146 check ');
       double div = 40.0;
       Map<String, dynamic>? holdMCWO;
       Map<String, dynamic> mp = item;
@@ -2486,7 +2486,7 @@ class ClientWorkOrderCampaignService {
       mp['otPay'] = 0.0;
       mp['regularPay'] = 0.0;
       double totalHours = rhrs + dhrs;
-      print(
+      debugPrint(
           'line 1166: ${mp['id']} ${item['id']} $xtm ${mp['clientId']} $dtm $div $totalHours');
       if (totalHours - div > 0) {
         otHours = totalHours - div;
@@ -2495,16 +2495,16 @@ class ClientWorkOrderCampaignService {
           mp['regularHours'] -= val;
           otHours -= val;
         }
-        print('line 1176 $otHours');
+        debugPrint('line 1176 $otHours');
         mp['otHours'] = otHours;
         double opv = mp['otHours'] * mp['payOTRate'] * mp['payRate'];
         mp['otPay'] = opv;
         mp['OtPayRate'] = mp['payOTRate'] * mp['payRate'];
-        print('line 1166 check');
+        debugPrint('line 1166 check');
         mp['regularHours'] -= otHours;
         mp['regularPay'] = mp['regularHours'] * mp['payRate'];
         mp['flagWillOweOT'] = true;
-        print('line 1169 check');
+        debugPrint('line 1169 check');
         mp['totalPay'] = mp['otPay'] + mp['regularPay'];
         div = totalHours;
       } else {
@@ -2519,16 +2519,16 @@ class ClientWorkOrderCampaignService {
         holdMCWO = mp;
       }
 
-      print('line 1198: ${holdMCWO!['id']} ${holdMCWO['flagWillOweOT']} ');
+      debugPrint('line 1198: ${holdMCWO!['id']} ${holdMCWO['flagWillOweOT']} ');
       return holdMCWO;
     } catch (e) {
-      print('line 1201: ${e.toString()}');
+      debugPrint('line 1201: ${e.toString()}');
       throw Exception('line 1334: ${e.toString()}');
     }
   }
   Future<List<Map<String, dynamic>>>? getClientWorkOrdersAll(
       int clientId) async {
-    print('line 22 getallitemsfrom clienthcpwo; $clientId');
+    debugPrint('line 22 getallitemsfrom clienthcpwo; $clientId');
     //  return realm.all<ClientWorkOrderCampaign>();
     try {
       List<Map<String, dynamic>> listOfCWOMap = [];
@@ -2583,7 +2583,7 @@ class ClientWorkOrderCampaignService {
       new DateTime(workDate.year, workDate.month, lastDayInMonth);
 
       int x = 0;
-      print('line 120: in getallworkorders');
+      debugPrint('line 120: in getallworkorders');
       await FirebaseFirestore.instance
           .collection('ClientWorkOrder')
           .where('clientId', isEqualTo: clientId)
@@ -2599,7 +2599,7 @@ class ClientWorkOrderCampaignService {
           int sDay = dtd.day;
           int sMonth = dtd.month;
           int sYear = dtd.year;
-          print('line 148: $sDay $sMonth $sYear $cDay $cMonth $cYear');
+          debugPrint('line 148: $sDay $sMonth $sYear $cDay $cMonth $cYear');
           if (sMonth < cMonth) {
             continue;
           }
@@ -2610,7 +2610,7 @@ class ClientWorkOrderCampaignService {
           if (obj['meals'] == null) {
             obj['meals'] = 0;
           }
-          // print('line 174: ${obj['hcpName']}');
+          // debugPrint('line 174: ${obj['hcpName']}');
           if (obj['hcpName'] == null ||
               obj['hcpName'] == "" ||
               obj['hcpName'] == '') {
@@ -2624,24 +2624,24 @@ class ClientWorkOrderCampaignService {
           obj['startTime'] = obj['dates']['rates']['rateDetails']['startTime'];
           obj['endTime'] = obj['dates']['rates']['rateDetails']['endTime'];
           obj['billRate'] = obj['dates']['rates']['rateDetails']['billRate'];
-          // print(
+          // debugPrint(
           //     'line 176: ${obj['shiftDate']} ${obj['shiftCode']} ${obj['isWeekend']} ${obj['isHoliday']} ${obj['startTime']} ${obj['endTime']} ${obj['billRate']}');
-          // print(
+          // debugPrint(
           //     'line 177: ${obj['disciplineName']} ${obj['clientName']} ${obj['departmentName']} ${obj['hcpId']} ${obj['hcpName']} ${obj['meals']}');
           x = 1;
 
           listOfCWOMap.add(obj);
         }
       });
-      print('line 153 get cmp all ${listOfCWOMap.length}');
+      debugPrint('line 153 get cmp all ${listOfCWOMap.length}');
       // for (int i = 0; i < listOfCWOMap.length; i++) {
       //   Map<String, dynamic> mp = listOfCWOMap[i];
-      //   print('line 202: $i, ${mp['shiftDate']} ${mp['asmWorkOrderId']}');
+      //   debugPrint('line 202: $i, ${mp['shiftDate']} ${mp['asmWorkOrderId']}');
       // }
       listOfCWOMap.sort((a, b) {
-        print('line 155: ${a['shiftDate']} ${b['shiftDate']}');
+        debugPrint('line 155: ${a['shiftDate']} ${b['shiftDate']}');
         int sd = a['shiftDate'].compareTo(b['shiftDate']);
-        print('line 203: $sd');
+        debugPrint('line 203: $sd');
         if (sd == 0) {
           return a['shiftCode'].compareTo(b['shiftCode']); // '-' for descending
         }
@@ -2649,13 +2649,13 @@ class ClientWorkOrderCampaignService {
       });
       return listOfCWOMap;
     } catch (e) {
-      print('line 164 in get all clienthcpwos: $e');
+      debugPrint('line 164 in get all clienthcpwos: $e');
       throw Exception(e.toString());
     }
   }
   Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsShiftsWithRequiredOT(
       int clientId) async {
-    print('lline 214 in getwosc for ot mitigation');
+    debugPrint('lline 214 in getwosc for ot mitigation');
     List<Map<String, dynamic>> listOfCWOs = [];
     try {
       await FirebaseFirestore.instance
@@ -2673,12 +2673,12 @@ class ClientWorkOrderCampaignService {
       });
       return listOfCWOs;
     } catch (e) {
-      print('line 218 error: ${e.toString()}');
+      debugPrint('line 218 error: ${e.toString()}');
       return [];
     }
   }
   Future<bool> updateClientMitigateOTForShift(String docId) async {
-    print('line 30 in updateclientmitigation');
+    debugPrint('line 30 in updateclientmitigation');
     try {
       await FirebaseFirestore.instance
           .collection('ClientWorkOrderCampaign')
@@ -2691,20 +2691,20 @@ class ClientWorkOrderCampaignService {
       });
       return true;
     } catch (e) {
-      print('line 34 error: ${e.toString()}');
+      debugPrint('line 34 error: ${e.toString()}');
       return false;
     }
   }
   Future<String> getCurrentWorkOrder(String wkid) async {
     String rtn = 'OK';
-    print('line 1553: $wkid');
+    debugPrint('line 1553: $wkid');
     await FirebaseFirestore.instance
         .collection('ClientWorkOrder')
         .doc(wkid)
         .get()
         .then((querySnapshot) {
       var obj = querySnapshot.data();
-      print('line 1513: ${obj!['shiftStatus']}');
+      debugPrint('line 1513: ${obj!['shiftStatus']}');
       if (obj['shiftStatus'].contains('O') == true) {
         rtn = "OK";
       }
@@ -2719,13 +2719,13 @@ class ClientWorkOrderCampaignService {
       }
       return;
     });
-    print('line 1530: $rtn');
+    debugPrint('line 1530: $rtn');
     return rtn;
   }
 
   Future<bool>? updateClientWorkOrderCampaignAccepted(
       Map<String, dynamic> item, dynamic data, BuildContext ctx) async {
-    print('line 1201: ${item['id']} $data ${item}');
+    debugPrint('line 1201: ${item['id']} $data ${item}');
     bool flagIsAccepted = false;
     String? clientUserEmail;
     try {
@@ -2742,7 +2742,7 @@ class ClientWorkOrderCampaignService {
       Map<String, dynamic>? clnt =
       await clientServices.getClient(item['clientId']);
       if (clnt == null) {
-        print('line 1221 did not get client record');
+        debugPrint('line 1221 did not get client record');
         return true;
       }
 
@@ -2751,7 +2751,7 @@ class ClientWorkOrderCampaignService {
       DateTime targetDate = cts.toDate();
 
       bool flagWeeklyOvertime = data['shiftOvertime'];
-      print('line 1250: ${data}');
+      debugPrint('line 1250: ${data}');
 
       String shiftApprovalNote = "";
       DateTime ctm = cts.toDate();
@@ -2762,7 +2762,7 @@ class ClientWorkOrderCampaignService {
         updateShiftStatus = 'Approved';
       }
 
-      print(
+      debugPrint(
           'line 1268: ${updateShiftStatus} ${flagWeeklyOvertime} ${updateShiftStatus} ${item['id']}');
       double dHours = data['regularHours'];
       await FirebaseFirestore.instance
@@ -2785,20 +2785,20 @@ class ClientWorkOrderCampaignService {
         'shiftApproved': updateShiftStatus == 'Approved' ? true : false
       },SetOptions(merge:true));
 
-      print('line 1284 returned true');
+      debugPrint('line 1284 returned true');
       await Future.delayed(const Duration(milliseconds: 100), () {
-        print('line 1286 Hello, after 100 milliseconds of delay');
+        debugPrint('line 1286 Hello, after 100 milliseconds of delay');
       });
       flagIsAccepted = true;
-      print('line 1288: ${item['clientId']}');
+      debugPrint('line 1288: ${item['clientId']}');
 
       Map<String, dynamic>? clc = await clientServices
           .getSingleClientUserWithClientId(item['clientId']);
       if (clc!.isEmpty) {
-        print('line 1293 did not get clientuser record');
+        debugPrint('line 1293 did not get clientuser record');
         return true;
       }
-      print('line 1602: ${clc}');
+      debugPrint('line 1602: ${clc}');
       List<String> listOfTokens = [];
       if (clc['iosFcmToken'] != null && clc['iosFcmToken'] != 'Placeholder') {
         listOfTokens.add(clc['iosFcmToken']);
@@ -2819,14 +2819,14 @@ class ClientWorkOrderCampaignService {
           listOfTokens.add(clc['androidFcmTabletToken']);
         }
       }
-      print('line 1623: $listOfTokens');
+      debugPrint('line 1623: $listOfTokens');
       if (listOfTokens.length > 0) {
         Timestamp ts = item['shiftDate'];
         Map<String,dynamic>nullMap = {};
         String shiftDate = convertFromTimestamp(ts);
         String body =
             '${clc['fullName']},  ${item['hcpName']} has accepted shift ${item['shiftCode']} for $shiftDate';
-        print('line 1301: $listOfTokens ${body}');
+        debugPrint('line 1301: $listOfTokens ${body}');
         Map<String, dynamic> parameters = {
           "title": "Shift Acceptance",
           "body": body,
@@ -2840,7 +2840,7 @@ class ClientWorkOrderCampaignService {
       if (flagIsAccepted == true) {
         return true;
       }
-      print('line 1311 error: ${item['id']} $e');
+      debugPrint('line 1311 error: ${item['id']} $e');
       int idx = e.toString().indexOf('Exception: ');
       int rdx = e.toString().indexOf('Exception: ', idx);
       if (rdx == -1) {
@@ -2862,7 +2862,7 @@ class ClientWorkOrderCampaignService {
       int weekDay = shiftDate.weekday;
 //      int diffDay = weekDay - (weekDay - 1);
       //     DateTime newShiftDate = shiftDate.subtract(Duration(days: diffDay));
-      print('line 1724: $shiftDate $shiftDateTimeStamp');
+      debugPrint('line 1724: $shiftDate $shiftDateTimeStamp');
       shiftDate = shiftDate.subtract(Duration(
           hours: shiftDate.hour,
           minutes: shiftDate.minute,
@@ -2878,7 +2878,7 @@ class ClientWorkOrderCampaignService {
           microseconds: endDate.microsecond,
           milliseconds: endDate.millisecond));
       Timestamp eds = Timestamp.fromDate(endDate);
-      print('line 1733 $fds $eds $shiftDate $endDate');
+      debugPrint('line 1733 $fds $eds $shiftDate $endDate');
       int tMin = 0;
       await FirebaseFirestore.instance
           .collection('ClientWorkOrderCampaign')
@@ -2888,7 +2888,7 @@ class ClientWorkOrderCampaignService {
           .where('shiftDate', isLessThan: eds)
           .get()
           .then((querySnapshot) {
-        print('line 1233: ${querySnapshot.docs.length}');
+        debugPrint('line 1233: ${querySnapshot.docs.length}');
         for (var docSnapshot in querySnapshot.docs) {
           var obj = docSnapshot.data();
           Timestamp ts = obj['shiftDate'];
@@ -2918,17 +2918,17 @@ class ClientWorkOrderCampaignService {
           }
         }
       });
-      print('line 1771: $tMin');
+      debugPrint('line 1771: $tMin');
       return tMin;
     } catch (e) {
-      print('line 1230 error: ${e.toString()}');
+      debugPrint('line 1230 error: ${e.toString()}');
       throw Exception('line 1231 error: ${e.toString()}');
     }
   }
   Future<int> getFutureShiftTimeInMinutes(
       Timestamp ts, int hcpId, String shiftCode,List<String>listOfShiftCodes) async {
     try {
-      print('line 2440 in getfutureshifttimeinminutes');
+      debugPrint('line 2440 in getfutureshifttimeinminutes');
       DateTime dte = ts.toDate();
       dte = dte.add(Duration(days: 1));
 
@@ -2939,7 +2939,7 @@ class ClientWorkOrderCampaignService {
           microseconds: dte.microsecond,
           milliseconds: dte.millisecond));
       Timestamp ts1 = Timestamp.fromDate(dte);
-      print('line 2458: ${ts1}');
+      debugPrint('line 2458: ${ts1}');
       int futureMinutes = 0;
 
       await FirebaseFirestore.instance
@@ -2956,7 +2956,7 @@ class ClientWorkOrderCampaignService {
           futureMinutes = 0;
           return futureMinutes;
         }
-        print('line 2474: ${querySnapshot.docs.length}');
+        debugPrint('line 2474: ${querySnapshot.docs.length}');
         for (var docSnapshot in querySnapshot.docs) {
           Map<String, dynamic> obj = docSnapshot.data();
 
@@ -2966,21 +2966,21 @@ class ClientWorkOrderCampaignService {
             eMin +=1440;
           }
           int diff = eMin - sMin;
-          print('line 2495: $shiftCode ${obj['shiftCode']} $diff');
+          debugPrint('line 2495: $shiftCode ${obj['shiftCode']} $diff');
           futureMinutes += diff;
         }
       });
-      print('line 2539 $futureMinutes');
+      debugPrint('line 2539 $futureMinutes');
       return futureMinutes;
     } catch (e) {
-      print('line 2471 error: ${e.toString()}');
+      debugPrint('line 2471 error: ${e.toString()}');
       return 0;
     }
   }
   Future<int> getCurrentShiftTimeInMinutes(
       Timestamp ts, int hcpId, String shiftCode,List<String>listOfShiftCodes) async {
     try {
-      print('line 2440 in getfutureshifttimeinminutes');
+      debugPrint('line 2440 in getfutureshifttimeinminutes');
       DateTime dte = ts.toDate();
       dte = dte.subtract(Duration(
           hours: dte.hour,
@@ -2989,7 +2989,7 @@ class ClientWorkOrderCampaignService {
           microseconds: dte.microsecond,
           milliseconds: dte.millisecond));
       Timestamp ts1 = Timestamp.fromDate(dte);
-      print('line 2503: ${ts1}');
+      debugPrint('line 2503: ${ts1}');
       int currentMinutes = 0;
       await FirebaseFirestore.instance
           .collection('ClientWorkOrderCampaign')
@@ -3005,7 +3005,7 @@ class ClientWorkOrderCampaignService {
           currentMinutes = 0;
           return currentMinutes;
         }
-        print('line 2474: ${querySnapshot.docs.length}');
+        debugPrint('line 2474: ${querySnapshot.docs.length}');
         for (var docSnapshot in querySnapshot.docs) {
           Map<String, dynamic> obj = docSnapshot.data();
 
@@ -3015,14 +3015,14 @@ class ClientWorkOrderCampaignService {
             eMin +=1440;
           }
           int diff = eMin - sMin;
-          print('line 2495: $shiftCode ${obj['shiftCode']} $diff');
+          debugPrint('line 2495: $shiftCode ${obj['shiftCode']} $diff');
           currentMinutes += diff;
         }
       });
-      print('line 2539 $currentMinutes');
+      debugPrint('line 2539 $currentMinutes');
       return currentMinutes;
     } catch (e) {
-      print('line 2471 error: ${e.toString()}');
+      debugPrint('line 2471 error: ${e.toString()}');
       return 0;
     }
   }
@@ -3056,7 +3056,7 @@ class ClientWorkOrderCampaignService {
       });
       return fMin;
     } catch (e) {
-      print('line 2570 ERROR in getpriorshifttimes: ${e.toString()}');
+      debugPrint('line 2570 ERROR in getpriorshifttimes: ${e.toString()}');
       return 0;
     }
   }
@@ -3064,7 +3064,7 @@ class ClientWorkOrderCampaignService {
   Future<int> getPastShiftTimeInInMinutes(
       Timestamp ts, int hcpId, String shiftCode,List<String>listOfShiftCodes) async {
     try {
-      print('line 2578 in getpasthifttimeinminutes');
+      debugPrint('line 2578 in getpasthifttimeinminutes');
       DateTime dte = ts.toDate();
       dte = dte.subtract(Duration(days: 1));
 
@@ -3075,7 +3075,7 @@ class ClientWorkOrderCampaignService {
           microseconds: dte.microsecond,
           milliseconds: dte.millisecond));
       Timestamp ts1 = Timestamp.fromDate(dte);
-      print('line 2589: ${ts1} ');
+      debugPrint('line 2589: ${ts1} ');
       int pastMinutes = 0;
 
       await FirebaseFirestore.instance
@@ -3092,7 +3092,7 @@ class ClientWorkOrderCampaignService {
           pastMinutes = 0;
           return pastMinutes;
         }
-        print('line 2474: ${querySnapshot.docs.length}');
+        debugPrint('line 2474: ${querySnapshot.docs.length}');
         for (var docSnapshot in querySnapshot.docs) {
           Map<String, dynamic> obj = docSnapshot.data();
 
@@ -3102,14 +3102,14 @@ class ClientWorkOrderCampaignService {
             eMin +=1440;
           }
           int diff = eMin - sMin;
-          print('line 2616: $shiftCode ${obj['shiftCode']} $diff');
+          debugPrint('line 2616: $shiftCode ${obj['shiftCode']} $diff');
           pastMinutes += diff;
         }
       });
-      print('line 2620 $pastMinutes');
+      debugPrint('line 2620 $pastMinutes');
       return pastMinutes;
     } catch (e) {
-      print('line 2623 error: ${e.toString()}');
+      debugPrint('line 2623 error: ${e.toString()}');
       return 0;
     }
   }
@@ -3119,7 +3119,7 @@ class ClientWorkOrderCampaignService {
       dynamic data,
       String clientWorkOrderUuid,
       BuildContext ctx) async {
-    print('line 1202 $data ${item}');
+    debugPrint('line 1202 $data ${item}');
 
     if (data['shiftStatus'] == 'Declined') {
       DateTime dte = DateTime.now();
@@ -3136,22 +3136,22 @@ class ClientWorkOrderCampaignService {
         }); //close
         return "Declined shift removed";
       } catch (e) {
-        print('line 2239 Error dismissing shift: ${e.toString()}');
+        debugPrint('line 2239 Error dismissing shift: ${e.toString()}');
         throw Exception('line 2239: ${e.toString()}');
       }
     }
-    print('line 2695 $item,');
+    debugPrint('line 2695 $item,');
     String shiftCode = item['shiftCode'];
     String workOrderId = item['clientWorkOrderId'];
     String wkr = await getCurrentWorkOrder(workOrderId);
-    print('line 2698: $wkr');
+    debugPrint('line 2698: $wkr');
     bool flagCaughtIssue = false;
     if (wkr != 'OK') {
       flagCaughtIssue = true;
       throw Exception("Problem: " + wkr);
     }
 
-    print('line 2242  shift status: ${data['shiftStatus']}');
+    debugPrint('line 2242  shift status: ${data['shiftStatus']}');
     Map<String, dynamic>? client =
     await clientServices.getClient(item['clientId']);
     if (client!.isEmpty) {
@@ -3165,11 +3165,11 @@ class ClientWorkOrderCampaignService {
         : client['longitude'];
 
     if (data['shiftStatus'] != 'Confirmed') {
-      print(
+      debugPrint(
           'line 2256 skipping because invalid shift status: ${data['shiftStatus']}');
       return "ERROR: invalid shiftStatus";
     }
-    print('line 2570: ${item['shiftDate']}');
+    debugPrint('line 2570: ${item['shiftDate']}');
     int shiftDailyMinutes =
     await getDailyTimeInMinutes(item['shiftDate'], item['hcpId']);
     int sMin = utilitiesServices.getMinutes(item['startTime']);
@@ -3178,7 +3178,7 @@ class ClientWorkOrderCampaignService {
       eMin += 1440;
     }
     int shiftTime = eMin - sMin;
-    print('line 2546: ${shiftDailyMinutes} ${shiftTime}');
+    debugPrint('line 2546: ${shiftDailyMinutes} ${shiftTime}');
 
     if (shiftDailyMinutes + shiftTime > 960) {
       return "ERROR: Shift time would result in more thant 16 hours in a day.";
@@ -3204,7 +3204,7 @@ class ClientWorkOrderCampaignService {
     DateTime nt1 = nt;
     //  nt1 = nt1.add(Duration(days: 1));
     Timestamp nt1s = Timestamp.fromDate(nt1);
-    print('line 2282: $nt1s ${item['id']}');
+    debugPrint('line 2282: $nt1s ${item['id']}');
 
     String clientWorkOrderUUid = '';
     var woDocumentId = null;
@@ -3217,7 +3217,7 @@ class ClientWorkOrderCampaignService {
       final db = FirebaseFirestore.instance;
 
       final String dId = item['id'];
-      print('line 2296: $dId');
+      debugPrint('line 2296: $dId');
       List<int> dailyMinutes = [0, 0, 0, 0, 0, 0, 0];
       String? processMessage;
       bool flagBatchWasCommitted = false;
@@ -3236,7 +3236,7 @@ class ClientWorkOrderCampaignService {
       } else {
         return "ERROR: No record for the HCP";
       }
-      print('line 2315');
+      debugPrint('line 2315');
       Timestamp its = item['shiftDate'];
       DateTime itd = its.toDate();
 
@@ -3246,7 +3246,7 @@ class ClientWorkOrderCampaignService {
           seconds: itd.second,
           microseconds: itd.microsecond,
           milliseconds: itd.millisecond));
-      print('line 2325: $itd');
+      debugPrint('line 2325: $itd');
       Timestamp cts = item['shiftDate'];
       DateTime ctd = cts.toDate();
       ctd = ctd.subtract(Duration(
@@ -3255,12 +3255,12 @@ class ClientWorkOrderCampaignService {
           seconds: ctd.second,
           microseconds: ctd.microsecond,
           milliseconds: ctd.millisecond));
-      print('line 2334: $itd $ctd');
+      debugPrint('line 2334: $itd $ctd');
       DateTime targetDate = ctd;
 
       int sMin = utilitiesServices.getMinutes(item['startTime']);
       int eMin = utilitiesServices.getMinutes(item['endTime']);
-      print('line 2339: $sMin $eMin');
+      debugPrint('line 2339: $sMin $eMin');
       // if (sMin > eMin) {
       //   eMin += 1440;
       // }
@@ -3272,10 +3272,10 @@ class ClientWorkOrderCampaignService {
       if (shiftMinutes == -1) {
         throw Exception('line 2348: Invalid shift minutes');
       }
-      print('line 2350: $shiftMinutes $shiftDailyMinutes');
+      debugPrint('line 2350: $shiftMinutes $shiftDailyMinutes');
       // if (shiftDailyMinutes + shiftMinutes > 990) {
       //   // return "Not Confirmed:  Hours Limit on Day";
-      //   print('line 2353 hours limit on day ignore for debug');
+      //   debugPrint('line 2353 hours limit on day ignore for debug');
       // }
 
       // if (item['shiftCode'] == '1' ||
@@ -3300,22 +3300,22 @@ class ClientWorkOrderCampaignService {
       // if (item['shiftCode'] == 'PA') {
       //   //Rules a,c
       //   if (shiftMinutes + nextMinutes > 960) {
-      //     print('line 2378 not confirmed: $shiftMinutes ');
+      //     debugPrint('line 2378 not confirmed: $shiftMinutes ');
       //     return "Not Confirmed: Would exceed the 16 consecutive hours limit.";
       //   }
       // } else if (item['shiftCode'] == '3') {
       //   //Rules b, d, i,j
       //   if (currentMinutes + shiftMinutes + nextMinutes > 960) {
-      //     print('line 2384 not confirmed: $shiftMinutes ');
+      //     debugPrint('line 2384 not confirmed: $shiftMinutes ');
       //     return "Not Confirmed: Would exceed the 16 consecutive hours limit.";
       //   }
       // } else if (item['shiftCode'] == '1') {
       //   //Rules: e, f, g, h,k,l
       //   if (shiftMinutes + previousMinutes > 960) {
-      //     print('line 2390 not confirmed: $shiftMinutes ');
+      //     debugPrint('line 2390 not confirmed: $shiftMinutes ');
       //     return "Not Confirmed: Would exceed the 16 consecutive hours limit.";
       //   } else if (currentMinutes + shiftMinutes + nextMinutes > 960) {
-      //     print('line 233 not confirmed: $shiftMinutes ');
+      //     debugPrint('line 233 not confirmed: $shiftMinutes ');
       //     return "Not Confirmed: Would exceed the 16 consecutive hours limit.";
       //   }
       // }
@@ -3345,7 +3345,7 @@ class ClientWorkOrderCampaignService {
       } else if (shiftCode == '2') {
         currentTimes = await getCurrentShiftTimeInMinutes(
             item['shiftDate'], item['hcpId'], item['shiftCode'],['1','3']);
-        print('line 2854: ${currentTimes} ${shiftTime}');
+        debugPrint('line 2854: ${currentTimes} ${shiftTime}');
         if (currentTimes +  shiftTime > 960) {
           return "ERROR: Shift time would result in more than 16 hours consecutive hours.";
         }
@@ -3354,7 +3354,7 @@ class ClientWorkOrderCampaignService {
 
         currentTimes = await getCurrentShiftTimeInMinutes(
             item['shiftDate'], item['hcpId'], item['shiftCode'],['1']);
-        print('line 2863: ${currentTimes} ${pastTimes} ${shiftTime}');
+        debugPrint('line 2863: ${currentTimes} ${pastTimes} ${shiftTime}');
         if (currentTimes + pastTimes + shiftTime > 960) {
           return "ERROR: Shift time would result in more than 16 hours consecutive hours.";
         }
@@ -3362,14 +3362,14 @@ class ClientWorkOrderCampaignService {
             item['shiftDate'], item['hcpId'], item['shiftCode'],['3']);
         futureTimes = await getFutureShiftTimeInMinutes(
             item['shiftDate'], item['hcpId'], item['shiftCode'],['1']);
-        print('line 2871: ${currentTimes} ${futureTimes} ${shiftTime}');
+        debugPrint('line 2871: ${currentTimes} ${futureTimes} ${shiftTime}');
         if (futureTimes + currentTimes + shiftTime > 960) {
           return "ERROR: Shift time would result in more than 16 hours consecutive hours.";
         }
         if (currentTimes > 0) {
           futureTimes = await getFutureShiftTimeInMinutes(
               item['shiftDate'], item['hcpId'], item['shiftCode'],['AP']);
-          print('line 2876 ${currentTimes} ${futureTimes} ${shiftTime}');
+          debugPrint('line 2876 ${currentTimes} ${futureTimes} ${shiftTime}');
           if (futureTimes + currentTimes + shiftTime > 960) {
             return "ERROR: Shift time would result in more than 16 hours consecutive hours.";
           }
@@ -3430,13 +3430,13 @@ class ClientWorkOrderCampaignService {
         }
       }
 
-      print('line 2398 $shiftMinutes');
+      debugPrint('line 2398 $shiftMinutes');
       WriteBatch batch = db.batch();
       bool flagSkip = false;
       if (flagSkip == false) {
-        // print('line 1644 $cts $weekStartDay $shiftMinutes $totalMinutes');
+        // debugPrint('line 1644 $cts $weekStartDay $shiftMinutes $totalMinutes');
 
-//        print('line 1646 $dailyMinutes');
+//        debugPrint('line 1646 $dailyMinutes');
         late var obj;
         int orderId = 0;
         String checkStatus = 'Open';
@@ -3449,7 +3449,7 @@ class ClientWorkOrderCampaignService {
           flagHasHCPTimecard = true;
           isGpoClient = true;
         }
-        print('line 2527: ${item['hcpId']} $checkStatus ${item['clientId']}');
+        debugPrint('line 2527: ${item['hcpId']} $checkStatus ${item['clientId']}');
         await FirebaseFirestore.instance
             .collection('ClientWorkOrder')
             .where('clientId', isEqualTo: item['clientId'])
@@ -3457,19 +3457,19 @@ class ClientWorkOrderCampaignService {
             .where('disciplineName', isEqualTo: item['disciplineName'])
             .get()
             .then((querySnapshot) async {
-          print('line 2425: ${querySnapshot.docs.length}');
+          debugPrint('line 2425: ${querySnapshot.docs.length}');
           for (var docSnapshot in querySnapshot.docs) {
             documentId = docSnapshot.id;
             obj = docSnapshot.data();
             if (obj['dates'] == null) {
               if (obj['shiftCode'] != item['shiftCode']) {
-                print('line 2431 skipping on shiftcode');
+                debugPrint('line 2431 skipping on shiftcode');
                 continue;
               }
             } else {
               if (item['shiftCode'] !=
                   obj['dates']['shiftDateInfo']['shiftCode']) {
-                print('line 2437skipping of shiftcode');
+                debugPrint('line 2437skipping of shiftcode');
                 continue;
               }
             }
@@ -3479,14 +3479,14 @@ class ClientWorkOrderCampaignService {
             //   continue;
             // }
             isGpoClient = false;
-            print('line 2447: ${obj['isGPOClient']}');
+            debugPrint('line 2447: ${obj['isGPOClient']}');
             if (obj['isGPOClient'] == null) {
               obj['isGPOClient'] = false;
               obj['bookShift'] = true;
               isGpoClient = false;
             } else {
               // if (obj['hcpId'] != item['hcpId']) {
-              //   print('line 2130 skipping on gpo with hcpid');
+              //   debugPrint('line 2130 skipping on gpo with hcpid');
               //   continue;
               // }
               if (obj['isGPOClient'] == true) {
@@ -3496,22 +3496,22 @@ class ClientWorkOrderCampaignService {
 
             if (obj['shiftCode'] != null) {
               if (obj['shiftCode'] != item['shiftCode']) {
-                print('line 2464: ${obj['shiftCode']} ${item['shiftCode']}');
+                debugPrint('line 2464: ${obj['shiftCode']} ${item['shiftCode']}');
                 flagSkip = true;
               }
             } else {
               if (obj['dates']['shiftDateInfo']['shiftCode'] !=
                   item['shiftCode']) {
-                print(
+                debugPrint(
                     'line 2471: ${obj['dates']['shiftDateInfo']['shiftCode']} ${item['shiftCode']}');
                 flagSkip = true;
               }
             }
             if (flagSkip == true) {
-              print('line 2576: skipping on shiftcode');
+              debugPrint('line 2576: skipping on shiftcode');
               continue;
             }
-            print('line 2479: ${obj['workOrderId']} $documentId ');
+            debugPrint('line 2479: ${obj['workOrderId']} $documentId ');
 
             Timestamp? cts;
 
@@ -3520,7 +3520,7 @@ class ClientWorkOrderCampaignService {
             } else {
               cts = obj['shiftDate'];
             }
-            print('line 2488: $isGpoClient $cts');
+            debugPrint('line 2488: $isGpoClient $cts');
             DateTime ctd = cts!.toDate();
             ctd = ctd.subtract(Duration(
                 hours: ctd.hour,
@@ -3528,9 +3528,9 @@ class ClientWorkOrderCampaignService {
                 seconds: ctd.second,
                 microseconds: ctd.microsecond,
                 milliseconds: ctd.millisecond));
-            print('line 2496: $itd $ctd');
+            debugPrint('line 2496: $itd $ctd');
             if (itd.millisecondsSinceEpoch == ctd.millisecondsSinceEpoch) {
-              print('line 2498');
+              debugPrint('line 2498');
               bool flagCheck = true;
               if (isGpoClient == false) {
                 if (obj['dates']['shiftDateInfo']['shiftCode'] !=
@@ -3541,23 +3541,23 @@ class ClientWorkOrderCampaignService {
                 flagCheck = false;
               }
               if (flagCheck == true) {
-                print('line 2509 $documentId ${obj['orderId']}');
+                debugPrint('line 2509 $documentId ${obj['orderId']}');
                 if (obj['orderId'] == null) {
                   obj['orderId'] = obj['asmWorkOrderId'];
                 }
                 orderId = obj['orderId'];
                 if (obj['asmWorkOrderId'] == null) {
-                  print('line 2515 asmworkorderid should not be null');
+                  debugPrint('line 2515 asmworkorderid should not be null');
                   throw Exception('ERROR: Asmworkorderid is null');
                 }
                 asmWorkOrderId = obj['asmWorkOrderId'];
-                // print(
+                // debugPrint(
                 //     'line 1533: ${obj['clientId']} ${obj['shiftCode']}  ${obj['dates']['shiftDateInfo']['shiftDate']}');break;
 
-                print('line 2522: $asmWorkOrderId $documentId $woDocumentId');
+                debugPrint('line 2522: $asmWorkOrderId $documentId $woDocumentId');
 
                 if (asmWorkOrderId == -1) {
-                  print('line 2525 skipping on asmWorkOrderId');
+                  debugPrint('line 2525 skipping on asmWorkOrderId');
                   return 'ERROR: No shift found to confirm.';
                 }
 
@@ -3583,8 +3583,8 @@ class ClientWorkOrderCampaignService {
                 DateTime ds1 = ts.toDate();
                 ds1 = ds1.add(Duration(days: 1));
                 Timestamp tse = Timestamp.fromDate(ds1);
-                print('line 2551: ${item['shiftDate']}, ${ts} ${tse}');
-                print(
+                debugPrint('line 2551: ${item['shiftDate']}, ${ts} ${tse}');
+                debugPrint(
                     'line 2553: ${item['branchId']} ${item['clientId']} ${item['shiftCode']} ${item['disciplineName']}');
                 await FirebaseFirestore.instance
                     .collection('ClientHCPWorkOrder')
@@ -3604,8 +3604,8 @@ class ClientWorkOrderCampaignService {
                     .orderBy('shiftDate', descending: false)
                     .get()
                     .then((querySnapshot) {
-                  print('line 2572: ${querySnapshot.docs}');
-                  print('line 2573 ${querySnapshot.docs.length}');
+                  debugPrint('line 2572: ${querySnapshot.docs}');
+                  debugPrint('line 2573 ${querySnapshot.docs.length}');
                   for (var docSnapshot in querySnapshot.docs) {
                     var hco = docSnapshot.data();
                     Timestamp hcs = hco['shiftDate'];
@@ -3616,7 +3616,7 @@ class ClientWorkOrderCampaignService {
                         seconds: hdc.second,
                         microseconds: hdc.microsecond,
                         milliseconds: hdc.millisecond));
-                    print(
+                    debugPrint(
                         'line 2585: ${tdis.millisecondsSinceEpoch} ${hdc.millisecondsSinceEpoch}');
                     if (tdis.millisecondsSinceEpoch ==
                         hdc.millisecondsSinceEpoch) {
@@ -3652,7 +3652,7 @@ class ClientWorkOrderCampaignService {
                   "statusId": 'S',
                   'statusDate': Timestamp.fromDate(DateTime.now())
                 });
-                print('line 2620 ${item['id']}');
+                debugPrint('line 2620 ${item['id']}');
                 final docRef1 = await db
                     .collection('ClientWorkOrderCampaign')
                     .doc(item['id']);
@@ -3667,7 +3667,7 @@ class ClientWorkOrderCampaignService {
                   'workOrderId': workOrderId,
                   'asmWorkOrderId': asmWorkOrderId
                 }); //closed
-                print(
+                debugPrint(
                     'line 2636 ${item['clientId']} ${data['shiftStatus']} ${item['shiftCode']}');
                 orderId = 0;
                 //903a
@@ -3684,7 +3684,7 @@ class ClientWorkOrderCampaignService {
                 bl1 = await insertHCPWorkOrderData(item, shiftMinutes, batch);
                 batch.commit();
                 flagBatchWasCommitted = true;
-                print('line 2653 just before batch commit: $bl1');
+                debugPrint('line 2653 just before batch commit: $bl1');
                 break;
               }
             }
@@ -3692,19 +3692,19 @@ class ClientWorkOrderCampaignService {
         });
       }
       if (flagBatchWasCommitted == false) {
-        print('line 2661 batch not committed');
+        debugPrint('line 2661 batch not committed');
         throw Exception('ERROR: line 2304 batch not committed');
       }
 
-      print('line 2665 just before commit check');
+      debugPrint('line 2665 just before commit check');
       authServices.clientId = item['clientId'];
-      print(
+      debugPrint(
           'line 2668: $asmWorkOrderId $woDocumentId $workOrderId $clientWorkOrderUUid');
 
-      print('line 2670: ${item['id']}');
+      debugPrint('line 2670: ${item['id']}');
 
       var doc_id = null;
-      print('line 2673 $workOrderId ${item['clientWorkOrderUuid']}');
+      debugPrint('line 2673 $workOrderId ${item['clientWorkOrderUuid']}');
 
       DateFormat formatter = DateFormat('MM-dd-yyyy');
 
@@ -3721,7 +3721,7 @@ class ClientWorkOrderCampaignService {
         "Conf_Cli_Time": item['startTime'],
         "Conf_Cli_Note": "Confirmed"
       };
-      print('line 2690 $asmWorkOrderId, $asmWO');
+      debugPrint('line 2690 $asmWorkOrderId, $asmWO');
       //step 1 book shift
       if (item['bookShift'] == true) {
         Timestamp ts = item['shiftDate'];
@@ -3734,15 +3734,15 @@ class ClientWorkOrderCampaignService {
           'orderId': asmWorkOrderId.toString()
         };
         dynamic result = await callBookShiftFunction(data, ctx);
-        print('line 2703: $result $asmWorkOrderId $hcpId');
+        debugPrint('line 2703: $result $asmWorkOrderId $hcpId');
         if (result == null ||
             result.toString().toLowerCase().contains("error") == true) {
           await cleanUpHCPData(item);
           return result;
         }
-        print('line 2347 check $result');
+        debugPrint('line 2347 check $result');
         asmHCPTimeCardId = int.parse(result);
-        print('line 2349: $asmHCPTimeCardId, $result');
+        debugPrint('line 2349: $asmHCPTimeCardId, $result');
       } else {
         //have to read asmHCPTimeCardId from db
         Timestamp ts = item['shiftDate'];
@@ -3754,7 +3754,7 @@ class ClientWorkOrderCampaignService {
           'hcpId': item['hcpId'].toString(),
           'orderId': item['orderId'].toString()
         };
-        print('line 2723: $data');
+        debugPrint('line 2723: $data');
         String? rslt = await getHTCData(data, ctx);
         if (rslt.isEmpty || rslt == '') {
           await cleanUpHCPData(item);
@@ -3763,7 +3763,7 @@ class ClientWorkOrderCampaignService {
         if (rslt.toLowerCase().contains('error') == true) {
           throw Exception('line 2730 on return for getHTC: ${rslt}');
         }
-        print('line 2732: $rslt');
+        debugPrint('line 2732: $rslt');
         asmHCPTimeCardId = int.parse(rslt);
       }
       //step 2 confirm shift
@@ -3771,9 +3771,9 @@ class ClientWorkOrderCampaignService {
         var rdata = {"OrderID": asmWorkOrderId, "asmWO": asmWO};
 
         dynamic rslt = await callASMWOFunction(rdata, ctx);
-        print('line 2740 : $rslt ${item['hcpId']} $hcpId');
+        debugPrint('line 2740 : $rslt ${item['hcpId']} $hcpId');
         if (rslt == null || rslt.contains("Unsuccessful") == true) {
-          print('line 2742 error');
+          debugPrint('line 2742 error');
           await cleanUpHCPData(item);
           return rslt;
         }
@@ -3787,8 +3787,8 @@ class ClientWorkOrderCampaignService {
           microseconds: dtm.microsecond,
           milliseconds: dtm.millisecond));
       Timestamp nowTm = Timestamp.fromDate(dtm);
-      print('line 2756: $asmHCPTimeCardId, ${item['shiftCode']} ${nowTm}');
-      print('line 2757: ${item['clientId']} ${item['hcpId']}');
+      debugPrint('line 2756: $asmHCPTimeCardId, ${item['shiftCode']} ${nowTm}');
+      debugPrint('line 2757: ${item['clientId']} ${item['hcpId']}');
       await FirebaseFirestore.instance
           .collection('HCPTimeCard')
           .where('clientId', isEqualTo: item['clientId'])
@@ -3798,16 +3798,16 @@ class ClientWorkOrderCampaignService {
           .then((querySnapshot) async {
         var docId;
         bool flatGotHit = false;
-        print('line 2767 ${querySnapshot.docs.length}');
+        debugPrint('line 2767 ${querySnapshot.docs.length}');
         if (querySnapshot.docs.length == 0) {
           await cleanUpHCPData(item);
           throw Exception('ERROR: Htptimecard does not exist yet');
         }
         for (var docSnapshot in querySnapshot.docs) {
           docId = docSnapshot.id;
-          print('line 2774 $docId');
+          debugPrint('line 2774 $docId');
           Map<String, dynamic> obj = docSnapshot.data();
-          print('line 2776: ${obj}');
+          debugPrint('line 2776: ${obj}');
           Timestamp shiftDate = obj['shiftDate'];
           DateTime shiftDateTime = shiftDate.toDate();
           shiftDateTime = shiftDateTime.subtract(Duration(
@@ -3817,12 +3817,12 @@ class ClientWorkOrderCampaignService {
               microseconds: shiftDateTime.microsecond,
               milliseconds: shiftDateTime.millisecond));
           shiftDate = Timestamp.fromDate(shiftDateTime);
-          print('line 2786: ${dtm} ${shiftDateTime}');
-          print(
+          debugPrint('line 2786: ${dtm} ${shiftDateTime}');
+          debugPrint(
               'line 2788 ${nowTm.millisecondsSinceEpoch} ${shiftDate.millisecondsSinceEpoch}');
           if (nowTm.millisecondsSinceEpoch ==
               shiftDate.millisecondsSinceEpoch) {
-            print(
+            debugPrint(
                 'line 2792: got hit $asmHCPTimeCardId $asmWorkOrderId $docId');
             await FirebaseFirestore.instance
                 .collection('HCPTimeCard')
@@ -3844,65 +3844,65 @@ class ClientWorkOrderCampaignService {
       if (item['bookShift'] == true) {
         var datae = {"OrderID": asmWorkOrderId, "asmWO": asmWO};
         dynamic rslts = await callASMWOFunction(datae, ctx);
-        print('line 2813: $rslts $hcpId');
+        debugPrint('line 2813: $rslts $hcpId');
         if (rslts == null || rslts == "Unsuccessful") {
-          print('line 2815 error');
+          debugPrint('line 2815 error');
           await cleanUpHCPData(item);
           throw Exception('ERROR: Exception on asm confirmation');
         }
       }
-      print('line 2820 ${asmWO}');
+      debugPrint('line 2820 ${asmWO}');
       if (item['clientUserId'] == null) {
         item['clientUserId'] = 1;
       }
       Map<String, dynamic>? clc = await clientServices
           .getSingleClientUserWithClientId(item['clientId']);
       if (clc!.isEmpty) {
-        print('line 2827 error getitng client user');
+        debugPrint('line 2827 error getitng client user');
         return "Clean Run - No Push Notification";
       }
-      print('line 2831 ${clc} ${clc['fcmToken']}');
+      debugPrint('line 2831 ${clc} ${clc['fcmToken']}');
       List<String> fcmTokens = [];
       if (clc['iosFcmToken'] != null && clc['iosFcmToken'] != 'Placeholder') {
-        print('line 2836 debug');
+        debugPrint('line 2836 debug');
         fcmTokens.add(clc['iosFcmToken']);
         if (clc['iosFcmTabletToken'] != null &&
             clc['iosFcmTabletToken'] != 'Placeholder' &&
             clc['iosFcmTabletToken'] != clc['iosFcmToken']) {
-          print('line 2841 debug');
+          debugPrint('line 2841 debug');
           fcmTokens.add(clc['iosFcmTabletToken']);
         }
       } else if (clc['iosFcmTabletToken'] != null &&
           clc['iosFcmTabletToken'] != 'Placeholder') {
-        print('line 2846 debug');
+        debugPrint('line 2846 debug');
         fcmTokens.add(clc['iosFcmTabletToken']);
       }
       if (clc['androidFcmToken'] != null &&
           clc['androidFcmToken'] != 'Placeholder') {
-        print('line 2851 debug');
+        debugPrint('line 2851 debug');
         fcmTokens.add(clc['androidFcmToken']);
         if (clc['androidFcmTabletToken'] != null &&
             clc['androidFcmTabletToken'] != 'Placeholder' &&
             clc['androidFcmTabletToken'] != clc['androidFcmToken']) {
-          print('line 2856 debug');
+          debugPrint('line 2856 debug');
           fcmTokens.add(clc['androidFcmTabletToken']);
         }
       } else if (clc['androidFcmTabletToken'] != null &&
           clc['androidFcmTabletToken'] != 'Placeholder') {
-        print('line 2861 debug');
+        debugPrint('line 2861 debug');
         fcmTokens.add(clc['androidFcmTabletToken']);
       }
-      print('line 2864 debug');
+      debugPrint('line 2864 debug');
       if (clc['fcmToken'] != null &&
           clc['fcmToken'] != 'Placeholder' &&
           fcmTokens.contains(clc['fcmToken']) == false) {
         fcmTokens.add(clc['fcmToken']);
       }
-      print('line 2864 debug ${fcmTokens}');
+      debugPrint('line 2864 debug ${fcmTokens}');
       if (fcmTokens.length > 0) {
         Timestamp ts = item['shiftDate'];
         String shiftDates = convertFromTimestamp(ts);
-        print('line 2864 $shiftDates');
+        debugPrint('line 2864 $shiftDates');
         String body =
             '${clc['fullName']},  ${item['hcpName']} has confirmed shift ${item['shiftCode']} for $shiftDates';
         Map<String, dynamic> parameters = {
@@ -3919,27 +3919,27 @@ class ClientWorkOrderCampaignService {
             return "Clean Run - No Push Notification";
           }
         } catch (e) {
-          print('line 2875 error on sending message');
+          debugPrint('line 2875 error on sending message');
           return "Clean Run - No Push Notification";
         }
         if (flagWeeklyOvertime == true) {
           return "Clean Run with weekly overtime limit reached.";
         }
-        print('line 2881');
+        debugPrint('line 2881');
 
         return "Clean Run";
       } else {
         processMessage = "Clean Run.";
       }
-      print('line 2887');
+      debugPrint('line 2887');
       return processMessage;
     } catch (e) {
-      print('line 2889 error: $e');
+      debugPrint('line 2889 error: $e');
       if (flagCaughtIssue == false) {
         await cleanUpHCPData(item);
         return e.toString();
       } else {
-        print('line 1311 error: ${item['id']} $e');
+        debugPrint('line 1311 error: ${item['id']} $e');
         int idx = e.toString().indexOf('Exception: ');
         int rdx = e.toString().indexOf('Exception: ', idx);
         if (rdx == -1) {
@@ -3958,13 +3958,13 @@ class ClientWorkOrderCampaignService {
     try {
       String rslt = await callGetHTCFunction(data, ctx);
       if (rslt.isEmpty) {
-        print('line 2195 error');
+        debugPrint('line 2195 error');
         return '';
       }
-      print('line 2198: $rslt');
+      debugPrint('line 2198: $rslt');
       return rslt;
     } catch (e) {
-      print('line 2201 error: ${e.toString()}');
+      debugPrint('line 2201 error: ${e.toString()}');
       return e.toString();
     }
   }
@@ -3978,16 +3978,16 @@ class ClientWorkOrderCampaignService {
         ),
       );
 
-      print('line 2204 in call A  function: $callable');
-      print('line 2205 : ${data}');
+      debugPrint('line 2204 in call A  function: $callable');
+      debugPrint('line 2205 : ${data}');
 
       HttpsCallableResult? result =
       await callingGetHTCFunction(callable, data, ctx);
-      print('line 2209 : $result');
-      print('line 2210: ${result.data.toString()}');
+      debugPrint('line 2209 : $result');
+      debugPrint('line 2210: ${result.data.toString()}');
       return result.data.toString();
     } catch (e) {
-      print('line 2224: $e');
+      debugPrint('line 2224: $e');
       return "ERROR: ${e.toString()}";
       // throw Exception('line 1168: ${e.toString()}');
     }
@@ -3998,10 +3998,10 @@ class ClientWorkOrderCampaignService {
     try {
       var data = datas;
       final HttpsCallableResult? result = await callable(data);
-      print('line 2239 ${result!.data}');
+      debugPrint('line 2239 ${result!.data}');
       return result;
     } catch (e) {
-      print('line 2235 error: $e');
+      debugPrint('line 2235 error: $e');
       throw Exception('line 2236  ${e.toString()}');
     }
   }
@@ -4016,22 +4016,22 @@ class ClientWorkOrderCampaignService {
         ),
       );
 
-      print('line 1971 in call A  function: $callable');
-      print('line 1972: ${data}');
+      debugPrint('line 1971 in call A  function: $callable');
+      debugPrint('line 1972: ${data}');
 
       dynamic result = await callingCreateWOFunction(callable, data, ctx);
-      print('line 1975 : $result');
+      debugPrint('line 1975 : $result');
       if (result == null) {
         return "ERROR: Null returned by function";
       }
       if (result.contains('Unsuccessful') == true) {
-        print('line 1980: Error writing work order to asm');
+        debugPrint('line 1980: Error writing work order to asm');
         return result;
       }
-      print('line 1983 mobile WORK ORDER WRITTEN');
+      debugPrint('line 1983 mobile WORK ORDER WRITTEN');
       return result;
     } catch (e) {
-      print('line 1986: $e');
+      debugPrint('line 1986: $e');
       return "ERROR: ${e.toString()}";
       // throw Exception('line 1168: ${e.toString()}');
     }
@@ -4042,10 +4042,10 @@ class ClientWorkOrderCampaignService {
     try {
       var data = asmWO;
       final HttpsCallableResult result = await callable(data);
-      print('line 1997 ${result.data}');
+      debugPrint('line 1997 ${result.data}');
       return result.data.toString();
     } catch (e) {
-      print('line 2000 error: $e');
+      debugPrint('line 2000 error: $e');
       throw Exception('line 2001  ${e.toString()}');
     }
   }
@@ -4054,15 +4054,15 @@ class ClientWorkOrderCampaignService {
     try {
       var data = asmWO;
       final HttpsCallableResult result = await callable(data);
-      print('line 2095 ${result.data}');
+      debugPrint('line 2095 ${result.data}');
       return result.data.toString();
     } catch (e) {
-      print('line 2098 error: $e');
+      debugPrint('line 2098 error: $e');
       throw Exception('line 2099  ${e.toString()}');
     }
   }
   Future<String> callASMWOFunction(Map<String, dynamic> data, ctx) async {
-    print('line 2006 callASMWOFunction');
+    debugPrint('line 2006 callASMWOFunction');
     try {
       HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'confirmWO',
@@ -4071,27 +4071,27 @@ class ClientWorkOrderCampaignService {
         ),
       );
 
-      print('line 2015 in call A  function: $callable');
+      debugPrint('line 2015 in call A  function: $callable');
       dynamic result = await callingASMWOFunction(callable, data, ctx);
-      print('line 2017: $result');
+      debugPrint('line 2017: $result');
       if (result == null) {
         return "ERROR: Null returned by function";
       }
       if (result.contains('Unsuccessful') == true) {
-        print('line 2022: Error writing work order to asm');
+        debugPrint('line 2022: Error writing work order to asm');
         return result;
       }
-      print('line 2085 ASM WORK ORDER WRITTEN');
+      debugPrint('line 2085 ASM WORK ORDER WRITTEN');
       return result;
     } catch (e) {
-      print('line 2028: $e');
+      debugPrint('line 2028: $e');
       return "ERROR: ${e.toString()}";
       // throw Exception('line 1168: ${e.toString()}');
     }
   }
 
   Future<void> cleanUpHCPData(Map<String, dynamic> item) async {
-    print('line 2896 in clean up hcp data');
+    debugPrint('line 2896 in clean up hcp data');
     try {
       Timestamp its = item['shiftDate'];
       DateTime dits = its.toDate();
@@ -4106,7 +4106,7 @@ class ClientWorkOrderCampaignService {
       eits = eits.add(Duration(days: 1));
       Timestamp dts = Timestamp.fromDate(eits);
       String? documentId;
-      print('line 2911: $its $dts');
+      debugPrint('line 2911: $its $dts');
       await FirebaseFirestore.instance
           .collection('ClientHCPWorkOrder')
           .where('clientId', isEqualTo: item['clientId'])
@@ -4118,7 +4118,7 @@ class ClientWorkOrderCampaignService {
           .then((querySnapshot) async {
         if (querySnapshot.docs.length > 0) {
           documentId = querySnapshot.docs[0].id;
-          print('line 2923: $documentId');
+          debugPrint('line 2923: $documentId');
           await FirebaseFirestore.instance
               .collection('ClientHCPWorkOrder')
               .doc(documentId)
@@ -4136,7 +4136,7 @@ class ClientWorkOrderCampaignService {
           .then((querySnapshot) async {
         if (querySnapshot.docs.length > 0) {
           documentId = querySnapshot.docs[0].id;
-          print('line 2941: $documentId');
+          debugPrint('line 2941: $documentId');
           await FirebaseFirestore.instance
               .collection('ClientWorkOrderCampaign')
               .doc(documentId)
@@ -4154,7 +4154,7 @@ class ClientWorkOrderCampaignService {
           .then((querySnapshot) async {
         if (querySnapshot.docs.length > 0) {
           documentId = querySnapshot.docs[0].id;
-          print('line 2959: $documentId');
+          debugPrint('line 2959: $documentId');
           await FirebaseFirestore.instance
               .collection('HCPTimeCard')
               .doc(documentId)
@@ -4175,9 +4175,9 @@ class ClientWorkOrderCampaignService {
           .get()
           .then((querySnapshot) async {
         if (querySnapshot.docs.length > 0) {
-          print('line 2980: ${querySnapshot.docs.length}');
+          debugPrint('line 2980: ${querySnapshot.docs.length}');
           documentId = querySnapshot.docs[0].id;
-          print('line 2982: $documentId');
+          debugPrint('line 2982: $documentId');
           await FirebaseFirestore.instance
               .collection('ClientWorkOrder')
               .doc(documentId)
@@ -4191,14 +4191,14 @@ class ClientWorkOrderCampaignService {
       });
       return;
     } catch (e) {
-      print('line 2996 error: ${e.toString()}');
+      debugPrint('line 2996 error: ${e.toString()}');
       throw Exception('line 2997 error cleaning up hcp data: ${e.toString()}');
     }
   }
 
   Future<String> callBookShiftFunction(
       Map<String, dynamic> data, BuildContext ctx) async {
-    print('line 1936: ${data}');
+    debugPrint('line 1936: ${data}');
     try {
       HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'bookShift09',
@@ -4207,16 +4207,16 @@ class ClientWorkOrderCampaignService {
         ),
       );
 
-      print('line 1945 in call A  function: $callable');
+      debugPrint('line 1945 in call A  function: $callable');
       dynamic result = await callingBookShiftFunction(callable, data, ctx);
-      print('line 1948: $result');
+      debugPrint('line 1948: $result');
       if (int.tryParse(result.toString()) == null) {
         throw Exception(result);
       }
-      print('line 1952 ASM WORK ORDER WRITTEN');
+      debugPrint('line 1952 ASM WORK ORDER WRITTEN');
       return result.toString();
     } catch (e) {
-      print('line 1955 error : $e');
+      debugPrint('line 1955 error : $e');
       return e.toString();
       // throw Exception('line 1168: ${e.toString()}');
     }
@@ -4224,9 +4224,9 @@ class ClientWorkOrderCampaignService {
   Future<dynamic> callingBookShiftFunction(HttpsCallable callable,
       Map<String, dynamic> data, BuildContext ctx) async {
     try {
-      print('line 2072 $data');
+      debugPrint('line 2072 $data');
       final HttpsCallableResult result = await callable(data);
-      print('line 2075 ${result.data}');
+      debugPrint('line 2075 ${result.data}');
       try {
         if (result.data is List) {
           return result.data[0];
@@ -4238,17 +4238,17 @@ class ClientWorkOrderCampaignService {
           }
         }
       } catch (e) {
-        print('line 2081 ${e.toString()}');
+        debugPrint('line 2081 ${e.toString()}');
         return result.data[0];
       }
     } catch (e) {
-      print('line 1994 error: $e');
+      debugPrint('line 1994 error: $e');
       throw Exception('line 1995  ${e.toString()}');
     }
   }
   Future<bool>? cancelHCPWorkOrderShift(
       Map<String, dynamic> item, int hcpId, BuildContext ctx) async {
-    print('line 642 cancelworkordershift: ${item['id']} $hcpId');
+    debugPrint('line 642 cancelworkordershift: ${item['id']} $hcpId');
     bool bl = true;
     String? documentId;
     DateTime currentDate = DateTime.now(); //DateTime
@@ -4256,7 +4256,7 @@ class ClientWorkOrderCampaignService {
     Map<String, dynamic>? asmWO;
     Map<String, dynamic>? hcpWO;
     try {
-      print('line 648 ${item['workOrderId']}');
+      debugPrint('line 648 ${item['workOrderId']}');
 
       //reopen shift
       String? workOrderId;
@@ -4290,7 +4290,7 @@ class ClientWorkOrderCampaignService {
         'shiftConfirmedActionDate': null,
         'woWorkOrderId': null,
       };
-      print('line 1018 $hcpProf');
+      debugPrint('line 1018 $hcpProf');
       FirebaseFirestore.instance
           .collection('ClientWorkOrderCampaign')
           .doc(item['id'])
@@ -4300,14 +4300,14 @@ class ClientWorkOrderCampaignService {
       asmWO['hcpId'] = 0;
       asmWO['hcpName'] = null;
       asmWO['shiftStatus'] = 'Open';
-      print('line 1028');
+      debugPrint('line 1028');
       await FirebaseFirestore.instance
           .collection("ClientWorkOrder")
           .doc(item['woWorkOrderId'])
           .get()
           .then((querySnapshot) async {
         var wobj = querySnapshot.data();
-        print('line 1035: $wobj');
+        debugPrint('line 1035: $wobj');
         clientHCPWorkOrderId = wobj!['clientHCPWorkOrderId'];
         asmWorkOrderId = wobj['asmWorkOrderId'];
         await FirebaseFirestore.instance
@@ -4315,7 +4315,7 @@ class ClientWorkOrderCampaignService {
             .doc(item['woWorkOrderId'])
             .set(asmWO!, SetOptions(merge: true));
       });
-      print('line 1041: ${item['id']} $asmWorkOrderId');
+      debugPrint('line 1041: ${item['id']} $asmWorkOrderId');
       item['asmWorkOrderId'] = asmWorkOrderId;
       Map<String, dynamic> st = {
         "asmWorkOrderId": asmWorkOrderId,
@@ -4324,13 +4324,13 @@ class ClientWorkOrderCampaignService {
           .collection("ClientWorkOrderCampaign")
           .doc(item['id'])
           .set(st, SetOptions(merge: true));
-      print('line 697: $asmWO');
+      debugPrint('line 697: $asmWO');
       hcpWO = {};
       hcpWO['hcpId'] = 0;
       hcpWO['hcpName'] = null;
       hcpWO['statusId'] = 'O';
       hcpWO['statusDate'] = Timestamp.fromDate(DateTime.now());
-      print('line 1058: ${clientHCPWorkOrderId}');
+      debugPrint('line 1058: ${clientHCPWorkOrderId}');
       await FirebaseFirestore.instance
           .collection("ClientHCPWorkOrder")
           .doc(clientHCPWorkOrderId)
@@ -4367,7 +4367,7 @@ class ClientWorkOrderCampaignService {
           }
         }
       });
-      print('line 686: $hcpTimeCardId $workOrderId $woWorkOrderId');
+      debugPrint('line 686: $hcpTimeCardId $workOrderId $woWorkOrderId');
       final db = FirebaseFirestore.instance;
       WriteBatch batch = db.batch();
       final docRefa = FirebaseFirestore.instance
@@ -4380,7 +4380,7 @@ class ClientWorkOrderCampaignService {
             "shiftStatusDate": Timestamp.fromDate(DateTime.now())
           },
           SetOptions(merge: true));
-      print('line 697: ${woWorkOrderId}');
+      debugPrint('line 697: ${woWorkOrderId}');
       final docRefb = FirebaseFirestore.instance
           .collection('ClientHCPWorkOrder')
           .doc(clientHCPWorkOrderId);
@@ -4392,7 +4392,7 @@ class ClientWorkOrderCampaignService {
       batch.delete(docRefc);
 
       //ClientWorkOrderCampaign
-      print('line 715');
+      debugPrint('line 715');
       final docRefd = FirebaseFirestore.instance
           .collection('ClientWorkOrderCampaign')
           .doc(item['id']);
@@ -4414,11 +4414,11 @@ class ClientWorkOrderCampaignService {
           SetOptions(merge: true));
       return true;
       //ClientWorkOrder
-      // print('line 786: ${item['shiftCancellationCodeId']}');
+      // debugPrint('line 786: ${item['shiftCancellationCodeId']}');
       // bool bl = await htc.callCancelWO(
       //     asmWorkOrderId.toString(), shiftCancellationMap, ctx);
       // if (bl == false) {
-      //   print('line 759 error canceling shift');
+      //   debugPrint('line 759 error canceling shift');
       //   throw Exception('Error on canceling shift');
       // }
       // Uuid uuid = Uuid();
@@ -4452,7 +4452,7 @@ class ClientWorkOrderCampaignService {
       //       .doc()
       //       .set(hcpWO!);
       // });
-      // print('line 820');
+      // debugPrint('line 820');
       // // Map<String, dynamic>? clc = await clientServices.getSingleClientUser(
       // //     item['clientId'], 'ClientScheduler');
       // // if (clc!.isEmpty) {
@@ -4460,7 +4460,7 @@ class ClientWorkOrderCampaignService {
       // // }
       // return true;
     } catch (e) {
-      print('line 1210 $e');
+      debugPrint('line 1210 $e');
       if (e.toString().toLowerCase().contains('debug') == true) {
         return true;
       }
@@ -4470,12 +4470,12 @@ class ClientWorkOrderCampaignService {
 // Future<Map<String, dynamic>> updateShiftTime(
 //     Map<String, dynamic> item, Map<String, dynamic> data) async {
 //   try {
-//     print('line 1538 in updateshifttime: $data');
+//     debugPrint('line 1538 in updateshifttime: $data');
 //     int potentialOTMinutes = 0;
 //     double potentialOTHours = 0.0;
 //     DateTime cdt = DateTime.now();
 //     Timestamp cdts = Timestamp.fromDate(cdt);
-//     print('line 1543');
+//     debugPrint('line 1543');
 //     Timestamp xt = item['shiftDate'];
 //     DateTime sed = xt.toDate();
 //     DateTime sht = sed.subtract(Duration(
@@ -4486,13 +4486,13 @@ class ClientWorkOrderCampaignService {
 //         milliseconds: sed.millisecond));
 //
 //     int shiftDay = sed.weekday;
-//     print(
+//     debugPrint(
 //         'line 1554: ${item['shiftStatus']} ${item['clientId']} ${item['shiftCreatedDate']}');
 //     int diffDay = shiftDay - 1; //eg
 //     Timestamp ts = item['shiftCreatedDate'];
 //     DateTime scrdt = ts.toDate();
 //     int scrdtmin = scrdt.millisecondsSinceEpoch;
-//     print('line 1560: $scrdtmin');
+//     debugPrint('line 1560: $scrdtmin');
 //     String str = scrdtmin.toString();
 //     str = str.substring(0, str.length - 3);
 //     str += '000';
@@ -4513,7 +4513,7 @@ class ClientWorkOrderCampaignService {
 //     DateTime tx = shiftDate.subtract(Duration(days: diffDay));
 //     int stmps = tx.millisecondsSinceEpoch;
 //     double shiftHours = 0.0;
-//     print('line 1573');
+//     debugPrint('line 1573');
 //     await FirebaseFirestore.instance
 //         .collection('HCPWeeklyShift')
 //         .where('hcpId', isEqualTo: item['hcpId'])
@@ -4526,29 +4526,29 @@ class ClientWorkOrderCampaignService {
 //         obj['id'] = docSnapshot.id;
 //         hcpWo = obj;
 //         documentId = obj['id'];
-//         print('line 1586: ${obj['cumulativePriorMinutes']}');
+//         debugPrint('line 1586: ${obj['cumulativePriorMinutes']}');
 //         List<dynamic> listCreatedDates = obj['listOfCreatedDateTimestamps'];
-//         print('line 1592: ${listCreatedDates.length}');
+//         debugPrint('line 1592: ${listCreatedDates.length}');
 //         for (int i = 0; i < listCreatedDates.length; i++) {
 //           var tbj = listCreatedDates[i];
-//           print('line 1708: ${tbj['createdDateTimestamp']}');
+//           debugPrint('line 1708: ${tbj['createdDateTimestamp']}');
 //           String str = tbj['createdDateTimestamp'].toString();
 //           str = str.substring(0, str.length - 3);
 //           str += '000';
 //           int dtms = int.parse(str);
-//           print('line 1598: $dtms $scrdtmin');
+//           debugPrint('line 1598: $dtms $scrdtmin');
 //           if (dtms != scrdtmin) {
-//             print('line 1600: $dtms $scrdtmin');
+//             debugPrint('line 1600: $dtms $scrdtmin');
 //             continue;
 //           }
-//           print('line 1603: $dtms $scrdtmin');
+//           debugPrint('line 1603: $dtms $scrdtmin');
 //           List<dynamic> listOfClients = tbj['listOfClients'];
 //           for (int j = 0; j < listOfClients.length; j++) {
 //             var cbj = listOfClients[j];
-//             print('line 1607 check');
+//             debugPrint('line 1607 check');
 //             List<dynamic> listOfWorkShiftDays = cbj['listOfWorkShiftDays'];
 //             List<dynamic>? listOfShifts;
-//             print('line 1610 check');
+//             debugPrint('line 1610 check');
 //             for (int k = 0; k < listOfWorkShiftDays.length; k++) {
 //               var lbj = listOfWorkShiftDays[k];
 //               listOfShifts = lbj['listOfShifts'];
@@ -4610,7 +4610,7 @@ class ClientWorkOrderCampaignService {
 //         .doc(documentId)
 //         .set(hcpWo, SetOptions(merge: true));
 //
-//     print('line 1672: $potentialOTHours $potentialOTMinutes');
+//     debugPrint('line 1672: $potentialOTHours $potentialOTMinutes');
 //     Map<String, dynamic> mp = {
 //       'shiftHours': shiftHours,
 //       'otHours': shiftOTHours,
@@ -4618,10 +4618,10 @@ class ClientWorkOrderCampaignService {
 //       'startTime': shiftStartTime,
 //       'endTime': shiftEndTime,
 //     };
-//     print('line 1680: ${mp}');
+//     debugPrint('line 1680: ${mp}');
 //     return mp;
 //   } catch (e) {
-//     print('line 1683: error ${e.toString()}');
+//     debugPrint('line 1683: error ${e.toString()}');
 //     throw Exception('line 1683 error: ${e.toString()}');
 //   }
 // }

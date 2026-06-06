@@ -127,7 +127,7 @@ class ProcessClientRequestScheduleState
     if (lm != null) {
       listOfHolidays = lm;
     }
-    print('line 135: ${listOfHolidays.length}');
+    debugPrint('line 135: ${listOfHolidays.length}');
   }
 
   bool hasDepartment = false;
@@ -139,7 +139,7 @@ class ProcessClientRequestScheduleState
     try {
       List<Map<String, dynamic>> dps =
       await clientServices.getClientDepartment(clientId);
-      print(' 137: $departmentIds $dps');
+      debugPrint(' 137: $departmentIds $dps');
       if (dps.isNotEmpty) {
         listClientDepartments = dps;
         for (int i = 0; i < dps.length; i++) {
@@ -158,7 +158,7 @@ class ProcessClientRequestScheduleState
       checkAllData![1] = false;
       return holdSts!;
     } catch (e) {
-      print('line 145: error $e');
+      debugPrint('line 145: error $e');
       throw Exception('Error getting client departments: ${e.toString()}');
     }
   }
@@ -170,13 +170,13 @@ class ProcessClientRequestScheduleState
   void initState() {
     super.initState();
 //    sendAnEmail();
-    print('line 172 initstate: ');
+    debugPrint('line 172 initstate: ');
     arguments = widget.args;
-    print('line 174 initstate: $arguments');
+    debugPrint('line 174 initstate: $arguments');
     clientId = arguments!['clientId'];
     currentUser = authService.currentUser;
 
-    print('line 176 in init schedule shifts');
+    debugPrint('line 176 in init schedule shifts');
     listOfClientTokens = [];
     if (currentUser!['iosFcmToken'] != null &&
         currentUser!['iosFcmToken'] != 'Placeholder') {
@@ -200,17 +200,17 @@ class ProcessClientRequestScheduleState
     // clientId = ref
     //     .read(clientUserNotifierProvider.notifier)
     //      .fromClientId;
-    print('line 246: $clientId');
+    debugPrint('line 246: $clientId');
 
-    print('line 194 in didchange');
+    debugPrint('line 194 in didchange');
     setPNRates();
     _getListOfHolidays(clientId!);
-    print('line 208 end of initstate');
+    debugPrint('line 208 end of initstate');
   }
 
   Future<dynamic> _showDialog(
       BuildContext context, String title, String? description) async {
-    print('line 398 showdialog');
+    debugPrint('line 398 showdialog');
     // Future.delayed(Duration(seconds: 3), () {
     //   Navigator.of(context).pop(); // Close the dialog
     // });
@@ -270,7 +270,7 @@ class ProcessClientRequestScheduleState
 
   bool checkIsHoliday(
       DateTime date, Map<String, dynamic> shm, Map<String, dynamic> ehm) {
-    print('line 80 data is a holiday: ${listOfHolidays.length}');
+    debugPrint('line 80 data is a holiday: ${listOfHolidays.length}');
     try {
       DateTime shiftStartDate = date.subtract(Duration(
           hours: date.hour,
@@ -293,14 +293,14 @@ class ProcessClientRequestScheduleState
         }
         List<String> lsdt = sdt.split('-');
         String dte = lsdt[2] + '-' + lsdt[0] + '-' + lsdt[1];
-        print('line 323: $dte');
+        debugPrint('line 323: $dte');
         DateTime ndt = DateTime.parse(dte);
-        print('line 325: ${date.year} ${date.month} ${date.day}');
-        print(
+        debugPrint('line 325: ${date.year} ${date.month} ${date.day}');
+        debugPrint(
             'line 326: ${hl['duration'].toString()} ${ndt.year} ${ndt.month} ${ndt.day}');
         int duration = int.parse(hl['duration'].toStringAsFixed(0));
         Map<String, dynamic> jhm = util.getHoursMinutes(hl['startTime']);
-        print('line 330: $jhm');
+        debugPrint('line 330: $jhm');
         ndt = ndt.subtract(Duration(
             hours: ndt.hour,
             minutes: ndt.minute,
@@ -309,7 +309,7 @@ class ProcessClientRequestScheduleState
             milliseconds: ndt.millisecond));
         DateTime endt = ndt;
         endt = endt.add(Duration(hours: duration));
-        print(
+        debugPrint(
             'line 340: ${shiftStartDate.millisecondsSinceEpoch} ${ndt.millisecondsSinceEpoch} ${shiftEndDate.millisecondsSinceEpoch} ${endt.millisecondsSinceEpoch}');
         if (shiftStartDate.millisecondsSinceEpoch >=
             ndt.millisecondsSinceEpoch &&
@@ -318,10 +318,10 @@ class ProcessClientRequestScheduleState
           break;
         }
       }
-      print('line 328: $isHoliday');
+      debugPrint('line 328: $isHoliday');
       return isHoliday;
     } catch (e) {
-      print('line 347 error: ${e.toString()}');
+      debugPrint('line 347 error: ${e.toString()}');
       throw Exception('line 348 error date is a holiday: ${e.toString()}');
     }
   }
@@ -332,7 +332,7 @@ class ProcessClientRequestScheduleState
   final valueListenablePNRate = ValueNotifier<String?>(null);
 
   Future<bool> _presentGetShift(BuildContext ctx, dynamic dtm) async {
-    print('line 331 presentgetshift: $dtm');
+    debugPrint('line 331 presentgetshift: $dtm');
     if (dtm == null) {
       return false;
     }
@@ -343,9 +343,9 @@ class ProcessClientRequestScheduleState
       return false;
     }
     try {
-      print('line 314: $selectedDisciplineHasChanged $listOfShifts');
+      debugPrint('line 314: $selectedDisciplineHasChanged $listOfShifts');
       if (selectedDisciplineHasChanged == true || listOfShifts == null) {
-        print('line 315 getting listof shifts ${listOfShifts!.length}');
+        debugPrint('line 315 getting listof shifts ${listOfShifts!.length}');
         listOfShifts = await _getRateAndShiftsByClientAndDiscipline(ctx);
         holdListOfShifts = [];
         for (int i = 0; i < listOfShifts!.length; i++) {
@@ -355,14 +355,14 @@ class ProcessClientRequestScheduleState
       }
       listOfShifts = [];
       int shiftIndex = -1;
-      print('line 326');
+      debugPrint('line 326');
       bool flagGotHit = false;
       //  int hcpId =0;
       if (listOfDatesWithShifts.length > 0) {
         for (int i = 0; i < listOfDatesWithShifts.length; i++) {
           dynamic lm = listOfDatesWithShifts[i];
-          print('line 355: ${lm}');
-          print('line 356: ${lm['date']} ${dtm}');
+          debugPrint('line 355: ${lm}');
+          debugPrint('line 356: ${lm['date']} ${dtm}');
           if (lm['date'] == dtm) {
             shiftIndex = i;
             //  hcpId = lm['date']['hcpId'];
@@ -375,25 +375,25 @@ class ProcessClientRequestScheduleState
       if (shiftIndex != -1) {
         losd = listOfDatesWithShifts[shiftIndex];
       }
-      print('line 363 $losd');
+      debugPrint('line 363 $losd');
       for (int i = 0; i < holdListOfShifts!.length; i++) {
         Map<String, dynamic> mp = Map.from(holdListOfShifts![i]);
         if (losd != null) {
           List<dynamic> rd = losd['rate']['rateDetails'];
-          print('line 368: ${rd}');
+          debugPrint('line 368: ${rd}');
           for (int j = 0; j < rd.length; j++) {
             if (rd[j]['shiftCode'] == mp['shiftCode']) {
               mp['shiftCount'] = rd[j]['shiftCount'];
               //  mp['hcpId'] = hcpId;
               break;
             }
-            print('line 413: $i $mp');
+            debugPrint('line 413: $i $mp');
           }
         }
         listOfShifts!.add(mp);
       }
     } catch (e) {
-      print('line 362 error getting rates from disiplines');
+      debugPrint('line 362 error getting rates from disiplines');
       await _showDialog(ctx, "Discipline Rate",
           "There are no valid discipline rates for the client.");
       Navigator.of(ctx).pop();
@@ -412,7 +412,7 @@ class ProcessClientRequestScheduleState
       // fontSize: fontSize)));
       double sfontSize = 14;
       sfontSize /= h!;
-      print('line 351 check');
+      debugPrint('line 351 check');
       List<Map<String, dynamic>>? lmap = await Navigator.push(
           context,
           MaterialPageRoute(
@@ -422,9 +422,9 @@ class ProcessClientRequestScheduleState
                   dateTime: dtm,
                   discipline: selectedDisciplineValue,
                   listOfData: listOfShifts!)));
-      print('line 407: ${lmap}');
+      debugPrint('line 407: ${lmap}');
       if (lmap == null) {
-        print('line 409 error no data returned from shift screen');
+        debugPrint('line 409 error no data returned from shift screen');
         throw Exception('No data returned from shfit screen.');
       }
       int i = 0;
@@ -439,10 +439,10 @@ class ProcessClientRequestScheduleState
         j = 0;
         while (j < lmap.length) {
           Map<String, dynamic> obj = lmap[j];
-          print('line 386: ${obj['shiftCode']} ${jbj['shiftCode']}');
+          debugPrint('line 386: ${obj['shiftCode']} ${jbj['shiftCode']}');
           if (obj['shiftCode'] == jbj['shiftCode']) {
             jbj['shiftCount'] = int.parse(obj['shiftCount'].toString());
-            print('line 426: ${obj['shiftCount']} ${jbj['shiftCount']}');
+            debugPrint('line 426: ${obj['shiftCount']} ${jbj['shiftCount']}');
             if (jbj['shiftCount'] > 0) {
               shiftCounts += 1;
             }
@@ -457,11 +457,11 @@ class ProcessClientRequestScheduleState
       }
       i = 0;
       if (shiftCounts == 0) {
-        print('line 429 error no shifts picked up.');
+        debugPrint('line 429 error no shifts picked up.');
         throw Exception('No shifts picked up.');
       }
       listOfShifts = holdList;
-      print('line 441: ${listOfShifts!.length} ${listOfShifts![0]}');
+      debugPrint('line 441: ${listOfShifts!.length} ${listOfShifts![0]}');
       List<dynamic> newList = holdList;
       if (newList.length == 0) {
         //throw Exception('Error: No counts returned from schedule!');
@@ -479,21 +479,21 @@ class ProcessClientRequestScheduleState
         listOfShifts!.add(lbj);
       }
 
-      print('line 459: $newList');
-      print('line 450: ${listOfShifts![0]}');
+      debugPrint('line 459: $newList');
+      debugPrint('line 450: ${listOfShifts![0]}');
 
       List<dynamic> rates = clientRate!['rates'];
-      print('line 452: ${listOfShifts!.length} $rates');
+      debugPrint('line 452: ${listOfShifts!.length} $rates');
       rates[0]['scheduleRateDetails'] = newList;
       List<dynamic> rateDetails = rates[0]['rateDetails'];
-      print('line 469: $rateDetails ${rates[0]['rateDetails'].length}');
+      debugPrint('line 469: $rateDetails ${rates[0]['rateDetails'].length}');
       int s = 0;
       int r = 0;
-      print('line 496 check ${rateDetails.length} ${listOfShifts!.length} ');
-      //print('line 500: $newList');
+      debugPrint('line 496 check ${rateDetails.length} ${listOfShifts!.length} ');
+      //debugPrint('line 500: $newList');
 
       dynamic clientRateMap = rates[0];
-      print('line 513 ${clientRateMap}');
+      debugPrint('line 513 ${clientRateMap}');
       List<dynamic> newDetails = [];
       for (int z = 0; z < newList.length; z++) {
         for (int j = 0; j < rateDetails.length; j++) {
@@ -523,7 +523,7 @@ class ProcessClientRequestScheduleState
         // rateDetails[z]['billRateWE'] = 0.0;
       }
       for (int z = 0; z < newDetails.length; z++) {
-        print('line 543: $z ${newDetails[z]}');
+        debugPrint('line 543: $z ${newDetails[z]}');
       }
       Map<String, dynamic> rateMap = {
         "branchId": clientRateMap!['branchId'],
@@ -552,7 +552,7 @@ class ProcessClientRequestScheduleState
         "payOTRate": clientRateMap!['payOTRate'],
         "rateDetails": newDetails
       };
-      print('line 525: $rateMap');
+      debugPrint('line 525: $rateMap');
 
       Map<String, dynamic>? clientMap =
       await clientServices.getClient(clientId!);
@@ -569,15 +569,15 @@ class ProcessClientRequestScheduleState
       rates[0]['payMaxPlus'] = clientMap['payMaxRate'];
       rates[0]['payOT'] = 1.5;
       rates[0]['payOTPlus'] = 1.5;
-      print('line 488: ${clientMap['clientId']}');
-      print('line 489: $selectedDepartmentIndex $selectedDisciplineIndex');
-      print(
+      debugPrint('line 488: ${clientMap['clientId']}');
+      debugPrint('line 489: $selectedDepartmentIndex $selectedDisciplineIndex');
+      debugPrint(
           'line 490: ${listClientDepartments.length} ${listOfDisciplines.length}');
       Map<String, dynamic> department =
       listClientDepartments[selectedDepartmentIndex];
       Map<String, dynamic> discipline =
       listOfDisciplines[selectedDisciplineIndex];
-      print(
+      debugPrint(
           'line 493: ${department['departmentId']} ${discipline['disciplineId']}');
       List<String> stringDays = [
         'Monday',
@@ -591,12 +591,12 @@ class ProcessClientRequestScheduleState
       bool isHoliday = false;
 
       Timestamp tms = Timestamp.fromDate(dtm);
-      print('line 535: $clientUser');
+      debugPrint('line 535: $clientUser');
       int schedulerId = clientUser!['genId'];
       String fullName =
           clientUser!['firstName'] + ' ' + clientUser!['lastName'];
       schedulerName = fullName;
-      print('line 506 $rateMap');
+      debugPrint('line 506 $rateMap');
       int q = 0;
       while (q < listOfDatesWithShifts.length) {
         if (listOfDatesWithShifts[q]['date'] == dtm) {
@@ -605,7 +605,7 @@ class ProcessClientRequestScheduleState
         }
         q += 1;
       }
-      print('line 537: $department');
+      debugPrint('line 537: $department');
 
       Map<String, dynamic> dm = {
         "date": dtm,
@@ -674,13 +674,13 @@ class ProcessClientRequestScheduleState
         "workersCompCodeId": clientRate!['workersCompCodeId'],
         "workersCompType": clientRate!['workersCompType']
       };
-      print('line 606: ${dm['workersCompCodeId']}');
+      debugPrint('line 606: ${dm['workersCompCodeId']}');
 
       listOfDatesWithShifts.add(dm);
-      print('line 609: ${listOfDatesWithShifts.length}');
+      debugPrint('line 609: ${listOfDatesWithShifts.length}');
       return true;
     } catch (e) {
-      print('line 612 error: $e');
+      debugPrint('line 612 error: $e');
       throw Exception('Error: ${e.toString()}');
     }
   }
@@ -703,7 +703,7 @@ class ProcessClientRequestScheduleState
   }
 
   Future<bool> _publishShiftInformation(context) async {
-    print(
+    debugPrint(
         'line 297 in publish shift information $scheduleNotes ${_textControllers[0].text}');
     int i = 0;
     String title = '';
@@ -713,26 +713,26 @@ class ProcessClientRequestScheduleState
     try {
       String description = '';
       if (selectedDisciplineValue == null) {
-        print('line 478 error');
+        debugPrint('line 478 error');
         title = 'Discipline Error';
         description = 'You have not selected a discipline.';
         await _showDialog(context, title, description);
         return false;
       }
       if (selectedDepartmentValue == null) {
-        print('line 485 error');
+        debugPrint('line 485 error');
         title = 'Department Error';
         description = 'You have not selected a department.';
         await _showDialog(context, title, description);
         return false;
       }
       if (listOfDatesWithShifts.isEmpty) {
-        print('line 492 error');
+        debugPrint('line 492 error');
         title = 'Shifts Error';
         description = 'You must enter at least one shift.';
         await _showDialog(context, title, description);
         // await _showSnackBar(description);
-        //print('line 727');
+        //debugPrint('line 727');
         return false;
       }
       selectedPNRateValue = valueListenablePNRate.value;
@@ -740,14 +740,14 @@ class ProcessClientRequestScheduleState
         checkAllData![0] = true;
       }
       if (selectedPNRateValue == null) {
-        print('line 524 error');
+        debugPrint('line 524 error');
         title = 'Push Notification Error';
         description = 'You have not selected a push notification frequency.';
         await _showDialog(context, title, description);
         return false;
       }
       // if (checkAllData!.contains(false) == true) {
-      //   print('line 528 error" $checkAllData');
+      //   debugPrint('line 528 error" $checkAllData');
       //   title = 'Data Error Error';
       //   description = 'You have not completed all required fields.';
       //   await _showDialog(context, title,  description);
@@ -755,17 +755,17 @@ class ProcessClientRequestScheduleState
       //
       // }
 
-      // print('line 499: publish: $selectedDisciplineValue $checkBoxValue, $listDates');
-      // print('line 500: ${selectedDisciplineValue.runtimeType}');
-      // print('line 501: ${selectedDepartmentValue.runtimeType}');
-      // print('line 502: ${schedulerId.runtimeType}');
-      // print('line 503: ${schedulerName.runtimeType}');
-      // print('line 504: ${checkBoxValue.runtimeType}');
-      // print('line 506: ${_popUpController.text.runtimeType}');
-      // print('line 507: ${ clientUser['userId'].runtimeType}');
-      // print('line 508: ${ pushNotificationFrequencyRate.text.runtimeType}');
-      // print('line 509: ${ user!.fcmToken.runtimeType}');
-      // print('line 510: ${ testerFcmToken.runtimeType}');
+      // debugPrint('line 499: publish: $selectedDisciplineValue $checkBoxValue, $listDates');
+      // debugPrint('line 500: ${selectedDisciplineValue.runtimeType}');
+      // debugPrint('line 501: ${selectedDepartmentValue.runtimeType}');
+      // debugPrint('line 502: ${schedulerId.runtimeType}');
+      // debugPrint('line 503: ${schedulerName.runtimeType}');
+      // debugPrint('line 504: ${checkBoxValue.runtimeType}');
+      // debugPrint('line 506: ${_popUpController.text.runtimeType}');
+      // debugPrint('line 507: ${ clientUser['userId'].runtimeType}');
+      // debugPrint('line 508: ${ pushNotificationFrequencyRate.text.runtimeType}');
+      // debugPrint('line 509: ${ user!.fcmToken.runtimeType}');
+      // debugPrint('line 510: ${ testerFcmToken.runtimeType}');
       setState(() {
         disabledTextColor = Colors.white;
         disabledColor = Colors.orange;
@@ -775,17 +775,17 @@ class ProcessClientRequestScheduleState
       if (scheduleNotes == null || scheduleNotes!.isEmpty) {
         scheduleNotes = 'None';
       }
-      print('line 697: ${listOfDatesWithShifts.length}');
+      debugPrint('line 697: ${listOfDatesWithShifts.length}');
       bool flagGoOn = false;
       for (int i = 0; i < listOfDatesWithShifts.length; i++) {
         Map<String, dynamic> mpd = listOfDatesWithShifts[i];
-        print('line 782: $i $mpd');
+        debugPrint('line 782: $i $mpd');
         List<dynamic> listDetails = mpd['rate']['rateDetails'];
-        print('line 684 ${listDetails.length}');
+        debugPrint('line 684 ${listDetails.length}');
         flagGoOn = false;
         for (int j = 0; j < listDetails.length; j++) {
           dynamic ld = listDetails[j];
-          print('line 688 $j $ld ${ld['shiftCount']}');
+          debugPrint('line 688 $j $ld ${ld['shiftCount']}');
           if (ld['shiftCount'] == null) {
             ld['shiftCount'] = 0;
             continue;
@@ -798,11 +798,11 @@ class ProcessClientRequestScheduleState
       }
 
       if (flagGoOn == false) {
-        print('line 700 error No Shift counts for one of your shifts.');
+        debugPrint('line 700 error No Shift counts for one of your shifts.');
         throw Exception(('line 701 No shift counts'));
       }
 
-      print('line 806 $scheduleNotes, $clientId');
+      debugPrint('line 806 $scheduleNotes, $clientId');
       List<dynamic>? count = await clientServices.createSchedulingWorkOrder(
           listOfDatesWithShifts,
           scheduleNotes!,
@@ -812,7 +812,7 @@ class ProcessClientRequestScheduleState
           premiumRate,
           clientUserId!,
           context);
-      print('line 809 true: ${count}');
+      debugPrint('line 809 true: ${count}');
       title = 'Shift Publication';
       double ctn = 0;
       if (count != []) {
@@ -828,7 +828,7 @@ class ProcessClientRequestScheduleState
       await _showDialog(context, title, description);
       return true;
     } catch (e) {
-      print('line 736 $e');
+      debugPrint('line 736 $e');
       // String te = e.toString();
       // te = te.replaceAll('Exception: Exception:', 'Exception:');
       // title = 'Shift Publication';
@@ -865,20 +865,20 @@ class ProcessClientRequestScheduleState
   }
 
   Future<int> _getDisciplineIndex(BuildContext ctx, dynamic value) async {
-    print('line 714 in getdicipindex $value');
+    debugPrint('line 714 in getdicipindex $value');
     try {
       // int idx = value.indexOf('(');
       // String val = value.toString().substring(0, idx).trim();
       // String stx = value.substring(idx);
       // stx = stx.replaceAll('(', '');
       // stx = stx.replaceAll((')'), '');
-      print('line 721: $value');
+      debugPrint('line 721: $value');
       bool flagGotHit = false;
       selectedDisciplineHasChanged = false;
       int sel = 0;
       for (int j = 0; j < listOfDisciplines.length; j++) {
         dynamic tb = listOfDisciplines[j];
-        print('line 726: ${tb['disciplineId']} $value ${tb['disciplineName']}');
+        debugPrint('line 726: ${tb['disciplineId']} $value ${tb['disciplineName']}');
         if (tb['disciplineDescription'] == value) {
           selectedDisciplineId = tb['disciplineId'];
           selectedDisciplineValue = value;
@@ -889,7 +889,7 @@ class ProcessClientRequestScheduleState
           break;
         }
       }
-      print('line 734 ${listOfDisciplines[sel]}');
+      debugPrint('line 734 ${listOfDisciplines[sel]}');
       checkAllData![0] = true;
       listOfShiftData = [];
       listOfDatesWithShifts = [];
@@ -898,18 +898,18 @@ class ProcessClientRequestScheduleState
       if (listOfShifts == null || listOfShifts!.length == 0) {
         throw Exception('No Valid rate data for client and discipline.');
       }
-      print('line 737: ${listOfShifts!.length}');
+      debugPrint('line 737: ${listOfShifts!.length}');
       for (int i = 0; i < listOfShifts!.length; i++) {
-        print('line 740: $i ${listOfShifts![i]}');
+        debugPrint('line 740: $i ${listOfShifts![i]}');
 
         dynamic sb = ShiftClass.fromJson(listOfShifts![i]);
 
-        print('line 742: $listOfShiftData $sb');
+        debugPrint('line 742: $listOfShiftData $sb');
         listOfShiftData!.add(sb);
       }
-      print('line 892: ${clientRate}');
+      debugPrint('line 892: ${clientRate}');
       listOfDepartments = await _getClientDepartments(clientId!);
-      print('line 850: ${listOfDepartments}');
+      debugPrint('line 850: ${listOfDepartments}');
       for (int i = 0; i < clientRate!['departments'].length; i++) {
         int depId = -1;
         if (clientRate!['departments'][i]['departmentId'] == null) {
@@ -928,11 +928,11 @@ class ProcessClientRequestScheduleState
         }
       }
 
-      print('line 870 dept length: ${departmentIds.length}');
-      print('line 889 deparmentids: $selectedDisciplineIndex ${departmentIds}');
+      debugPrint('line 870 dept length: ${departmentIds.length}');
+      debugPrint('line 889 deparmentids: $selectedDisciplineIndex ${departmentIds}');
       return selectedDisciplineIndex;
     } catch (e) {
-      print('line 876 error: $e');
+      debugPrint('line 876 error: $e');
       throw Exception('line 479 error: ${e.toString()}');
     }
   }
@@ -945,7 +945,7 @@ class ProcessClientRequestScheduleState
       if (value == listClientDepartments[i]['departmentName']) {
         selectedDepartmentId = listClientDepartments[i]['departmentId'];
         selectedDepartmentValue = listClientDepartments[i]['departmentName'];
-        print('line 818: $i $selectedDepartmentId $selectedDepartmentValue');
+        debugPrint('line 818: $i $selectedDepartmentId $selectedDepartmentValue');
         checkAllData![1] = true;
         hasDepartment = true;
         ii = i;
@@ -963,17 +963,17 @@ class ProcessClientRequestScheduleState
 
   Future<List<Map<String, dynamic>>>? _getRateAndShiftsByClientAndDiscipline(
       BuildContext ctx) async {
-    print('line 842 getratedisciplines $selectedDisciplineValue');
+    debugPrint('line 842 getratedisciplines $selectedDisciplineValue');
     try {
       Map<String, dynamic> sm = listOfDisciplines[selectedDisciplineIndex];
-      print('line 858: ${sm}');
+      debugPrint('line 858: ${sm}');
       clientRate = await clientServices.getShiftsByClientAndDiscipline(
           clientId!, selectedDisciplineValue, sm['rateGroupId']);
-      print('line 846: $clientRate!');
+      debugPrint('line 846: $clientRate!');
 
       List<dynamic> rateDetails = clientRate!['rates'][0]['rateDetails'];
       listOfShifts = [];
-      print('line 850:  ${rateDetails.length} $rateDetails');
+      debugPrint('line 850:  ${rateDetails.length} $rateDetails');
       for (int i = 0; i < rateDetails.length; i++) {
         if (rateDetails[i]['startTime'] == null) {
           continue;
@@ -993,10 +993,10 @@ class ProcessClientRequestScheduleState
         };
         listOfShifts!.add(shift);
       }
-      print('line 870: ${listOfShifts!.length} ${listOfShifts![0]}');
+      debugPrint('line 870: ${listOfShifts!.length} ${listOfShifts![0]}');
       return listOfShifts!;
     } catch (e) {
-      print('line 873 no valid discipline with rates returned $e');
+      debugPrint('line 873 no valid discipline with rates returned $e');
       await _showDialog(ctx, "Discipline Rate",
           "There are no valid rate data for the client's discpline");
       Navigator.of(ctx).pop();
@@ -1012,7 +1012,7 @@ class ProcessClientRequestScheduleState
   List<String>? listStringDisciplines;
 
   Future<List<String>> getDisciplinesForDropDown() async {
-    print('line 1030 in get disciplines for dropdonw');
+    debugPrint('line 1030 in get disciplines for dropdonw');
 
     try {
       List<Map<String, dynamic>>? lst;
@@ -1038,7 +1038,7 @@ class ProcessClientRequestScheduleState
       checkAllData![0] = false;
       return listStringDisciplines!;
     } catch (e) {
-      print('line 858 error getting disciplines: $e');
+      debugPrint('line 858 error getting disciplines: $e');
       return [];
     }
   }
@@ -1060,7 +1060,7 @@ class ProcessClientRequestScheduleState
   double? h;
   @override
   Widget build(BuildContext context) {
-    print('line 103 in showaccepted ashifts');
+    debugPrint('line 103 in showaccepted ashifts');
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
     h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
@@ -1086,7 +1086,7 @@ class ProcessClientRequestScheduleState
     height = 30;
     double smallFontSize = 14;
     smallFontSize /= h!;
-    print('line 1124: $h $fontSize $screenWidth! $screenHeight $h');
+    debugPrint('line 1124: $h $fontSize $screenWidth! $screenHeight $h');
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: color1,
@@ -1168,7 +1168,7 @@ class ProcessClientRequestScheduleState
                             );
                           } else {
                             List<String> listH = snapshot.data![0];
-                            print('line 111 ${listH.length}');
+                            debugPrint('line 111 ${listH.length}');
                             if (listH.length == 0) {
                               return Center(
                                 child: Padding(
@@ -1188,7 +1188,7 @@ class ProcessClientRequestScheduleState
                               );
                             } else {
                               List<String> listD = snapshot.data![0]!;
-                              print('line 1156: ${listD.length}');
+                              debugPrint('line 1156: ${listD.length}');
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
@@ -1234,7 +1234,7 @@ class ProcessClientRequestScheduleState
                                             valueListenable:
                                             valueListenableDiscipline,
                                             onChanged: (newValue) async {
-                                              print(
+                                              debugPrint(
                                                   'line 1189: $selectedDisciplineValue $newValue');
                                               int idx = await _getDisciplineIndex(
                                                   context, newValue);
@@ -1246,7 +1246,7 @@ class ProcessClientRequestScheduleState
                                                     newValue;
                                                 listDepartments = listOfDepartments;
                                               });
-                                              print(
+                                              debugPrint(
                                                   'line 1202: ${listDepartments}');
                                             },
                                           )),
@@ -1306,7 +1306,7 @@ class ProcessClientRequestScheduleState
                                             selectedDepartmentIndex =
                                                 _getDepartmentIndex(
                                                     value);
-                                            print(
+                                            debugPrint(
                                                 'line 1128: $selectedDepartmentIndex');
                                             setState(() {
                                               selectedDepartmentValue =
@@ -1353,7 +1353,7 @@ class ProcessClientRequestScheduleState
                                 onSelectionChanged:
                                     (DateRangePickerSelectionChangedArgs
                                 args) async {
-                                  print(
+                                  debugPrint(
                                       'line 1310: ${dateTimeList.length} ${args} ${args.value}');
                                   if (selectedDisciplineIndex == -1 ||
                                       selectedDepartmentIndex == -1) {
@@ -1386,7 +1386,7 @@ class ProcessClientRequestScheduleState
                                     }
                                   }
 
-                                  print(
+                                  debugPrint(
                                       'line 1343: $flagFoundMatch ${args.value} ${dateTimeList}');
                                   DateTime? dateTimeObj;
                                   if (flagFoundMatch == false &&
@@ -1400,7 +1400,7 @@ class ProcessClientRequestScheduleState
                                     args.value[args.value.length - 1];
                                   }
                                   if (args.value.length > 0) {
-                                    print(
+                                    debugPrint(
                                         'line 1357: ${dateTimeObj.toString()}');
                                     bool? bl = await _presentGetShift(
                                         context, dateTimeObj);
@@ -1536,7 +1536,7 @@ class ProcessClientRequestScheduleState
                               .toList(),
                           valueListenable: valueListenablePNRate,
                           onChanged: (value) {
-                            print('line 455: $selectedPNRateValue $value');
+                            debugPrint('line 455: $selectedPNRateValue $value');
                             selectedPNRateIndex = _getPNRateIndex(value);
                             pushNotificationFrequencyRate.text = value;
                             setState(() {
@@ -1764,7 +1764,7 @@ class ProcessClientRequestScheduleState
 //     if (lm != null) {
 //       listOfHolidays = lm;
 //     }
-//     print('line 135: ${listOfHolidays.length}');
+//     debugPrint('line 135: ${listOfHolidays.length}');
 //   }
 //
 //   bool hasDepartment = false;
@@ -1778,7 +1778,7 @@ class ProcessClientRequestScheduleState
 //       if (holdSts == null) {
 //         List<Map<String, dynamic>> dps =
 //             await clientServices.getClientDepartment(clientId!);
-//         print('line 145: $departmentIds $dps');
+//         debugPrint('line 145: $departmentIds $dps');
 //         if (dps.isNotEmpty) {
 //           listClientDepartments = dps;
 //           for (int i = 0; i < dps.length; i++) {
@@ -1800,7 +1800,7 @@ class ProcessClientRequestScheduleState
 //       checkAllData![1] = false;
 //       return holdSts!;
 //     } catch (e) {
-//       print('line 145: error $e');
+//       debugPrint('line 145: error $e');
 //       throw Exception('Error getting client departments: ${e.toString()}');
 //     }
 //   }
@@ -1811,13 +1811,13 @@ class ProcessClientRequestScheduleState
 //   Map<String, dynamic>? clientMap;
 //
 //   void _getClientX(BuildContext context) async {
-//     print('line 173 _getClientX');
+//     debugPrint('line 173 _getClientX');
 //     await _getClient(context);
-//     print('line 175');
+//     debugPrint('line 175');
 //   }
 //
 //   Future<void> _getClient(BuildContext context) async {
-//     print('line 178 _getClientUsers');
+//     debugPrint('line 178 _getClientUsers');
 //     try {
 //       Map<String, dynamic>? cmp = await clientServices.getClient(clientId!);
 //       if (cmp == null) {
@@ -1827,10 +1827,10 @@ class ProcessClientRequestScheduleState
 //         throw Exception('No client returned from query');
 //       }
 //       clientMap = cmp;
-//       print('line 205');
+//       debugPrint('line 205');
 //       return;
 //     } catch (e) {
-//       print('line 210 error: ${e.toString()}');
+//       debugPrint('line 210 error: ${e.toString()}');
 //       //exit
 //       Navigator.of(context)
 //           .pushNamed(clientSchedulingMenu, arguments: arguments!);
@@ -1838,25 +1838,25 @@ class ProcessClientRequestScheduleState
 //   }
 //
 //   void _getClientUsersX(BuildContext context) async {
-//     print('line 173 _getClientUsersX');
+//     debugPrint('line 173 _getClientUsersX');
 //     await _getClientUsers(context);
-//     print('line 175');
+//     debugPrint('line 175');
 //   }
 //
 //   Future<void> _getClientUsers(BuildContext context) async {
-//     print('line 178 _getClientUsers');
+//     debugPrint('line 178 _getClientUsers');
 //     try {
-//       print('line 214: ${authServices}');
-//       print('line 215: ${authServices.clientUserMap}');
+//       debugPrint('line 214: ${authServices}');
+//       debugPrint('line 215: ${authServices.clientUserMap}');
 //       if (authServices.clientUserMap == null) {
-//         print('line 217 ${authServices}');
+//         debugPrint('line 217 ${authServices}');
 //         clientUserMap = await clientServices.getASingleClientUser(clientId!);
-//         print('line 219: $clientUserMap');
+//         debugPrint('line 219: $clientUserMap');
 //         authServices.clientUserMap = clientUserMap;
 //       } else {
 //         clientUserMap = authServices.clientUserMap!;
 //       }
-//       print('line 224 $clientUserMap');
+//       debugPrint('line 224 $clientUserMap');
 //
 //       if (clientUserMap!.containsKey('fcmToken') == true) {
 //         clientFcmToken = clientUserMap!['fcmToken'];
@@ -1864,10 +1864,10 @@ class ProcessClientRequestScheduleState
 //         testerFCMToken = clientUserMap!['fcmTokens'][0];
 //       }
 //       userEmail = clientUserMap!['email'];
-//       print('line 231: $clientUserMap');
+//       debugPrint('line 231: $clientUserMap');
 //       return;
 //     } catch (e) {
-//       print('line 231 error: ${e.toString()}');
+//       debugPrint('line 231 error: ${e.toString()}');
 //       //exit
 //       Navigator.of(context)
 //           .pushNamed(clientSchedulingMenu, arguments: arguments!);
@@ -1879,7 +1879,7 @@ class ProcessClientRequestScheduleState
 //   void initState() {
 //     super.initState();
 // //    sendAnEmail();
-//     print('line 154 initstate');
+//     debugPrint('line 154 initstate');
 //     arguments = widget.args;
 //     clientId = arguments!['clientId'];
 //     flagAllData = false;
@@ -1887,19 +1887,19 @@ class ProcessClientRequestScheduleState
 //     // clientId = ref
 //     //     .read(clientUserNotifierProvider.notifier)
 //     //      .fromClientId;
-//     print('line 203: $clientId');
+//     debugPrint('line 203: $clientId');
 //     clientMap = authServices.clientMap!;
 //     _getClientUsersX(context);
 //
-//     print('line 208 in didchange');
+//     debugPrint('line 208 in didchange');
 //     setPNRates();
 //     _getListOfHolidays(clientId!);
-//     print('line 211 end of initstate');
+//     debugPrint('line 211 end of initstate');
 //   }
 //
 //   Future<dynamic> _showDialog(
 //       BuildContext context, String title, String? description) async {
-//     print('line 398 showdialog');
+//     debugPrint('line 398 showdialog');
 //     // Future.delayed(Duration(seconds: 3), () {
 //     //   Navigator.of(context).pop(); // Close the dialog
 //     // });
@@ -1950,7 +1950,7 @@ class ProcessClientRequestScheduleState
 //
 //   bool checkIsHoliday(
 //       DateTime date, Map<String, dynamic> shm, Map<String, dynamic> ehm) {
-//     print('line 80 data is a holiday: ${listOfHolidays.length}');
+//     debugPrint('line 80 data is a holiday: ${listOfHolidays.length}');
 //     try {
 //       DateTime shiftStartDate = date.subtract(Duration(
 //           hours: date.hour,
@@ -1973,14 +1973,14 @@ class ProcessClientRequestScheduleState
 //         }
 //         List<String> lsdt = sdt.split('-');
 //         String dte = lsdt[2] + '-' + lsdt[0] + '-' + lsdt[1];
-//         print('line 323: $dte');
+//         debugPrint('line 323: $dte');
 //         DateTime ndt = DateTime.parse(dte);
-//         print('line 325: ${date.year} ${date.month} ${date.day}');
-//         print(
+//         debugPrint('line 325: ${date.year} ${date.month} ${date.day}');
+//         debugPrint(
 //             'line 326: ${hl['duration'].toString()} ${ndt.year} ${ndt.month} ${ndt.day}');
 //         int duration = int.parse(hl['duration'].toStringAsFixed(0));
 //         Map<String, dynamic> jhm = util.getHoursMinutes(hl['startTime']);
-//         print('line 330: $jhm');
+//         debugPrint('line 330: $jhm');
 //         ndt = ndt.subtract(Duration(
 //             hours: ndt.hour,
 //             minutes: ndt.minute,
@@ -1989,7 +1989,7 @@ class ProcessClientRequestScheduleState
 //             milliseconds: ndt.millisecond));
 //         DateTime endt = ndt;
 //         endt = endt.add(Duration(hours: duration));
-//         print(
+//         debugPrint(
 //             'line 340: ${shiftStartDate.millisecondsSinceEpoch} ${ndt.millisecondsSinceEpoch} ${shiftEndDate.millisecondsSinceEpoch} ${endt.millisecondsSinceEpoch}');
 //         if (shiftStartDate.millisecondsSinceEpoch >=
 //                 ndt.millisecondsSinceEpoch &&
@@ -1998,10 +1998,10 @@ class ProcessClientRequestScheduleState
 //           break;
 //         }
 //       }
-//       print('line 328: $isHoliday');
+//       debugPrint('line 328: $isHoliday');
 //       return isHoliday;
 //     } catch (e) {
-//       print('line 347 error: ${e.toString()}');
+//       debugPrint('line 347 error: ${e.toString()}');
 //       throw Exception('line 348 error date is a holiday: ${e.toString()}');
 //     }
 //   }
@@ -2009,7 +2009,7 @@ class ProcessClientRequestScheduleState
 //   bool toggleDaySelection = true;
 //
 //   Future<bool> _presentGetShift(BuildContext ctx, dynamic dtm) async {
-//     print('line 331 presentgetshift: $dtm');
+//     debugPrint('line 331 presentgetshift: $dtm');
 //     if (dtm == null) {
 //       return false;
 //     }
@@ -2020,9 +2020,9 @@ class ProcessClientRequestScheduleState
 //       return false;
 //     }
 //     try {
-//       print('line 314: $selectedDisciplineHasChanged $listOfShifts');
+//       debugPrint('line 314: $selectedDisciplineHasChanged $listOfShifts');
 //       if (selectedDisciplineHasChanged == true || listOfShifts == null) {
-//         print('line 315 getting listof shifts ${listOfShifts!.length}');
+//         debugPrint('line 315 getting listof shifts ${listOfShifts!.length}');
 //         listOfShifts = await _getRateAndShiftsByClientAndDiscipline(ctx);
 //         holdListOfShifts = [];
 //         for (int i = 0; i < listOfShifts!.length; i++) {
@@ -2032,14 +2032,14 @@ class ProcessClientRequestScheduleState
 //       }
 //       listOfShifts = [];
 //       int shiftIndex = -1;
-//       print('line 326');
+//       debugPrint('line 326');
 //       bool flagGotHit = false;
 //       //  int hcpId =0;
 //       if (listOfDatesWithShifts.length > 0) {
 //         for (int i = 0; i < listOfDatesWithShifts.length; i++) {
 //           dynamic lm = listOfDatesWithShifts[i];
-//           print('line 355: ${lm}');
-//           print('line 356: ${lm['date']} ${dtm}');
+//           debugPrint('line 355: ${lm}');
+//           debugPrint('line 356: ${lm['date']} ${dtm}');
 //           if (lm['date'] == dtm) {
 //             shiftIndex = i;
 //             //  hcpId = lm['date']['hcpId'];
@@ -2052,12 +2052,12 @@ class ProcessClientRequestScheduleState
 //       if (shiftIndex != -1) {
 //         losd = listOfDatesWithShifts[shiftIndex];
 //       }
-//       print('line 363 $losd');
+//       debugPrint('line 363 $losd');
 //       for (int i = 0; i < holdListOfShifts!.length; i++) {
 //         Map<String, dynamic> mp = Map.from(holdListOfShifts![i]);
 //         if (losd != null) {
 //           List<dynamic> rd = losd['rate']['rateDetails'];
-//           print('line 368: ${rd}');
+//           debugPrint('line 368: ${rd}');
 //           for (int j = 0; j < rd.length; j++) {
 //             if (rd[j]['shiftCode'] == mp['shiftCode']) {
 //               mp['shiftCount'] = rd[j]['shiftCount'];
@@ -2069,7 +2069,7 @@ class ProcessClientRequestScheduleState
 //         listOfShifts!.add(mp);
 //       }
 //     } catch (e) {
-//       print('line 362 error getting rates from disiplines');
+//       debugPrint('line 362 error getting rates from disiplines');
 //       await _showDialog(ctx, "Discipline Rate",
 //           "There are no valid discipline rates for the client.");
 //       Navigator.of(ctx).pop();
@@ -2088,7 +2088,7 @@ class ProcessClientRequestScheduleState
 //       // fontSize: fontSize)));
 //       double sfontSize = 14;
 //       sfontSize /= h!;
-//       print('line 351 check');
+//       debugPrint('line 351 check');
 //       List<Map<String, dynamic>>? lmap = await Navigator.push(
 //           context,
 //           MaterialPageRoute(
@@ -2098,9 +2098,9 @@ class ProcessClientRequestScheduleState
 //                   dateTime: dtm,
 //                   discipline: selectedDisciplineValue,
 //                   listOfData: listOfShifts!)));
-//       print('line 407: ${lmap}');
+//       debugPrint('line 407: ${lmap}');
 //       if (lmap == null) {
-//         print('line 409 error no data returned from shift screen');
+//         debugPrint('line 409 error no data returned from shift screen');
 //         throw Exception('No data returned from shfit screen.');
 //       }
 //       int i = 0;
@@ -2115,10 +2115,10 @@ class ProcessClientRequestScheduleState
 //         j = 0;
 //         while (j < lmap.length) {
 //           Map<String, dynamic> obj = lmap[j];
-//           print('line 386: ${obj['shiftCode']} ${jbj['shiftCode']}');
+//           debugPrint('line 386: ${obj['shiftCode']} ${jbj['shiftCode']}');
 //           if (obj['shiftCode'] == jbj['shiftCode']) {
 //             jbj['shiftCount'] = int.parse(obj['shiftCount'].toString());
-//             print('line 426: ${obj['shiftCount']} ${jbj['shiftCount']}');
+//             debugPrint('line 426: ${obj['shiftCount']} ${jbj['shiftCount']}');
 //             shiftCounts += 1;
 // //              listOfShifts![i] = jbj;
 //             holdList.add(Map.from(jbj));
@@ -2131,11 +2131,11 @@ class ProcessClientRequestScheduleState
 //       }
 //       i = 0;
 //       if (shiftCounts == 0) {
-//         print('line 429 error no shifts picked up.');
+//         debugPrint('line 429 error no shifts picked up.');
 //         throw Exception('No shifts picked up.');
 //       }
 //       listOfShifts = holdList;
-//       print('line 441: ${listOfShifts!.length} ${listOfShifts![0]}');
+//       debugPrint('line 441: ${listOfShifts!.length} ${listOfShifts![0]}');
 //       List<dynamic> newList = holdList;
 //       if (newList.length == 0) {
 //         //throw Exception('Error: No counts returned from schedule!');
@@ -2153,21 +2153,21 @@ class ProcessClientRequestScheduleState
 //         listOfShifts!.add(lbj);
 //       }
 //
-//       print('line 459: $newList');
-//       print('line 450: ${listOfShifts![0]}');
+//       debugPrint('line 459: $newList');
+//       debugPrint('line 450: ${listOfShifts![0]}');
 //
 //       List<dynamic> rates = clientRate!['rates'];
-//       print('line 452: ${listOfShifts!.length} $rates');
+//       debugPrint('line 452: ${listOfShifts!.length} $rates');
 //       rates[0]['scheduleRateDetails'] = newList;
 //       List<dynamic> rateDetails = rates[0]['rateDetails'];
-//       print('line 469: $rateDetails ${rates[0]['rateDetails'].length}');
+//       debugPrint('line 469: $rateDetails ${rates[0]['rateDetails'].length}');
 //       int s = 0;
 //       int r = 0;
-//       print('line 496 check ${rateDetails.length} ${listOfShifts!.length} ');
-//       //print('line 500: $newList');
+//       debugPrint('line 496 check ${rateDetails.length} ${listOfShifts!.length} ');
+//       //debugPrint('line 500: $newList');
 //
 //       dynamic clientRateMap = rates[0];
-//       print('line 513 ${clientRateMap}');
+//       debugPrint('line 513 ${clientRateMap}');
 //       List<dynamic> newDetails = [];
 //       for (int z = 0; z < newList.length; z++) {
 //         for (int j = 0; j < rateDetails.length; j++) {
@@ -2197,7 +2197,7 @@ class ProcessClientRequestScheduleState
 //         // rateDetails[z]['billRateWE'] = 0.0;
 //       }
 //       for (int z = 0; z < newDetails.length; z++) {
-//         print('line 543: $z ${newDetails[z]}');
+//         debugPrint('line 543: $z ${newDetails[z]}');
 //       }
 //       Map<String, dynamic> rateMap = {
 //         "branchId": clientRateMap!['branchId'],
@@ -2226,7 +2226,7 @@ class ProcessClientRequestScheduleState
 //         "payOTRate": clientRateMap!['payOTRate'],
 //         "rateDetails": newDetails
 //       };
-//       print('line 525: $rateMap');
+//       debugPrint('line 525: $rateMap');
 //
 //       Map<String, dynamic>? clientMap =
 //           await clientServices.getClient(clientId!);
@@ -2243,15 +2243,15 @@ class ProcessClientRequestScheduleState
 //       rates[0]['payMaxPlus'] = clientMap['payMaxRate'];
 //       rates[0]['payOT'] = 1.5;
 //       rates[0]['payOTPlus'] = 1.5;
-//       print('line 488: ${clientMap['clientId']}');
-//       print('line 489: $selectedDepartmentIndex $selectedDisciplineIndex');
-//       print(
+//       debugPrint('line 488: ${clientMap['clientId']}');
+//       debugPrint('line 489: $selectedDepartmentIndex $selectedDisciplineIndex');
+//       debugPrint(
 //           'line 490: ${listClientDepartments.length} ${listOfDisciplines.length}');
 //       Map<String, dynamic> department =
 //           listClientDepartments[selectedDepartmentIndex];
 //       Map<String, dynamic> discipline =
 //           listOfDisciplines[selectedDisciplineIndex];
-//       print(
+//       debugPrint(
 //           'line 493: ${department['departmentId']} ${discipline['disciplineId']}');
 //       List<String> stringDays = [
 //         'Monday',
@@ -2265,12 +2265,12 @@ class ProcessClientRequestScheduleState
 //       bool isHoliday = false;
 //
 //       Timestamp tms = Timestamp.fromDate(dtm);
-//       print('line 535: $clientUserMap');
+//       debugPrint('line 535: $clientUserMap');
 //       int schedulerId = clientUserMap!['genId'];
 //       String fullName =
 //           clientUserMap!['firstName'] + ' ' + clientUserMap!['lastName'];
 //       schedulerName = fullName;
-//       print('line 506 $rateMap');
+//       debugPrint('line 506 $rateMap');
 //       int q = 0;
 //       while (q < listOfDatesWithShifts.length) {
 //         if (listOfDatesWithShifts[q]['date'] == dtm) {
@@ -2279,7 +2279,7 @@ class ProcessClientRequestScheduleState
 //         }
 //         q += 1;
 //       }
-//       print('line 537: $department');
+//       debugPrint('line 537: $department');
 //
 //       Map<String, dynamic> dm = {
 //         "date": dtm,
@@ -2348,19 +2348,19 @@ class ProcessClientRequestScheduleState
 //         "workersCompCodeId": clientRate!['workersCompCodeId'],
 //         "workersCompType": clientRate!['workersCompType']
 //       };
-//       print('line 606: ${dm['workersCompCodeId']}');
+//       debugPrint('line 606: ${dm['workersCompCodeId']}');
 //
 //       listOfDatesWithShifts.add(dm);
-//       print('line 609: ${listOfDatesWithShifts}');
+//       debugPrint('line 609: ${listOfDatesWithShifts}');
 //       return true;
 //     } catch (e) {
-//       print('line 612 error: $e');
+//       debugPrint('line 612 error: $e');
 //       throw Exception('Error: ${e.toString()}');
 //     }
 //   }
 //
 //   Future<void> _publishShiftInformation(context) async {
-//     print(
+//     debugPrint(
 //         'line 297 in publish shift information $scheduleNotes ${_textControllers[0].text}');
 //     int i = 0;
 //     String title = '';
@@ -2369,21 +2369,21 @@ class ProcessClientRequestScheduleState
 //     }
 //     String description = '';
 //     if (selectedDisciplineValue == null) {
-//       print('line 478 error');
+//       debugPrint('line 478 error');
 //       title = 'Discipline Error';
 //       description = 'You have not selected a discipline.';
 //       await _showDialog(context, title, description);
 //       return;
 //     }
 //     if (selectedDepartmentValue == null) {
-//       print('line 485 error');
+//       debugPrint('line 485 error');
 //       title = 'Department Error';
 //       description = 'You have not selected a department.';
 //       await _showDialog(context, title, description);
 //       return;
 //     }
 //     if (listOfDatesWithShifts.isEmpty) {
-//       print('line 492 error');
+//       debugPrint('line 492 error');
 //       title = 'Shifts Error';
 //       description = 'You must enter at least one shift.';
 //       await _showDialog(context, title, description);
@@ -2393,14 +2393,14 @@ class ProcessClientRequestScheduleState
 //       checkAllData![4] = true;
 //     }
 //     if (selectedPNRateValue == null) {
-//       print('line 524 error');
+//       debugPrint('line 524 error');
 //       title = 'Push Notification Error';
 //       description = 'You have not selected a push notification frequency.';
 //       await _showDialog(context, title, description);
 //       return;
 //     }
 //     // if (checkAllData!.contains(false) == true) {
-//     //   print('line 528 error" $checkAllData');
+//     //   debugPrint('line 528 error" $checkAllData');
 //     //   title = 'Data Error Error';
 //     //   description = 'You have not completed all required fields.';
 //     //   await _showDialog(context, title,  description);
@@ -2409,17 +2409,17 @@ class ProcessClientRequestScheduleState
 //     // }
 //
 //     try {
-//       // print('line 499: publish: $selectedDisciplineValue $checkBoxValue, $listDates');
-//       // print('line 500: ${selectedDisciplineValue.runtimeType}');
-//       // print('line 501: ${selectedDepartmentValue.runtimeType}');
-//       // print('line 502: ${schedulerId.runtimeType}');
-//       // print('line 503: ${schedulerName.runtimeType}');
-//       // print('line 504: ${checkBoxValue.runtimeType}');
-//       // print('line 506: ${_popUpController.text.runtimeType}');
-//       // print('line 507: ${ clientUser['userId'].runtimeType}');
-//       // print('line 508: ${ pushNotificationFrequencyRate.text.runtimeType}');
-//       // print('line 509: ${ user!.fcmToken.runtimeType}');
-//       // print('line 510: ${ testerFcmToken.runtimeType}');
+//       // debugPrint('line 499: publish: $selectedDisciplineValue $checkBoxValue, $listDates');
+//       // debugPrint('line 500: ${selectedDisciplineValue.runtimeType}');
+//       // debugPrint('line 501: ${selectedDepartmentValue.runtimeType}');
+//       // debugPrint('line 502: ${schedulerId.runtimeType}');
+//       // debugPrint('line 503: ${schedulerName.runtimeType}');
+//       // debugPrint('line 504: ${checkBoxValue.runtimeType}');
+//       // debugPrint('line 506: ${_popUpController.text.runtimeType}');
+//       // debugPrint('line 507: ${ clientUser['userId'].runtimeType}');
+//       // debugPrint('line 508: ${ pushNotificationFrequencyRate.text.runtimeType}');
+//       // debugPrint('line 509: ${ user!.fcmToken.runtimeType}');
+//       // debugPrint('line 510: ${ testerFcmToken.runtimeType}');
 //       setState(() {
 //         disabledTextColor = Colors.white;
 //         disabledColor = Colors.orange;
@@ -2429,16 +2429,16 @@ class ProcessClientRequestScheduleState
 //       if (scheduleNotes == null) {
 //         scheduleNotes = 'None';
 //       }
-//       print('line 697: ${listOfDatesWithShifts.length}');
+//       debugPrint('line 697: ${listOfDatesWithShifts.length}');
 //       bool flagGoOn = false;
 //       for (int i = 0; i < listOfDatesWithShifts.length; i++) {
 //         Map<String, dynamic> mpd = listOfDatesWithShifts[i];
 //         List<dynamic> listDetails = mpd['rate']['rateDetails'];
-//         print('line 684 ${listDetails.length}');
+//         debugPrint('line 684 ${listDetails.length}');
 //         flagGoOn = false;
 //         for (int j = 0; j < listDetails.length; j++) {
 //           dynamic ld = listDetails[j];
-//           print('line 688 ${ld['shiftCount']}');
+//           debugPrint('line 688 ${ld['shiftCount']}');
 //           if (ld['shiftCount'] == null) {
 //             ld['shiftCount'] = 0;
 //             continue;
@@ -2450,7 +2450,7 @@ class ProcessClientRequestScheduleState
 //         }
 //       }
 //       if (flagGoOn == false) {
-//         print('line 700 error No Shift counts for one of your shifts.');
+//         debugPrint('line 700 error No Shift counts for one of your shifts.');
 //         throw Exception(('line 701 No shift counts'));
 //       }
 //
@@ -2463,7 +2463,7 @@ class ProcessClientRequestScheduleState
 //           [],
 //           premiumRate,
 //           context);
-//       print('line 730 true: $count');
+//       debugPrint('line 730 true: $count');
 //       title = 'Shift Publication';
 //       if (count.length > 0 && count[0] > 0) {
 //         description =
@@ -2473,7 +2473,7 @@ class ProcessClientRequestScheduleState
 //       }
 //       await _showDialog(context, title, description);
 //     } catch (e) {
-//       print('line 736 $e');
+//       debugPrint('line 736 $e');
 //       String te = e.toString();
 //       te = te.replaceAll('Exception: Exception:', 'Exception:');
 //       title = 'Shift Publication';
@@ -2507,20 +2507,20 @@ class ProcessClientRequestScheduleState
 //   }
 //
 //   Future<int> _getDisciplineIndex(BuildContext ctx, dynamic value) async {
-//     print('line 714 in getdicipindex $value');
+//     debugPrint('line 714 in getdicipindex $value');
 //     try {
 //       // int idx = value.indexOf('(');
 //       // String val = value.toString().substring(0, idx).trim();
 //       // String stx = value.substring(idx);
 //       // stx = stx.replaceAll('(', '');
 //       // stx = stx.replaceAll((')'), '');
-//       print('line 721: $value');
+//       debugPrint('line 721: $value');
 //       bool flagGotHit = false;
 //       selectedDisciplineHasChanged = false;
 //       int sel = 0;
 //       for (int j = 0; j < listOfDisciplines.length; j++) {
 //         dynamic tb = listOfDisciplines[j];
-//         print('line 726: ${tb['disciplineId']} $value ${tb['disciplineName']}');
+//         debugPrint('line 726: ${tb['disciplineId']} $value ${tb['disciplineName']}');
 //         if (tb['disciplineDescription'] == value) {
 //           selectedDisciplineId = tb['disciplineId'];
 //           selectedDisciplineValue = value;
@@ -2531,7 +2531,7 @@ class ProcessClientRequestScheduleState
 //           break;
 //         }
 //       }
-//       print('line 734 ${listOfDisciplines[sel]}');
+//       debugPrint('line 734 ${listOfDisciplines[sel]}');
 //       checkAllData![0] = true;
 //       listOfShiftData = [];
 //       listOfDatesWithShifts = [];
@@ -2540,27 +2540,27 @@ class ProcessClientRequestScheduleState
 //       if (listOfShifts == null || listOfShifts!.length == 0) {
 //         throw Exception('No Valid rate data for client and discipline.');
 //       }
-//       print('line 737: ${listOfShifts!.length}');
+//       debugPrint('line 737: ${listOfShifts!.length}');
 //       for (int i = 0; i < listOfShifts!.length; i++) {
-//         print('line 740: $i ${listOfShifts![i]}');
+//         debugPrint('line 740: $i ${listOfShifts![i]}');
 //
 //         dynamic sb = ShiftClass.fromJson(listOfShifts![i]);
 //
-//         print('line 742: $listOfShiftData $sb');
+//         debugPrint('line 742: $listOfShiftData $sb');
 //         listOfShiftData!.add(sb);
 //       }
 //       departmentIds = [];
 //       for (int i = 0; i < clientRate!['departments'].length; i++) {
 //         departmentIds.add(clientRate!['departments'][i]['departmentId']);
 //       }
-//       print('line 799: ${departmentIds.length}');
-//       print('line 801 ${listOfShiftData!.length} ${listOfShiftData![0]}');
+//       debugPrint('line 799: ${departmentIds.length}');
+//       debugPrint('line 801 ${listOfShiftData!.length} ${listOfShiftData![0]}');
 //       listOfDepartments = await _getClientDepartments(departmentIds);
 //
-//       print('line 802: ${listOfDepartments[0]}');
+//       debugPrint('line 802: ${listOfDepartments[0]}');
 //       return selectedDisciplineIndex;
 //     } catch (e) {
-//       print('line 805 error: $e');
+//       debugPrint('line 805 error: $e');
 //       throw Exception('line 479 error: ${e.toString()}');
 //     }
 //   }
@@ -2573,7 +2573,7 @@ class ProcessClientRequestScheduleState
 //       if (value == listClientDepartments[i]['departmentName']) {
 //         selectedDepartmentId = listClientDepartments[i]['departmentId'];
 //         selectedDepartmentValue = listClientDepartments[i]['departmentName'];
-//         print('line 818: $i $selectedDepartmentId $selectedDepartmentValue');
+//         debugPrint('line 818: $i $selectedDepartmentId $selectedDepartmentValue');
 //         checkAllData![1] = true;
 //         hasDepartment = true;
 //         ii = i;
@@ -2591,18 +2591,18 @@ class ProcessClientRequestScheduleState
 //
 //   Future<List<Map<String, dynamic>>>? _getRateAndShiftsByClientAndDiscipline(
 //       BuildContext ctx) async {
-//     print('line 842 getratedisciplines $selectedDisciplineValue');
+//     debugPrint('line 842 getratedisciplines $selectedDisciplineValue');
 //     try {
 //       Map<String, dynamic> sm = listOfDisciplines[selectedDisciplineIndex];
-//       print('line 858: ${sm}');
+//       debugPrint('line 858: ${sm}');
 //       //   String selectedDisciplineName = sm['disciplineName'];
 //       clientRate = await clientServices.getShiftsByClientAndDiscipline(
 //           clientId!, selectedDisciplineValue, sm['rateGroupId']);
-//       print('line 846: $clientRate!');
+//       debugPrint('line 846: $clientRate!');
 //
 //       List<dynamic> rateDetails = clientRate!['rates'][0]['rateDetails'];
 //       listOfShifts = [];
-//       print('line 850:  ${rateDetails.length} $rateDetails');
+//       debugPrint('line 850:  ${rateDetails.length} $rateDetails');
 //       for (int i = 0; i < rateDetails.length; i++) {
 //         if (rateDetails[i]['startTime'] == null) {
 //           continue;
@@ -2622,10 +2622,10 @@ class ProcessClientRequestScheduleState
 //         };
 //         listOfShifts!.add(shift);
 //       }
-//       print('line 870: ${listOfShifts!.length} ${listOfShifts![0]}');
+//       debugPrint('line 870: ${listOfShifts!.length} ${listOfShifts![0]}');
 //       return listOfShifts!;
 //     } catch (e) {
-//       print('line 873 no valid discipline with rates returned $e');
+//       debugPrint('line 873 no valid discipline with rates returned $e');
 //       await _showDialog(ctx, "Discipline Rate",
 //           "There are no valid rate data for the client's discpline");
 //       Navigator.of(ctx).pop();
@@ -2640,7 +2640,7 @@ class ProcessClientRequestScheduleState
 //   List<String>? listStsHold = null;
 //   List<String>? listStringDisciplines;
 //   Future<List<String>> getDisciplinesForDropDown() async {
-//     print('line 1030 in get disciplines for dropdonw');
+//     debugPrint('line 1030 in get disciplines for dropdonw');
 //
 //     try {
 //       List<Map<String, dynamic>>? lst;
@@ -2666,7 +2666,7 @@ class ProcessClientRequestScheduleState
 //       checkAllData![0] = false;
 //       return listStringDisciplines!;
 //     } catch (e) {
-//       print('line 858 error getting disciplines: $e');
+//       debugPrint('line 858 error getting disciplines: $e');
 //       return [];
 //     }
 //   }
@@ -2680,7 +2680,7 @@ class ProcessClientRequestScheduleState
 //   double? h;
 //   @override
 //   Widget build(BuildContext context) {
-//     print('line 103 in showaccepted ashifts');
+//     debugPrint('line 103 in showaccepted ashifts');
 //     screenWidth = MediaQuery.of(context).size.width;
 //     screenHeight = MediaQuery.of(context).size.height;
 //     h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
@@ -2691,7 +2691,7 @@ class ProcessClientRequestScheduleState
 //     fontSize /= h!;
 //     double smallFontSize = 14;
 //     smallFontSize /= h!;
-//     print('line 1124: $fontSize $screenWidth! $screenHeight $h');
+//     debugPrint('line 1124: $fontSize $screenWidth! $screenHeight $h');
 //     return Scaffold(
 //       resizeToAvoidBottomInset: true,
 //       backgroundColor: color1,
@@ -2774,7 +2774,7 @@ class ProcessClientRequestScheduleState
 //                               );
 //                             } else {
 //                               List<dynamic> listH = snapshot.data![0];
-//                               print('line 111 ${listH.length}');
+//                               debugPrint('line 111 ${listH.length}');
 //                               if (listH.length == 0) {
 //                                 return Center(
 //                                   child: Padding(
@@ -2844,7 +2844,7 @@ class ProcessClientRequestScheduleState
 //                                               .toList(),
 //                                           value: selectedDisciplineValue,
 //                                           onChanged: (dynamic newValue) async {
-//                                             print(
+//                                             debugPrint(
 //                                                 'line 1083: $selectedDisciplineValue $newValue');
 //                                             await _getDisciplineIndex(
 //                                                 context, newValue);
@@ -2855,7 +2855,7 @@ class ProcessClientRequestScheduleState
 //                                               listDepartments =
 //                                                   listOfDepartments;
 //                                             });
-//                                             print(
+//                                             debugPrint(
 //                                                 'line 1091: ${listDepartments}');
 //                                           },
 //                                         ),
@@ -2912,7 +2912,7 @@ class ProcessClientRequestScheduleState
 //                                                     selectedDepartmentIndex =
 //                                                         _getDepartmentIndex(
 //                                                             value);
-//                                                     print(
+//                                                     debugPrint(
 //                                                         'line 1128: $selectedDepartmentIndex');
 //                                                     setState(() {
 //                                                       selectedDepartmentValue =
@@ -2958,7 +2958,7 @@ class ProcessClientRequestScheduleState
 //                                   onSelectionChanged:
 //                                       (DateRangePickerSelectionChangedArgs
 //                                           args) async {
-//                                     print(
+//                                     debugPrint(
 //                                         'line 1216: ${dateTimeList.length} ${args} ${args.value}');
 //                                     if (selectedDisciplineIndex == -1 ||
 //                                         selectedDepartmentIndex == -1) {
@@ -2991,7 +2991,7 @@ class ProcessClientRequestScheduleState
 //                                       }
 //                                     }
 //
-//                                     print(
+//                                     debugPrint(
 //                                         'line 1237: $flagFoundMatch ${args.value} ${dateTimeList}');
 //                                     DateTime? dateTimeObj;
 //                                     if (flagFoundMatch == false &&
@@ -3005,7 +3005,7 @@ class ProcessClientRequestScheduleState
 //                                           args.value[args.value.length - 1];
 //                                     }
 //                                     if (args.value.length > 0) {
-//                                       print(
+//                                       debugPrint(
 //                                           'line 1218: ${dateTimeObj.toString()}');
 //                                       bool? bl = await _presentGetShift(
 //                                           context, dateTimeObj);
@@ -3125,7 +3125,7 @@ class ProcessClientRequestScheduleState
 //                           .toList(),
 //                       value: selectedPNRateValue,
 //                       onChanged: (dynamic value) {
-//                         print('line 455: $selectedPNRateValue $value');
+//                         debugPrint('line 455: $selectedPNRateValue $value');
 //                         selectedPNRateIndex = _getPNRateIndex(value);
 //                         setState(() {
 //                           selectedPNRateValue = value;

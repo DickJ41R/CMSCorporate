@@ -77,7 +77,7 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
 
   DataGridController _dataGridController = DataGridController();
   bool _dateIsAHoliday(DateTime date) {
-    print('line 80 data is a holiday: ${listOfHolidays.length}');
+    debugPrint('line 80 data is a holiday: ${listOfHolidays.length}');
     try {
       bool isHoliday = false;
       for (int i = 0; i < listOfHolidays.length; i++) {
@@ -89,10 +89,10 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
         }
         List<String> lsdt = sdt.split('-');
         String dte = lsdt[2] + '-' + lsdt[0] + '-' + lsdt[1];
-        print('line 92: $dte');
+        debugPrint('line 92: $dte');
         DateTime ndt = DateTime.parse(dte);
-        print('line 94: ${date.year} ${date.month} ${date.day}');
-        print('line 95: ${ndt.year} ${ndt.month} ${ndt.day}');
+        debugPrint('line 94: ${date.year} ${date.month} ${date.day}');
+        debugPrint('line 95: ${ndt.year} ${ndt.month} ${ndt.day}');
         double duration = double.parse(hl['duration'].toString());
         Map<String, dynamic> shm = utilities.getHoursMinutes(hl['startTime']);
         ndt = ndt.subtract(Duration(
@@ -102,7 +102,7 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
             microseconds: ndt.microsecond,
             milliseconds: ndt.millisecond));
         DateTime endt = ndt;
-        print(
+        debugPrint(
             'line 106: ${date.millisecondsSinceEpoch} ${ndt.millisecondsSinceEpoch} ${endt.millisecondsSinceEpoch}${shm}');
         endt = endt.add(Duration(hours: shm['hours'], minutes: shm['minutes']));
         if (date.millisecondsSinceEpoch >= ndt.millisecondsSinceEpoch &&
@@ -113,7 +113,7 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
       }
       return isHoliday;
     } catch (e) {
-      print('line 105 error: ${e.toString()}');
+      debugPrint('line 105 error: ${e.toString()}');
       throw Exception('line 106 error date is a holiday: ${e.toString()}');
     }
   }
@@ -129,7 +129,7 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
     dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day);
     DateFormat formatter = DateFormat('MM-dd-yyyy');
     formatted = formatter.format(dateTime);
-    print('line 115 just before call to date is a holiday');
+    debugPrint('line 115 just before call to date is a holiday');
     isDateAHoliday = _dateIsAHoliday(dateTime);
     isDateAWeekEnd = false;
     if (dateTime.weekday == 6 || dateTime.weekday == 7) {
@@ -150,10 +150,10 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
     fontS /= hh;
     discipline = widget.discipline;
     listOfShiftData = widget.listOfData;
-    print('line 123: $listOfHolidays, $dateTime, $discipline');
-    print('line 124: $isDateAHoliday, $isDateAWeekEnd');
+    debugPrint('line 123: $listOfHolidays, $dateTime, $discipline');
+    debugPrint('line 124: $isDateAHoliday, $isDateAWeekEnd');
 
-    print('line 126: ${fontSize} ${listOfShiftData}');
+    debugPrint('line 126: ${fontSize} ${listOfShiftData}');
     shiftClasses = getShiftClassData(listOfShiftData);
     shiftClassDataSource =
         ShiftClassDataSource(shiftClassData: shiftClasses, fontS: fontS);
@@ -270,7 +270,7 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
     largeFontSize /= h!;
     // double smallFontSize = 14;
     smallFontSize /= h!;
-    print('line 296: $h! $fontSize, $listOfHolidays, $dateTime, $discipline');
+    debugPrint('line 296: $h! $fontSize, $listOfHolidays, $dateTime, $discipline');
     tableHeight = (listOfShiftData.length + 1) * 55;
     double scw = screenWidth! / 2;
     return Scaffold(
@@ -291,7 +291,7 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
         //         size: 30),
         //     onPressed: () {
         //       // shiftClasses = shiftClassDataSource.returnShiftClasses();
-        //       // print('line 99: ${shiftClasses[0].shiftCode} ${shiftClasses[0].shiftCount}');
+        //       // debugPrint('line 99: ${shiftClasses[0].shiftCode} ${shiftClasses[0].shiftCount}');
         //       Navigator.of(widget.ctx).pop(null);
         //     },
         //   ),
@@ -338,9 +338,9 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
                           showCheckboxOnHeader: false),
 
                       // onRowSelectBuilder: ( (List<RowWidgetModel<dynamic>>? listR) {
-                      //   print('line 281 ${listR!.length}');
+                      //   debugPrint('line 281 ${listR!.length}');
                       //   if (listR!.length > 0) {
-                      //     print('line 282: ${listR[0].others} ${listR[0]
+                      //     debugPrint('line 282: ${listR[0].others} ${listR[0]
                       //         .isSelected}');
                       //   }
                       // }
@@ -394,7 +394,7 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
                           }
                         }
                       }
-                      print('line 405: ');
+                      debugPrint('line 405: ');
                     },
 
                     child: Container(
@@ -452,7 +452,7 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
                           }
                         }
                       }
-                      print('line 520 ');
+                      debugPrint('line 520 ');
                     },
                     child: Container(
                         //width: 50.0,
@@ -546,7 +546,7 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
                             (a, b) => (a.shiftCode.compareTo(b.shiftCode)));
                         for (int i = 0; i < shiftClasses.length; i++) {
                           ShiftClass sf = shiftClasses[i];
-                          print('line 464: ${sf.shiftCount}');
+                          debugPrint('line 464: ${sf.shiftCount}');
                           Map<String, dynamic> lp = sf.toJson();
                           lmp.add(lp);
                         }
@@ -623,7 +623,7 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
 //     if (fontSize! > 8) {
 //       this.fontSize = 8;
 //     }
-//     print('line  581: ${fontSize}');
+//     debugPrint('line  581: ${fontSize}');
 //   }
 //
 //   dynamic newCellValue;
@@ -687,7 +687,7 @@ class _ProcessShiftDataGridState extends State<ProcessShiftDataGrid> {
 //         }).toList());
 //   }
 //   void updateDataGridSource({required RowColumnIndex rowColumnIndex}) {
-//     print('line 740: $rowColumnIndex');
+//     debugPrint('line 740: $rowColumnIndex');
 //   notifyDataSourceListeners(rowColumnIndex: rowColumnIndex);
 //   }
 // }

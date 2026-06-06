@@ -31,7 +31,7 @@ class _ClientCreditProfilePageState extends State<ClientCreditProfilePage> {
 
   Future<Map<String, dynamic>> _getClientCredit() async {
     try {
-      print('line 46 $clientId');
+      debugPrint('line 46 $clientId');
       if (clientId == null) {
         return {};
       }
@@ -42,7 +42,7 @@ class _ClientCreditProfilePageState extends State<ClientCreditProfilePage> {
       agingData = ccl['agingData'];
       return clientCredit!;
     } catch (e) {
-      print('line 52 error: $e');
+      debugPrint('line 52 error: $e');
       throw Exception('line 53 error: $e');
     }
   }
@@ -58,9 +58,9 @@ class _ClientCreditProfilePageState extends State<ClientCreditProfilePage> {
     clientId = arguments!['clientId'];
     // try {
     //   setUpAsyncVariables(clientId!,context,clw,htc);
-    //   print('ine 49: $clientId');
+    //   debugPrint('ine 49: $clientId');
     // } catch(e) {
-    //   print('line 133 error: $e');
+    //   debugPrint('line 133 error: $e');
     //
     // }
   }
@@ -82,7 +82,7 @@ class _ClientCreditProfilePageState extends State<ClientCreditProfilePage> {
     }
     fontSize = 16;
     fontSize /= h;
-    print('line 75 in showaccepted ashifts');
+    debugPrint('line 75 in showaccepted ashifts');
     return Scaffold(
       backgroundColor: color1,
       appBar: AppBar(
@@ -111,7 +111,7 @@ class _ClientCreditProfilePageState extends State<ClientCreditProfilePage> {
             [_getClientCredit()],
           ),
           builder: (context, snapshot) {
-            print(
+            debugPrint(
                 'line 129: ${snapshot.data}  ${snapshot.connectionState} ${snapshot.hasData}');
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -148,7 +148,7 @@ class _ClientCreditProfilePageState extends State<ClientCreditProfilePage> {
               );
             } else {
               dynamic ccl = snapshot.data[0]; // cast to List<Marker>
-              print('line 147: $ccl');
+              debugPrint('line 147: $ccl');
               if (ccl == null) {
                 return Center(
                   child: Container(

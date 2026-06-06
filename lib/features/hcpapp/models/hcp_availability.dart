@@ -1,4 +1,5 @@
 import 'package:cms_web/features/clientapp/models/client_shift_data.dart';
+import 'package:flutter/foundation.dart';
 
 class HCPAvailability {
   HCPAvailability(
@@ -39,7 +40,7 @@ class HCPAvailability {
 
   Map<String, dynamic> setCollection() {
     Map<String, dynamic> col = {};
-    print('line 41 cmsempavail: $availabilityId $shiftInfo');
+    debugPrint('line 41 cmsempavail: $availabilityId $shiftInfo');
     //  col['uid'] = id;
     col['hcpId'] = hcpId;
     col['availabilityId'] = availabilityId;

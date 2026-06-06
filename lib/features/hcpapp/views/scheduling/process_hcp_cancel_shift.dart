@@ -37,41 +37,41 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
   _ProcessHCPCancelShiftsState();
 
   Future<List<Map<String, dynamic>>> _getAllConfirmedShifts() async {
-    print('line 122 in getAvailable shiftgs');
+    debugPrint('line 122 in getAvailable shiftgs');
     try {
       List<Map<String, dynamic>>? lm =
           await clw.getWorkOrderCampaignsConfirmed(hcpId!);
-      print('line 58 in get all confirmed');
+      debugPrint('line 58 in get all confirmed');
       if (lm == null) {
         return [];
       }
 
       return lm;
     } catch (e) {
-      print('line 66 erro in cancel shifts: $e');
+      debugPrint('line 66 erro in cancel shifts: $e');
       throw Exception(e.toString());
     }
   }
 
   void getHCPUserX() async {
-    print('line 44 in get usrx');
+    debugPrint('line 44 in get usrx');
     await getHCPUser();
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    print('line 50 gethcpuser available shfts: $hcpServices');
+    debugPrint('line 50 gethcpuser available shfts: $hcpServices');
     try {
       Map<String, dynamic>? lm = await hcpServices.getHCPUser(hcpId!);
 
       if (lm.isEmpty) {
-        print('line 54 lm i septy');
+        debugPrint('line 54 lm i septy');
         return lm;
       }
-      print('line 57 in available shifts gethcpuser $lm');
+      debugPrint('line 57 in available shifts gethcpuser $lm');
       fullName = lm['legalName'];
       return lm;
     } catch (e) {
-      print('line 63 error: $e');
+      debugPrint('line 63 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -84,14 +84,14 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
     getRegistrantCancelReasons();
-    print('line 39: $currentUser $clw');
-    print('check');
+    debugPrint('line 39: $currentUser $clw');
+    debugPrint('check');
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('line 63 didchange');
+    debugPrint('line 63 didchange');
 
     getHCPUserX();
   }
@@ -103,7 +103,7 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
 
   Future<bool> _showDialog(
       BuildContext context, String title, String? description) async {
-    print('line 12 showdialog');
+    debugPrint('line 12 showdialog');
     // Future.delayed(Duration(seconds: 3), () {
     //   Navigator.of(context).pop(); // Close the dialog
     // });
@@ -193,10 +193,10 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
 
   void onButtonPressed(Map<String, dynamic> item,
       bool flagPublishedButtonDisabled, BuildContext ctx) async {
-    print(
+    debugPrint(
         'line 41 in onButtonPressed: ${item['shiftDate']} ${item['shiftCode']}');
     //cancel  clentworkorder first
-    print('line 201:${item['shiftCancellationNote']}');
+    debugPrint('line 201:${item['shiftCancellationNote']}');
 
     if (item['shiftCancellationNote'] == null) {
       _showDialog(
@@ -206,7 +206,7 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
     int cancelReasonCodeId = 0;
     for (int i = 0; i < listOfRegistrantCancelReasons.length; i++) {
       Map<String, dynamic> mp = listOfRegistrantCancelReasons[i];
-      print('line 204: $mp ${item['shiftCancellationNote']}');
+      debugPrint('line 204: $mp ${item['shiftCancellationNote']}');
       if (mp['reason'] == item['shiftCancellationNote']) {
         cancelReason = mp['reason'];
         cancelReasonCodeId = mp['codeId'];
@@ -252,12 +252,12 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
       // //uncomment next to lines after DEBUG
       // await utilitiesServices.sendEmailFromGMail(
       //     tos, from, fromUserName, subject, text);
-      print('line 257 just before alert');
+      debugPrint('line 257 just before alert');
       await _showDialog(ctx, "Cancellation",
           "You have successfully canceled the shift.  Don't forget to notify the client and your CMS representative.");
       Navigator.of(ctx).pop();
     } catch (e) {
-      print('line 263 error: ${e.toString()}');
+      debugPrint('line 263 error: ${e.toString()}');
       await _showDialog(ctx, "Cancellation",
           "THere was an error:   Don't forget to notify the client and your CMS representative.");
       Navigator.of(ctx).pop();
@@ -300,7 +300,7 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
     fontSize /= h;
     double smallFontSize = 14;
     smallFontSize /= h;
-    print('line 40 in show cancel shifts');
+    debugPrint('line 40 in show cancel shifts');
     return Scaffold(
       backgroundColor: color1,
       appBar: AppBar(
@@ -361,7 +361,7 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
               );
             } else {
               List<dynamic> data = snapshot.data![0];
-              print('line 328 $data ${data.length} ${snapshot.data![0]}');
+              debugPrint('line 328 $data ${data.length} ${snapshot.data![0]}');
               if (data.length == 0) {
                 return Center(
                   child: Container(
@@ -441,7 +441,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
       debugPrint('line 398 get list of reasons: ${listOfReasons[0]}');
       return listOfReasons;
     } catch (e) {
-      print('line 400: $e');
+      debugPrint('line 400: $e');
       return [];
     }
   }
@@ -451,7 +451,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     super.initState();
     item = widget.itemm;
     flagPublishedButtonDisabled = widget.flagPublishedButtonDisabled;
-    print('line 409: ${widget.reasons[0]}');
+    debugPrint('line 409: ${widget.reasons[0]}');
   }
 
   @override
@@ -465,7 +465,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
 
     DateTime dt = DateTime.fromMillisecondsSinceEpoch(tms + 18000);
     String sdt = formatter.format(dt);
-    print('line 186: $sdt');
+    debugPrint('line 186: $sdt');
     return sdt;
   }
 
@@ -492,7 +492,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
   int selectedCancelReasonIndex = -1;
 
   Future<int> getReasonIndex(dynamic value) async {
-    print('line 458 in getReasonindex');
+    debugPrint('line 458 in getReasonindex');
     for (int i = 0; i < listOfReasons.length; i++) {
       if (value == listOfReasons[i]) {
         selectedCancelReasonIndex = i;
@@ -500,7 +500,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
         break;
       }
     }
-    print('line 465: $selectedCancelReasonIndex');
+    debugPrint('line 465: $selectedCancelReasonIndex');
     return selectedCancelReasonIndex;
   }
 
@@ -511,7 +511,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
 
   String getPayrateAsString(dynamic pr) {
     String prs = pr.toString();
-    print('line 254: $pr $prs');
+    debugPrint('line 254: $pr $prs');
     double prd = double.parse(prs);
     prs = prd.toStringAsFixed(2);
 
@@ -531,7 +531,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     fontSize /= h;
     double smallFontSize = 14;
     smallFontSize /= h;
-    print('line 98 in tile building $selectedCancelReasonValue');
+    debugPrint('line 98 in tile building $selectedCancelReasonValue');
     String hoursString =
         (item['decimalHours'] - (item['meals'] / 60)).toStringAsFixed(2);
     return Container(
@@ -592,10 +592,10 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                       ),
                     );
                   } else {
-                    print('line 544: ${snapshot.data![0]} ');
+                    debugPrint('line 544: ${snapshot.data![0]} ');
                     List<dynamic> listH = snapshot.data![0];
                     if (listH.length == 0) {
-                      print('line 548 check');
+                      debugPrint('line 548 check');
                       return Center(
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 30),
@@ -614,7 +614,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                       );
                     } else {
                       List<dynamic> listH = snapshot.data![0]!;
-                      print('line 591: ${listH[0]}');
+                      debugPrint('line 591: ${listH[0]}');
                       return Container(
                         height: 80,
                         width: screenWidth - 10,
@@ -661,10 +661,10 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                               valueListenable: valueListenableCancelReason,
                               onChanged: (dynamic value) async {
                                 selectedCancelReasonValue = value;
-                                print('line 609: $value');
+                                debugPrint('line 609: $value');
                                 selectedCancelReasonIndex =
                                     await getReasonIndex(value);
-                                print(
+                                debugPrint(
                                     'line 1128: $selectedCancelReasonValue $value $selectedCancelReasonIndex ');
                                 setState(() {
                                   flagShowRed = false;

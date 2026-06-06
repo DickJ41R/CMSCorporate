@@ -86,7 +86,7 @@ class AuthService {
 
   void setFCMToken(String FCMToken, bool isClientApp, bool isIOS,
       bool isAndroid, bool isMacos, bool isWindows, bool isWeb) {
-    print('line 58 in setfcmtoken');
+    debugPrint('line 58 in setfcmtoken');
     this.isIOS = isIOS;
     this.isAndroid = isAndroid;
     this.isMacos = isMacos;
@@ -100,7 +100,7 @@ class AuthService {
     try {
       await _auth.currentUser?.sendEmailVerification();
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
@@ -108,16 +108,16 @@ class AuthService {
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
     }
   }
 
   Future<void> signup(Map<String, dynamic> mp, BuildContext context) async {
-    print('line 113: ${mp['email']} ${mp['password']}');
+    debugPrint('line 113: ${mp['email']} ${mp['password']}');
     try {
       String email = mp['email'].toLowerCase();
       String password = mp['password'];
-      print('line 117 cms_auth: $email $password ');
+      debugPrint('line 117 cms_auth: $email $password ');
       Map<String,dynamic> oId = {};
       Map<String, dynamic>? npm;
       var errorCode;
@@ -126,64 +126,64 @@ class AuthService {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password)
           .then((snapshot) {
-        print('line 124 auth service: $snapshot');
+        debugPrint('line 124 auth service: $snapshot');
         userCredential = snapshot;
         currentCredentialUser = userCredential!.user;
-        print('line 127 $currentCredentialUser');
+        debugPrint('line 127 $currentCredentialUser');
       }).catchError((error) {
         errorCode = error.code;
         errorMessage = error.message;
         // Handle errors here
         switch (errorCode) {
           case 'auth/invalid-email':
-            print('Invalid email format.');
+            debugPrint('Invalid email format.');
             break;
           case 'auth/user-not-found':
-            print('No user found with this email.');
+            debugPrint('No user found with this email.');
             break;
           case 'auth/wrong-password':
-            print('Incorrect password.');
+            debugPrint('Incorrect password.');
             break;
           default:
-            print('An error occurred during login:  $errorMessage');
+            debugPrint('An error occurred during login:  $errorMessage');
         }
       });
-      print('line 146');
+      debugPrint('line 146');
       if (errorCode != null) {
-        print('line 150 error: $errorMessage');
+        debugPrint('line 150 error: $errorMessage');
         throw Exception(errorMessage);
       }
       await Future.delayed(const Duration(seconds: 1));
-      print('line 154: ${currentCredentialUser}');
+      debugPrint('line 154: ${currentCredentialUser}');
       documentId = currentCredentialUser!['id'];
 
         if (currentCredentialUser!.displayName == 'CMSUser') {
-          //   print('line 227');
+          //   debugPrint('line 227');
           //   oId['message'] = '10. You are not authorized to use this app.';
           //   return oId;
           // }
           // documentId = usr.uid;
-          print('line 225: $currentCredentialUser ');
+          debugPrint('line 225: $currentCredentialUser ');
           // await Future.delayed(const Duration(seconds: 1)
-          print('line 202 $email');
+          debugPrint('line 202 $email');
 
           await FirebaseFirestore.instance
               .collection('CMSUser')
               .doc(documentId)
               .get()
               .then((querySnapshot) async {
-            print('line 208 ${querySnapshot.data()}');
+            debugPrint('line 208 ${querySnapshot.data()}');
             final docSnapshot = querySnapshot.data();
             userDocumentId = querySnapshot.id;
 
             if (docSnapshot == null) {
-              print('line 242');
+              debugPrint('line 242');
               oId['success'] = false;
               oId['message'] = 'Invalid find for a user.';
               return oId;
             }
             if (docSnapshot['userType'] != 'CNSUser') {
-              print('line 346');
+              debugPrint('line 346');
               await FirebaseAuth.instance.signOut();
               oId['success'] = false;
               oId['documentId'] = null;
@@ -197,27 +197,27 @@ class AuthService {
             }
           });
         } else {
-          print('line 189: $currentCredentialUser ');
+          debugPrint('line 189: $currentCredentialUser ');
           oId['documentId'] = documentId;
           // await Future.delayed(const Duration(seconds: 1)
-          print('line 202 $email');
+          debugPrint('line 202 $email');
           await FirebaseFirestore.instance
               .collection('CMSBranchUser')
               .doc(documentId)
               .get()
               .then((querySnapshot) async {
-            print('line 208 ${querySnapshot.data()}');
+            debugPrint('line 208 ${querySnapshot.data()}');
             final docSnapshot = querySnapshot.data();
             userDocumentId = querySnapshot.id;
 
             if (docSnapshot == null) {
-              print('line 242');
+              debugPrint('line 242');
               oId['success'] = false;
               oId['message'] = 'Invalid find for a user.';
               return oId;
             }
             if (docSnapshot['userType'] != 'CNSUser') {
-              print('line 346');
+              debugPrint('line 346');
               await FirebaseAuth.instance.signOut();
               oId['success'] = false;
               oId['documentId'] = null;
@@ -230,18 +230,18 @@ class AuthService {
             }
           });
         }
-      print('line 146: $currentUser ${mp['email']}');
+      debugPrint('line 146: $currentUser ${mp['email']}');
 
       final navigator = Navigator.of(context)
           .pushNamed(AutofillHints.language, arguments: null);
     } catch (e) {
       String message = '';
-      print('line 168 $message');
+      debugPrint('line 168 $message');
     }
   }
 
   T? tryCast<T>(dynamic value, {T? fallback}) {
-    print('line 119: $value');
+    debugPrint('line 119: $value');
     try {
       return (value as T);
     } on TypeError catch (_) {
@@ -255,8 +255,8 @@ class AuthService {
     //   double dv = view.physicalSize.width / view.physicalSize.height;
     String aspectRatio = "16:9";
     String device = 'desktop';
-    //   print('line 323 in loadevices: $dv');
-    print('line 326: $screenRatio');
+    //   debugPrint('line 323 in loadevices: $dv');
+    debugPrint('line 326: $screenRatio');
     double dv = screenRatio!;
     if (1.78 >= dv - .10 && 1.78 <= dv + .10) {
       aspectRatio = "16:9";
@@ -286,7 +286,7 @@ class AuthService {
       String email, String password, String app) async {
     EncryptionService ens = EncryptionService();
     try {
-      print('line 381 in storeuserinfo $fcmToken');
+      debugPrint('line 381 in storeuserinfo $fcmToken');
       Timestamp ts = Timestamp.fromDate(DateTime.now());
       var kw = dotenv.env['USERINFORMATION_KEY']!;
       ens.init(kw);
@@ -315,13 +315,13 @@ class AuthService {
       }
       return true;
     } catch (e) {
-      print('line 397 error: ${e.toString()}');
+      debugPrint('line 397 error: ${e.toString()}');
       return false;
     }
   }
 
   Future<int> getCMSBranchUserLoginCount(String email) async {
-    print('line 331 getlogincount: $email');
+    debugPrint('line 331 getlogincount: $email');
     int lgc = 0;
     await FirebaseFirestore.instance
         .collection('users')
@@ -345,17 +345,17 @@ class AuthService {
     bool flagHaveUserInformation = false;
     bool flagIsAuthenticated = false;
     Map<String, dynamic>? fcmMap;
-    print('line 346: $email $password');
+    debugPrint('line 346: $email $password');
     try {
       email = email.toLowerCase();
-      print('line 349: $email $password');
+      debugPrint('line 349: $email $password');
       Map<String, dynamic>? npm;
       Map<String, dynamic>? fcmMap = null;
       List<Map<String, dynamic>> listFCMTokens = [];
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password)
           .then((snapshot) {
-        print('line 356: $snapshot');
+        debugPrint('line 356: $snapshot');
         userCredential = snapshot;
         currentCredentialUser = userCredential!.user;
       }).catchError((error) {
@@ -364,26 +364,26 @@ class AuthService {
         // Handle errors here
         switch (errorCode) {
           case 'auth/invalid-email':
-            print('Invalid email format.');
+            debugPrint('Invalid email format.');
             break;
           case 'auth/user-not-found':
-            print('No user found with this email.');
+            debugPrint('No user found with this email.');
             break;
           case 'auth/wrong-password':
-            print('Incorrect password.');
+            debugPrint('Incorrect password.');
             break;
           default:
-            print('An error occurred during login:  $errorMessage');
+            debugPrint('An error occurred during login:  $errorMessage');
         }
-        print('line 376: in singin $errorMessage');
+        debugPrint('line 376: in singin $errorMessage');
         throw Exception(errorMessage);
       });
       await Future.delayed(const Duration(seconds: 1));
-      print('line 380  $email');
+      debugPrint('line 380  $email');
       Map<String, dynamic>? obj;
-      print('line 382: ${currentCredentialUser.displayName}');
+      debugPrint('line 382: ${currentCredentialUser.displayName}');
       if (currentCredentialUser == null) {
-        print('line 383 null currentCredentialUser');
+        debugPrint('line 383 null currentCredentialUser');
         throw Exception('No User found with the entered email.');
       }
       if (currentCredentialUser.displayName == 'BranchUser') {
@@ -397,7 +397,7 @@ class AuthService {
 
             obj = docSnapshot.data();
             currentUser = obj;
-            print('line 396 checking _authservice $obj');
+            debugPrint('line 396 checking _authservice $obj');
             cmsBranchUserId = obj!['genId'];
             cmsBranchUserMap = obj;
             bool flagIsCorporate = false;
@@ -436,7 +436,7 @@ class AuthService {
 
             obj = docSnapshot.data();
             currentUser = obj;
-            print('line 413 checking _authservice $obj');
+            debugPrint('line 413 checking _authservice $obj');
             cmsUserId = obj!['genId'];
             cmsUserMap = obj;
             bool flagIsCorporate = false;
@@ -454,7 +454,7 @@ class AuthService {
           if (obj!['Roles'] != null) {
             obj!['roles'] = obj!['Roles'];
           }
-          print('line 363 ${obj!['roles']} ${obj!['Roles']}');
+          debugPrint('line 363 ${obj!['roles']} ${obj!['Roles']}');
           flagIsCorporate = false;
           String npx = obj!['roles'][0];
           if (npx.indexOf('CORPORATE') != -1) {
@@ -476,7 +476,7 @@ class AuthService {
           "loginCounter": FieldValue.increment(1),
           "dateOfLastLogin": ts
         });
-        print('line 363 ${obj!['roles']} ${obj!['Roles']}');
+        debugPrint('line 363 ${obj!['roles']} ${obj!['Roles']}');
 
 
       }
@@ -492,14 +492,14 @@ class AuthService {
       //   {'branchId': 640, 'branchName': 'CHATTANOOGA CMS 116'},
       //   {'branchId': 641, 'branchName': 'LEXINGTON CMS 117'}
       // ];
-      // print('line 334 ${listOfUserBranches.length}');
+      // debugPrint('line 334 ${listOfUserBranches.length}');
       // if (obj!['branchIds'][0] == 0) {
       //   if (obj!['branchNames'] == null) {
       //     obj!['branchNames'] = [];
       //     obj!['branchNames'].add('CMS CORPORATE');
       //   }
 
-      print('line  534 $fcmToken $email $flagIsAuthenticated');
+      debugPrint('line  534 $fcmToken $email $flagIsAuthenticated');
 
       // if (fcmToken != null && fcmToken != 'PlaceHolder') {
 
@@ -511,10 +511,10 @@ class AuthService {
       } else if (e.code == 'invalid-credential') {
         message = 'Wrong password provided for that user.';
       }
-      print('line 549 $message');
+      debugPrint('line 549 $message');
       throw Exception('Unable to process user');
     } catch (e) {
-      print('line 552 error $e');
+      debugPrint('line 552 error $e');
       String err = e.toString();
       int idx = err.indexOf('Exception:');
       if (idx != -1) {
@@ -652,12 +652,12 @@ class AuthService {
   // Future<void> callingFunction(HttpsCallable callable, BuildContext context,
   //     String title, String message, String clientToken, String hcpToken) async {
   //   try {
-  //     print('line 354 in callingFunction: $title $message $hcpToken');
+  //     debugPrint('line 354 in callingFunction: $title $message $hcpToken');
   //     var data = {'title': title, 'message': message, 'hcpToken': hcpToken};
   //     final result = await callable(data);
-  //     print('line 355: ${result.data}');
+  //     debugPrint('line 355: ${result.data}');
   //   } catch (e) {
-  //     print('line 356 error: $e');
+  //     debugPrint('line 356 error: $e');
   //     ScaffoldMessenger.of(context).showSnackBar(
   //       SnackBar(
   //         content: Text('ERROR: $e'),

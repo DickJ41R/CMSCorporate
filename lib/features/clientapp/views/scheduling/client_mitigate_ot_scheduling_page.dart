@@ -44,7 +44,7 @@ class _ClientMitigateOTSchedulingPageState
 
   Future<dynamic> _showActionDialog(
       BuildContext context, String title, String? description) async {
-    print('line 49 showdialog');
+    debugPrint('line 49 showdialog');
 // Future.delayed(Duration(seconds: 3), () {
 //   Navigator.of(context).pop(); // Close the dialog
 // });
@@ -122,7 +122,7 @@ class _ClientMitigateOTSchedulingPageState
         throw Exception('No time cards available');
       }
     } catch (e) {
-      print('line 114: $e');
+      debugPrint('line 114: $e');
       throw Exception(e.toString());
     }
   }
@@ -144,18 +144,18 @@ class _ClientMitigateOTSchedulingPageState
     clw = ClientWorkOrderCampaignService();
     htc = HCPTimeCardService();
 
-    print('line 39:  $clw');
+    debugPrint('line 39:  $clw');
   }
 
   void onButtonPressed(Map<String, dynamic> item, BuildContext ctx) async {
-    print(
+    debugPrint(
         'line 91 in onButtonPressed: ${item['shiftDate']} ${item['shiftCode']}');
 
     try {
       var response = '';
       response = await _showActionDialog(context, "Overtime Mitigation Actions",
           'This shift would result in the employee having OT. Do you wish to mitigate the OT payment? ');
-      print('line 169: $response');
+      debugPrint('line 169: $response');
       if (response == 'OK') {
         bool bl = await clw.updateClientMitigateOTForShift(item['id']);
         Navigator.of(context)
@@ -165,7 +165,7 @@ class _ClientMitigateOTSchedulingPageState
       }
       ;
     } catch (e) {
-      print('line 129 error: $e');
+      debugPrint('line 129 error: $e');
       throw Exception(e.toString());
     }
   }
@@ -188,7 +188,7 @@ class _ClientMitigateOTSchedulingPageState
     fontSize = 16;
     fontSize /= h;
 
-    print('line 128 in showaccepted ashifts $screenWidth $screenHeight');
+    debugPrint('line 128 in showaccepted ashifts $screenWidth $screenHeight');
     return Scaffold(
       resizeToAvoidBottomInset:
           false, // Stops widgets from being moved by keyboard
@@ -220,7 +220,7 @@ class _ClientMitigateOTSchedulingPageState
             getAllItems(),
           ]),
           builder: (context, snapshot) {
-            print(
+            debugPrint(
                 'line 129: ${snapshot.data}  ${snapshot.connectionState} ${snapshot.hasData}');
             double screenWidth = MediaQuery.sizeOf(context).width;
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -273,7 +273,7 @@ class _ClientMitigateOTSchedulingPageState
               );
             } else {
               allItems = snapshot.data[0]; // cast to List<Marker>
-              print('line 111 ${allItems.length}');
+              debugPrint('line 111 ${allItems.length}');
               if (allItems.length == 0) {
                 return Center(
                   child: Padding(
@@ -381,7 +381,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
   }
 
   String getOvertimeString(bool? value) {
-    print('line 450: $value');
+    debugPrint('line 450: $value');
     String str = 'No';
     if (value == null) {
       return str;
@@ -389,7 +389,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     if (value == true) {
       str = 'Yes';
     }
-    print('line 457: $str');
+    debugPrint('line 457: $str');
     return str;
   }
 
@@ -399,7 +399,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     }
     double val = double.parse(value.toString());
     String str = val.toStringAsFixed(2);
-    print('line 466: $str');
+    debugPrint('line 466: $str');
     return str;
   }
 
@@ -431,7 +431,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     fontSize = 16;
     fontSize /= h;
     double height = 290; // * (screenHeight! / 800);
-    print('line 98 in tile building');
+    debugPrint('line 98 in tile building');
     return Container(
       width: screenWidth! - 10,
       height: height,
@@ -819,7 +819,7 @@ class _ClientCampaignTile1State extends State<ClientCampaignTile1> {
     fontSize = 16;
     fontSize /= h;
     double height = 200; // * (screenHeight! / 800);
-    print('line 98 in tile building');
+    debugPrint('line 98 in tile building');
     return Container(
       width: screenWidth! - 10,
       height: height,

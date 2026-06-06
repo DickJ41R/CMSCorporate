@@ -24,20 +24,20 @@ class ClientServices {
   Future<List<dynamic>> getClientWorkOrders(
       int clientId, BuildContext ctx) async {
     try {
-      print('line 22 get clientworkorders $clientId');
+      debugPrint('line 22 get clientworkorders $clientId');
       List<dynamic> response =
           await callRetrieveClientWorkOrdersFunction(clientId, ctx);
-      print('line 24: $response');
+      debugPrint('line 24: $response');
       return response;
     } catch (e) {
-      print('line 28: ${e.toString()}');
+      debugPrint('line 28: ${e.toString()}');
       return [];
     }
   }
 
   Future<List<Map<String, dynamic>>> getCannotBeScheduledData(
       int clientId) async {
-    print('line 32: $clientId');
+    debugPrint('line 32: $clientId');
     List<Map<String, dynamic>> lm = [];
     DateTime dte = DateTime.now();
     dte = dte.subtract(Duration(
@@ -47,30 +47,30 @@ class ClientServices {
         microseconds: dte.microsecond,
         milliseconds: dte.millisecond));
     try {
-      print('line 35 getcannot be scheduled: $clientId');
+      debugPrint('line 35 getcannot be scheduled: $clientId');
       await FirebaseFirestore.instance
           .collection('ClientCannotBeScheduled')
           .where("clientId", isEqualTo: clientId)
           .where('shiftDate', isGreaterThanOrEqualTo: Timestamp.fromDate(dte))
           .get()
           .then((snapshot) {
-        print(
+        debugPrint(
             'line 43 get client cannot be scheduled: ${snapshot.docs.length}');
         for (var snp in snapshot.docs) {
           lm.add(snp.data());
         }
       });
-      print('line 48: ${lm.length}');
+      debugPrint('line 48: ${lm.length}');
       return lm;
     } catch (e) {
-      print('line 53 $e');
+      debugPrint('line 53 $e');
       throw Exception('line 54: ${e.toString()}');
     }
   }
 
   Future<List<dynamic>> callRetrieveClientWorkOrdersFunction(
       int clientId, BuildContext ctx) async {
-    print('line 60 callretrieveclients: $clientId');
+    debugPrint('line 60 callretrieveclients: $clientId');
     try {
       HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'retrieveclientworkorders02',
@@ -78,49 +78,49 @@ class ClientServices {
           timeout: const Duration(seconds: 5),
         ),
       );
-      print('line 68: just before calling retrieve client wos');
+      debugPrint('line 68: just before calling retrieve client wos');
       List<dynamic> result = await callingRetrieveClientWorkOrdersFunction(
           callable, clientId, ctx);
-      print('line 71: $result');
+      debugPrint('line 71: $result');
       if (result[0]['ERROR'] != null) {
-        print('line 73: Error getting htc id to asm');
+        debugPrint('line 73: Error getting htc id to asm');
         return result;
       }
-      print('line 76 successfully retrieved htc');
+      debugPrint('line 76 successfully retrieved htc');
 
       return result;
     } catch (e) {
-      print('line 80 $e');
+      debugPrint('line 80 $e');
       throw Exception('line 81: ${e.toString()}');
     }
   }
 
   Future<List<dynamic>> callingRetrieveClientWorkOrdersFunction(
       HttpsCallable callable, int clientId, BuildContext ctx) async {
-    print('line 87: $clientId');
+    debugPrint('line 87: $clientId');
     try {
       var data = {
         "clientId": clientId,
       };
       final HttpsCallableResult result = await callable(data);
-      print('line 93 ${result.data}');
+      debugPrint('line 93 ${result.data}');
       //    var convertedResult = Map<String, dynamic>.from(result.data);
       return result.data;
     } catch (e) {
-      print('line 97 error: $e');
+      debugPrint('line 97 error: $e');
       throw Exception('line 98  ${e.toString()}');
     }
   }
 
   Future<List<Map<String, dynamic>>> getClientAddressData(int clientId) async {
     List<Map<String, dynamic>> lm = [];
-    print('line 76 getclientaddress: $clientId');
+    debugPrint('line 76 getclientaddress: $clientId');
     await FirebaseFirestore.instance
         .collection('ClientAddress')
         .where("clientId", isEqualTo: clientId)
         .get()
         .then((snapshot) {
-      print('line 82 get client addr ${snapshot.docs.length}');
+      debugPrint('line 82 get client addr ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         lm.add(snp.data());
       }
@@ -135,7 +135,7 @@ class ClientServices {
         .where("clientId", isEqualTo: clientId)
         .get()
         .then((snapshot) {
-      print('line 33 gt clent ddress data  ${snapshot.docs.length}');
+      debugPrint('line 33 gt clent ddress data  ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         ClientAddress cli = ClientAddress.fromFirestore(snp, null);
         lm.add(cli);
@@ -152,7 +152,7 @@ class ClientServices {
         .where("clientId", isEqualTo: clientId)
         .get()
         .then((snapshot) {
-      print('line 49 get client contact ${snapshot.docs.length}');
+      debugPrint('line 49 get client contact ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         var obj = snp.data();
         obj['id'] = snp.id;
@@ -170,7 +170,7 @@ class ClientServices {
         .where("clientId", isEqualTo: clientId)
         .get()
         .then((snapshot) {
-      print('line 72 get client deptgs ${snapshot.docs.length}');
+      debugPrint('line 72 get client deptgs ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         lm.add(snp.data());
       }
@@ -185,7 +185,7 @@ class ClientServices {
         .where("clientId", isEqualTo: clientId)
         .get()
         .then((snapshot) {
-      print('line 75 get client holidays ${snapshot.docs.length}');
+      debugPrint('line 75 get client holidays ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         lm.add(snp.data());
       }
@@ -201,7 +201,7 @@ class ClientServices {
         .orderBy("invoiceDate", descending: true)
         .get()
         .then((snapshot) {
-      print('line 88  client invoice ${snapshot.docs.length}');
+      debugPrint('line 88  client invoice ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         lm.add(snp.data());
       }
@@ -216,7 +216,7 @@ class ClientServices {
         .where("clientId", isEqualTo: clientId)
         .get()
         .then((snapshot) {
-      print('line 1p1 client dnu ${snapshot.docs.length}');
+      debugPrint('line 1p1 client dnu ${snapshot.docs.length}');
       lm = [];
       for (var snp in snapshot.docs) {
         lm!.add(snp.data());
@@ -258,7 +258,7 @@ class ClientServices {
         .get()
         .then((snapshot) {
       lm = [];
-      print('line 158 client ${snapshot.docs.length}');
+      debugPrint('line 158 client ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         lm!.add(snp.data());
       }
@@ -273,7 +273,7 @@ class ClientServices {
         .where("clientId", isEqualTo: clientId)
         .get()
         .then((snapshot) {
-      print('line 158 getclient ${snapshot.docs.length}');
+      debugPrint('line 158 getclient ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         lm = snp.data();
         break;
@@ -284,7 +284,7 @@ class ClientServices {
 
   Future<List<Map<String, dynamic>>>? getClientsByBranchId(branchId) async {
     List<Map<String, dynamic>> lm = [];
-    print('line 163 getclientbybranchid $branchId');
+    debugPrint('line 163 getclientbybranchid $branchId');
     try {
       //begin debug
       //take out for production
@@ -298,17 +298,17 @@ class ClientServices {
           . //debug
           get()
           .then((snapshot) {
-        print('line 168 getclientbybrnchid ${snapshot.docs.length}');
+        debugPrint('line 168 getclientbybrnchid ${snapshot.docs.length}');
         for (var snp in snapshot.docs) {
           final obj = snp.data();
           lm.add(obj);
         }
-        print('line 174: ${lm.length}');
+        debugPrint('line 174: ${lm.length}');
         return lm;
       });
       return lm;
     } catch (e) {
-      print('line 258 error $e');
+      debugPrint('line 258 error $e');
       String te = e.toString();
       te = te.replaceAll('Exception: Exception:', 'Exception:');
       throw Exception(te.toString());
@@ -324,7 +324,7 @@ class ClientServices {
           .collection('Client')
           .get()
           .then((snapshot) {
-        print('line 225 getclientbybrnchid ${snapshot.docs.length}');
+        debugPrint('line 225 getclientbybrnchid ${snapshot.docs.length}');
         for (var snp in snapshot.docs) {
           final obj = snp.data();
           if (branchIds.indexOf(obj['branchId']) == true) {
@@ -334,7 +334,7 @@ class ClientServices {
       });
       return lm;
     } catch (e) {
-      print('line 258 error $e');
+      debugPrint('line 258 error $e');
       throw Exception(e.toString());
     }
   }
@@ -385,7 +385,7 @@ class ClientServices {
             new DateTime.fromMillisecondsSinceEpoch(dtt).toIso8601String();
         final dateTime = DateTime.parse(ds);
         xt = format.format(dateTime); // 2021-08-11 11:38
-        print('line 217 $xt');
+        debugPrint('line 217 $xt');
         List<String> xts = xt.split(' ');
         xt = xts[1];
         xts = xt.split(':');
@@ -395,17 +395,17 @@ class ClientServices {
         } else {
           xt += ' AM';
         }
-        print('line 230: $xt');
+        debugPrint('line 230: $xt');
         return xt;
       }
     } catch (e) {
-      print('line 233: $e');
+      debugPrint('line 233: $e');
       throw Exception('line 222 get ts ${e.toString()}');
     }
   }
 
   double getTimeHours(String? tme) {
-    print('line 270 gettimehours: $tme');
+    debugPrint('line 270 gettimehours: $tme');
     var slingPayrollHours = [
       {"minutes": 0.0, "decimal": 0.00},
       {"minutes": 1.0, "decimal": 0.02},
@@ -476,31 +476,31 @@ class ClientServices {
       }
       List<String> sts = tme.split(' ');
       if (sts.length < 2) {
-        print('Error with data: $tme');
+        debugPrint('Error with data: $tme');
         return hours;
       }
       String sx = sts[0];
-      print('line 345: $sx');
+      debugPrint('line 345: $sx');
       List<String> sxs = sx.split(':');
       double dmstm = double.parse(sxs[1]);
       if (dmstm == 0) {
         dmstm = 0.0;
       }
       double stmin = 0.0;
-      print('line 352: $dmstm');
+      debugPrint('line 352: $dmstm');
       for (int m = 0; m < slingPayrollHours.length; m++) {
-        print('line 348 comp: $stmin ${slingPayrollHours[m]['minutes']}');
+        debugPrint('line 348 comp: $stmin ${slingPayrollHours[m]['minutes']}');
         if (dmstm == slingPayrollHours[m]['minutes']) {
           stmin = slingPayrollHours[m]['decimal']!;
-          print('line 351: $stmin');
+          debugPrint('line 351: $stmin');
           break;
         }
       }
       hours = double.parse(sxs[0]) + stmin;
-      print('line 353: $hours');
+      debugPrint('line 353: $hours');
       return hours;
     } catch (e) {
-      print('line 356 error $e');
+      debugPrint('line 356 error $e');
       throw Exception(e.toString());
     }
   }
@@ -508,14 +508,14 @@ class ClientServices {
   Future<Map<String, dynamic>> getClientRateDisciplines(
       int clientId, int departmentId, String departmentName) async {
     //List<dynamic> listD = [];
-    print('line 391: $clientId $departmentId $departmentName');
+    debugPrint('line 391: $clientId $departmentId $departmentName');
     Map<String, dynamic>? rateMap;
     List<Map<String, dynamic>> listOfRateMaps = [];
     List<Map<String, dynamic>> listDisciplineMap = [];
     List<dynamic> listOfDisciplines = [];
     bool flagGotHit = false;
     try {
-      print('line 397 check');
+      debugPrint('line 397 check');
       await FirebaseFirestore.instance
           .collection('ClientRate')
           .where('clientId', isEqualTo: clientId)
@@ -523,15 +523,15 @@ class ClientServices {
           .then((querySnapshot) {
         // int cnt = 0;
         for (var docSnapshot in querySnapshot.docs) {
-          print('line 405: $flagGotHit');
+          debugPrint('line 405: $flagGotHit');
           if (flagGotHit == true) {
             continue;
           }
-          print('line 407 ${docSnapshot.id}');
+          debugPrint('line 407 ${docSnapshot.id}');
           final documentId = docSnapshot.id;
           final obj = docSnapshot.data();
           obj['id'] = documentId;
-          print('line 411: $clientId ${obj['departments']}');
+          debugPrint('line 411: $clientId ${obj['departments']}');
           if (obj['hcpId'] != null && obj['hcpId'] > 0) {
             continue;
           }
@@ -546,20 +546,20 @@ class ClientServices {
             obj['departments'] = [];
             obj['departments'].add(dpm);
           }
-          print('line 431 check ${obj['departments']} ${obj['disciplines']}');
+          debugPrint('line 431 check ${obj['departments']} ${obj['disciplines']}');
           flagGotHit = false;
           rateMap = Map.from(obj);
           for (int i = 0; i < obj['departments'].length; i++) {
             dynamic ob = obj['departments'][i];
-            print('line 432: $ob ');
-            print(
+            debugPrint('line 432: $ob ');
+            debugPrint(
                 'line 433 ${ob['departmentName'].toString()} ${departmentName.toString()}');
-            print(
+            debugPrint(
                 'line 434 ${int.parse(ob['departmentId'].toString())} ${int.parse(departmentId.toString())}');
             if (ob['departmentName'].toString() == departmentName.toString() ||
                 int.parse(ob['departmentId'].toString()) ==
                     int.parse(departmentId.toString())) {
-              print('line 442 check');
+              debugPrint('line 442 check');
               listOfDisciplines = [];
               for (int j = 0; j < obj['disciplines'].length; j++) {
                 dynamic db = obj['disciplines'][j];
@@ -574,7 +574,7 @@ class ClientServices {
                 if (flagIsDuplicate == true) {
                   continue;
                 }
-                print('line 456 ${listOfDisciplines.length}');
+                debugPrint('line 456 ${listOfDisciplines.length}');
                 if (listOfDisciplines.length > 0) {
                   for (int k = 0; k < listOfDisciplines.length; k++) {
                     dynamic dd = listOfDisciplines[k];
@@ -585,7 +585,7 @@ class ClientServices {
                     listOfDisciplines.add(db);
                   }
                 } else {
-                  print('line 468: $db');
+                  debugPrint('line 468: $db');
                   listOfDisciplines.add(db);
                 }
               }
@@ -597,7 +597,7 @@ class ClientServices {
                 };
                 listDisciplineMap.add(disciplineMap);
               }
-              print('line 484: ${rateMap!['disciplines']}');
+              debugPrint('line 484: ${rateMap!['disciplines']}');
               listOfRateMaps.add(rateMap!);
               flagGotHit = true;
             }
@@ -611,21 +611,21 @@ class ClientServices {
         }
       });
 
-      print('line 422 ${listOfRateMaps.length} ${listDisciplineMap.length}');
+      debugPrint('line 422 ${listOfRateMaps.length} ${listDisciplineMap.length}');
       Map<String, dynamic> ld = {
         "listDisciplineMap": listDisciplineMap,
         "listClientRates": listOfRateMaps
       };
       return ld;
     } catch (e) {
-      print('line 484 error in getclientratedisciplinerate: $e');
+      debugPrint('line 484 error in getclientratedisciplinerate: $e');
       throw Exception('Error in getClientRateDisciplines: ${e.toString()}');
     }
   }
 
   Future<List<Map<String, dynamic>>> getClientDepartmentData(
       int clientId) async {
-    print('line 596: $clientId');
+    debugPrint('line 596: $clientId');
     List<Map<String, dynamic>> dps = [];
     try {
       await FirebaseFirestore.instance
@@ -639,7 +639,7 @@ class ClientServices {
           final obj = docSnapshot.data();
           obj['id'] = documentId;
           cnt += 1;
-          print('line 446: $cnt ${obj['statusId']}');
+          debugPrint('line 446: $cnt ${obj['statusId']}');
           bool bl = obj['departmentName'].contains('PSG');
           if (bl == true) {
             continue;
@@ -648,18 +648,18 @@ class ClientServices {
           if (obj['statusId'] != 'A') {
             continue;
           }
-          print('line 417 $cnt');
+          debugPrint('line 417 $cnt');
           dps.add(obj);
         }
       });
       //  List<Map<String, dynamic>> drs = [];
-      print('line 422 ${dps.length}');
+      debugPrint('line 422 ${dps.length}');
       if (dps.length == 0) {
         throw Exception('No active departments found for the client');
       }
       return dps;
     } catch (e) {
-      print('line 418 error getting departments.');
+      debugPrint('line 418 error getting departments.');
       throw Exception('Error: ${e.toString()}');
     }
   }
@@ -679,7 +679,7 @@ class ClientServices {
           final obj = docSnapshot.data();
           obj['id'] = documentId;
           cnt += 1;
-          print('line 446: $cnt ${obj['statusId']}');
+          debugPrint('line 446: $cnt ${obj['statusId']}');
           bool bl = obj['departmentName'].contains('PSG');
           if (bl == true) {
             continue;
@@ -690,25 +690,25 @@ class ClientServices {
           if (obj['departmentId'] != departmentId) {
             continue;
           }
-          print('line 417 $cnt');
+          debugPrint('line 417 $cnt');
           dps.add(obj);
         }
       });
       //  List<Map<String, dynamic>> drs = [];
-      print('line 422 ${dps.length}');
+      debugPrint('line 422 ${dps.length}');
       if (dps.length == 0) {
         throw Exception('No active departments found for the client');
       }
       return dps;
     } catch (e) {
-      print('line 418 error getting departments.');
+      debugPrint('line 418 error getting departments.');
       throw Exception('Error: ${e.toString()}');
     }
   }
 
   Future<List<ClientData>> getClientDataFromSearch(String clientName) async {
     List<ClientData> clientData = [];
-    print('line  577: $clientName');
+    debugPrint('line  577: $clientName');
     clientName = clientName.toLowerCase();
     List<Map<String, dynamic>> branches = [
       {"branchCode": 615, "branchName": "RALEIGH CMS 101"},
@@ -735,7 +735,7 @@ class ClientServices {
       branchNamex = lts[0];
       for (int i = 0; i < branches.length; i++) {
         Map<String, dynamic> ob = branches[i];
-        print(
+        debugPrint(
             'line 616: ${ob['branchName'].toLowerCase().contains(lts[0].toLowerCase())}');
 
         if (ob['branchName'].toLowerCase().contains(lts[0].toLowerCase()) ==
@@ -747,10 +747,10 @@ class ClientServices {
       clientNamex = lts[1].toLowerCase();
     } else {
       String lcl = clientName.toLowerCase();
-      print('line 613: $lcl');
+      debugPrint('line 613: $lcl');
       for (int i = 0; i < branches.length; i++) {
         Map<String, dynamic> ob = branches[i];
-        print(
+        debugPrint(
             'line 616: ${ob['branchName'].toLowerCase().contains(lcl.toLowerCase())}');
         if (ob['branchName'].toLowerCase().contains(lcl.toLowerCase()) ==
             true) {
@@ -768,7 +768,7 @@ class ClientServices {
       clientNamex = '';
       clientNumber = int.parse(clientName);
     }
-    print('line 632: $branchNumberx');
+    debugPrint('line 632: $branchNumberx');
     try {
       ClientData? tbj;
       await FirebaseFirestore.instance
@@ -796,7 +796,7 @@ class ClientServices {
                 if (clientNamex == null) {
                   clientNamex = clientName.toLowerCase();
                 }
-                print('line 662: $clientNamex');
+                debugPrint('line 662: $clientNamex');
 
                 if (obj['clientName'].toLowerCase().indexOf(clientNamex) !=
                     -1) {
@@ -815,7 +815,7 @@ class ClientServices {
               int idx = obj['clientName']
                   .toLowerCase()
                   .indexOf(clientNamex!.toLowerCase());
-              print('line 589: $idx $clientNamex ${obj['clientName']}');
+              debugPrint('line 589: $idx $clientNamex ${obj['clientName']}');
               if (idx == -1) {
                 continue;
               }
@@ -832,7 +832,7 @@ class ClientServices {
       });
       return clientData;
     } catch (e) {
-      print('line 594 error: ${e.toString()}');
+      debugPrint('line 594 error: ${e.toString()}');
       return [];
     }
   }
@@ -850,7 +850,7 @@ class ClientServices {
         break;
       }
     });
-    print('line  779: $obj');
+    debugPrint('line  779: $obj');
     return obj!;
   }
 
@@ -874,7 +874,7 @@ class ClientServices {
   Future<Map<String, dynamic>> getClientCredit(int clientId) async {
     try {
       // DateTime shiftDate = DateTime.now();
-      print('line 1152 $clientId');
+      debugPrint('line 1152 $clientId');
       Map<String, dynamic>? clientCredit;
       await FirebaseFirestore.instance
           .collection('ClientCredit')
@@ -887,13 +887,13 @@ class ClientServices {
           break;
         }
       });
-      print('line 1165 $clientCredit');
+      debugPrint('line 1165 $clientCredit');
       if (clientCredit == null) {
         throw Exception('line 800 no client credit records');
       }
       if (clientCredit!.entries.isNotEmpty) {
         Map<String, dynamic> agingData = await getAgingData(clientId);
-        print('line 622: ${agingData}');
+        debugPrint('line 622: ${agingData}');
         return {
           'clientCredit': clientCredit,
           'agingData': agingData['balances'],
@@ -903,7 +903,7 @@ class ClientServices {
         return {};
       }
     } catch (e) {
-      print('line 1166 error: $e');
+      debugPrint('line 1166 error: $e');
       return {};
     }
   }
@@ -956,9 +956,9 @@ class ClientServices {
           if (balance == 0) {
             continue;
           }
-          print('line 686: ${lag['totalAmount']} ${lag['totalPaid']} $balance');
+          debugPrint('line 686: ${lag['totalAmount']} ${lag['totalPaid']} $balance');
           Timestamp ids = lag['invoiceDate'];
-          print('line 688: $ids');
+          debugPrint('line 688: $ids');
           DateTime ide = ids.toDate();
           ide = ide.subtract(Duration(
               hours: ide.hour,
@@ -968,10 +968,10 @@ class ClientServices {
               milliseconds: ide.millisecond));
           int mse = cds.millisecondsSinceEpoch - ide.millisecondsSinceEpoch;
           double msed = double.parse(mse.toString());
-          print('line 698: $msed');
+          debugPrint('line 698: $msed');
           msed /= 86400000;
           int days = msed.round();
-          print('line 701: $days');
+          debugPrint('line 701: $days');
           int idx = -1;
           if (days < 31) {
             idx = 0;
@@ -984,17 +984,17 @@ class ClientServices {
           } else if (days >= 121) {
             idx = 4;
           }
-          print('line 713: $balance $idx');
+          debugPrint('line 713: $balance $idx');
           totalCurrentBalance += balance;
           Map<String, dynamic> bal = balances[idx];
-          print('line 715: ${bal}');
+          debugPrint('line 715: ${bal}');
           bal['balance'] += balance;
           balances[idx] = bal;
         }
       });
       return {'balances': balances, 'totalCurrentBalance': totalCurrentBalance};
     } catch (e) {
-      print('line 720 error $e');
+      debugPrint('line 720 error $e');
       throw Exception('Error getting aging data');
     }
   }
@@ -1008,35 +1008,35 @@ class ClientServices {
           .set(clt, SetOptions(merge: true));
       return "Success";
     } catch (e) {
-      print('line 926 error getting users: ${e.toString()}');
+      debugPrint('line 926 error getting users: ${e.toString()}');
       return "Error: ${e.toString()}";
     }
   }
 
   Future<bool> insertClientUserX(Map<String, dynamic> obj) async {
     try {
-      print('line 999: ${obj}');
+      debugPrint('line 999: ${obj}');
       String email = obj['email'];
       String password = obj['password'];
 
       UserCredential dyn = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-      print('line 1738: $dyn');
+      debugPrint('line 1738: $dyn');
       if (dyn.user == null) {
-        print('line 2259: $email $password');
+        debugPrint('line 2259: $email $password');
         throw Exception('line 937: dyn is null');
       }
 
-      print('line 1744: ${dyn.user!.uid} ');
+      debugPrint('line 1744: ${dyn.user!.uid} ');
       String uid = dyn.user!.uid;
-      print('line 1746 uid: ${uid}');
+      debugPrint('line 1746 uid: ${uid}');
       await FirebaseFirestore.instance
           .collection('ClientUser')
           .doc(uid)
           .set(obj);
       return true;
     } catch (e) {
-      print('line 926 error getting users: ${e.toString()}');
+      debugPrint('line 926 error getting users: ${e.toString()}');
       return false;
     }
   }
@@ -1050,7 +1050,7 @@ class ClientServices {
           .update(obj);
       return true;
     } catch (e) {
-      print('line 937 error getting users: ${e.toString()}');
+      debugPrint('line 937 error getting users: ${e.toString()}');
       return false;
     }
   }
@@ -1064,13 +1064,13 @@ class ClientServices {
           .update(obj);
       return true;
     } catch (e) {
-      print('line 937 error getting users: ${e.toString()}');
+      debugPrint('line 937 error getting users: ${e.toString()}');
       return false;
     }
   }
 
   Future<bool> updateTheClientUser(Map<String, dynamic> obj) async {
-    print('line 1052 $obj');
+    debugPrint('line 1052 $obj');
     try {
       await FirebaseFirestore.instance
           .collection('ClientUser')
@@ -1078,7 +1078,7 @@ class ClientServices {
           .set(obj, SetOptions(merge: true));
       return true;
     } catch (e) {
-      print('line 937 error getting users: ${e.toString()}');
+      debugPrint('line 937 error getting users: ${e.toString()}');
       return false;
     }
   }
@@ -1098,10 +1098,10 @@ class ClientServices {
           listCls.add(obj);
         }
       });
-      print('line 1062: ${listCls.length} ');
+      debugPrint('line 1062: ${listCls.length} ');
       return listCls;
     } catch (e) {
-      print('line 926 error getting users: ${e.toString()}');
+      debugPrint('line 926 error getting users: ${e.toString()}');
       return [];
     }
   }
@@ -1114,7 +1114,7 @@ class ClientServices {
       'hasScheduledHCPs': false,
       'status': 'No Data'
     };
-    print('line 860 check for cancel work order');
+    debugPrint('line 860 check for cancel work order');
     try {
       DateTime dms = DateTime.now();
       dms = dms.subtract(Duration(
@@ -1133,7 +1133,7 @@ class ClientServices {
           .get()
           .then((querySnapshot) {
         for (var docSnapshot in querySnapshot.docs) {
-          print('line 1066: $dcxId $docSnapshot.id');
+          debugPrint('line 1066: $dcxId $docSnapshot.id');
           if (dcxId == docSnapshot.id) {
             continue;
           }
@@ -1150,11 +1150,11 @@ class ClientServices {
           if (tmd.millisecondsSinceEpoch == dms.millisecondsSinceEpoch) {
             int sct = obj['shiftCount'];
             sct += int.parse(shiftCount.toString());
-            print('line 903: $sct ${obj['shiftCount']}');
+            debugPrint('line 903: $sct ${obj['shiftCount']}');
             tvs['status'] = 'WriteCWO';
             tvs['shiftCount'] = sct;
             tvs['hasScheduledHCPs'] = true;
-            print('line 906: $tvs $sct');
+            debugPrint('line 906: $tvs $sct');
             return tvs;
           }
         }
@@ -1185,7 +1185,7 @@ class ClientServices {
             tvs['shiftHasHCPs'] = true;
             tvs['status'] = 'CreateCWO';
             tvs['shiftCount'] = shiftCount;
-            print('line 938');
+            debugPrint('line 938');
             return tvs;
           }
         }
@@ -1196,7 +1196,7 @@ class ClientServices {
       });
       return tvs;
     } catch (e) {
-      print('line 889: ${e.toString()}');
+      debugPrint('line 889: ${e.toString()}');
       return tvs;
     }
   }
@@ -1210,8 +1210,8 @@ class ClientServices {
       bool payPremiumRate,
       int clientUserId,
       BuildContext ctx) async {
-    print('line 1171 clentsvrcreatescheduline ${listOfDatesWithShifts.length}');
-    print('line 1192: $clientUserId');
+    debugPrint('line 1171 clentsvrcreatescheduline ${listOfDatesWithShifts.length}');
+    debugPrint('line 1192: $clientUserId');
     List<Map<String, dynamic>> wosForCounts = [];
     List<Map<String, dynamic>> clArray = [];
     List<String> listClientWorkOrderIds = [];
@@ -1251,7 +1251,7 @@ class ClientServices {
           }
         }
       });
-      print('line 1204 check $mp');
+      debugPrint('line 1204 check $mp');
       if (mp.isEmpty) {
         throw Exception('Did not get a Clientuser');
       }
@@ -1271,20 +1271,20 @@ class ClientServices {
           }
         }
       });
-      print('line 1221: ${listOfDatesWithShifts[0]}');
+      debugPrint('line 1221: ${listOfDatesWithShifts[0]}');
       List<dynamic>? ldDepartments;
-      print('line 1223: ${listOfDatesWithShifts[0]['departmentIds']}');
+      debugPrint('line 1223: ${listOfDatesWithShifts[0]['departmentIds']}');
       ldDepartments = listOfDatesWithShifts[0]['departments'];
-      print('line 1205 ${ldDepartments}');
+      debugPrint('line 1205 ${ldDepartments}');
       int departmentId = ldDepartments![0]['departmentId'];
       if (departmentId == 0) {
         throw Exception('line 1176 DepartmentId == 0');
       }
       String departmentName = ldDepartments[0]['departmentName'];
       String departmentNumber = ldDepartments[0]['departmentNumber'];
-      print('line 1212 check');
+      debugPrint('line 1212 check');
       int workersCompCodeId = listOfDatesWithShifts[0]['workersCompCodeId'];
-      print('line 1214 check');
+      debugPrint('line 1214 check');
       String workersCompType = listOfDatesWithShifts[0]['workersCompType'];
       if (listOfDatesWithShifts[0]['rateType'] == null ||
           listOfDatesWithShifts[0]['rateType'] == "") {
@@ -1296,17 +1296,17 @@ class ClientServices {
         listOfDatesWithShifts[0]['rateTypeCodeId'] = 2683;
       }
       int rateTypeCodeId = listOfDatesWithShifts[0]['rateTypeCodeId'];
-      print('line 1226 check');
+      debugPrint('line 1226 check');
       List<dynamic>? ldDisciplines;
       ldDisciplines = listOfDatesWithShifts[0]['disciplines'];
-      print('line 1229: ${ldDisciplines}');
+      debugPrint('line 1229: ${ldDisciplines}');
       int disciplineId = ldDisciplines![0]['disciplineId'];
       String disciplineName = ldDisciplines[0]['disciplineName'];
-      print('line 1232 check $clientId');
+      debugPrint('line 1232 check $clientId');
       Map<String, dynamic>? clientMap = await getClient(clientId);
-      print('line 1234: ${clientMap!['clientId']} $clientMap');
+      debugPrint('line 1234: ${clientMap!['clientId']} $clientMap');
 
-      print('line 1236: clisvr createsched ${clientMap['orientation']}');
+      debugPrint('line 1236: clisvr createsched ${clientMap['orientation']}');
 
       //  List<ClientDepartment>?dps = fromClientDepartments;
       bool orientation = false;
@@ -1316,7 +1316,7 @@ class ClientServices {
       List<dynamic> dps = listOfDatesWithShifts[0]['departments'];
       dynamic dp = dps[0];
       //bool useClientPayment = dp['useClientPayment'];
-      print('line 1246 clisver create: $dp');
+      debugPrint('line 1246 clisver create: $dp');
       //    int idx =-1;
       //   Map<String, dynamic>date;
       Map<String, dynamic> addr;
@@ -1351,7 +1351,7 @@ class ClientServices {
           //   "state": null,
           //   "zipCode": null
           // };
-          print('line 1280 address is empty: $clientId');
+          debugPrint('line 1280 address is empty: $clientId');
           throw Exception('Address is empty for client: $clientId');
         }
       } else {
@@ -1367,7 +1367,7 @@ class ClientServices {
           "timeZoneOffset": dp['timeZoneOffset']
         };
       }
-      print('line 1295 clisver create: $addr');
+      debugPrint('line 1295 clisver create: $addr');
       int? cClientId = clientMap['clientId'];
       int? cClientUserId = clientUserId;
       String? cClientName = clientMap['clientName'];
@@ -1383,31 +1383,31 @@ class ClientServices {
       // dynamic xr =
       //     listOfDatesWithShifts[listOfDatesWithShifts.length - 1]['rate'];
       // if (xr == null) {
-      //   print('line 1308 last rate is null in listofdates is null');
+      //   debugPrint('line 1308 last rate is null in listofdates is null');
       //   throw Exception('line 1309 debug exception');
       // }
       // dynamic rd = xr['rateDetails'];
-      // print('line 1313: $xr');
-      // print('line 1314: ${rd[rd.length - 1]}');
+      // debugPrint('line 1313: $xr');
+      // debugPrint('line 1314: ${rd[rd.length - 1]}');
       // if (rd[rd.length - 1]['shiftCount'] == 0) {
-      //   print('line 1315 last shift count = 0');
+      //   debugPrint('line 1315 last shift count = 0');
       //   throw Exception('line 1314 debug exception');
       // }
       Map<String, dynamic> clientSchedulingWorkOrder = {};
       var uuid = Uuid();
-      print('line 1344: ${listOfDatesWithShifts.length}');
+      debugPrint('line 1344: ${listOfDatesWithShifts.length}');
       for (int i = 0; i < listOfDatesWithShifts.length; i++) {
-        print('line 1346 beginnng of i loop: $i');
+        debugPrint('line 1346 beginnng of i loop: $i');
         dynamic rt = listOfDatesWithShifts[i]['rate'];
-        print('line 1402: ${rt}');
-        print(
+        debugPrint('line 1402: ${rt}');
+        debugPrint(
             'line 1350:  ${rt['rateDetails']} ${rt['rateDetails'][4]['shiftCode']} ${rt['rateDetails'][4]['shiftCount']}');
 
         rt['clientId'] = clientMap['clientId'];
         rt['clientName'] = clientMap['clientName'];
         rt['branchId'] = clientMap['branchId'];
         rt['branchName'] = clientMap['branchName'];
-        print('line 1355 ${clientMap['clientUserId']}');
+        debugPrint('line 1355 ${clientMap['clientUserId']}');
         if (mp['clientUserId'] != null) {
           rt['clientUserId'] = mp['clientUserId'];
         } else {
@@ -1416,34 +1416,34 @@ class ClientServices {
         if (clientUserId == 0) {
           clientUserId = mp['clientUserId'];
         }
-        print('line 1361');
+        debugPrint('line 1361');
         workersCompCodeId = listOfDatesWithShifts[i]['workersCompCodeId'];
-        print('line 1363');
+        debugPrint('line 1363');
         workersCompType = listOfDatesWithShifts[i]['workersCompType'];
-        print('line 1365');
+        debugPrint('line 1365');
         if (listOfDatesWithShifts[i]['rateType'] == '' ||
             listOfDatesWithShifts[i]['rateType'] == null) {
           rateType = 'Per Diem';
         } else {
           rateType = listOfDatesWithShifts[i]['rateType'];
         }
-        print('line 1372');
+        debugPrint('line 1372');
         if (listOfDatesWithShifts[i]['rateTypeCodeId'] != null) {
           rateTypeCodeId = listOfDatesWithShifts[i]['rateTypeCodeId'];
         } else {
           rateTypeCodeId = 2683;
         }
-        print('line 1378');
+        debugPrint('line 1378');
         listOfDatesWithShifts[i]['rate'] = rt;
         dynamic ld = listOfDatesWithShifts[i];
-        print(
+        debugPrint(
             'line 1382: ${ld['payHolidayRate']}  ${ld['overridePayModifiers']}');
-        print(
+        debugPrint(
             'line 1384 ${rt['overridePayModifiers']} ${rt['rateDetails'][0]['payRate']} ${rt['rateDetails'][0]['isAHoliday']}');
 
-        print('line 1386: ${clientMap} ${clientMap['payHolidayRate']}');
+        debugPrint('line 1386: ${clientMap} ${clientMap['payHolidayRate']}');
         // for (int z = 0; z < rt['rateDetails'].length; z++) {
-        //   //     print('line 1324: $z ${rt['rateDetails'][z]}');
+        //   //     debugPrint('line 1324: $z ${rt['rateDetails'][z]}');
         //   if (rt['rateDetails'][z]['isAHoliday'] != null &&
         //       rt['rateDetails'][z]['isAHoliday'] == true) {
         //     if (rt['overridePayModifiers'] == false) {
@@ -1454,7 +1454,7 @@ class ClientServices {
         //       rt['rateDetails'][z]['billRateWE'] *=
         //           clientMap['billingHolidayRate'];
         //     } else {
-        //       print('line 1399');
+        //       debugPrint('line 1399');
         //       if (rt['payHolidayRate'] == null || rt[['payHolidayRate']] == 0) {
         //         rt['payHolidayRate'] = 1.5;
         //       }
@@ -1464,7 +1464,7 @@ class ClientServices {
         //       rt['rateDetails'][z]['billRateWE'] *= rt['billHolidayRate'];
         //     }
         //   }
-        //   print(
+        //   debugPrint(
         //       'line 1410 $z ${rt['rateDetails'][z]['payRate']} ${rt['rateDetails'][z]['payRateWE']} ${clientMap['payHolidayRate']} ${rt['payHolidayRate']}');
         // }
 
@@ -1478,7 +1478,7 @@ class ClientServices {
             seconds: curd.second,
             microseconds: curd.microsecond,
             milliseconds: curd.millisecond));
-        print(
+        debugPrint(
             'line 1422: $curd ${clientMap['payHolidayRate']} ${rt['rateDetails'][0]['payRate']}');
 
         clientSchedulingWorkOrder['rateGroupId'] = rt['rateGroupId'];
@@ -1529,11 +1529,11 @@ class ClientServices {
         latitude = clientMap['latitude'];
         longitude = clientMap['longitude'];
         if (dp['latitude'] > 0) {
-          print('line 1532 got dept lat');
+          debugPrint('line 1532 got dept lat');
           latitude = dp['latitude'];
           longitude = dp['longitude'];
           }
-        print(
+        debugPrint(
             'line 1443 clisver createsched $latitude, $longitude ${addr['state']}');
         clientSchedulingWorkOrder['latitude'] = latitude;
         clientSchedulingWorkOrder['longitude'] = longitude;
@@ -1571,20 +1571,20 @@ class ClientServices {
         clientSchedulingWorkOrder['orderTypeOrderId'] = null;
         clientSchedulingWorkOrder['specialRequirements'] = specialRequirements;
         clientSchedulingWorkOrder['dates'] = [];
-        print('line 1480');
+        debugPrint('line 1480');
         cswo = Map.from(clientSchedulingWorkOrder);
 
         //  Map<String, dynamic>?ls;
 
         //  List<dynamic>shifts = List.from(listOfDatesWithShifts[i]['shifts']);
         List<dynamic> rateDetails = rt['rateDetails'];
-        print('line 1487: ${rateDetails.length}');
+        debugPrint('line 1487: ${rateDetails.length}');
         dynamic rate = listOfDatesWithShifts[i]['rate'];
 
         // for (int k = 0; k < rateDetails.length; k++) {
         //   var v4 = uuid.v4();
         //   dynamic rd = rateDetails[k];
-        //   print('line 1493 $k  $rd');
+        //   debugPrint('line 1493 $k  $rd');
         //   if (rd['startTime'] == null) {
         //     continue;
         //   }
@@ -1592,8 +1592,8 @@ class ClientServices {
         //     continue;
         //   }
         //
-        //   print('line 1501: $cBranchId $cBranchName $cClientId, $cClientName');
-        //   print('line 1502: $disciplineId $disciplineName ${ld['date']}');
+        //   debugPrint('line 1501: $cBranchId $cBranchName $cClientId, $cClientName');
+        //   debugPrint('line 1502: $disciplineId $disciplineName ${ld['date']}');
         // //   Map<String, dynamic> clientPublishedSchedule = {
         //     "uuid": v4,
         //     "clientId": cClientId,
@@ -1626,48 +1626,48 @@ class ClientServices {
         //       .set(clientPublishedSchedule);
         // }
 
-        print('line 1533 clisvr create: $i ${cswo}');
+        debugPrint('line 1533 clisvr create: $i ${cswo}');
         // Map<String,dynamic>ld = Map.from(listOfDatesWithShifts[j]);
         //  List<dynamic>listOfShifts = List.from(listOfDatesWithShifts[j]['shifts']);
         List<dynamic> rtd = rateDetails;
-        print('line 1537: ${rtd.length}');
+        debugPrint('line 1537: ${rtd.length}');
         Map<String, dynamic> ccl = {};
         for (int k = 0; k < rtd.length; k++) {
-          print('line 1539 start of k loop');
+          debugPrint('line 1539 start of k loop');
           clArray = [];
           String hour =
               util.getHoursString(rtd[k]['startTime'], rtd[k]['endTime']);
-          print('line 1543: $k $hour');
+          debugPrint('line 1543: $k $hour');
           rtd[k]['hour'] = hour;
           if (rtd[k]['shiftCount'] == 0) {
             continue;
           }
-          print('line 1545: ${rtd[k]['shiftCount']} ${rtd[k]['hour']}');
+          debugPrint('line 1545: ${rtd[k]['shiftCount']} ${rtd[k]['hour']}');
           var v4 = uuid.v4();
           cswo['uuid'] = v4;
-          print('line 1548 $v4 ${cswo['uuid']}');
+          debugPrint('line 1548 $v4 ${cswo['uuid']}');
           if (rtd[k]['startTime'] == null) {
             continue;
           }
-          print('line 1552:${rtd.length} $k ${rtd[k]['shiftCount']}');
+          debugPrint('line 1552:${rtd.length} $k ${rtd[k]['shiftCount']}');
 
-          print('line 1556: ${rtd[k]['shiftCount']}');
+          debugPrint('line 1556: ${rtd[k]['shiftCount']}');
           int shiftCount = rtd[k]['shiftCount'];
-          print(
+          debugPrint(
               'line 1559: ${rtd[k]['shiftCount']} ${rtd[k]['startTime']} ${rtd[k]['endTime']} ${rtd[k]['meals']}');
           double dvv = util.getHours(
               rtd[k]['startTime'], rtd[k]['endTime'], rtd[k]['meals']);
-          print('line 1562: ${dvv.toStringAsFixed(2)}');
+          debugPrint('line 1562: ${dvv.toStringAsFixed(2)}');
           rtd[k]['hours'] = dvv.toStringAsFixed(2);
-          print(
+          debugPrint(
               'line 1524: $k ${rtd[k]['shiftCode']}  ${rtd[k]['shiftCount']}');
           //  clientSchedulingWorkOrder = Map.from(cswo);
           rtd[k]['hour'] = hour;
-          print('line 1568: ${rtd[k]['hour']}');
+          debugPrint('line 1568: ${rtd[k]['hour']}');
           dynamic shiftDetail = rtd[k];
 
           //get rate group;d
-          print('line 1572: $rtd');
+          debugPrint('line 1572: $rtd');
           int ckv = -1;
           String queryShiftCode = shiftDetail['shiftCode'].toString();
 
@@ -1690,15 +1690,15 @@ class ClientServices {
             'margin': shiftDetail['margin'],
             'marginWE': shiftDetail['marginWE']
           };
-          print('line 1590 clisvr createsched $si $shiftDetail ');
+          debugPrint('line 1590 clisvr createsched $si $shiftDetail ');
 
           Map<String, dynamic> date = {};
           //  Map<String,dynamic> rts = {};
-          print(
+          debugPrint(
               'line 1621: ${si['overridePayModifiers']}  ${si['overrideBillModifiers']}');
-          print('line 1634: ${rtd} ${rate['billingRate']} ${rate['rateType']}');
+          debugPrint('line 1634: ${rtd} ${rate['billingRate']} ${rate['rateType']}');
 
-          print('line 1625 using client money rates');
+          debugPrint('line 1625 using client money rates');
           cswo['payOTRate'] = rt['payOTRate'];
           cswo["payOTPlusRate"] = rt['payOTPlusRate'];
           cswo["payDblRate"] = rt['payDblRate'];
@@ -1731,7 +1731,7 @@ class ClientServices {
           cswo['pushNotificationFrequencyRate'] = pushNotificationFrequencyRate;
           cswo['clientFCMToken'] = clientFcmToken;
 
-          print('line 1694 $k ${rtd[k]['shiftCount']}');
+          debugPrint('line 1694 $k ${rtd[k]['shiftCount']}');
           shiftCount = rtd[k]['shiftCount'];
           // if (rate['departments'] == null) {
           //   Map<String,dynamic> mp = {
@@ -1739,7 +1739,7 @@ class ClientServices {
           //     'departmentName': selectedDepartmentValue
           //   };
           //   rate['departments'] = [mp];
-          //   print('line 1566: ${rate['departments']}');
+          //   debugPrint('line 1566: ${rate['departments']}');
           // } else {
           //   if (rate['departments']['departmentId'] == 0) {
           //     rate['departments']['departmentId'] = selectedDepartmentId;
@@ -1747,23 +1747,23 @@ class ClientServices {
           //   }
           //
           rate['scheduledRateDetails'] = null;
-          print('line 1769: ${rate}');
+          debugPrint('line 1769: ${rate}');
           Map<String, dynamic> dts = {"rates": rate, "shiftDateInfo": si};
           cswo['dates'] = dts;
-          print('line 1770: ${cswo['dates']}');
+          debugPrint('line 1770: ${cswo['dates']}');
           ccl = Map.from(cswo);
-          print('line 1771: ${ccl['workOrderId']} ${ccl['woWorkOrderId']} ');
+          debugPrint('line 1771: ${ccl['workOrderId']} ${ccl['woWorkOrderId']} ');
           Map<String, dynamic> sii = Map.from(si);
-          print('line 1773: ${sii}');
+          debugPrint('line 1773: ${sii}');
           sii['indexValue'] = false;
           date['shiftDateInfo'] = Map.from(sii);
           rate['rateDetails'] = Map.from(shiftDetail);
           date['rates'] = Map.from(rate);
-          print('line 1778: ${date} $rate');
+          debugPrint('line 1778: ${date} $rate');
           //       clArray.add(clientSchedulingWorkOrder);
-          print('line 1779: ${ccl['dates']}');
+          debugPrint('line 1779: ${ccl['dates']}');
 
-          print(
+          debugPrint(
               'line 1782: $shiftCount ${ccl['clientId']} $disciplineName $queryShiftCode');
 
           for (int s = 0; s < shiftCount; s++) {
@@ -1777,12 +1777,12 @@ class ClientServices {
 
               xbj['indexValue'] = true;
             }
-            print('line 1792 ${xbj}');
+            debugPrint('line 1792 ${xbj}');
             Map<String, dynamic> asmwo =
                 convertClientWorkOrderToAsmWorkOrder(xbj);
-            print('line 1795 ${asmwo}');
+            debugPrint('line 1795 ${asmwo}');
             dynamic result = await hts.callCreateMobileWOFunction(asmwo, ctx);
-            print('line 1788: $result');
+            debugPrint('line 1788: $result');
             if (result != null) {
               String workOrderIdUuid = uuid.v4();
               String woWorkOrderId = uuid.v4();
@@ -1810,18 +1810,18 @@ class ClientServices {
               listClientWorkOrderIds.add(xbj['workOrderId']);
               hobj['woWorkOrderId'] = woWorkOrderId;
               hobj['woWorkOrderIdUuid'] = workOrderIdUuid;
-              print('line 1799: ${hobj['workOrderId']}');
+              debugPrint('line 1799: ${hobj['workOrderId']}');
               await FirebaseFirestore.instance
                   .collection('ClientHCPWorkOrder')
                   .doc()
                   .set(hobj);
             }
-            print('line 1740 check');
+            debugPrint('line 1740 check');
           }
         }
         int sfc =
             int.parse(ccl['dates']['shiftDateInfo']['shiftCount'].toString());
-        print(
+        debugPrint(
             'line 1855: ${pushNotificationFrequencyRate} $sfc ${totalScheduledShifts}');
         //     if (woWorkOrderId != null) {
         //       if (listClientWorkOrderIds.indexOf(woWorkOrderId!) == -1) {
@@ -1840,32 +1840,32 @@ class ClientServices {
         //       .set(hobj);
         //   Map<String, dynamic> initialObj = Map.from(ccl);
         //   clArray.add(initialObj);
-        //   print('line 1831: ${clArray.length} ${shiftDetail}');
-        //   print('line 1832 ${shiftDetail['shiftCount']}');
+        //   debugPrint('line 1831: ${clArray.length} ${shiftDetail}');
+        //   debugPrint('line 1832 ${shiftDetail['shiftCount']}');
         //   for (int p = 1; p < shiftDetail['shiftCount']; p++) {
-        //     print('line 1834: $p ${ccl['dates']['shiftDateInfo']}');
+        //     debugPrint('line 1834: $p ${ccl['dates']['shiftDateInfo']}');
         //     dynamic six = ccl['dates']['shiftDateInfo'];
         //     six['indexValue'] = true;
         //     ccl['dates']['shiftDateInfo'] = six;
         //     ccl['workOrderId'] = workOrderId;
         //     ccl['woWorkOrderId'] = woWorkOrderId;
-        //     print('line 1838 $workOrderId $woWorkOrderId');
+        //     debugPrint('line 1838 $workOrderId $woWorkOrderId');
         //     // cswo['dates'] = Map.from(date);
         //     clArray.add(ccl);
         //   }
         //   //      clArray.insert(0, ccl); // at index 0 we are adding A
-        //   print('line 1843 ${clArray.length} ');
-        //   print('line 1844: ${shiftDetail['shiftCount']}');
+        //   debugPrint('line 1843 ${clArray.length} ');
+        //   debugPrint('line 1844: ${shiftDetail['shiftCount']}');
         //
         //   for (int p = 1; p < shiftDetail['shiftCount']; p++) {
         //     Map<String, dynamic> obj = clArray[p];
-        //     print('line 1848: $i $p, ${obj['dates']}');
-        //     print('line 1849:  ${obj['dates']['shiftDateInfo']}');
+        //     debugPrint('line 1848: $i $p, ${obj['dates']}');
+        //     debugPrint('line 1849:  ${obj['dates']['shiftDateInfo']}');
         //     String wid = uuid.v4();
         //     clientHCPWorkOrderId = uuid.v4();
         //     obj['workOrderId'] = workOrderId;
         //     obj['shiftCount'] = shiftDetail['shiftCount'];
-        //     print('line 1854: ${obj['workOrderId']}');
+        //     debugPrint('line 1854: ${obj['workOrderId']}');
         //     obj['woWorkOrderId'] = null;
         //     obj['clientHCPWorkOrderId'] = clientHCPWorkOrderId;
         //     String? wwo;
@@ -1875,7 +1875,7 @@ class ClientServices {
         //         .then((DocumentReference doc) {
         //       wwo = doc.id;
         //     });
-        //     print('line 1880: $wwo $wid');
+        //     debugPrint('line 1880: $wwo $wid');
         //     Map<String, dynamic> zbj = {
         //       'woWorkOrderId': wwo,
         //       'workOrderId': wwo
@@ -1894,10 +1894,10 @@ class ClientServices {
         //         .set(hobj);
         //   }
         // }
-        print('line 1868');
+        debugPrint('line 1868');
       }
       //    }
-      print('line 1858: ${listClientWorkOrderIds}');
+      debugPrint('line 1858: ${listClientWorkOrderIds}');
       if (listClientWorkOrderIds.length == 0) {
         List<double> cnt = [0];
         return cnt;
@@ -1905,10 +1905,10 @@ class ClientServices {
       double dCnt = double.parse(listClientWorkOrderIds.length.toString());
       List<double> cnt = [dCnt];
       return cnt;
-//       print('line 1930: ${DateTime.now().second}');
+//       debugPrint('line 1930: ${DateTime.now().second}');
 //       double countOfScheduled = 0;
 //       await Future.delayed(Duration(seconds: 5), () async {
-//         print('line 1932: ${DateTime.now().second}');
+//         debugPrint('line 1932: ${DateTime.now().second}');
 //
 //         await FirebaseFirestore.instance
 //             .collection('ClientWorkOrderCampaign')
@@ -1919,7 +1919,7 @@ class ClientServices {
 //               double.parse(querySnapshot.docs.length.toStringAsFixed(0));
 //           return;
 //         });
-//         print('line 1881: $countOfScheduled');
+//         debugPrint('line 1881: $countOfScheduled');
 //         if (countOfScheduled == 0) {
 //           await cleanUpSchedulingData(listClientWorkOrderIds);
 //         }
@@ -1927,7 +1927,7 @@ class ClientServices {
 //       });
 //       return [countOfScheduled];
     } catch (e) {
-      print('line 1954 error: $e');
+      debugPrint('line 1954 error: $e');
       List<double> cnt = [0];
       return cnt;
 //      throw Exception('$e');
@@ -1940,13 +1940,13 @@ class ClientServices {
 //     DateTime tm = tms.toDate();
 
     try {
-      print('line 1984 in convert');
+      debugPrint('line 1984 in convert');
       DateTime tm = ccl['dates']['shiftDateInfo']['shiftDate'];
       String smonth = (tm.month).toString();
       String sday = (tm.day).toString();
       String syear = (tm.year).toString();
       String formattedShiftDate = '${smonth}/${sday}/${syear}';
-      print('line 1990: ${formattedShiftDate}');
+      debugPrint('line 1990: ${formattedShiftDate}');
       Map<String, dynamic> asm = {
         "ExternalID": "9999999",
         "AnticipatedNeed": false,
@@ -1984,7 +1984,7 @@ class ClientServices {
       };
       return asm;
     } catch (e) {
-      print('line 2030: ${e.toString()}');
+      debugPrint('line 2030: ${e.toString()}');
       return {};
     }
   }
@@ -2003,10 +2003,10 @@ class ClientServices {
         .then((querySnapshot) async {
       for (var snapshot in querySnapshot.docs) {
         var obj = snapshot.data();
-        print('line 2011: ${snapshot.id}');
+        debugPrint('line 2011: ${snapshot.id}');
         String woWorkOrderId = snapshot.id;
         String uuid = obj['uuid'];
-        print('line 2014: $uuid $obj');
+        debugPrint('line 2014: $uuid $obj');
         await FirebaseFirestore.instance
             .collection('ClientHCPWorkOrder')
             .where('woWorkOrderId', isEqualTo: woWorkOrderId)
@@ -2020,7 +2020,7 @@ class ClientServices {
                 .delete();
           }
         });
-        print('line 2044: $uuid');
+        debugPrint('line 2044: $uuid');
         // await FirebaseFirestore.instance
         //     .collection('ClientPublishedSchedule')
         //     .where('uuid', isEqualTo: uuid)
@@ -2070,22 +2070,22 @@ class ClientServices {
 
   Future<Map<String, dynamic>> getScheduledCount(
       Map<String, dynamic> action, BuildContext ctx) async {
-    print('line 1845 ${action['clientId']} ${action['uuid']}');
+    debugPrint('line 1845 ${action['clientId']} ${action['uuid']}');
 
     try {
       Map<String, dynamic> response =
           await callGetClientSchedulingStatsFunction(action['uuid'], ctx);
-      print('line 1856: $response');
+      debugPrint('line 1856: $response');
       return response;
     } catch (e) {
-      print('line 1839 error in getting schedule count: ${e.toString()}');
+      debugPrint('line 1839 error in getting schedule count: ${e.toString()}');
       return {};
     }
   }
 
   Future<Map<String, dynamic>> callGetClientSchedulingStatsFunction(
       String clientWorkOrderUuid, BuildContext ctx) async {
-    print('line 1866 cwou: $clientWorkOrderUuid');
+    debugPrint('line 1866 cwou: $clientWorkOrderUuid');
     Map<String, dynamic>? mp;
     try {
       await Future.delayed(Duration(seconds: 10), () async {
@@ -2095,24 +2095,24 @@ class ClientServices {
             timeout: const Duration(seconds: 300),
           ),
         );
-        print('line 1416: just before calling retrieve client wos');
+        debugPrint('line 1416: just before calling retrieve client wos');
         Map<String, dynamic> result =
             await callingGetClientSchedulingStatsFunction(
                 callable, clientWorkOrderUuid, ctx);
-        print('line 1879: $result');
+        debugPrint('line 1879: $result');
         if (result['data'] is String) {
-          print('line 1881: Error getting htc id to asm');
+          debugPrint('line 1881: Error getting htc id to asm');
           throw Exception('No matching documents');
         }
-        print('line 1884 successfully retrieved htc');
+        debugPrint('line 1884 successfully retrieved htc');
         mp = result;
 
         return;
       });
-      print('line 1890: $mp');
+      debugPrint('line 1890: $mp');
       return mp!;
     } catch (e) {
-      print('line 1890 $e');
+      debugPrint('line 1890 $e');
       throw Exception('line 81: ${e.toString()}');
     }
   }
@@ -2121,24 +2121,24 @@ class ClientServices {
       HttpsCallable callable,
       String clientWorkOrderUuid,
       BuildContext ctx) async {
-    print('line 1899: $clientWorkOrderUuid');
+    debugPrint('line 1899: $clientWorkOrderUuid');
     try {
       var data = {
         "clientWorkOrderUuid": clientWorkOrderUuid,
       };
       final HttpsCallableResult result = await callable(data);
-      print('line 1905 ${result.data}');
+      debugPrint('line 1905 ${result.data}');
       var convertedResult = Map<String, dynamic>.from(result.data);
       return convertedResult;
     } catch (e) {
-      print('line 1909 error: $e');
+      debugPrint('line 1909 error: $e');
       throw Exception('line 98  ${e.toString()}');
     }
   }
 
   Future<Map<String, dynamic>> getShiftsByClientAndDiscipline(
       int clientId, String disciplineDescription, rateGroupId) async {
-    print('line 2127 doc: $clientId $disciplineDescription $rateGroupId');
+    debugPrint('line 2127 doc: $clientId $disciplineDescription $rateGroupId');
     try {
       String val = '';
       int idx = disciplineDescription.indexOf('(');
@@ -2153,7 +2153,7 @@ class ClientServices {
       int objCount = -1;
 
       Map<String, dynamic>? rateInstance;
-      print('line 2177: ${rateInstance}');
+      debugPrint('line 2177: ${rateInstance}');
       await FirebaseFirestore.instance
           .collection('ClientRateInstance')
           .where('clientId', isEqualTo: clientId)
@@ -2164,7 +2164,7 @@ class ClientServices {
           rateInstance = snapShot.data();
         }
       });
-      print('ine 2187: ${rateInstance}');
+      debugPrint('ine 2187: ${rateInstance}');
       await FirebaseFirestore.instance
           .collection('ClientRate')
           .where('clientId', isEqualTo: clientId)
@@ -2178,7 +2178,7 @@ class ClientServices {
           }
           if (obj['rateTypeDescription'] != null) {
             if (obj['rateTypeDescription'].toLowerCase().contains('contract')) {
-              print('line 2152: ${obj['rateTypeDescription']}');
+              debugPrint('line 2152: ${obj['rateTypeDescription']}');
               continue;
             }
           } else {
@@ -2188,19 +2188,19 @@ class ClientServices {
             continue;
           }
 
-          print('line 2215: ${flagGotHit}');
+          debugPrint('line 2215: ${flagGotHit}');
           for (int j = 0; j < obj['disciplines'].length; j++) {
             dynamic db = obj['disciplines'][j];
             if (flagGotHit == true) {
               continue;
             }
-            print('line 2160: $val $db ${obj['rateGroupId']}, $rateGroupId');
+            debugPrint('line 2160: $val $db ${obj['rateGroupId']}, $rateGroupId');
             if (db['disciplineName'] == val &&
                 obj['rateGroupId'] == rateGroupId) {
-              print('line 2224: ${obj['departments']} $obj');
+              debugPrint('line 2224: ${obj['departments']} $obj');
               flagGotHit = true;
               if (obj['rates'][0]['overridePayModifiers']! == false) {
-                print('line 2227 ${rateInstance}');
+                debugPrint('line 2227 ${rateInstance}');
                 if (rateInstance != null) {
                   obj['rates'][0]['payDblPlusRate'] =
                       rateInstance!['payDblPlusRate'];
@@ -2218,7 +2218,7 @@ class ClientServices {
                 }
               }
               if (obj['rates'][0]['overrideBillModifiers']! == false) {
-                print('line 2245: ${rateInstance}');
+                debugPrint('line 2245: ${rateInstance}');
                 if (rateInstance != null) {
                   obj['rates'][0]['billDblPlusRate'] =
                       rateInstance!['billDblPlusRate'];
@@ -2236,13 +2236,13 @@ class ClientServices {
                 }
               }
             }
-            print('line 2263: ${obj}');
+            debugPrint('line 2263: ${obj}');
             holdObj = Map.from(obj);
             // if (flagGotHit == true) {
             //   break;
             // }
           }
-          print('line 2268: ${obj}');
+          debugPrint('line 2268: ${obj}');
         }
       });
       obj = Map.from(holdObj);
@@ -2253,13 +2253,13 @@ class ClientServices {
         for (int q = 0; q < rd.length; q++) {
           dynamic rdt = rd[q];
           if (lTimes.indexOf(rdt['shiftCode']) == -1) {
-            print('line 2188 ${rdt['shiftCode']}');
+            debugPrint('line 2188 ${rdt['shiftCode']}');
             // if (rdt['startTime'] == null) {
             //   continue;
             // }
             continue;
           }
-          print('line 2193');
+          debugPrint('line 2193');
           if (rdt['startTime'] == null) {
             continue;
           }
@@ -2273,10 +2273,10 @@ class ClientServices {
       }
       obj['rates'][0]['rateDetails'] = rds;
       flagGotHit = true;
-      print('line 2207 $obj');
+      debugPrint('line 2207 $obj');
       return obj;
     } catch (e) {
-      print('line 2218 error: $e');
+      debugPrint('line 2218 error: $e');
       throw Exception('Error ${e.toString()}');
     }
   }
@@ -2300,7 +2300,7 @@ class ClientServices {
 
   Future<List<Map<String, dynamic>>>? getDisciplinesFromClientRates(
       int clientId) async {
-    print('line 2231 in get disciplines from client rates $clientId');
+    debugPrint('line 2231 in get disciplines from client rates $clientId');
     try {
       List<Map<String, dynamic>> lstm = [];
       List<String> listNms = [];
@@ -2314,7 +2314,7 @@ class ClientServices {
         for (var docSnapshot in querySnapshot.docs) {
           final obj = docSnapshot.data();
           var docId = docSnapshot.id;
-          print('line 2245: $docId');
+          debugPrint('line 2245: $docId');
           obj['id'] = docId;
           if (obj['hcpId'] > 0) {
             continue;
@@ -2338,7 +2338,7 @@ class ClientServices {
                   db['disciplineName'] != 'RN') {
                 continue;
               }
-              print('line 2265: ${obj['disciplines']} ${obj['departments']}');
+              debugPrint('line 2265: ${obj['disciplines']} ${obj['departments']}');
               if ((obj['departments'] == null ||
                       obj['departments'].length == 0) &&
                   obj['rateType'] == 'Per Diem') {
@@ -2367,13 +2367,13 @@ class ClientServices {
                 ];
               }
 
-              print('line 2294 ${obj['departments']}');
+              debugPrint('line 2294 ${obj['departments']}');
               if (obj['departments'].length == 0) {
                 continue;
               }
               List<dynamic> listDepts = obj['departments'];
-              print('line 2299: ${listDepts[0]}');
-              print('line 2300: ${obj['rateGroupId']} $db ${listDepts}');
+              debugPrint('line 2299: ${listDepts[0]}');
+              debugPrint('line 2300: ${obj['rateGroupId']} $db ${listDepts}');
               listNms.add(db['disciplineName']);
               Map<String, dynamic> dm = {
                 'rateGroupId': obj['rateGroupId'],
@@ -2382,15 +2382,15 @@ class ClientServices {
                 'disciplineDescription': db['disciplineName'],
                 'departmentName': listDepts[0]['departmentName']
               };
-              print('line 2309: $dm');
+              debugPrint('line 2309: $dm');
               lstm.add(dm);
             }
           }
         }
       }).catchError((error) {
-        print('line 2315: $error');
+        debugPrint('line 2315: $error');
       });
-      print('line 2317 ${lstm.length}');
+      debugPrint('line 2317 ${lstm.length}');
       List<int> listCt = [0, 0, 0];
       for (int i = 0; i < listNms.length; i++) {
         if (listNms[i] == 'CNA') {
@@ -2414,16 +2414,16 @@ class ClientServices {
         }
       }
       lstm.sort((a, b) => a['disciplineId'].compareTo(b['disciplineId']));
-      print('line 2338: ${lstm.length}');
+      debugPrint('line 2338: ${lstm.length}');
       return lstm;
     } catch (e) {
-      print('line 2341 error getting disciplines ${e.toString()}');
+      debugPrint('line 2341 error getting disciplines ${e.toString()}');
       throw Exception(e.toString());
     }
   }
 
   Future<List<Map<String, dynamic>>> getDNUForClients(int clientId) async {
-    print('line 2060 $clientId');
+    debugPrint('line 2060 $clientId');
     try {
       // DateTime shiftDate = DateTime.now();
       List<Map<String, dynamic>> listOfDNUHCPS = [];
@@ -2455,10 +2455,10 @@ class ClientServices {
           listOfDNUHCPS.add(obj);
         }
       });
-      print('line 2074: ${listOfDNUHCPS.length}');
+      debugPrint('line 2074: ${listOfDNUHCPS.length}');
       return listOfDNUHCPS;
     } catch (e) {
-      print('line 2077');
+      debugPrint('line 2077');
       throw Exception('Error: $e');
     }
   }
@@ -2466,24 +2466,24 @@ class ClientServices {
   Future<String> insertClientUser(
       Map<String, dynamic> obj, String userType) async {
     try {
-      print('line 2209: ${obj}');
+      debugPrint('line 2209: ${obj}');
       String email = obj['email'];
       String password = obj['password'];
-      print('line 2212 cms_auth: $email $password ');
+      debugPrint('line 2212 cms_auth: $email $password ');
       final UserCredential dyn =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      print('line 2216: $dyn');
+      debugPrint('line 2216: $dyn');
       if (dyn.user == null) {
-        print('line 2218: $email $password');
+        debugPrint('line 2218: $email $password');
         return 'Error: Invalid login';
       }
       await dyn.user!.updateDisplayName(userType);
       obj['password'] = '**********';
       //
-      print('line 1744: ${dyn.user!.uid} ');
+      debugPrint('line 1744: ${dyn.user!.uid} ');
       // String uid =
       //     obj['clientId'].toString() + ':' + obj['clientUserId'].toString();
       String uid = dyn.user!.uid;
@@ -2493,14 +2493,14 @@ class ClientServices {
           .set(obj, SetOptions(merge: true));
       return "Success";
     } catch (e) {
-      print('line 926 error getting users: ${e.toString()}');
+      debugPrint('line 926 error getting users: ${e.toString()}');
       return "Error: ${e.toString()}";
     }
   }
 
   Future<bool> insertClientDNU(int clientId, int hcpId, int departmentId,
       String departmentName, String comments) async {
-    print('line  745 $clientId, $hcpId $comments');
+    debugPrint('line  745 $clientId, $hcpId $comments');
 
     int clientUserId = authServices.clientUserId!;
     try {
@@ -2519,12 +2519,12 @@ class ClientServices {
         "hcpDNUDate": null,
         "clientUserId": clientUserId,
       };
-      print('line 751: $obj');
+      debugPrint('line 751: $obj');
 
       FirebaseFirestore.instance.collection("ClientDNU").doc().set(obj);
       return true;
     } catch (e) {
-      print('line 750 error: $e');
+      debugPrint('line 750 error: $e');
       return false;
     }
   }
@@ -2537,7 +2537,7 @@ class ClientServices {
         .where("clientId", isEqualTo: clientId)
         .get()
         .then((snapshot) {
-      print('line 733 clientdet ${snapshot.docs.length}');
+      debugPrint('line 733 clientdet ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         if (snp['departmentName'] == null || snp['departmentName'] == '') {
           continue;
@@ -2563,7 +2563,7 @@ class ClientServices {
 
   Future<ClientUser> getClientUserMap(int clientId, String userEmail) async {
     ClientUser? lm;
-    print('line 747 in get clientUser: $userEmail');
+    debugPrint('line 747 in get clientUser: $userEmail');
     try {
       await FirebaseFirestore.instance
           .collection('ClientUser')
@@ -2574,7 +2574,7 @@ class ClientServices {
           .then((querySnapshot) {
         for (var docSnapshot in querySnapshot.docs) {
           final obj = docSnapshot.data();
-          //   print('line 1762: ${obj}');
+          //   debugPrint('line 1762: ${obj}');
           String usn = obj['firstName'].toString().toLowerCase() +
               obj['lastName'].toString().toLowerCase().substring(0, 1);
           ClientUser clu = ClientUser(
@@ -2608,13 +2608,13 @@ class ClientServices {
       }
       return lm!;
     } catch (e) {
-      print('line 1797 error: $e');
+      debugPrint('line 1797 error: $e');
       throw Exception(e.toString());
     }
   }
 
   String getStringDate2(Timestamp ts, dynamic dayValue) {
-    print('line 920 getstringdate2 $ts $dayValue');
+    debugPrint('line 920 getstringdate2 $ts $dayValue');
     try {
       List<String> days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       int dv = int.parse(dayValue.toString());
@@ -2626,14 +2626,14 @@ class ClientServices {
       dte += ' ( ' + dvs + ')';
       return dte;
     } catch (e) {
-      print('line 1248 $e');
+      debugPrint('line 1248 $e');
       throw Exception('Error line 1248: ${e.toString()}');
     }
   }
 
   Map<String, dynamic> convertObjToHbj(Map<String, dynamic> obj) {
-    print('line 2152 ${obj['dates']['shiftDateInfo']}');
-    print(
+    debugPrint('line 2152 ${obj['dates']['shiftDateInfo']}');
+    debugPrint(
         'line 2154 convertobjtohobj ${obj['dates']['shiftDateInfo']['shiftDate']}');
     //      var od= 0;
     Timestamp shiftDate =
@@ -2641,7 +2641,7 @@ class ClientServices {
     DateTime nwd = DateTime.now();
     Timestamp ts = Timestamp.fromDate(nwd);
     Map<String, dynamic> hobj = {};
-    print('line 2161');
+    debugPrint('line 2161');
     try {
       hobj = {
         "orderId": obj['orderId'],
@@ -2761,10 +2761,10 @@ class ClientServices {
         'bookShift': obj['bookShift'],
         'isGPOClient': obj['isGPOClient']
       };
-      print('line 2452 return from converttohobj: $hobj');
+      debugPrint('line 2452 return from converttohobj: $hobj');
       return hobj;
     } catch (e) {
-      print('line 1041 catch error:  $hobj $e');
+      debugPrint('line 1041 catch error:  $hobj $e');
       throw Exception(e.toString());
     }
   }
@@ -2778,7 +2778,7 @@ class ClientServices {
         .where("primaryRole", isEqualTo: 'ClientScheduler')
         .get()
         .then((snapshot) async {
-      print('line 88 ${snapshot.docs.length}');
+      debugPrint('line 88 ${snapshot.docs.length}');
       for (var i = 0; i < snapshot.docs.length; i++) {
         objId = snapshot.docs[i].id;
         obj = snapshot.docs[i].data();
@@ -2801,7 +2801,7 @@ class ClientServices {
         .where("genId", isEqualTo: clientUserId)
         .get()
         .then((snapshot) {
-      print('line 88 ${snapshot.docs.length}');
+      debugPrint('line 88 ${snapshot.docs.length}');
       for (var snp in snapshot.docs) {
         String documentId = snp.id;
         lm = snp.data();
@@ -2827,7 +2827,7 @@ class ClientServices {
         break;
       }
     });
-    print('line 2653: $lm');
+    debugPrint('line 2653: $lm');
     return lm;
   }
 
@@ -2843,14 +2843,14 @@ class ClientServices {
         break;
       }
     });
-    print('line 2653: $lm');
+    debugPrint('line 2653: $lm');
     return lm;
   }
 
   Future<void> sendClientCancelMessage(
       Map<String, dynamic> wor, List<String> tos, String reason) async {
     //Timestamp ts = Timestamp.fromDate(DateTime.now());
-    print('line 2438: ${wor}');
+    debugPrint('line 2438: ${wor}');
     String sname = 'No Employee Scheduled';
     int hcpId = 0;
     String email = 'No Email';
@@ -2910,7 +2910,7 @@ class ClientServices {
       "templateId": templateId,
       "toList": tos
     };
-    print('line 557: ${cancelShift}');
+    debugPrint('line 557: ${cancelShift}');
     await FirebaseFirestore.instance
         .collection('ClientShiftCancellationMessage')
         .doc(orderId.toString())
@@ -2921,20 +2921,20 @@ class ClientServices {
   Future<bool> updateClientAddressForm(
       String documentId, Map<String, dynamic> mp) async {
     try {
-      print('line 36: $documentId ${mp}');
+      debugPrint('line 36: $documentId ${mp}');
       await FirebaseFirestore.instance
           .collection('ClientAddress')
           .doc(documentId)
           .set(mp, SetOptions(merge: true));
       return true;
     } catch (e) {
-      print('line 37 error: ${e.toString()}');
+      debugPrint('line 37 error: ${e.toString()}');
       return false;
     }
   }
   Future<Map<String,dynamic>>? getASingleClientById(int clientId) async {
     try {
-      print('line 36: $clientId');
+      debugPrint('line 36: $clientId');
       Map<String,dynamic>?mp;
       await FirebaseFirestore.instance
           .collection('Client')
@@ -2942,7 +2942,7 @@ class ClientServices {
           .get()
           .then((querySnapshot) {
         if (querySnapshot.docs.length == 0) {
-          print('line 36 no records returned');
+          debugPrint('line 36 no records returned');
           final snapShot = querySnapshot.docs[0];
           mp = snapShot.data();
         }
@@ -2950,12 +2950,12 @@ class ClientServices {
       });
       return mp!;
     } catch (e) {
-      print('line 2592 error: ${e.toString()}');
+      debugPrint('line 2592 error: ${e.toString()}');
       return {};
     }
   }
   Future<Map<String, dynamic>>? getASingleClientUser(int clientId) async {
-    print('line 20 get a singleclient user ${clientId}');
+    debugPrint('line 20 get a singleclient user ${clientId}');
     try {
       Map<String, dynamic>? mp;
       await FirebaseFirestore.instance
@@ -2974,7 +2974,7 @@ class ClientServices {
           .get()
           .then((querySnapshot) {
         if (querySnapshot.docs.length == 0) {
-          print('line 36 no records returned');
+          debugPrint('line 36 no records returned');
           mp = {};
           return mp;
         }
@@ -2983,13 +2983,13 @@ class ClientServices {
         var obj = snp.data();
         obj['id'] = documentId;
         mp = obj;
-        print('line 45 $mp');
+        debugPrint('line 45 $mp');
         return mp;
       });
-      print('line 48 $mp');
+      debugPrint('line 48 $mp');
       return mp!;
     } catch (e) {
-      print('line 42 error: ${e.toString()}');
+      debugPrint('line 42 error: ${e.toString()}');
       throw Exception('line 37 ${e.toString()}');
     }
   }
@@ -2997,14 +2997,14 @@ class ClientServices {
       int clientId) async {
     Map<String, dynamic> lm = {};
     try {
-      print('line 356: $clientId ');
+      debugPrint('line 356: $clientId ');
       bool flagGotHit = false;
       await FirebaseFirestore.instance
           .collection('ClientUser')
           .where("clientId", isEqualTo: clientId)
           .get()
           .then((snapshot) {
-        print('line 88 ${snapshot.docs.length}');
+        debugPrint('line 88 ${snapshot.docs.length}');
         for (var snp in snapshot.docs) {
           lm = snp.data();
           flagGotHit = false;
@@ -3028,7 +3028,7 @@ class ClientServices {
       });
       return lm;
     } catch (e) {
-      print('line 372 read error clientuser: ${e.toString()}');
+      debugPrint('line 372 read error clientuser: ${e.toString()}');
       throw Exception(e.toString());
     }
   }
@@ -3041,10 +3041,10 @@ Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
       QuerySnapshot querySnapshot = await query.get();
       clm = [];
       for (var docSnapShot in querySnapshot.docs) {
-        print('line 3041: ${querySnapshot.docs.length}');
+        debugPrint('line 3041: ${querySnapshot.docs.length}');
         Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
         obj['id'] = docSnapShot.id;
-        print('line 3044 in querysnapshot: $obj');
+        debugPrint('line 3044 in querysnapshot: $obj');
 
         listOfClients.add(obj);
         obj['city'] = '';
@@ -3055,20 +3055,20 @@ Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
             .where('addressType', isEqualTo: 'Physical')
             .get()
             .then((QuerySnapshot) async {
-              print('line 3057: ${QuerySnapshot.docs.length}');
+              debugPrint('line 3057: ${QuerySnapshot.docs.length}');
           for (var docSnapshot in QuerySnapshot.docs) {
             Map<String, dynamic> tobj = docSnapshot.data();
-           print('line 3055: $tobj');
+           debugPrint('line 3055: $tobj');
             obj['city'] = tobj['city'];
             obj['state'] = tobj['state'];
             break;
           }
         });
-        print('line 3066: $obj');
+        debugPrint('line 3066: $obj');
         obj['balance'] = '0.0';
         obj['openCredit'] = false;
         obj['creditLimit'] = 0.0;
-        print('line 3070 $obj');
+        debugPrint('line 3070 $obj');
         await FirebaseFirestore.instance
             .collection('ClientCredit')
             .where('clientId', isEqualTo: obj['clientId'])
@@ -3076,14 +3076,14 @@ Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
             .then((QuerySnapshot) async {
           for (var docSnapshot in QuerySnapshot.docs) {
             Map<String, dynamic> cobj = docSnapshot.data();
-//     print('line 113: $cobj');
+//     debugPrint('line 113: $cobj');
             obj['balance'] = '0.00';
             obj['openCredit'] = cobj['weeklyCreditLimit'];
             obj['creditLimit'] = cobj['creditLimit'] == null ? 0.0 : cobj['creditLimit'];
             break;
           }
         });
-        print('line 3805: $obj');
+        debugPrint('line 3805: $obj');
         Map<String, dynamic> xbj = {
           'clientId': obj['clientId'].toString().length < 4
               ? "    ".substring(0, 4 - obj['clientId'].toString().length) +
@@ -3112,7 +3112,7 @@ Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
           'openCredit':
           obj['openCredit'] == false ? "No" : "Yes"
         };
-     print('line 3110: $xbj');
+     debugPrint('line 3110: $xbj');
         clm.add(xbj);
       }
       clm.sort((a, b) {
@@ -3120,11 +3120,11 @@ Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
         if (cmp != 0) return cmp;
         return a['clientId'].compareTo(b['clientId']);
       });
-      print('line 3123 ${clm.length}');
+      debugPrint('line 3123 ${clm.length}');
       return clm;
 
     } catch(e) {
-      print('line 3116 error: ${e.toString()}');
+      debugPrint('line 3116 error: ${e.toString()}');
       return [];
 
     }

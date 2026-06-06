@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
 
 class ShowHCPDocumentPDF extends StatefulWidget {
+
   const ShowHCPDocumentPDF({super.key, required this.imageData});
 
   final Uint8List imageData;
@@ -30,7 +31,7 @@ class _ShowHCPDocumentPDFState extends State<ShowHCPDocumentPDF> {
   void initState() {
     super.initState();
     createFileOfPdfUrl().then((f) {
-      print('line 34: ${f.path}');
+      debugPrint('line 34: ${f.path}');
       setState(() {
         remotePDFPath = f.path;
       });
@@ -39,7 +40,7 @@ class _ShowHCPDocumentPDFState extends State<ShowHCPDocumentPDF> {
 
   Future<File> createFileOfPdfUrl() async {
     Completer<File> completer = Completer();
-    print("creating file pdf from internet!");
+    debugPrint("creating file pdf from internet!");
     try {
       // "https://berlin2017.droidcon.cod.newthinking.net/sites/global.droidcon.cod.newthinking.net/files/media/documents/Flutter%20-%2060FPS%20UI%20of%20the%20future%20%20-%20DroidconDE%2017.pdf";
       // final url = "https://pdfkit.org/docs/guide.pdf";
@@ -47,19 +48,19 @@ class _ShowHCPDocumentPDFState extends State<ShowHCPDocumentPDF> {
       Uint8List bytes = widget.imageData;
       var dir = await getApplicationDocumentsDirectory();
       var filename = 'my_pdf.pdf';
-      print("line 49 pdf hcp: ${dir.path}/$filename");
+      debugPrint("line 49 pdf hcp: ${dir.path}/$filename");
       File file = File("${dir.path}/$filename");
-      print('line 51: ${bytes.length}');
+      debugPrint('line 51: ${bytes.length}');
       await file.writeAsBytes(bytes, flush: true);
       completer.complete(file);
       //   completer.future.then( (value) {
-      //     print('line 60 completerutue: $value');
+      //     debugPrint('line 60 completerutue: $value');
       //   }).catchError( (error) {
-      //     print('error: $error');
+      //     debugPrint('error: $error');
       // });
-      print('line 63 exiting ${file.path}');
+      debugPrint('line 63 exiting ${file.path}');
     } catch (e) {
-      print('line 65 error: $e');
+      debugPrint('line 65 error: $e');
       throw Exception('Error parsing pdf file!');
     }
 
@@ -107,7 +108,7 @@ class _ShowHCPDocumentPDFState extends State<ShowHCPDocumentPDF> {
                         color: Color.fromARGB(255, 19, 125, 103)),
                   ),
                   onPressed: () {
-                    print('line 76: $remotePDFPath');
+                    debugPrint('line 76: $remotePDFPath');
                     if (remotePDFPath != '') {
                       Navigator.push(
                         context,
@@ -130,17 +131,17 @@ class _ShowHCPDocumentPDFState extends State<ShowHCPDocumentPDF> {
                               });
                             },
                             onError: (error) {
-                              print(error.toString());
+                              debugPrint(error.toString());
                             },
                             onPageError: (page, error) {
-                              print('$page: ${error.toString()}');
+                              debugPrint('$page: ${error.toString()}');
                             },
                             onViewCreated:
                                 (PDFViewController pdfViewController) {
                               _controller.complete(pdfViewController);
                             },
                             // onPageChanged: (int page, int total) {
-                            //   print('page change: $page/$total');
+                            //   debugPrint('page change: $page/$total');
                             // },
                           ),
                         ),
@@ -258,7 +259,7 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
               onRender: (_pages) {
                 setState(() {
                   pages = _pages;
-                  print('line 173: $_pages');
+                  debugPrint('line 173: $_pages');
                   currentPage = 0;
                   isReady = true;
                 });
@@ -267,22 +268,22 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
                 setState(() {
                   errorMessage = error.toString();
                 });
-                print(error.toString());
+                debugPrint(error.toString());
               },
               onPageError: (page, error) {
                 setState(() {
                   errorMessage = '$page: ${error.toString()}';
                 });
-                print('$page: ${error.toString()}');
+                debugPrint('$page: ${error.toString()}');
               },
               onViewCreated: (PDFViewController pdfViewController) {
                 _controller.complete(pdfViewController);
               },
               onLinkHandler: (String? uri) {
-                print('goto uri: $uri');
+                debugPrint('goto uri: $uri');
               },
               onPageChanged: (int? page, int? total) {
-                //  print('page change: $page/$total');
+                //  debugPrint('page change: $page/$total');
                 setState(() {
                   currentPage = page;
                 });

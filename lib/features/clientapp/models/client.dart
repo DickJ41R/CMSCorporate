@@ -79,13 +79,13 @@ class Client {
       required this.invoiceSeparationCodeId,
       required this.maxShiftsPerInvoice,
       required this.maxAmountPerInvoice,
-      required this.printQueue,
+      required this.debugPrintQueue,
       required this.omrQueue,
       required this.emailQueue,
-      required this.printQueueCopies,
+      required this.debugPrintQueueCopies,
       required this.emailQueuePDF,
       required this.emailQueueXLS,
-      required this.printImages,
+      required this.debugPrintImages,
       required this.imagesPerPage,
       required this.invoiceComments,
       required this.creditStatusCodeId,
@@ -252,13 +252,13 @@ class Client {
   final int invoiceSeparationCodeId;
   final int maxShiftsPerInvoice;
   final double maxAmountPerInvoice;
-  final bool printQueue;
+  final bool debugPrintQueue;
   final bool omrQueue;
   final bool emailQueue;
-  final int printQueueCopies;
+  final int debugPrintQueueCopies;
   final bool emailQueuePDF;
   final bool emailQueueXLS;
-  final bool printImages;
+  final bool debugPrintImages;
   final int imagesPerPage;
   final String? invoiceComments;
   final int creditStatusCodeId;
@@ -431,13 +431,13 @@ class Client {
         invoiceSeparationCodeId: data?["invoiceSeparationCodeId"] ?? 0,
         maxShiftsPerInvoice: data?["maxShiftsPerInvoice"] ?? 0,
         maxAmountPerInvoice: data?["maxAmountPerInvoice"] ?? 0,
-        printQueue: data?["printQueue"] ?? false,
+        debugPrintQueue: data?["debugPrintQueue"] ?? false,
         omrQueue: data?["omrQueue"] ?? false,
         emailQueue: data?["emailQueue"] ?? false,
-        printQueueCopies: data?["printQueueCopies"] ?? 0,
+        debugPrintQueueCopies: data?["debugPrintQueueCopies"] ?? 0,
         emailQueuePDF: data?["emailQueuePDF"] ?? false,
         emailQueueXLS: data?["emailQueueXLS"] ?? false,
-        printImages: data?["printImages"] ?? false,
+        debugPrintImages: data?["debugPrintImages"] ?? false,
         imagesPerPage: data?["imagesPerPage"] ?? 0,
         invoiceComments: data?["invoiceComments"],
         creditStatusCodeId: data?["creditStatusCodeId"] ?? 0,
