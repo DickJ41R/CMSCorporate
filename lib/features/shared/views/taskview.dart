@@ -8,9 +8,10 @@ class TabsWeb extends StatefulWidget {
   final title;
   final route;
   final argumentId;
+  final actualBranch;
   final Map<String, String>? argumentMap;
   const TabsWeb(
-      {Key? key, this.title, this.route, this.argumentId, this.argumentMap})
+      {Key? key, this.title, this.route, this.argumentId, this.actualBranch, this.argumentMap})
       : super(key: key);
 
   @override
@@ -24,11 +25,29 @@ class _TabsWebState extends State<TabsWeb> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        debugPrint('line 20: ${widget.route}');
-        Navigator.of(context).pushNamed(widget.route,
-            arguments: widget.argumentId != -1
-                ? widget.argumentId
-                : widget.argumentMap!);
+        debugPrint('line 27 tabs voew: ${widget.route}');
+        if (widget.route == '/hcpprofessionalstreamscreen' &&
+            widget.actualBranch != 1) {
+          return;
+      } else if (widget.route == '/clientstreamscreen' && widget.actualBranch != 0) {
+          return;
+        } else if (widget.route == '/workOrderstreamscreen' && widget.actualBranch != 2) {
+            return;
+        }
+        if (widget.route != '/hcpprofessionalstreamscreen' &&
+            widget.route != '/clientstreamscreen' &&
+            widget.route != '/workOrderstreamscreen' ) {
+            return;
+        }
+
+    try {
+      Navigator.of(context).pushNamed(widget.route,
+              arguments: widget.argumentId > -1
+                  ? widget.argumentId
+                  : widget.argumentMap!);
+    } catch (e, s) {
+      print(s);
+    }
       },
       child: MouseRegion(
         onEnter: (_) {
@@ -314,6 +333,7 @@ class _VerticalTile1State extends State<VerticalTile1> {
       child: GestureDetector(
         onTap: () {
           debugPrint('line 20: ${menuItem}');
+
           Navigator.of(context).pushNamed(routeName, arguments: arguments!);
         },
         child: MouseRegion(

@@ -48,6 +48,8 @@ import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_payments.da
 import 'package:cms_web/features/hcpapp/views/scheduling/show_hcp_payment_details_screen.dart';
 import 'package:cms_web/features/shared/widgets/hcp_show_payment_pdf.dart';
 import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_schedule_view.dart';
+import 'package:cms_web/features/shared/views/landing_page_web.dart';
+
 import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_show_confirmed_shifts.dart';
 import 'package:cms_web/features/shared/widgets/show_hcp_document_pdf.dart';
 class MyRoutes {
@@ -63,6 +65,9 @@ class MyRoutes {
         debugPrint('line 40 routes');
         return MaterialPageRoute(
             builder: (context) => Login(flagGetAPNS: false));
+      case landingPage:
+        return MaterialPageRoute(
+            builder: (context) => LandingPageWeb());
       case workOrderPage:
         return MaterialPageRoute(builder: (context) => WorkOrderStreamScreen());
       case clientPage:

@@ -9,6 +9,8 @@ import 'package:cms_web/features/authentication/services/auth_service.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'dart:math';
 
+//import 'package:path/path.dart';
+
 class Role {
   final String role;
   final int id;
@@ -27,6 +29,8 @@ class Discipline {
         required this.isselected});
   set selected(bool value) => isselected = value;
 }
+GlobalKey<FormState> formKey = GlobalKey();
+GlobalKey<FormState> formKey1 = GlobalKey();
 
 class ClientUserProfilePage extends StatefulWidget {
   final Map<String, dynamic> args;
@@ -35,8 +39,7 @@ class ClientUserProfilePage extends StatefulWidget {
   @override
   State<ClientUserProfilePage> createState() => _ClientUserProfilePageState();
 }
-GlobalKey<FormState> formKey = GlobalKey();
-GlobalKey<FormState> formKey1 = GlobalKey();
+
 class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 
   String? documentId;
@@ -54,6 +57,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
   List<String> listOfClientUserItems = [];
   ClientServices clientServices = ClientServices();
   AuthService authService = AuthService();
+  int? clientId;
 
   Future<List<String>> _getClientUserMenuData() async {
     debugPrint('line 30 get client user Dropdownitems ${listOfClientUsers.length}');
@@ -62,7 +66,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     listOfClientUserItems = [];
     try {
       if (listOfClientUsers.length == 0) {
-        client = await clientServices.getClient(arguments!['clientId']);
+       // client = await clientServices.getClient(arguments!['clientId']);
         listOfClientUsers = await clientServices.getClientUsers(arguments!['clientId']);
       }
       int largestId = -1;
@@ -207,19 +211,29 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 
   int? selectedClientUser;
   bool checkForm(List<String> lr, List<String> ld) {
-    if (lr.length == 0) {
+    print('line 210 checkform: $lr $ld');
+    try {
+      if (lr.length == 0) {
+        return false;
+      }
+      if (ld.length == 0) {
+        return false;
+      }
+      print('line 218');
+      print('line 219: $formKey1');
+      print('line 220: ${formKey1.currentState!}');
+      final form = formKey1.currentState!;
+      print('line 220: $form');
+      if (form.validate()) {
+        debugPrint('line 219 form validated');
+        return true;
+      }
+      debugPrint('line 222 form did not validate');
+      return false;
+    } catch(e) {
+      print('line 225: ${e.toString()}');
       return false;
     }
-    if (ld.length == 0) {
-      return false;
-    }
-    final form = formKey.currentState!;
-    if (form.validate()) {
-      debugPrint('line 219 form validated');
-      return true;
-    }
-    debugPrint('line 222 form did not validate');
-    return false;
   }
 
   Future<void> _submit() async {
@@ -278,9 +292,9 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
       String displayName = firstNameController.text;
       String userName =
           firstNameController.text[0].toUpperCase() + lastNameController.text;
-      if (currentPassword != '**********') {
+      if (currentPassword!.contains('**') == false) {
         Map<String, dynamic> clt = {
-          "clientId": clientId,
+          "clientId": clientId!,
           "clientUserId": int.parse(clientUserIdController.text),
           "branchId": client!['branchId'],
           "branchName": client!['branchName'],
@@ -295,7 +309,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
           "fcmToken": "Placeholder",
           "loginCounter": 0,
           "originalPassword": passwordController.text,
-          'password': '**********',
+          'password': '********',
           "userName": userNameController.text,
           "dateLastLoggedIn": null,
           "dateLastLogin": null,
@@ -321,7 +335,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
           "telephoneExtension": telephoneExtensionController.text,
           "userId": int.parse(clientUserIdController.text),
           "userType": userType,
-          "userTypes": null,
+          "userTypes": [userType],
           "username": userName,
           "department": departmentController.text,
           "disciplineIds": disciplineIds,
@@ -346,10 +360,11 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
           "telephone": cleanTelephone(telephoneController.text),
           "telephoneExtension": telephoneExtensionController.text,
           "userType": userType,
-          "userTypes": gclu!['userTypes'],
+          "userTypes": [userType],
           "department": departmentController.text,
           "disciplineIds": disciplineIds,
           "disciplineNames": disciplineNames,
+
         };
         bls = await clientServices.updateClientUserFromItself(clt, gclu!['id']);
       }
@@ -410,19 +425,24 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     }
   }
 
-  String reformatTelephone(String tel) {
+  String reformatTelephone(String? tel) {
+    if (tel == null || tel == "") {
+      return "";
+    }
+    if (tel.length < 10) {
+      return "";
+    }
     String tl = tel;
-    tl = tl.replaceAll('(', '');
-    tl = tl.replaceAll('(', '');
-    tl = tl.replaceAll('(', '');
-    tl = tl.replaceAll('(', '');
-
-    tl = '(' +
-        tel.substring(0, 3) +
-        ') ' +
-        tel.substring(3, 6) +
+    tl = tl.replaceAll('\(', '');
+    tl = tl.replaceAll('\)', '');
+    tl = tl.replaceAll('\-', '');
+    tl = tl.replaceAll('\ ', '');
+    tl =
+        tl.substring(0, 3) +
+          ' ' +
+        tl.substring(3, 6) +
         '-' +
-        tel.substring(6, tel.length);
+        tl.substring(6, tl.length);
     return tl;
   }
 
@@ -533,8 +553,8 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
         displayNameController.text =
         clu['displayName'] == null ? "" : clu['displayName'];
         emailController.text = clu['email'];
-        loginCounterController.text =
-        clu['loginCounter'] == null ? '0' : clu['loginCounter'].toString();
+        // loginCounterController.text =
+        // clu['loginCounter'] == null ? '0' : clu['loginCounter'].toString();
         passwordController.text = clu['password'];
         userNameController.text =
         clu['username'] == null ? '0' : clu['username'];
@@ -553,13 +573,16 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
         clu['isAdministrator'] == null ? false : clu['isAdministrator'];
         telephoneController.text =
         clu['telephone'] == null ? "" : reformatTelephone(clu['telephone']);
-        telephoneExtensionController.text = clu['telephoneExtension'] == null
-            ? ""
-            : telephoneExtensionController.text;
+        telephoneExtensionController.text =  reformatTelephone(clu['telephoneExtension']);
+        debugPrint('line 574');
         departmentController.text =
         clu['department'] == null ? "" : clu['department'];
         debugPrint('line 553 ${dateLastLoggedInController.text}');
-
+        clu['loginCounter'] = 2;
+        if (passwordController.text.contains('**') == false) {
+          clu['originalPassword'] = passwordController.text;
+          clu['password'] = '********';
+        }
         debugPrint('line 555 ');
         return index;
       } else {
@@ -573,17 +596,31 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 
   int? selectedClientUserId;
 
-  int? clientId;
   // Future<bool> _submit() async {}
   bool isRolesOpen = false;
   bool isDisciplinesOpen = false;
   // late FocusNode myFocusNode;
+  Future<void>getClient() async {
+
+    try {
+      client = await clientServices.getASingleClientById(clientId!);
+
+
+    } catch(e) {
+      print('line 598 error: ${e.toString()}');
+      return;
+    }
+  }
+  late String? clientName;
+
   @override
   void initState() {
     super.initState();
-    client = authService.client;
-    clientId = authService.clientId;
+
     arguments = widget.args;
+    clientId = arguments!['clientId'];
+    clientName = arguments!['clientName'];
+    getClient();
     debugPrint('line 72 arguments $arguments');
     // myFocusNode = FocusNode();
   }
@@ -607,6 +644,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     isAdministratorChecked = false;
     telephoneController.text = "";
     telephoneExtensionController.text = "";
+    currentPassword = "";
     departmentController.text = "";
     setState(() {
       _selectedRoles = [];
@@ -635,6 +673,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     telephoneController.text = "";
     telephoneExtensionController.text = "";
     departmentController.text = "";
+    currentPassword != "";
     setState(() {
       showRightSide = true;
     });
@@ -723,9 +762,9 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const title = 'Client User Profile Form';
+    final title = 'Client User Profile Form: ${clientName!}';
     final double screenWidth = MediaQuery.sizeOf(context).width;
-    final double screenHeight = MediaQuery.sizeOf(context).height;
+    double screenHeight = MediaQuery.sizeOf(context).height;
     double? hh = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
     h = hh!;
     if (h < 1.0) {
@@ -733,10 +772,11 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     }
     double smallFontSize = 16 / h;
     double vWidth1 = 780;
-    double height = 65;
+    double height = 60;
     double height2 = 55;
     double width3 = 760;
     double width2 = 370; //(screenWidth - 10) - vWidth1;
+    screenHeight = 820;
     debugPrint('line 672: $vWidth1 $width2 $screenWidth, $screenHeight');
     debugPrint(
         'line 700: ${flagShowForm} ${ssnController.text} ${clientUserIdController.text}');
@@ -1332,8 +1372,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black,
                                               ),
-                                              enabled: currentPassword ==
-                                                  '**********'
+                                              enabled: currentPassword!.contains('**')
                                                   ? false
                                                   : true,
                                               decoration: InputDecoration(
@@ -1365,8 +1404,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                                 if (value == null) {
                                                   return "You must enter a password.";
                                                 }
-                                                if (currentPassword ==
-                                                    '**********') {
+                                                if (currentPassword!.contains('**') == true) {
                                                   return null;
                                                 }
                                                 bool bl =
@@ -1448,10 +1486,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                         color: Colors.black,
                                       ),
                                       maxLength: 100,
-                                      enabled: passwordController.text ==
-                                          '**********'
-                                          ? false
-                                          : true,
+                                      enabled: passwordController.text.contains('**') == false,
                                       decoration: InputDecoration(
                                           errorStyle: TextStyle(
                                             color: Colors.red,
@@ -1600,34 +1635,30 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                               border: Border.all(
                                                   color: Colors.black)),
                                           child: TextFormField(
-                                              controller:
-                                              telephoneExtensionController,
-                                              maxLength: 20,
-                                              keyboardType:
-                                              TextInputType.none,
+                                              controller: telephoneExtensionController,
+                                              keyboardType: TextInputType.none,
+                                              maxLength: 12,
                                               style: TextStyle(
                                                 fontSize: fontSize,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black,
                                               ),
                                               decoration: InputDecoration(
-                                                  counterText: '',
                                                   errorStyle: TextStyle(
                                                     color: Colors.red,
-                                                    fontWeight:
-                                                    FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     fontSize:
                                                     18.0, // Set your desired font size here
                                                   ),
-                                                  label: Text('Extension',
+                                                  counterText: '',
+                                                  label: Text('Faculty Tel:',
                                                       style: TextStyle(
                                                           fontSize: fontSize,
                                                           fontWeight:
                                                           FontWeight.bold,
-                                                          color:
-                                                          Colors.black)),
+                                                          color: Colors.black)),
                                                   hint: Text(
-                                                    'Extension',
+                                                    '555 666-777',
                                                     style: TextStyle(
                                                       fontSize: fontSize,
                                                       fontWeight:
@@ -1635,15 +1666,25 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
                                                       color: Colors.black,
                                                     ),
                                                   )),
-                                              onSaved: (value) {
-                                                debugPrint('line 1556 $value');
+                                              validator: (value) {
+                                                debugPrint('line 1028: $value');
+                                                if (value == '') {
+                                                  return null;
+                                                }
+                                                bool isValidTelephone = checkTelephone(value);
+                                                debugPrint(
+                                                    'line 1031: $isValidTelephone');
+                                                if (isValidTelephone == false) {
+                                                  return "Invalid faculty telephone format";
+                                                }
+                                                return null;
                                               }),
                                         ),
                                       ),
-                                    ],
+                                        ],
                                   ),
                                 ),
-                                SizedBox(height: 8),
+                                        SizedBox(height: 8),
                                 Container(
                                   height: height,
                                   width: width3,

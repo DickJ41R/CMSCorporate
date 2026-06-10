@@ -45,7 +45,10 @@ class ClientUser {
       this.securityGroupId,
       this.securityGroupName,
       this.userType,
-      this.isAdministrator});
+      this.isAdministrator,
+      this.telephone,
+      this.telephoneExtension,
+      this.originalPassword});
   final int clientId;
   final int clientUserId;
   final bool active;
@@ -71,4 +74,7 @@ class ClientUser {
   final String? securityGroupName;
   final String? userType;
   final bool? isAdministrator;
+  final String? telephone;
+  final String? telephoneExtension;
+  final String? originalPassword;
 }

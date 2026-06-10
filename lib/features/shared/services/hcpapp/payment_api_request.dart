@@ -22,7 +22,7 @@ class HCPPaymentDataService {
     try {
       List<dynamic> result = await callGetPayDataFromCheckRegisterFunction(
           hcpId, fromDate, toDate, ctx);
-      debugPrint('line 22: $result');
+     // debugPrint('line 22: $result');
       var retv = result[0];
       debugPrint('line 24: $retv');
       if (retv['error'] != null) {
@@ -117,7 +117,7 @@ class HCPPaymentDataService {
       debugPrint('line 117:  ${result.data.runtimeType}');
       final bytes = List<int>.from(result.data.values);
       dynamic uint = Uint8List.fromList(bytes);
-      print('line 120 $uint');
+  //    print('line 120 $uint');
       return uint;
       // dynamic imageData = result.data;
       //
@@ -160,7 +160,7 @@ class HCPPaymentDataService {
       debugPrint('line 90 in call A  function: $callable');
       dynamic result = await callingGetPayDataFromCheckRegisterFunction(
           callable, regId, fromDate, toDate, ctx);
-      debugPrint('line 93: $result');
+      //debugPrint('line 93: $result');
       return result;
     } catch (e) {
       debugPrint('line 96 error : $e');
@@ -179,9 +179,9 @@ class HCPPaymentDataService {
       var data = {"hcpId": regId, "fromDate": fromDate, 'toDate': toDate};
 
       final HttpsCallableResult result = await callable(data);
-      debugPrint('line 112 ${result.data}');
+      //debugPrint('line 112 ${result.data}');
       var convertedResult = result.data;
-      debugPrint('line 114 $convertedResult');
+//      debugPrint('line 114 $convertedResult');
       return convertedResult;
     } catch (e) {
       debugPrint('line 117 error: $e');

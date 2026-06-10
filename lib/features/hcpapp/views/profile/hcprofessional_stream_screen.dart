@@ -272,6 +272,8 @@ class _HCProfessionalStreamScreenState
                 HCPClassData.clear();
                 listH.forEach((doc) {
                   //   debugPrint('line 307: ${doc}');
+                  print('line 275 $doc');
+
                   hcpClassData.add(HCPClass.fromJson(doc));
                 });
                 debugPrint('line 205: check');

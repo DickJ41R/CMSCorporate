@@ -2598,7 +2598,11 @@ class ClientServices {
               password: obj['password'],
               roles: obj['roles'],
               userId: obj['userId'],
-              username: obj['username'] == null ? usn : obj['username']);
+              username: obj['username'] == null ? usn : obj['username'],
+            telephone: obj['telephone'],
+            telephoneExtension: obj['telephoneExtension'],
+            originalPassword: obj['originalPassword'],
+          );
           lm = clu;
           break;
         }

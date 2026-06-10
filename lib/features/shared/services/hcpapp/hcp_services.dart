@@ -770,13 +770,22 @@ class HCPServices {
         Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
         obj['id'] = docSnapShot.id;
         debugPrint('line 387: ${obj['id']}');
-        Timestamp ts = obj['credsWillWarnDate'];
-        DateTime date = ts.toDate();
-        var formattedDate = DateFormat('MM/dd/yyyy').format(date);
+        DateTime date;
+        Timestamp ts;
+        var formattedDate = 'No Value';
+        if (obj['credsWillWarnDate'] != null) {
+          ts = obj['credsWillWarnDate'];
+          date = ts.toDate();
+          formattedDate = DateFormat('MM/dd/yyyy').format(date);
+        }
+        formattedDate = "No Value";
         obj['credsWillWarnDate'] = formattedDate;
-        ts = obj['lastWorked'];
-        date = ts.toDate();
-        formattedDate = DateFormat('MM/dd/yyyy').format(date);
+        if (obj['lastWorked'] != null) {
+          ts = obj['lastWorked'];
+          date = ts.toDate();
+          formattedDate = DateFormat('MM/dd/yyyy').format(date);
+        }
+
         obj['lastWorked'] = formattedDate;
 
         //    debugPrint('line 184: $formattedDate  ${obj['credsWillWarnDate']}');

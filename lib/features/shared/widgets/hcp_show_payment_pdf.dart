@@ -116,7 +116,7 @@ class _HCPShowPaymentPDFState extends State<HCPShowPaymentPDF> {
         title: const Text("HCP Payment Document"),
       ),
       body: SizedBox(
-        height: 780,
+        height: 1024,
         width: screenWidth! -10,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -137,15 +137,21 @@ class _HCPShowPaymentPDFState extends State<HCPShowPaymentPDF> {
                     } else if (snapshot.hasData) {
                       // Extracting data from snapshot object
                       data = snapshot.data;
-                      debugPrint('line 140 has data $data');
+                   //   debugPrint('line 140 has data $data');
                       // debugPrint('line 137: $data');
-                        return IntrinsicHeight(
-                          child: Container(
-                          height: 778,
-                          width: screenWidth! - 10,
-                          child: SfPdfViewer.memory(data),
-                        ),
+                        return SizedBox(
+                        height: 1000,
+                        width: screenWidth! - 10,
+
+                        // child: SfPdfViewer.network("https://api.stafferlink.com/asm/Payroll/Stub/2570211"
+                         child: SfPdfViewer.memory(data,
+                         onDocumentLoadFailed: (PdfDocumentLoadFailedDetails details) {
+                          print('${details.error}');
+                          print('${details.description}');
+                        }),
                         );
+                         //                       child: SfPdfViewer.memory(data),
+
                       //SizedBox(height: 5);
                       // Container(
                       //   height: 24,

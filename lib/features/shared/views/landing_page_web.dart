@@ -246,11 +246,12 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     }
     return -1;
   }
-
+  String whichMenu = 'None';
   String _getSelectedSearchFieldIndex(int index, String value) {
     String ivv = '';
     debugPrint('line 252: $index $value');
     if (index == 0) {
+      whichMenu = 'Client';
       for (int i=0; i < clientFields!.length; i++) {
         if (clientFields![i]['value'] == value) {
           ivv = clientFields![i]['value']!;
@@ -258,6 +259,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
         }
       }
     } else if (index == 1) {
+      whichMenu = 'HCProfessional';
       for (int i=0; i < hcpFields!.length; i++) {
         if (hcpFields![i]['value'] == value) {
           ivv = hcpFields![i]['value']!;
@@ -265,6 +267,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
         }
       }
     } else if (index == 2) {
+      whichMenu = 'WorkOrders';
       for (int i=0; i < workOrderFields!.length; i++) {
         if (workOrderFields![i]['value'] == value) {
           ivv = workOrderFields![i]['value']!;
@@ -783,18 +786,22 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                         title: 'Work Order',
                         route: workOrderPage,
                         argumentId: -1,
+                         actualBranch: isCheckedClient == true ? 0 : isCheckedHCP == true ? 1 : 2,
                         argumentMap: currentArgument),
                     Spacer(),
                     TabsWeb(
                         title: 'Clients',
                         route: clientPage,
                         argumentId: -1,
+                        actualBranch: isCheckedClient == true ? 0 : isCheckedHCP == true ? 1 : 2,
                         argumentMap: currentArgument),
                     Spacer(),
                     TabsWeb(
                         title: 'HC Professionals',
                         route: hcprofessionalPage,
                         argumentId: -1,
+                        actualBranch: isCheckedClient == true ? '0' : isCheckedHCP == true ? 1 : 2,
+
                         argumentMap: currentArgument),
                     Spacer(),
                   ],

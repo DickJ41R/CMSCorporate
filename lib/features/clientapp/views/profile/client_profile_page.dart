@@ -585,6 +585,7 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
   void initState() {
     super.initState();
     arguments = widget.args;
+    debugPrint('line 588: ${arguments!}');
     clientId = arguments!['clientId'];
     localTitle = 'Client Profile for: ' + arguments!['clientName'];
     debugPrint('line 72 arguments $arguments');
@@ -610,7 +611,7 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const title = 'Client Profile Form';
+    final title = 'Client Profile Form ' + arguments!['clientName'];
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     debugPrint('line 115: $screenWidth $screenHeight');

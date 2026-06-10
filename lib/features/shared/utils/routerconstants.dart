@@ -1,4 +1,6 @@
 const String homePage = '/';
+const String landingPage = '/landingpage';
+
 const String clientPage = '/clientstreamscreen';
 const String loginPage = '/login';
 const String clientMenu = '/clientMenu';
