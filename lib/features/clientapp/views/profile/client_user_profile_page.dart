@@ -235,7 +235,14 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
       return false;
     }
   }
-
+  String clearExtraneousCharacters(String tl) {
+    String tel = tl;
+    tel = tel.replaceAll('\(','');
+    tel = tel.replaceAll('\)','');
+    tel = tel.replaceAll('\-','');
+    tel = tel.replaceAll('\ ','');
+    return tel;
+  }
   Future<void> _submit() async {
     debugPrint(
         'line 202 in submit: $roleMultiValueListenable $disciplineMultiValueListenable');
@@ -331,8 +338,8 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
           "securityGroupName": null,
           "status": isActiveChecked == true ? "Active" : "Inactive",
           "statusId": isActiveChecked == true ? "A" : "I",
-          "telephone": telephoneController.text,
-          "telephoneExtension": telephoneExtensionController.text,
+          "telephone": clearExtraneousCharacters(telephoneController.text),
+          "telephoneExtension": clearExtraneousCharacters(telephoneExtensionController.text),
           "userId": int.parse(clientUserIdController.text),
           "userType": userType,
           "userTypes": [userType],
@@ -649,6 +656,9 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     setState(() {
       _selectedRoles = [];
       _selectedDisciplines = [];
+      roleMultiValueListenable.value = List.from(_selectedRoles);
+      disciplineMultiValueListenable.value = List.from(_selectedDisciplines);
+
     });
   }
 
@@ -676,6 +686,10 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     currentPassword != "";
     setState(() {
       showRightSide = true;
+      _selectedRoles = [];
+      _selectedDisciplines = [];
+      roleMultiValueListenable.value = List.from(_selectedRoles);
+      disciplineMultiValueListenable.value = List.from(_selectedDisciplines);
     });
   }
 

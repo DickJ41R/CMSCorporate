@@ -212,6 +212,7 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
                             const SizedBox(height: 5),
                             Container(
                               height: 36,
+                              width: screenWidth -10,
                               padding: EdgeInsets.fromLTRB(2, 0, 0, 0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -230,25 +231,35 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
                                 ],
                               ),
                             ),
+                            const SizedBox(height: 5),
                             Container(
                               height: 36,
+                              width: screenWidth -10,
                               padding: EdgeInsets.fromLTRB(2, 0, 0, 0),
                               child: Row(
                                 children: [
-                                  Text(
-                                    'Desc: ${getStringData(item['credentialDescription'])}',
-                                    style: const TextStyle(
-                                        fontSize: 16, color: Colors.black),
+                                  Flexible(
+                                    flex: 2,
+                                    child: Text(
+                                      'Desc: ${getStringData(item['credentialDescription'])}',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                          fontSize: 16, color: Colors.black),
+                                    ),
                                   ),
                                   SizedBox(width: 10),
-                                  Text(
-                                    'Type: ${item['credentialType']}',
-                                    style: const TextStyle(
-                                        fontSize: 16, color: Colors.black),
+                                  Flexible(
+                                      flex: 1,
+                                    child: Text(
+                                      'Type: ${item['credentialType']}',
+                                      style: const TextStyle(
+                                          fontSize: 16, color: Colors.black),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
+                            const SizedBox(height: 5),
                             Container(
                               height: 36,
                               width: screenWidth - 10,
@@ -287,7 +298,7 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
                                     'credentialDescription':
                                         cim['credentialDescription'],
                                     'credentialType': cim['credentialType'],
-                                    'credAcquiredData': cim['credAcquiredData'],
+                                    'credAcquiredDate': cim['credAcquiredDate'],
                                     'credExpirationDate':
                                         cim['credExpirationDate'],
                                     'credVerifiedBy': cim['credVerifiedBy'],
@@ -299,8 +310,8 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
                                     'credWillWarn': cim['credWillWarn'],
                                     'useExpirationDate':
                                         cim['useExpirationDate'],
-                                    'credentialWillWarnDate':
-                                        cim['credentialWillWarnDate'],
+                                    'credWillWarnDate':
+                                        cim['credWillWarnDate'],
                                     'agencyRequired': cim['agencyRequired'],
                                     'yesNoLabel': cim['yesNoLabel'],
                                     'index': index

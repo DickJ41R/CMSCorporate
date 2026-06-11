@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 final dio = Dio();
 
@@ -30,14 +32,12 @@ class _ShowHCPCredentialDetailsScreenState
     return bls;
   }
 
-  String getFormattedDate(dynamic dte) {
-    debugPrint('line 32 detauks: $dte');
-    if (dte == null) {
-      return 'No Date';
-    }
-    String dts = dte.toString();
-    dts = dts.substring(0, 10);
-    return dts;
+  String getFormattedDate(Timestamp dts) {
+    debugPrint('line 32 detauks: $dts');
+    DateTime dte = dts.toDate();
+    String formattedDate =   DateFormat('MM/dd/yyyy').format(dte);
+
+    return formattedDate;
     // DateFormat formatter = DateFormat('yyyy-MM-dd');
     // final String formatted = formatter.format(dte);
     // return formatted;
@@ -85,7 +85,7 @@ class _ShowHCPCredentialDetailsScreenState
           child: Center(
             child: Container(
               height: screenHeight - 120,
-              width: 600,
+              width: 900,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -163,7 +163,7 @@ class _ShowHCPCredentialDetailsScreenState
                           height: 40,
                           width: 240,
                           child: Text(
-                            'AqdDate: ${getFormattedDate(widget.hcpCredential['credAcquiredData'])}',
+                            'AqdDate: ${getFormattedDate(widget.hcpCredential['credAcquiredDate'])}',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
@@ -183,7 +183,7 @@ class _ShowHCPCredentialDetailsScreenState
                     height: 40,
                     width: 500,
                     child: Text(
-                      'Verifier: ${getStringData(widget.hcpCredential['credVerifyBy'])}',
+                      'Verifier: ${getStringData(widget.hcpCredential['credVerifiedBy'])}',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.bold,
@@ -312,7 +312,7 @@ class _ShowHCPCredentialDetailsScreenState
                     height: 40,
                     width: 500,
                     child: Text(
-                      'WarnDate: ${getFormattedDate(widget.hcpCredential['credentialWillWarnDate'])}',
+                      'WarnDate: ${getFormattedDate(widget.hcpCredential['credWillWarnDate'])}',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.bold,

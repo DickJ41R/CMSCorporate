@@ -45,7 +45,15 @@ class _ProcessHCPProfileContactDataState
       if (listOfContacts!.length > 0) {
         for (int i = 0; i < listOfContacts!.length; i++) {
           Map<String, dynamic> con = listOfContacts![i];
-
+          if (con['contactTypeCodeDescription'] == null) {
+            if (con['contactTypeCodeId'] == 2367) {
+              con['contactTypeCodeDescription'] = 'Email Contact';
+            } else if (con['contactTypeCodeId'] == 2371) {
+              con['contactTypeCodeDescription'] = 'Mobile Phone Contact';
+            } else {
+              con['contactTypeCodeDescription'] = "Unknown";
+            }
+          }
           Map<String, dynamic> mcon = {
             'contactTypeCodeDescription': con['contactTypeCodeDescription'],
             'contactName': con['contactTypeCodeDescription']
@@ -61,10 +69,9 @@ class _ProcessHCPProfileContactDataState
       } else {
         return [];
       }
-      debugPrint('line 49: dropdownentries ${dropDownMenuEntries.length}');
     } catch (e) {
-      debugPrint('line 49: error: ${e.toString()}');
-      throw Exception('line 21 error getting dropdown menu items');
+      debugPrint('line 66: error: ${e.toString()}');
+      throw Exception('line 67 error getting dropdown menu items');
     }
   }
 
@@ -761,7 +768,7 @@ class _ProcessHCPProfileContactDataState
                                 height: 50,
                                 width: 320,
                                 child: TextFormField(
-                                  maxLines: 3,
+                                  maxLines: 1,
                                   controller: noteController,
                                   maxLength: 200,
                                   decoration:

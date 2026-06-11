@@ -1022,11 +1022,11 @@ class UtilitiesServices {
           Map<String, dynamic> obj = docSnapshot.data();
           //  String shiftDateString = obj['shiftDate'];
 
-          debugPrint('line 1182 keeping asms');
+          debugPrint('line 1025 keeping asms');
           listASMs.add(obj);
         }
       });
-      debugPrint('line 1186 check ${listASMs.length}');
+      debugPrint('line 1029 check ${listASMs.length}');
       tvs['dailyScheduledMinutes'] = [0, 0, 0, 0, 0, 0, 0];
       tvs['weeklyScheduledMinutes'] = 0;
       tvs['shiftData'] = [];
@@ -1789,9 +1789,9 @@ class UtilitiesServices {
         return query;
       }
       //isequalto
-      debugPrint('line 942');
+      debugPrint('line 1792');
       if (arg['searchCriteria'] == 'Is Equal To') {
-        if (arg['searchField']!.indexOf('Id') != -1) {
+        if (arg['searchField']!.indexOf('Id') != -1 && arg['searchField'].contains('status') == false) {
           int value = int.parse(arg['searchValue']!);
           debugPrint('line 84: $value ${arg['searchField']}');
           if (flagHaveBaseArgument == true) {
@@ -1815,7 +1815,7 @@ class UtilitiesServices {
         }
       }
       //less than
-      debugPrint('line 968');
+      debugPrint('line 1818');
       if (arg['searchCriteria'] == 'Is Less Than') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
@@ -1841,7 +1841,7 @@ class UtilitiesServices {
         }
       }
       //greater than
-      debugPrint('line 994');
+      debugPrint('line 1844');
       if (arg['searchCriteria'] == 'Is Greater Than') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
@@ -1867,7 +1867,7 @@ class UtilitiesServices {
         }
       }
       // Is greater Than or Equal To,
-      debugPrint('line 1020');
+      debugPrint('line 1870');
       if (arg['searchCriteria'] == 'Is Greater Than Or Equal To') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
@@ -2030,10 +2030,10 @@ class UtilitiesServices {
           }
         }
       }
-      debugPrint('line 1183 $query');
+      debugPrint('line 2033 $query');
       return query!;
     } catch (e) {
-      debugPrint('line 1186: ${e.toString()}');
+      debugPrint('line 2036: ${e.toString()}');
       throw Exception(e.toString());
     }
   }

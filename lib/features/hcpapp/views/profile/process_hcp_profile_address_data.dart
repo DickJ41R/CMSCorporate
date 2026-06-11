@@ -187,7 +187,7 @@ class _ProcessHCPProfileAddressDataState
                               padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
                               color: Colors.grey[200],
                               child: Text(
-                                'Adr1: ${item['address1'].toString()}',
+                                'Adr1: ' + item['1'] != "" ? item['1'] : item['address1'],
                                 style: TextStyle(
                                   fontSize: fontSize,
                                   color: Colors.black87,

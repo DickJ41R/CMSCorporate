@@ -24,19 +24,33 @@ class _LandingPageWebState extends State<LandingPageWeb> {
 
     debugPrint('line 26 landingpage web');
     localTitle = 'CMS Primary Menu';
-    listOfCurrentUserBranches = authServices.listOfCMSUserBranches;
-    _setBranches();
-    _setSearchCriteria();
-    _setClientFields();
-    _setHCPFields();
-    _setWorkOrderFields();
-    currentArgument = {
-      'searchCollection': 'Unknown',
-      'searchField': 'Unknown',
-      'searchCriteria': 'Unknown',
-      'searchValue': 'Unknown',
-      'branchValue': 'Unknown'
-    };
+    if (authServices.isCheckedHCP != false || authServices.isCheckedClient != false
+    || authServices.isCheckedWorkSchedule != false) {
+      isCheckedWorkSchedule = authServices.isCheckedWorkSchedule;
+      isCheckedHCP = authServices.isCheckedHCP;
+      isCheckedClient = authServices.isCheckedClient;
+      flagHasTopLevelBranch = true;
+      flagHaveQueryData = true;
+      currentArgument = authServices.currentArgument;
+
+    } else {
+      listOfCurrentUserBranches = authServices.listOfCMSUserBranches;
+      isCheckedClient = false;
+      isCheckedHCP = false;
+      isCheckedWorkSchedule = false;
+      _setBranches();
+      _setSearchCriteria();
+      _setClientFields();
+      _setHCPFields();
+      _setWorkOrderFields();
+      currentArgument = {
+        'searchCollection': 'Unknown',
+        'searchField': 'Unknown',
+        'searchCriteria': 'Unknown',
+        'searchValue': 'Unknown',
+        'branchValue': 'Unknown'
+      };
+    }
   }
 
   @override
@@ -142,9 +156,8 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     clientFields = [
       {"value": 'clientId', "label": 'Client Id'},
       {'value': 'clientName', 'label': 'Client Name'},
-      {"value": 'active', 'label': 'Status'},
-      {'value': 'branchId', 'label': 'Branch Id'},
-      {'value': 'branchName', 'label': 'Branch Name'}
+      {"value": 'statusId', 'label': 'Status Id'},
+
     ];
   }
 
@@ -152,9 +165,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     hcpFields = [
       {"value": "hcpId", "label": 'Hcp Id'},
       {"value": "fullName","label": "Hcp Name (LN, FN)"},
-      {"value": "shiftStatus", "label": 'Status'},
-      {'value': "branchId", "label": 'Branch Id'},
-      {'value': 'branchName', 'label': 'Branch Name'}
+      {"value": "shiftStatus", "label": 'Shift Status'},
     ];
   }
 
@@ -334,6 +345,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       debugPrint('line 302 bl == false');
       return;
     }
+    authServices.currentArgument = currentArgument;
     setState(() {
       flagHaveQueryData = true;
       if (selectedBranchNumber != null) {
@@ -555,17 +567,22 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                               _setSearchFields(0);
 
                               isCheckedClient = value!;
+                              authServices.isCheckedClient = value;
                               haveFields = true;
                               if (value == false) {
                                 dropDownSearchFieldsEntries = [];
                                 currentArgument!['searchCollection'] = 'None';
                                 isCheckedHCP = false;
+                                authServices.isCheckedHCP = false;
                                 isCheckedWorkSchedule = false;
+                                authServices.isCheckedWorkSchedule = value;
                               } else {
                                 currentArgument!['searchCollection'] = 'Client';
                               }
                               isCheckedHCP = !value;
+                              authServices.isCheckedHCP = !value;
                               isCheckedWorkSchedule = !value;
+                              authServices.isCheckedWorkSchedule = !value;
                             });
                           },
                         ),
@@ -594,20 +611,25 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                             debugPrint('line 389: $value');
                             setState(() {
                               isCheckedHCP = value!;
+                              authServices.isCheckedHCP = value;
                               haveFields = true;
                               _setSearchFields(1);
 
                               if (value == false) {
                                 dropDownSearchFieldsEntries = [];
                                 isCheckedClient = false;
+                                authServices.isCheckedClient = false;
                                 isCheckedWorkSchedule = false;
+                                authServices.isCheckedWorkSchedule = false;
                                 currentArgument!['searchCollection'] = 'None';
                               } else {
                                 currentArgument!['searchCollection'] =
                                 'HCProfessional';
 
                                 isCheckedClient = !value;
+                                authServices.isCheckedClient = !value;
                                 isCheckedWorkSchedule = !value;
+                                authServices.isCheckedWorkSchedule = !value;
                               }
                             });
                           },
@@ -636,19 +658,25 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                           onChanged: (value) {
                             setState(() {
                               isCheckedWorkSchedule = value!;
+                              authServices.isCheckedWorkSchedule = value;
                               _setSearchFields(2);
                               haveFields = true;
                               if (value == false) {
                                 dropDownSearchFieldsEntries = [];
                                 isCheckedHCP = false;
+                                authServices.isCheckedHCP = false;
+
                                 isCheckedClient = false;
+                                authServices.isCheckedClient = false;
                                 currentArgument!['searchCollection'] = 'None';
                               } else {
                                 currentArgument!['searchCollection'] =
                                 'ClientWorkOrder';
 
                                 isCheckedHCP = !value;
+                                authServices.isCheckedClient = !value;
                                 isCheckedClient = !value;
+                                authServices.isCheckedHCP = !value;
                               }
                             });
                           },
@@ -801,7 +829,6 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                         route: hcprofessionalPage,
                         argumentId: -1,
                         actualBranch: isCheckedClient == true ? '0' : isCheckedHCP == true ? 1 : 2,
-
                         argumentMap: currentArgument),
                     Spacer(),
                   ],

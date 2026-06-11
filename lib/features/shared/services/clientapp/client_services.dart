@@ -3048,7 +3048,7 @@ Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
         debugPrint('line 3041: ${querySnapshot.docs.length}');
         Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
         obj['id'] = docSnapShot.id;
-        debugPrint('line 3044 in querysnapshot: $obj');
+      //  debugPrint('line 3044 in querysnapshot: $obj');
 
         listOfClients.add(obj);
         obj['city'] = '';
@@ -3068,11 +3068,11 @@ Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
             break;
           }
         });
-        debugPrint('line 3066: $obj');
+      //  debugPrint('line 3066: $obj');
         obj['balance'] = '0.0';
         obj['openCredit'] = false;
         obj['creditLimit'] = 0.0;
-        debugPrint('line 3070 $obj');
+   //     debugPrint('line 3070 $obj');
         await FirebaseFirestore.instance
             .collection('ClientCredit')
             .where('clientId', isEqualTo: obj['clientId'])
@@ -3087,7 +3087,7 @@ Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
             break;
           }
         });
-        debugPrint('line 3805: $obj');
+    //    debugPrint('line 3805: $obj');
         Map<String, dynamic> xbj = {
           'clientId': obj['clientId'].toString().length < 4
               ? "    ".substring(0, 4 - obj['clientId'].toString().length) +
@@ -3116,7 +3116,7 @@ Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
           'openCredit':
           obj['openCredit'] == false ? "No" : "Yes"
         };
-     debugPrint('line 3110: $xbj');
+  //   debugPrint('line 3110: $xbj');
         clm.add(xbj);
       }
       clm.sort((a, b) {

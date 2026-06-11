@@ -28,31 +28,35 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
   AuthService authService = AuthService();
 
   late _DataSource dataSource;
-  late int hcpId;
+
   List<dynamic>? lstApts;
   bool flagHaveData = false;
-  Future<void> getRawDataForDataSourceX(int hcpId, BuildContext ctx) async {
-    await getRawDataForDataSource(hcpId, ctx);
-  }
+  // Future<void> getRawDataForDataSourceX(int hcpId, BuildContext ctx) async {
+  //   await getRawDataForDataSource(hcpId, ctx);
+  // }
 
-  Future<void> getRawDataForDataSource(int hcpId, BuildContext ctx) async {
+  Future<void> getRawDataForDataSource() async {
     debugPrint('line 37 in getrawdatasource');
     try {
       bool working = false;
-      Center(
-        child: Container(
-          height: 50,
-          width: 50,
-          child: CircularProgressIndicator(
-            value: working == false ? null : 1,
-            backgroundColor: Colors.cyanAccent,
-            valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
+
+      lstApts = await hcpServices.getHCPWorkOrderCampaigns(hcpId!);
+
+      if (lstApts!.isEmpty) {
+        Center(
+          child: Container(
+            height: 50,
+            width: 50,
+            child: CircularProgressIndicator(
+              value: working == false ? null : 1,
+              backgroundColor: Colors.cyanAccent,
+              valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
+            ),
           ),
-        ),
-      );
-      lstApts = await hcpServices.getHCPWorkOrderCampaigns(hcpId, ctx);
-      working = true;
-      if (lstApts!.isNotEmpty) {
+        );
+
+      } else if (lstApts!.isNotEmpty) {
+        working = true;
         debugPrint('line 36: ${lstApts![0]}');
         setState(() {
           flagHaveData = true;
@@ -66,6 +70,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
       return null;
     }
   }
+  int? hcpId;
   Map<String,dynamic>? currentHCPMap;
   Map<String,dynamic>?arguments;
   UtilitiesServices utilitiesServices = UtilitiesServices();
@@ -75,7 +80,6 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
 
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
-    getRawDataForDataSourceX(hcpId, context);
 
     setOrientationPreference(1);
     super.initState();
@@ -102,12 +106,18 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
           [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
     }
   }
-
+  Color color1 = Color.fromARGB(255, 134, 219, 197); //green from website
+  Color color2 = Color.fromARGB(255, 19, 125, 103); //green from logo
+  Color color3 = Colors.grey.shade200;
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidth = MediaQuery
+        .of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double? h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
+    double? h = MediaQuery
+        .maybeOf(context)
+        ?.textScaler
+        .scale(1.0);
     if (h! < 1.0) {
       h = 1.0;
     }
@@ -115,272 +125,400 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
     fontSize /= h;
     debugPrint('line 40 after setorientation pref: $flagHaveData');
     return SafeArea(
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text('Work Schedule'),
-              // actions: <Widget>[
-              //   IconButton(
-              //     icon: Icon(Icons.arrow_back),
-              //     onPressed: () {
-              //       debugPrint('line 41: in onpressed back');
-              //       calendarController.backward!();
-              //     },
-              //   ),
-              //   IconButton(
-              //     icon: Icon(Icons.arrow_forward),
-              //     onPressed: () {
-              //       debugPrint('line 48 in onpressed forward');
-              //
-              //       calendarController.forward!();
-              //     },
-              //   ),
-              // ],
-            ),
-            body: flagHaveData == true
-                ? Column(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Work Schedule'),
+          // actions: <Widget>[
+          //   IconButton(
+          //     icon: Icon(Icons.arrow_back),
+          //     onPressed: () {
+          //       debugPrint('line 41: in onpressed back');
+          //       calendarController.backward!();
+          //     },
+          //   ),
+          //   IconButton(
+          //     icon: Icon(Icons.arrow_forward),
+          //     onPressed: () {
+          //       debugPrint('line 48 in onpressed forward');
+          //
+          //       calendarController.forward!();
+          //     },
+          //   ),
+          // ],
+        ),
+        body: FutureBuilder<List<dynamic>>(
+          future: Future.wait([getRawDataForDataSource()]),
+          builder: (context, snapshot) {
+// debugPrint(
+//     'line 211: ${snapshot.hasError} ${snapshot.hasData} ${ConnectionState} ');
+            if ( snapshot.connectionState  == ConnectionState.waiting) {
+              return  Center (
+                  child : Container(
+                    height: 50,
+                    width: 50,
+                    child:
+                    CircularProgressIndicator(),
+                  ),
+                );
+            } else if (snapshot.hasError) {
+              return Center(
+                child : Container(
+                    height:  100,
+                    width:screenWidth -10,
+                    child: Text('Error: ${snapshot.error}',
+                        overflow:TextOverflow.visible,
+                        style: TextStyle(
+                            fontSize:Theme.of(context).textTheme.headlineSmall!.fontSize! /h!,
+                            color:Colors.red,
+                            fontWeight:FontWeight.bold
+                        )
+                    ),
+                  ),
+                );
+            } else if (snapshot.data == [[]] && snapshot.connectionState == ConnectionState.done) {
+              return Center(
+                  child:Container(
+                    height: 100,
+                    width: screenWidth - 10,
+                    child:Text('There are no clients to list.',
+                        style: TextStyle(
+                            fontSize: Theme.of(context).textTheme.headlineSmall!.fontSize!/h!,
+                            color: color2,
+                            fontWeight: FontWeight.bold
+                        )
+                    ),
+                  ),
+                );
+            }else {
+              List<dynamic>data = snapshot.data![0];
+//  debugPrint('line 292 ${data.length}');
+              if(data.length == 0) {
+                return Center(
+                    child:Container(
+                      height: 100,
+                      width: screenWidth - 10,
+                      child: Text('There are no clients to list.',
+                          style: TextStyle(
+                              fontSize : Theme.of(context).textTheme.headlineSmall!.fontSize! /h!,
+                              color:color2,
+                              fontWeight: FontWeight.bold
+                          )
+                      ),
+                    ),
+                  );
+              } else {
+                List<Map<String,dynamic>>listH = snapshot.data![0];
+                return Column(
                     children: [
                       Expanded(
-                        child: SfCalendar(
-                          view: CalendarView.month,
-                          dataSource: dataSource,
-                          initialSelectedDate:
-                              DateTime.now().add(const Duration(days: -1)),
+                        child:SfCalendar(
+                          view:CalendarView.month,
+                          dataSource:dataSource,
+                          initialSelectedDate: DateTime.now().add(
+                              const Duration(days:-1)
+                          ),
                           onSelectionChanged: selectionChanged,
                           onTap: calendarTapped,
-                          // showNavigationArrow: true,
-                          // showDatePickerButton: true,
-                          //    dataSource: _DataSource(getAppointments()),
-                          // onTap: calendarTapped,
-                          // firstDayOfWeek: 1,
-                          // view: CalendarView.schedule,
-                          // viewHeaderHeight: 0,
-                          // viewHeaderStyle: ViewHeaderStyle(
-                          //     backgroundColor: Colors.grey,
-                          //     dayTextStyle: TextStyle(
-                          //         fontSize: 18,
-                          //         color: Color(0xFFff5eaea),
-                          //         fontWeight: FontWeight.w500),
-                          //     dateTextStyle: TextStyle(
-                          //         fontSize: 22,
-                          //         color: Color(0xFFff5eaea),
-                          //         letterSpacing: 2,
-                          //         fontWeight: FontWeight.w500)),
-                          // // allowViewNavigation: true,
-                          // // timeSlotViewSettings:
-                          // //     const TimeSlotViewSettings(numberOfDaysInView: 7),
-                          // scheduleViewSettings: ScheduleViewSettings(
-                          //   hideEmptyScheduleWeek: true,
-                          //   appointmentItemHeight: 60,
-                          //   appointmentTextStyle: TextStyle(
-                          //       fontSize: 12,
-                          //       fontWeight: FontWeight.w500,
-                          //       color: Colors.black),
-                          //   dayHeaderSettings: DayHeaderSettings(
-                          //       dayFormat: 'EEEE',
-                          //       width: 70,
-                          //       dayTextStyle: TextStyle(
-                          //         fontSize: 10,
-                          //         fontWeight: FontWeight.w300,
-                          //         color: Colors.red,
-                          //       ),
-                          //       dateTextStyle: TextStyle(
-                          //         fontSize: 12,
-                          //         fontWeight: FontWeight.w300,
-                          //         color: Colors.red,
-                          //       )),
-                          //   weekHeaderSettings: WeekHeaderSettings(
-                          //       startDateFormat: 'dd MMM ',
-                          //       endDateFormat: 'dd MMM, yy',
-                          //       height: 40,
-                          //       textAlign: TextAlign.center,
-                          //       backgroundColor: Colors.red,
-                          //       weekTextStyle: TextStyle(
-                          //         color: Colors.white,
-                          //         fontWeight: FontWeight.w400,
-                          //         fontSize: 15,
-                          //       )),
-                          //   monthHeaderSettings: MonthHeaderSettings(
-                          //       monthFormat: 'MMMM, yyyy',
-                          //       height: 0,
-                          //       textAlign: TextAlign.left,
-                          //       backgroundColor: Colors.green,
-                          //       monthTextStyle: TextStyle(
-                          //           color: Colors.red,
-                          //           fontSize: 25,
-                          //           fontWeight: FontWeight.w400)),
-                          // ),
                         ),
                       ),
                       Expanded(
-                          child: Container(
-                              color: Colors.black12,
+                          child:Container(
+                              color:Colors.black12,
                               child: ListView.separated(
                                 padding: const EdgeInsets.all(2),
                                 itemCount: _appointmentDetails.length,
-                                itemBuilder: (BuildContext context, int index) {
+                                itemBuilder:(BuildContext context, int index) {
                                   return Container(
-                                      padding: EdgeInsets.all(2),
-                                      height: 80,
-                                      color: _appointmentDetails[index].color,
-                                      child: ListTile(
-                                          leading: Column(
-                                            children: <Widget>[
-                                              Text(
-                                                _appointmentDetails[index]
-                                                        .isAllDay
-                                                    ? ''
-                                                    : '${DateFormat('hh:mm a').format(_appointmentDetails[index].startTime)}',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Colors.white,
-                                                    height: 1.7),
-                                              ),
-                                              Text(
-                                                _appointmentDetails[index]
-                                                        .isAllDay
-                                                    ? 'All day'
-                                                    : '',
-                                                style: TextStyle(
-                                                    height: 0.5,
-                                                    color: Colors.white),
-                                              ),
-                                              Text(
-                                                _appointmentDetails[index]
-                                                        .isAllDay
-                                                    ? ''
-                                                    : '${DateFormat('hh:mm a').format(_appointmentDetails[index].endTime)}',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Colors.white),
-                                              ),
-                                            ],
-                                          ),
-                                          // trailing: Container(
-                                          //     child: getIcon(
-                                          //         _appointmentDetails[index]
-                                          //             .subject)),
-                                          title: Container(
-                                              width: screenWidth - 100,
-                                              child: Text(
-                                                  '${_appointmentDetails[index].subject}',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 10,
-                                                      color: Colors.white))),
-                                          subtitle: Container(
-                                              width: screenWidth - 100,
-                                              child: Text(
-                                                  '${_appointmentDetails[index].notes}',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 10,
-                                                      color: Colors.white)))));
-                                },
-                                separatorBuilder:
-                                    (BuildContext context, int index) =>
-                                        const Divider(
-                                  height: 5,
-                                ),
-                              )))
-                    ],
-                  )
-                : Container()));
-
-    //       Expanded(
-    //         child: ListView.separated(
-    //           itemCount: _appointmentDetails.length,
-    //           itemBuilder: (BuildContext context, int index) {
-    //             return Container(
-    //                 height: 120,
-    //                 width: screenWidth -10,
-    //                 padding: EdgeInsets.all(2),
-    //                 color: _appointmentDetails[index].color,
-    //                 child: ListTile(
-    //                   leading: Column(
-    //                     children: <Widget>[
-    //                       Text(
-    //                         _appointmentDetails[index].isAllDay
-    //                             ? ''
-    //                             : '${DateFormat('hh:mm a').format(_appointmentDetails[index].startTime)}',
-    //                         textAlign: TextAlign.center,
-    //                         style: TextStyle(
-    //                           fontWeight: FontWeight.w600,
-    //                           color: Colors.white,
-    //                         ),
-    //                       ),
-    //                       // Text(
-    //                       //   _appointmentDetails[index].isAllDay
-    //                       //       ? 'All day'
-    //                       //       : '',
-    //                       //   style: TextStyle(
-    //                       //       height: 0.5, color: Colors.white),
-    //                       // ),
-    //                       Text(
-    //                         _appointmentDetails[index].isAllDay
-    //                             ? ''
-    //                             : '${DateFormat('hh:mm a').format(_appointmentDetails[index].endTime)}',
-    //                         textAlign: TextAlign.center,
-    //                         style: TextStyle(
-    //                             fontWeight: FontWeight.w600,
-    //                             color: Colors.white),
-    //                       ),
-    //                     ],
-    //                   ),
-    //                   // trailing: Container(
-    //                   //     child: getIcon(
-    //                   //         _appointmentDetails[index]
-    //                   //             .subject)),
-    //
-    //                   title: Container(
-    //                       width: screenWidth - 100,
-    //                       padding: EdgeInsets.fromLTRB(12, 0, 0, 0),
-    //                       child: Text(
-    //                           '${_appointmentDetails[index].subject}',
-    //                           textAlign: TextAlign.left,
-    //                           style: TextStyle(
-    //                               fontWeight: FontWeight.w600,
-    //                               fontSize: 10,
-    //                               color: Colors.white))),
-    //                   subtitle: Container(
-    //                     width: screenWidth - 100,
-    //                     child: Text(
-    //                       '${_appointmentDetails[index].notes}',
-    //                       textAlign: TextAlign.left,
-    //                       style: TextStyle(
-    //                           fontWeight: FontWeight.w600,
-    //                           fontSize: 10,
-    //                           color: Colors.white),
-    //                     ),
-    //                   ),
-    //                   trailing: Container(
-    //                     width: screenWidth - 100,
-    //                     child: Text(
-    //                       '${_appointmentDetails[index].location}',
-    //                       textAlign: TextAlign.left,
-    //                       style: TextStyle(
-    //                           fontWeight: FontWeight.w600,
-    //                           fontSize: 10,
-    //                           color: Colors.white),
-    //                     ),
-    //                   ),
-    //                 ));
-    //           },
-    //           separatorBuilder: (BuildContext context, int index) =>
-    //               const Divider(
-    //             height: 5,
-    //           ),
-    //         ),
-    //       ),
-    //     ],
-    //   )
-    // : Container()));
+                                        padding: EdgeInsets.all(2),
+                                        height:80,
+                                        color:_appointmentDetails[index].color,
+                                        child: ListTile(
+                                            leading:Column(
+                                              children :<Widget>[
+                                                Text( _appointmentDetails[index].isAllDay ? '' : '${DateFormat
+                                                  ('hh:mm a').format
+                                                  (_appointmentDetails[index]
+                                                      .
+                                                  startTime
+                                                  )
+                                                  }
+                                                  '
+                                                  ,
+                                                  textAlign
+                                                      :
+                                                  TextAlign
+                                                      .
+                                                  center
+                                                  ,
+                                                  style
+                                                      :
+                                                  TextStyle
+                                                    (
+                                                      fontWeight
+                                                          :
+                                                      FontWeight
+                                                          .
+                                                      w600
+                                                      ,
+                                                      color
+                                                          :
+                                                      Colors
+                                                          .
+                                                      white
+                                                      ,
+                                                      height
+                                                          :
+                                                      1.7
+                                                  )
+                                                  ,
+                                                )
+                                                ,
+                                                Text
+                                                  (
+                                                  _appointmentDetails
+                                                  [
+                                                  index
+                                                  ]
+                                                      .
+                                                  isAllDay
+                                                      ?
+                                                  '
+                                                  All
+                                                  day
+                                                  '
+                                                  :
+                                                  '
+                                                  '
+                                                  ,
+                                                  style
+                                                      :
+                                                  TextStyle
+                                                    (
+                                                      height
+                                                          :
+                                                      0.5
+                                                      ,
+                                                      color
+                                                          :
+                                                      Colors
+                                                          .
+                                                      white
+                                                  )
+                                                  ,
+                                                )
+                                                ,
+                                                Text
+                                                  (
+                                                  _appointmentDetails
+                                                  [
+                                                  index
+                                                  ]
+                                                      .
+                                                  isAllDay ?
+                                                  '
+                                                  '
+                                                      :
+                                                  '
+                                                  $
+                                                  {
+                                                  DateFormat
+                                                  (
+                                                  '
+                                                  hh
+                                                      :
+                                                  mm
+                                                  a
+                                                  '
+                                                  )
+                                                      .
+                                                  format
+                                                  (
+                                                  _appointmentDetails
+                                                  [
+                                                  index
+                                                  ]
+                                                      .
+                                                  endTime
+                                                  )
+                                                  }
+                                                  '
+                                                  ,
+                                                  textAlign
+                                                      :
+                                                  TextAlign
+                                                      .
+                                                  center
+                                                  ,
+                                                  style
+                                                      :
+                                                  TextStyle
+                                                    (
+                                                      fontWeight
+                                                          :
+                                                      FontWeight
+                                                          .
+                                                      w600
+                                                      ,
+                                                      color
+                                                          :
+                                                      Colors
+                                                          .
+                                                      white
+                                                  )
+                                                  ,
+                                                )
+                                                ,
+                                              ]
+                                              ,
+                                            )
+                                            ,
+// trailing: Container(
+//     child: getIcon(
+//         _appointmentDetails[index]
+//             .subject)),
+                                            title
+                                                :
+                                            Container
+                                              (
+                                                width
+                                                    :
+                                                screenWidth
+                                                    -
+                                                    100
+                                                ,
+                                                child
+                                                    :
+                                                Text
+                                                  (
+                                                    '
+                                                    $
+                                                    {
+                                                    _appointmentDetails
+                                                    [
+                                                    index
+                                                    ]
+                                                        .
+                                                    subject
+                                                    }
+                                                    '
+                                                    ,
+                                                    textAlign
+                                                        :
+                                                    TextAlign
+                                                        .
+                                                    center
+                                                    ,
+                                                    style
+                                                        :
+                                                    TextStyle
+                                                      (
+                                                        fontWeight
+                                                            :
+                                                        FontWeight
+                                                            .
+                                                        w600
+                                                        ,
+                                                        fontSize
+                                                            :
+                                                        10
+                                                        ,
+                                                        color
+                                                            :
+                                                        Colors
+                                                            .
+                                                        white
+                                                    )
+                                                )
+                                            )
+                                            ,
+                                            subtitle
+                                                :
+                                            Container
+                                              (
+                                                width
+                                                    :
+                                                screenWidth
+                                                    -
+                                                    100
+                                                ,
+                                                child
+                                                    :
+                                                Text
+                                                  (
+                                                    '
+                                                    $
+                                                    {
+                                                    _appointmentDetails
+                                                    [
+                                                    index
+                                                    ]
+                                                        .
+                                                    notes
+                                                    }
+                                                    '
+                                                    ,
+                                                    textAlign
+                                                        :
+                                                    TextAlign
+                                                        .
+                                                    left
+                                                    ,
+                                                    style
+                                                        :
+                                                    TextStyle
+                                                      (
+                                                        fontWeight
+                                                            :
+                                                        FontWeight
+                                                            .
+                                                        w600
+                                                        ,
+                                                        fontSize
+                                                            :
+                                                        10
+                                                        ,
+                                                        color
+                                                            :
+                                                        Colors
+                                                            .
+                                                        white
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    );
+                                }
+                                ,
+                                separatorBuilder
+                                    :
+                                    (BuildContext
+                                context
+                                    ,
+                                    int
+                                    index) =>
+                                const
+                                Divider
+                                  (
+                                  height
+                                      :
+                                  5
+                                  ,
+                                )
+                                ,
+                              )
+                          )
+                      )
+                    ]
+                    ,
+                  );
+              }
+            }
+          },
+        ),
+      ),
+    );
   }
+
 
   void selectionChanged(CalendarSelectionDetails calendarSelectionDetails) {
     getSelectedDateAppointments(calendarSelectionDetails.date);
@@ -525,68 +663,6 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
         debugPrint('line 346: $obj');
         Appointment apt = buildAppointment(obj);
         appointments.add(apt);
-        // DateTime startTime = apt.startTime;
-        // DateTime endTime = startTime.add(const Duration(hours: 8));
-        //
-        // appointments.add(Appointment(
-        //   startTime: startTime,
-        //   endTime: endTime,
-        //   subject: 'CNA',
-        //   color: Colors.red,
-        // ));
-        // appointments.add(Appointment(
-        //   startTime: startTime,
-        //   endTime: endTime,
-        //   subject: 'LPN',
-        //   color: Colors.lightBlueAccent,
-        // ));
-        //
-        // appointments.add(Appointment(
-        //   startTime: startTime,
-        //   endTime: endTime,
-        //   subject: 'RN',
-        //   color: const Color(0xFFfb21f66),
-        // ));
-        // startTime = startTime.add(Duration(hours: 8));
-        // endTime = startTime.add(Duration(hours: 8));
-        // appointments.add(Appointment(
-        //   startTime: startTime,
-        //   endTime: endTime,
-        //   subject: 'CNA',
-        //   color: Colors.red,
-        // ));
-        // appointments.add(Appointment(
-        //   startTime: startTime,
-        //   endTime: endTime,
-        //   subject: 'LPN',
-        //   color: Colors.lightBlueAccent,
-        // ));
-        // appointments.add(Appointment(
-        //   startTime: startTime,
-        //   endTime: endTime,
-        //   subject: 'RN',
-        //   color: const Color(0xFFf3282b8),
-        // ));
-        // startTime = startTime.add(Duration(hours: 8));
-        // endTime = startTime.add(Duration(hours: 8));
-        // appointments.add(Appointment(
-        //   startTime: startTime,
-        //   endTime: endTime,
-        //   subject: 'CNA',
-        //   color: Colors.red,
-        // ));
-        // appointments.add(Appointment(
-        //   startTime: startTime,
-        //   endTime: endTime,
-        //   subject: 'LPN',
-        //   color: Colors.lightBlueAccent,
-        // ));
-        // appointments.add(Appointment(
-        //   startTime: startTime,
-        //   endTime: endTime,
-        //   subject: 'RN',
-        //   color: const Color(0xFFf3282b8),
-        // ));
       }
       return _DataSource(appointments);
     } catch (e) {
@@ -615,68 +691,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
   }
 
   void calendarTapped(CalendarTapDetails details) {
-    debugPrint('line 490: $details');
-    // if (details.targetElement == CalendarElement.appointment ||
-    //     details.targetElement == CalendarElement.agenda) {
-    //   final Appointment appointmentDetails = details.appointments![0];
-    //   _subjectText = appointmentDetails.subject;
-    //   _dateText = DateFormat('MMMM dd, yyyy')
-    //       .format(appointmentDetails.startTime)
-    //       .toString();
-    //   _startTimeText =
-    //       DateFormat('hh:mm a').format(appointmentDetails.startTime).toString();
-    //   _endTimeText =
-    //       DateFormat('hh:mm a').format(appointmentDetails.endTime).toString();
-    //   if (appointmentDetails.isAllDay) {
-    //     _timeDetails = 'All day';
-    //   } else {
-    //     _timeDetails = '$_startTimeText - $_endTimeText';
-    //   }
-    //   showDialog(
-    //       context: context,
-    //       builder: (BuildContext context) {
-    //         return AlertDialog(
-    //           title: Container(child: Text('$_subjectText')),
-    //           content: Container(
-    //             height: 80,
-    //             child: Column(
-    //               children: <Widget>[
-    //                 Row(
-    //                   children: <Widget>[
-    //                     Text(
-    //                       '$_dateText',
-    //                       style: const TextStyle(
-    //                         fontWeight: FontWeight.w400,
-    //                         fontSize: 20,
-    //                       ),
-    //                     ),
-    //                   ],
-    //                 ),
-    //                 Row(
-    //                   children: const <Widget>[
-    //                     Text(''),
-    //                   ],
-    //                 ),
-    //                 Row(
-    //                   children: <Widget>[
-    //                     Text(_timeDetails!,
-    //                         style: const TextStyle(
-    //                             fontWeight: FontWeight.w400, fontSize: 15)),
-    //                   ],
-    //                 )
-    //               ],
-    //             ),
-    //           ),
-    //           actions: <Widget>[
-    //             TextButton(
-    //                 onPressed: () {
-    //                   Navigator.of(context).pop();
-    //                 },
-    //                 child: const Text('close'))
-    //           ],
-    //         );
-    //       });
-    // }
+
   }
 }
 

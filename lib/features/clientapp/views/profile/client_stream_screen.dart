@@ -64,20 +64,29 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
   Map<String, dynamic>? arguments;
   List<Map<String, dynamic>> listOfClients = [];
   List<Map<String, dynamic>>? clm;
-  List<Map<String,dynamic>>? holdClm;
+
+
   Future<List<Map<String, dynamic>>> _getAllClientData() async {
-    debugPrint('line 178 in _getallclientdata: $arguments ${clm!.length}');
+    debugPrint('line 70 _getallclientdata: $arguments ${clm!.length}');
 
     try {
-      if (holdClm != null && holdClm!.length > 0) {
-        clm = holdClm;
-        debugPrint('line 73 no get $clm');
-
-        return clm!;
+      if (authServices.holdClm.length > 0) {
+        debugPrint('line 74: ${authServices.holdClm.length}');
+        clm = authServices.holdClm;
+        _clients = authServices.clients;
+        clientClassData = authServices.clientClassData;
+        _rowsPerPage = authServices.rowsPerPage;
+        debugPrint('line 73  ${clm!.length}');
+        if (clm!.length > 0) {
+          return clm!;
+        }
       }
      _rowsPerPage = 15;
+      authServices.rowsPerPage = _rowsPerPage!;
       clm = [];
-      holdClm = [];
+      authServices.holdClm = [];
+      authServices.clients = [];
+
       Query query = util.buildDynamicQuery(arguments!);
        clm = await clientServices.getQueryData(query);
        if (clm!.length < _rowsPerPage!) {
@@ -88,8 +97,10 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
          Map<String, dynamic>obj = clm![i];
          _clients.add(ClientClass.fromJson(obj));
        }
-       holdClm = clm;
-       debugPrint('line 85: $clm');
+       authServices.clients = _clients;
+       authServices.holdClm = clm!;
+
+      // debugPrint('line 85: $clm');
       return clm!;
     } catch (e) {
       debugPrint('line 87: ${e.toString()}');
@@ -164,6 +175,28 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
 //     return true;
 //   }
 // }
+  double _getPageCount(int len, int rowsPerPage) {
+    debugPrint('line 168: $len $rowsPerPage');
+    try {
+      int addOn = 0;
+      if (len % rowsPerPage > 0) {
+        addOn = 1;
+      }
+      double lend =  len.toDouble();
+      double rppd =  rowsPerPage.toDouble();
+      debugPrint('line 176 $lend $rppd');
+      int pgc = (lend / rppd).toInt();
+      pgc += addOn;
+      debugPrint('line 179 $pgc');
+      double pgd = pgc.toDouble();
+      debugPrint('line 181: $pgd');
+      return pgd;
+
+    } catch(e) {
+      print('line 173 error ${e.toString()}');
+          throw Exception('line 174: ${e.toString()}');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery
@@ -201,6 +234,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 20),
           onPressed: () {
+            authServices.holdClm = [];
             // shiftClasses = shiftClassDataSource.returnShiftClasses();
             // debugPrint('line 99: ${shiftClasses[0].shiftCode} ${shiftClasses[0].shiftCount}');
             Navigator.of(context).pop(null);
@@ -293,6 +327,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                 //   debugPrint('line 311: ${clientClassData[0].clientId}');
                 clientClassDataSource = ClientClassDataSource(
                     clientClassData, _rowsPerPage!, _clients, _paginatedClients);
+                authServices.clientClassData = clientClassData;
                 return LayoutBuilder(builder: (context, constraint) {
                   return Column(children: [
                     SizedBox(
@@ -303,7 +338,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                         height: _dataPagerHeight,
                         child: SfDataPager(
                           delegate: clientClassDataSource,
-                          pageCount: _clients.length / _rowsPerPage!,
+                          pageCount: _getPageCount(_clients.length, _rowsPerPage!),
                           direction: Axis.horizontal,
                         ))
                   ]);

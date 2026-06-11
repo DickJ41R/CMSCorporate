@@ -256,50 +256,50 @@ class _ShowHCPPaymentDetailsScreenState
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Visibility(
-                      //    visible: _showCircle,
-                      //   child: CircularProgressIndicator(),
-                      // ),
-                      // Button for getting request
-                      Flexible(
-                        fit: FlexFit.loose,
-                        child: Container(
-                          height: 40,
-                          width: screenWidth! - 10,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Map<String,dynamic>mapItem = {
-                                    'hcpId': paymentItem!['regId'],
-                                    'checkRegisterId': paymentItem!['checkRegisterId'],
-                                    'orgId': orgId!,
-                                    'ctx': ctx!,
-                                    'args': arguments!
-                                  };
-                                  final navigator = Navigator.of(context)
-                                      .pushNamed(showPaymentPDF, arguments: mapItem);
-                                },
-                                child: Text('Press to Show Check PDF',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: smallFontSize,
-                                      fontWeight: FontWeight.bold,
-                                    )),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // const SizedBox(height: 10),
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   mainAxisSize: MainAxisSize.min,
+                  //   children: [
+                  //     // Visibility(
+                  //     //    visible: _showCircle,
+                  //     //   child: CircularProgressIndicator(),
+                  //     // ),
+                  //     // Button for getting request
+                  //     Flexible(
+                  //       fit: FlexFit.loose,
+                  //       child: Container(
+                  //         height: 40,
+                  //         width: screenWidth! - 10,
+                  //         child: Row(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           mainAxisSize: MainAxisSize.min,
+                  //           children: [
+                  //             ElevatedButton(
+                  //               onPressed: () {
+                  //                 Map<String,dynamic>mapItem = {
+                  //                   'hcpId': paymentItem!['regId'],
+                  //                   'checkRegisterId': paymentItem!['checkRegisterId'],
+                  //                   'orgId': orgId!,
+                  //                   'ctx': ctx!,
+                  //                   'args': arguments!
+                  //                 };
+                  //                 final navigator = Navigator.of(context)
+                  //                     .pushNamed(showPaymentPDF, arguments: mapItem);
+                  //               },
+                  //               child: Text('Press to Show Check PDF',
+                  //                   style: TextStyle(
+                  //                     color: Colors.black,
+                  //                     fontSize: smallFontSize,
+                  //                     fontWeight: FontWeight.bold,
+                  //                   )),
+                  //             )
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
             ): SizedBox.shrink()

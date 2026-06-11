@@ -25,8 +25,8 @@ class _TabsWebState extends State<TabsWeb> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        debugPrint('line 27 tabs voew: ${widget.route}');
-        if (widget.route == '/hcpprofessionalstreamscreen' &&
+        debugPrint('line 27 tabs view: ${widget.actualBranch} ${widget.route}');
+        if (widget.route == '/hcprofessionalstreamscreen' &&
             widget.actualBranch != 1) {
           return;
       } else if (widget.route == '/clientstreamscreen' && widget.actualBranch != 0) {
@@ -34,7 +34,7 @@ class _TabsWebState extends State<TabsWeb> {
         } else if (widget.route == '/workOrderstreamscreen' && widget.actualBranch != 2) {
             return;
         }
-        if (widget.route != '/hcpprofessionalstreamscreen' &&
+        if (widget.route != '/hcprofessionalstreamscreen' &&
             widget.route != '/clientstreamscreen' &&
             widget.route != '/workOrderstreamscreen' ) {
             return;

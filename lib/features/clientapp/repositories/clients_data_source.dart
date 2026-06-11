@@ -13,7 +13,7 @@ class ClientClassDataSource extends DataGridSource {
   List<ClientClass>paginatedClients;
   ClientClassDataSource(this._clientClassInfo,this.rowsPerPage,this.clients,this.paginatedClients) {
     //  debugPrint('line 11: ${this._clientClassInfo}');
-    debugPrint('line 14: $rowsPerPage $clients $paginatedClients');
+//    debugPrint('line 14: $rowsPerPage $clients $paginatedClients');
     paginatedClients = clients.getRange(0,rowsPerPage).toList(growable: false);
     //_addCityState();
     buildPaginatedDataGridRows();
@@ -186,8 +186,14 @@ class ClientClassDataSource extends DataGridSource {
   @override
   Future<bool> handlePageChange(int oldPageIndex, int newPageIndex) async {
     int startIndex = newPageIndex * rowsPerPage;
-    int endIndex = startIndex + rowsPerPage;
+    int endIndex  = startIndex + rowsPerPage;
+    if (endIndex  > clients.length) {
+      endIndex = clients.length;
+    }
+
+    debugPrint('line 191: $startIndex $endIndex $rowsPerPage ${clients.length}');
     if (startIndex < clients.length && endIndex <= clients.length) {
+
       paginatedClients =
           clients.getRange(startIndex, endIndex).toList(growable: false);
       buildPaginatedDataGridRows();

@@ -19,7 +19,7 @@ import 'package:cms_web/features/shared/services/clientapp/client_services.dart'
 import 'package:cms_web/features/clientapp/views/client_menu.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 // Private constructor to prevent external instantiation.
-
+import 'package:cms_web/features/clientapp/models/client_class.dart';
 //import 'package:cms_web/apps/client/screens/process_hcp_menu_tester.dart';
 class AuthService {
   static AuthService? _instance;
@@ -42,6 +42,16 @@ class AuthService {
   Map<String, dynamic>? clientUserMap;
   Map<String, dynamic>? currentHCPMap;
   dynamic currentCredentialUser;
+  List<Map<String,dynamic>> holdClm = [];
+  List<Map<String,dynamic>> holdHcp = [];
+  List<Map<String,dynamic>> holdWrk = [];
+  List<ClientClass>clients = [];
+  late List<ClientClass> clientClassData = [];
+  int rowsPerPage = 15;
+  Map<String,String>? currentArgument;
+  bool isCheckedClient = false;
+  bool isCheckedHCP = false;
+  bool isCheckedWorkSchedule = false;
   List<Map<String, dynamic>>? listOfCMSUserBranches;
   List<Map<String, dynamic>>? listClientUserMap;
   String? targetType;
