@@ -43,6 +43,7 @@ class ProcessClientRequestScheduleState
   List<String>? listDepartments;
   List<String>? listOfDepartments;
   dynamic selectedDepartmentValue = null;
+  Map<String,dynamic>? client;
 
   List<TextEditingController> listDisciplinesControllers = [];
 
@@ -162,9 +163,28 @@ class ProcessClientRequestScheduleState
       throw Exception('Error getting client departments: ${e.toString()}');
     }
   }
-
+  Map<String,dynamic>?clientMap;
   Map<String, dynamic>? arguments;
-
+  Future<void>getClientX() async {
+    await getClient();
+    return;
+    }
+  Future<void> getClient() async {
+    try {
+      Map<String,dynamic>? clm = await  clientServices.getClientMapData(clientId!);
+      clientMap = clm!;
+      Map<String,dynamic>? clu = await clientServices.getASingleClientUser(clientId!);
+      if (clu!.containsKey('clientId') == false) {
+        print('line 174 no client user record found');
+        throw Exception('No client user record found');
+      }
+      authService.clientUser = clu!;
+      return;
+     } catch(e) {
+       debugPrint('line 180 error: ${e.toString()}');
+       return;
+   }
+}
   List<DateTime> dateTimeList = [];
   @override
   void initState() {
@@ -174,39 +194,60 @@ class ProcessClientRequestScheduleState
     arguments = widget.args;
     debugPrint('line 174 initstate: $arguments');
     clientId = arguments!['clientId'];
-    currentUser = authService.currentUser;
 
+    getClientX();
+    print('line 195 check');
+    if (authService.clientUser == null) {
+    debugPrint('line 196 no client user record.  get out');
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+              Navigator.of(context).pop();
+              // Or navigate to another page:
+              // Navigator.of(context).pushReplacement(
+              //   MaterialPageRoute(builder: (_) => const AnotherPage()),
+              // );
+            }
+      });
+    }
+  clientUser = authService.clientUser;
+    clientUserId = clientUser!['clientUserId'];
     debugPrint('line 176 in init schedule shifts');
     listOfClientTokens = [];
-    if (currentUser!['iosFcmToken'] != null &&
-        currentUser!['iosFcmToken'] != 'Placeholder') {
+    if (clientUser!['iosFcmToken'] != null &&
+        clientUser!['iosFcmToken'] != 'Placeholder') {
       listOfClientTokens!.add(currentUser!['iosFcmToken']);
     }
-    if (currentUser!['iosFcmTabletToken'] != null &&
-        currentUser!['iosFcmTabletToken'] != 'Placeholder') {
-      listOfClientTokens!.add(currentUser!['iosFcmTabletToken']);
+    if (clientUser!['iosFcmTabletToken'] != null &&
+        clientUser!['iosFcmTabletToken'] != 'Placeholder') {
+      listOfClientTokens!.add(clientUser!['iosFcmTabletToken']);
     }
-    if (currentUser!['androidFcmToken'] != null &&
-        currentUser!['androidFcmToken'] != 'Placeholder') {
-      listOfClientTokens!.add(currentUser!['androidFcmToken']);
+    if (clientUser!['androidFcmToken'] != null &&
+        clientUser!['androidFcmToken'] != 'Placeholder') {
+      listOfClientTokens!.add(clientUser!['androidFcmToken']);
     }
-    if (currentUser!['androidFcmTabletToken'] != null &&
-        currentUser!['androidFcmTabletToken'] != 'Placeholder') {
-      listOfClientTokens!.add(currentUser!['androidFcmTabletToken']);
+    if (clientUser!['androidFcmTabletToken'] != null &&
+        clientUser!['androidFcmTabletToken'] != 'Placeholder') {
+      listOfClientTokens!.add(clientUser!['androidFcmTabletToken']);
     }
+     debugPrint('line 246: $clientId');
 
     flagAllData = false;
     checkAllData = [false, false, false, false, false];
     // clientId = ref
     //     .read(clientUserNotifierProvider.notifier)
     //      .fromClientId;
-    debugPrint('line 246: $clientId');
+
 
     debugPrint('line 194 in didchange');
     setPNRates();
     _getListOfHolidays(clientId!);
     debugPrint('line 208 end of initstate');
   }
+//   @override
+//   didChangeDependencies() {
+//   dependOnInheritedWidgetOfExactType();
+//  }
 
   Future<dynamic> _showDialog(
       BuildContext context, String title, String? description) async {
@@ -461,7 +502,7 @@ class ProcessClientRequestScheduleState
         throw Exception('No shifts picked up.');
       }
       listOfShifts = holdList;
-      debugPrint('line 441: ${listOfShifts!.length} ${listOfShifts![0]}');
+      debugPrint('line 441:$holdList ${listOfShifts!.length} ${listOfShifts![0]}');
       List<dynamic> newList = holdList;
       if (newList.length == 0) {
         //throw Exception('Error: No counts returned from schedule!');
@@ -486,14 +527,16 @@ class ProcessClientRequestScheduleState
       debugPrint('line 452: ${listOfShifts!.length} $rates');
       rates[0]['scheduleRateDetails'] = newList;
       List<dynamic> rateDetails = rates[0]['rateDetails'];
-      debugPrint('line 469: $rateDetails ${rates[0]['rateDetails'].length}');
+      debugPrint('line 489: $rateDetails ${rates[0]['rateDetails'].length}');
       int s = 0;
       int r = 0;
-      debugPrint('line 496 check ${rateDetails.length} ${listOfShifts!.length} ');
+      debugPrint('line 492 check ${rateDetails.length} ${listOfShifts!.length} ');
       //debugPrint('line 500: $newList');
 
       dynamic clientRateMap = rates[0];
-      debugPrint('line 513 ${clientRateMap}');
+      clientRateMap['branchId'] = clientRate!['branchId'];
+      clientRateMap['branchName'] = clientRate!['branchName'];
+      debugPrint('line 498 ${clientRateMap}');
       List<dynamic> newDetails = [];
       for (int z = 0; z < newList.length; z++) {
         for (int j = 0; j < rateDetails.length; j++) {
@@ -523,8 +566,10 @@ class ProcessClientRequestScheduleState
         // rateDetails[z]['billRateWE'] = 0.0;
       }
       for (int z = 0; z < newDetails.length; z++) {
-        debugPrint('line 543: $z ${newDetails[z]}');
+        debugPrint('line 528: $z ${newDetails[z]}');
       }
+      print('line 527: $clientRateMap');
+
       Map<String, dynamic> rateMap = {
         "branchId": clientRateMap!['branchId'],
         "branchName": clientRateMap!['branchName'],
@@ -552,33 +597,28 @@ class ProcessClientRequestScheduleState
         "payOTRate": clientRateMap!['payOTRate'],
         "rateDetails": newDetails
       };
-      debugPrint('line 525: $rateMap');
+      debugPrint('line 559: $rateMap');
 
-      Map<String, dynamic>? clientMap =
-      await clientServices.getClient(clientId!);
-      if (clientMap!.isEmpty) {
-        throw Exception('Unable to get a client while setting rate data');
-      }
-      rates[0]['overtimeRule'] = clientMap['overtimeRule'];
-      rates[0]['payHoliday'] = clientMap['payHolidayRate'];
-      rates[0]['payHolidayPlus'] = clientMap['payHolidayRate'];
-      rates[0]['payMaxRate'] = clientMap['payMaxRate'];
-      rates[0]['payDbPlus'] = clientMap['payMaxRate'];
-      rates[0]['payDbl'] = clientMap['payMaxRate'];
-      rates[0]['payMax'] = clientMap['payMaxRate'];
-      rates[0]['payMaxPlus'] = clientMap['payMaxRate'];
+      rates[0]['overtimeRule'] = clientMap!['overtimeRule'];
+      rates[0]['payHoliday'] = clientMap!['payHolidayRate'];
+      rates[0]['payHolidayPlus'] = clientMap!['payHolidayRate'];
+      rates[0]['payMaxRate'] = clientMap!['payMaxRate'];
+      rates[0]['payDbPlus'] = clientMap!['payMaxRate'];
+      rates[0]['payDbl'] = clientMap!['payMaxRate'];
+      rates[0]['payMax'] = clientMap!['payMaxRate'];
+      rates[0]['payMaxPlus'] = clientMap!['payMaxRate'];
       rates[0]['payOT'] = 1.5;
       rates[0]['payOTPlus'] = 1.5;
-      debugPrint('line 488: ${clientMap['clientId']}');
+      debugPrint('line 488: ${clientMap!['clientId']}');
       debugPrint('line 489: $selectedDepartmentIndex $selectedDisciplineIndex');
       debugPrint(
-          'line 490: ${listClientDepartments.length} ${listOfDisciplines.length}');
+          'line 579: ${listClientDepartments.length} ${listOfDisciplines.length}');
       Map<String, dynamic> department =
       listClientDepartments[selectedDepartmentIndex];
       Map<String, dynamic> discipline =
       listOfDisciplines[selectedDisciplineIndex];
       debugPrint(
-          'line 493: ${department['departmentId']} ${discipline['disciplineId']}');
+          'line 585: ${department['departmentId']} ${discipline['disciplineId']}');
       List<String> stringDays = [
         'Monday',
         'Tuesday',
@@ -596,7 +636,7 @@ class ProcessClientRequestScheduleState
       String fullName =
           clientUser!['firstName'] + ' ' + clientUser!['lastName'];
       schedulerName = fullName;
-      debugPrint('line 506 $rateMap');
+      debugPrint('line 603 $rateMap');
       int q = 0;
       while (q < listOfDatesWithShifts.length) {
         if (listOfDatesWithShifts[q]['date'] == dtm) {
@@ -605,7 +645,7 @@ class ProcessClientRequestScheduleState
         }
         q += 1;
       }
-      debugPrint('line 537: $department');
+      debugPrint('line 612: $department');
 
       Map<String, dynamic> dm = {
         "date": dtm,
@@ -668,8 +708,8 @@ class ProcessClientRequestScheduleState
         "rateTypeCodeId": clientRate!['rateTypeCodeId'],
         "rateTypeDescription": clientRate!['rateTypeDescription'],
         "rate": rateMap,
-        "clientLatitude": clientMap['latitude'],
-        "clientLongitude": clientMap['longitude'],
+        "clientLatitude": clientMap!['latitude'],
+        "clientLongitude": clientMap!['longitude'],
         "clientTimeZoneOffset": null,
         "workersCompCodeId": clientRate!['workersCompCodeId'],
         "workersCompType": clientRate!['workersCompType']
@@ -803,6 +843,12 @@ class ProcessClientRequestScheduleState
       }
 
       debugPrint('line 806 $scheduleNotes, $clientId');
+      debugPrint('line 810: $listOfDatesWithShifts');
+      debugPrint('line 811: $selectedPNRateValue');
+     debugPrint('line 812: ${listOfClientTokens}');
+     debugPrint('line 813: $premiumRate');
+     debugPrint('line 814: $clientUserId');
+
       List<dynamic>? count = await clientServices.createSchedulingWorkOrder(
           listOfDatesWithShifts,
           scheduleNotes!,
@@ -828,13 +874,14 @@ class ProcessClientRequestScheduleState
       await _showDialog(context, title, description);
       return true;
     } catch (e) {
-      debugPrint('line 736 $e');
+      debugPrint('line 835 $e');
       // String te = e.toString();
       // te = te.replaceAll('Exception: Exception:', 'Exception:');
       // title = 'Shift Publication';
       // description =
       //     'You have not published your shift(s). There were errors: ' + te;
       // await _showDialog(context, title, description);
+      await _showDialog(context, title, e.toString());
       return false;
     }
   }
@@ -1104,7 +1151,7 @@ class ProcessClientRequestScheduleState
                     .pushNamed(clientSchedulingMenu, arguments: arguments!);
               }),
         ),
-        title: Text("Publish Shift - ${clientId!}",
+        title: Text('Publish Shift - ${clientId!} ${clientMap!['clientName']}',
             style: TextStyle(
               fontSize: fontSize < 18 ? 18 : fontSize,
               fontWeight: FontWeight.bold,

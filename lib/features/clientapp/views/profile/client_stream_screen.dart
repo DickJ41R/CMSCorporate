@@ -250,6 +250,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
       body: FutureBuilder<List<dynamic>>(
           future: Future.wait([_getAllClientData()]),
           builder: (context, snapshot) {
+
             // debugPrint(
             //     'line 211: ${snapshot.hasError} ${snapshot.hasData} ${ConnectionState} ');
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -318,6 +319,9 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                 );
               } else {
                 List<Map<String, dynamic>> listH = snapshot.data![0];
+                if (_rowsPerPage! > listH.length) {
+                  _rowsPerPage = listH.length;
+                }
                 //   debugPrint('line 312: ${listH.length} ${listH[0]}');
                 clientClassData.clear();
                 listH.forEach((doc) {

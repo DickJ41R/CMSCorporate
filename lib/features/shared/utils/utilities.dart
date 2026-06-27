@@ -1759,6 +1759,33 @@ class UtilitiesServices {
       throw Exception('line 41 error in cvt from ukn');
     }
   }
+  bool isNumericType(dynamic value) {
+    if (value == null) return false;
+
+    // Direct type check for int or double
+    if (value is num) return true;
+
+    // If it's a string, try parsing
+    if (value is String) {
+      return num.tryParse(value) != null;
+    }
+
+    return false;
+  }
+
+  List<dynamic> trimList(List<dynamic>lst) {
+
+    for (int i=0; i < lst.length; i++) {
+      bool bl = isNumericType(lst[i]);
+      if (bl == true) {
+        return lst;
+      }
+      lst[i] = lst[i].trim();
+      }
+      return lst;
+
+ }
+
   Query buildDynamicQuery(Map<String, dynamic> arg) {
     Query? query;
     //check search criteria
@@ -1868,7 +1895,7 @@ class UtilitiesServices {
       }
       // Is greater Than or Equal To,
       debugPrint('line 1870');
-      if (arg['searchCriteria'] == 'Is Greater Than Or Equal To') {
+      if (arg['searchCriteria'] == 'Is Greater Than or Equal To') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
           if (flagHaveBaseArgument == true) {
@@ -1877,6 +1904,7 @@ class UtilitiesServices {
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThanOrEqualTo: value);
           } else {
+
             query = contentsRef.where(arg['searchField']!,
                 isGreaterThanOrEqualTo: value);
           }
@@ -1887,6 +1915,7 @@ class UtilitiesServices {
                 arg['searchField']!,
                 isGreaterThanOrEqualTo: arg['searchValue']);
           } else {
+            String value = arg['searchValue'];
             query = contentsRef.where(arg['searchField']!,
                 isGreaterThanOrEqualTo: arg['searchValue']);
           }
@@ -1894,7 +1923,7 @@ class UtilitiesServices {
       }
 
       //Is less Than or Equal To",
-      if (arg['searchCriteria'] == 'Is Less Than Or Equal To') {
+      if (arg['searchCriteria'] == 'Is Less Than or Equal To') {
         if (arg['searchField']!.indexOf('Id') != -1) {
           int value = int.parse(arg['searchValue']!);
           int branchId = int.parse(stringBranchId);
@@ -1914,6 +1943,7 @@ class UtilitiesServices {
                 arg['searchField']!,
                 isLessThanOrEqualTo: arg['searchValue']);
           } else {
+            String value = arg['searchValue'];
             query = contentsRef.where(arg['searchField']!,
                 isLessThanOrEqualTo: arg['searchValue']);
           }
@@ -1923,43 +1953,69 @@ class UtilitiesServices {
       if (arg['searchCriteria'] ==
           'Is Between (Edges, colon separated fields)') {
         if (arg['searchField']!.indexOf('Id') != -1) {
-          List<String> lst = arg['searchValue']!.split(':');
-          List<int> values = [];
-          for (int i = 0; i < lst.length; i++) {
-            values.add(int.parse(lst[i]));
-          }
+          List<int>values = arg['searchField']!.split(':');
           debugPrint('line 143: $values');
           if (flagHaveBaseArgument == true) {
             int branchId = int.parse(stringBranchId);
+             List<int>values = arg['searchField']!.split(':');
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
                 .where(arg['searchField']!, isLessThanOrEqualTo: values[1]);
           } else {
+          List<int>values = arg['searchField']!.split(':');
             query = contentsRef
                 .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
                 .where(arg['searchField']!, isLessThanOrEqualTo: values[1]);
           }
         } else {
-          List<String> lst = arg['searchValue']!.split(':');
-          List<String> values = [];
-
-          for (int i = 0; i < lst.length; i++) {
-            values.add(lst[i]);
-          }
+          List<dynamic> lst = arg['searchValue']!.split(':');
+          debugPrint('line 1973: $lst');
+          lst = trimList(lst);
+          List<String>values = lst as List<String>;
           if (flagHaveBaseArgument == true) {
             int branchId = int.parse(stringBranchId);
+            print('line 1977: $branchId $values');
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
                 .where(arg['searchField']!, isLessThanOrEqualTo: values[1]);
           } else {
+                      List<dynamic> lst = arg['searchValue']!.split(':');
+                      lst = trimList(lst);
+                      List<String>values = lst as List<String>;
             query = contentsRef
                 .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
                 .where(arg['searchField']!, isLessThanOrEqualTo: values[1]);
           }
         }
       }
+      //contains
+  if (arg['searchCriteria'] ==  'Starts With') {
+            String value = arg['searchValue'];
+            int asciiValue = value.codeUnitAt(0);
+            asciiValue -= 1;
+           String char = String.fromCharCode(asciiValue);
+           value = char + value;
+           String value1 = arg['searchValue']!;
+           asciiValue = value1.codeUnitAt(0);
+           asciiValue += 1;
+           char = String.fromCharCode(asciiValue);
+           value1 = char + value1;
+           List<String> values = [value,value1];
+           if (flagHaveBaseArgument == true) {
+             int branchId = int.parse(stringBranchId);
+             query = contentsRef
+                 .where('branchId', isEqualTo: branchId)
+                 .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
+                 .where(arg['searchField']!, isLessThanOrEqualTo: values[1]);
+           } else {
+             query = contentsRef
+                 .where(arg['searchField']!, isGreaterThanOrEqualTo: values[0])
+                 .where(arg['searchField']!, isLessThanOrEqualTo: values[1]);
+           }
+         }
+
       // Is Between (Do not Include Edges)",
       if (arg['searchCriteria'] ==
           'Is Between (No Edges, colon separated fields)') {
@@ -1971,23 +2027,30 @@ class UtilitiesServices {
           }
           if (flagHaveBaseArgument == true) {
             int branchId = int.parse(stringBranchId);
+
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThan: values[0])
                 .where(arg['searchField']!, isLessThan: values[1]);
           } else {
+                      List<dynamic> lst = arg['searchValue']!.split(':');
+                      lst = trimList(lst);
+                      List<String>values = lst as List<String>;
+
             query = contentsRef
                 .where(arg['searchField']!, isGreaterThan: values[0])
                 .where(arg['searchField']!, isLessThan: values[1]);
           }
         } else {
-          List<String> lst = arg['searchValue']!.split(':');
-          List<String> values = [];
-          for (int i = 0; i < lst.length; i++) {
-            values.add(lst[i]);
-          }
+          List<dynamic> lst = arg['searchValue']!.split(':');
+
+          lst = trimList(lst);
+           List<String> values =  lst as List<String>;
+
           if (flagHaveBaseArgument == true) {
             int branchId = int.parse(stringBranchId);
+
+
             query = contentsRef
                 .where('branchId', isEqualTo: branchId)
                 .where(arg['searchField']!, isGreaterThan: values[0])
@@ -2015,11 +2078,11 @@ class UtilitiesServices {
             query = contentsRef.where(arg!['searchField']!, whereIn: lvalues);
           }
         } else {
+                String sx = arg['searchValue']!.replaceAll(',', ':');
+         List<dynamic> lsx = sx.split(':');
           List<String> svalues = [];
-          for (int i = 0; i < lsx.length; i++) {
-            String sv = lsx[i];
-            svalues.add(sv);
-          }
+          lsx = trimList(lsx);
+          svalues = lsx as List<String>;
           if (flagHaveBaseArgument == true) {
             int branchId = int.parse(stringBranchId);
             query = contentsRef

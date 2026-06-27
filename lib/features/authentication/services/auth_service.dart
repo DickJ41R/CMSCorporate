@@ -427,6 +427,10 @@ class AuthService {
           }
 
         });
+
+                    flagIsCorporate = false;
+                    flagIsBranch = true;
+                    corporateOrBranch = "Branch";
         Timestamp ts = Timestamp.fromDate(DateTime.now());
         await FirebaseFirestore.instance
             .collection('CMSBranchUser')
@@ -436,6 +440,7 @@ class AuthService {
           "dateOfLastLogin": ts
         });
       } else {
+        debugPrint('line 439 $email');
         await FirebaseFirestore.instance
             .collection('CMSUser')
             .where('email', isEqualTo: email)
@@ -443,7 +448,7 @@ class AuthService {
             .then((querySnapshot) async {
           for (var docSnapshot in querySnapshot.docs) {
             userDocumentId = docSnapshot.id;
-
+            debugPrint('line 447: ${userDocumentId}');
             obj = docSnapshot.data();
             currentUser = obj;
             debugPrint('line 413 checking _authservice $obj');
@@ -465,19 +470,10 @@ class AuthService {
             obj!['roles'] = obj!['Roles'];
           }
           debugPrint('line 363 ${obj!['roles']} ${obj!['Roles']}');
-          flagIsCorporate = false;
-          String npx = obj!['roles'][0];
-          if (npx.indexOf('CORPORATE') != -1) {
+
             flagIsCorporate = true;
             corporateOrBranch = "Corporate";
             flagIsBranch = false;
-          } else {
-            flagIsCorporate = false;
-            flagIsBranch = true;
-            corporateOrBranch = "Branch";
-          }
-
-        });
         Timestamp ts = Timestamp.fromDate(DateTime.now());
         await FirebaseFirestore.instance
             .collection('CMSUser')
@@ -487,7 +483,7 @@ class AuthService {
           "dateOfLastLogin": ts
         });
         debugPrint('line 363 ${obj!['roles']} ${obj!['Roles']}');
-
+         });
 
       }
       // List<Map<String, dynamic>> listOfUserBranches = [
@@ -524,7 +520,7 @@ class AuthService {
       debugPrint('line 549 $message');
       throw Exception('Unable to process user');
     } catch (e) {
-      debugPrint('line 552 error $e');
+      debugPrint('line 528 error $e');
       String err = e.toString();
       int idx = err.indexOf('Exception:');
       if (idx != -1) {

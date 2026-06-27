@@ -35,12 +35,12 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
   //   await getRawDataForDataSource(hcpId, ctx);
   // }
 
-  Future<void> getRawDataForDataSource() async {
+  Future<void> getRawDataForDataSource(BuildContext context) async {
     debugPrint('line 37 in getrawdatasource');
     try {
       bool working = false;
 
-      lstApts = await hcpServices.getHCPWorkOrderCampaigns(hcpId!);
+      lstApts = await hcpServices.getHCPWorkOrderCampaigns(hcpId!,context);
 
       if (lstApts!.isEmpty) {
         Center(
@@ -147,7 +147,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
           // ],
         ),
         body: FutureBuilder<List<dynamic>>(
-          future: Future.wait([getRawDataForDataSource()]),
+          future: Future.wait([getRawDataForDataSource(context)]),
           builder: (context, snapshot) {
 // debugPrint(
 //     'line 211: ${snapshot.hasError} ${snapshot.hasData} ${ConnectionState} ');
@@ -226,8 +226,11 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
                               color:Colors.black12,
                               child: ListView.separated(
                                 padding: const EdgeInsets.all(2),
+                                separatorBuilder:(BuildContext context,int index) =>const Divider(
+                                   height:5),
                                 itemCount: _appointmentDetails.length,
                                 itemBuilder:(BuildContext context, int index) {
+
                                   return Container(
                                         padding: EdgeInsets.all(2),
                                         height:80,
@@ -236,280 +239,65 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
                                             leading:Column(
                                               children :<Widget>[
                                                 Text( _appointmentDetails[index].isAllDay ? '' : '${DateFormat
-                                                  ('hh:mm a').format
-                                                  (_appointmentDetails[index]
-                                                      .
-                                                  startTime
-                                                  )
-                                                  }
-                                                  '
-                                                  ,
-                                                  textAlign
-                                                      :
-                                                  TextAlign
-                                                      .
-                                                  center
-                                                  ,
-                                                  style
-                                                      :
-                                                  TextStyle
-                                                    (
-                                                      fontWeight
-                                                          :
-                                                      FontWeight
-                                                          .
-                                                      w600
-                                                      ,
-                                                      color
-                                                          :
-                                                      Colors
-                                                          .
-                                                      white
-                                                      ,
-                                                      height
-                                                          :
-                                                      1.7
-                                                  )
-                                                  ,
-                                                )
-                                                ,
-                                                Text
-                                                  (
-                                                  _appointmentDetails
-                                                  [
-                                                  index
-                                                  ]
-                                                      .
-                                                  isAllDay
-                                                      ?
-                                                  '
-                                                  All
-                                                  day
-                                                  '
-                                                  :
-                                                  '
-                                                  '
-                                                  ,
-                                                  style
-                                                      :
-                                                  TextStyle
-                                                    (
-                                                      height
-                                                          :
-                                                      0.5
-                                                      ,
-                                                      color
-                                                          :
-                                                      Colors
-                                                          .
-                                                      white
-                                                  )
-                                                  ,
-                                                )
-                                                ,
-                                                Text
-                                                  (
-                                                  _appointmentDetails
-                                                  [
-                                                  index
-                                                  ]
-                                                      .
-                                                  isAllDay ?
-                                                  '
-                                                  '
-                                                      :
-                                                  '
-                                                  $
-                                                  {
-                                                  DateFormat
-                                                  (
-                                                  '
-                                                  hh
-                                                      :
-                                                  mm
-                                                  a
-                                                  '
-                                                  )
-                                                      .
-                                                  format
-                                                  (
-                                                  _appointmentDetails
-                                                  [
-                                                  index
-                                                  ]
-                                                      .
-                                                  endTime
-                                                  )
-                                                  }
-                                                  '
-                                                  ,
-                                                  textAlign
-                                                      :
-                                                  TextAlign
-                                                      .
-                                                  center
-                                                  ,
-                                                  style
-                                                      :
-                                                  TextStyle
-                                                    (
-                                                      fontWeight
-                                                          :
-                                                      FontWeight
-                                                          .
-                                                      w600
-                                                      ,
-                                                      color
-                                                          :
-                                                      Colors
-                                                          .
-                                                      white
-                                                  )
-                                                  ,
-                                                )
-                                                ,
-                                              ]
-                                              ,
-                                            )
-                                            ,
+                                                  ('hh:mm a').format(_appointmentDetails[index].startTime)}',
+                                                  textAlign:TextAlign.center,
+                                                  style:TextStyle(
+                                                      fontWeight:FontWeight.w600,
+                                                      color:Colors.white,
+                                                      height:1.7
+                                                  ),
+                                                ),
+                                                Text(_appointmentDetails[index].isAllDay ? 'All day'
+                                                  : '',
+                                                  style:TextStyle(
+                                                      height:0.5,
+                                                      color:Colors. white
+                                                  ),
+                                                ),
+                                                Text(_appointmentDetails[index].isAllDay ?
+                                                      '${DateFormat('hh:mm a').format(
+                                                   _appointmentDetails[index].endTime)}' : '',
+                                                  textAlign:TextAlign.center,
+                                                  style:TextStyle(
+                                                      fontWeight:FontWeight.w600,
+                                                      color:Colors.white
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
 // trailing: Container(
 //     child: getIcon(
 //         _appointmentDetails[index]
 //             .subject)),
-                                            title
-                                                :
-                                            Container
-                                              (
-                                                width
-                                                    :
-                                                screenWidth
-                                                    -
-                                                    100
-                                                ,
-                                                child
-                                                    :
-                                                Text
-                                                  (
-                                                    '
-                                                    $
-                                                    {
-                                                    _appointmentDetails
-                                                    [
-                                                    index
-                                                    ]
-                                                        .
-                                                    subject
-                                                    }
-                                                    '
-                                                    ,
-                                                    textAlign
-                                                        :
-                                                    TextAlign
-                                                        .
-                                                    center
-                                                    ,
-                                                    style
-                                                        :
-                                                    TextStyle
-                                                      (
-                                                        fontWeight
-                                                            :
-                                                        FontWeight
-                                                            .
-                                                        w600
-                                                        ,
-                                                        fontSize
-                                                            :
-                                                        10
-                                                        ,
-                                                        color
-                                                            :
-                                                        Colors
-                                                            .
-                                                        white
-                                                    )
+                                            title:Container(
+                                                width:screenWidth - 100,
+                                                child:Text('${_appointmentDetails[index].subject}',
+                                                    textAlign:TextAlign.center,
+                                                    style:TextStyle(
+                                                        fontWeight:FontWeight.w600,
+                                                        fontSize:10,
+                                                        color:Colors.white
+                                                    ),
                                                 )
-                                            )
-                                            ,
-                                            subtitle
-                                                :
-                                            Container
-                                              (
-                                                width
-                                                    :
-                                                screenWidth
-                                                    -
-                                                    100
-                                                ,
-                                                child
-                                                    :
-                                                Text
-                                                  (
-                                                    '
-                                                    $
-                                                    {
-                                                    _appointmentDetails
-                                                    [
-                                                    index
-                                                    ]
-                                                        .
-                                                    notes
-                                                    }
-                                                    '
-                                                    ,
-                                                    textAlign
-                                                        :
-                                                    TextAlign
-                                                        .
-                                                    left
-                                                    ,
-                                                    style
-                                                        :
-                                                    TextStyle
-                                                      (
-                                                        fontWeight
-                                                            :
-                                                        FontWeight
-                                                            .
-                                                        w600
-                                                        ,
-                                                        fontSize
-                                                            :
-                                                        10
-                                                        ,
-                                                        color
-                                                            :
-                                                        Colors
-                                                            .
-                                                        white
-                                                    )
+                                            ),
+                                            subtitle:Container(width:screenWidth - 100,
+                                                child:Text('${_appointmentDetails[index].notes}',
+                                                    textAlign:TextAlign.left,
+                                                    style:TextStyle(
+                                                        fontWeight:FontWeight.w600,
+                                                        fontSize:10,
+                                                        color:Colors.white
+                                                    ),
                                                 )
                                             )
                                         )
                                     );
-                                }
-                                ,
-                                separatorBuilder
-                                    :
-                                    (BuildContext
-                                context
-                                    ,
-                                    int
-                                    index) =>
-                                const
-                                Divider
-                                  (
-                                  height
-                                      :
-                                  5
-                                  ,
-                                )
-                                ,
+                                },
+
                               )
                           )
                       )
-                    ]
-                    ,
+                    ],
                   );
               }
             }

@@ -193,6 +193,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       "Is Between (Edges, colon separated fields)",
       "Is Between (No Edges, colon separated fields)",
       "Is In (colon separated list)",
+      "Starts With"
     ];
     for (int i = 0; i < searchCriteria!.length; i++) {
       DropdownMenuEntry me = DropdownMenuEntry(
@@ -220,14 +221,16 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       dropDownBranchEntries.add(me);
       flagHaveCorporate = true;
     }
-    for (int i = 0; i < userBranches!.length; i++) {
+
       // String st = userBranches[i]['branchName'];
       //  Text ts = Text('Index $i: $st', style: optionStyle);
       //  _widgetOptions.add(userBranches[i]);
-      bool flagGotHit = false;
-      Map<String, dynamic> mp = userBranches![i];
       for (int j = 0; j < listOfCurrentUserBranches!.length; j++) {
-        Map<String, dynamic> tp = listOfCurrentUserBranches![j];
+      bool flagGotHit = false;
+      Map<String, dynamic> tp = listOfCurrentUserBranches![j];
+      for (int i = 0; i < userBranches!.length; i++) {
+      Map<String, dynamic> mp = userBranches![i];
+
         if (tp['branchId'] == mp['branchId']) {
           flagGotHit = true;
           break;
@@ -238,12 +241,13 @@ class _LandingPageWebState extends State<LandingPageWeb> {
       }
       DropdownMenuEntry me = DropdownMenuEntry(
           value: '(' +
-              mp['branchId'].toString() +
+              tp['branchId'].toString() +
               ') ' +
-              mp['branchName'].toString(),
-          label: mp['branchName']);
+              tp['branchName'].toString(),
+          label: tp['branchName']);
       dropDownBranchEntries.add(me);
     }
+    debugPrint('line 247: ${dropDownBranchEntries.length}');
   }
 
   int getSelectedBranchIndex(value) {
