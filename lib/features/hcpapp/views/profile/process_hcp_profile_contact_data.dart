@@ -34,15 +34,18 @@ class _ProcessHCPProfileContactDataState
 
   Future<List<dynamic>> _getDropDownMenuItems() async {
     debugPrint(
-        'line 30 get client address Dropdownitems: ${listOfContacts!.length}');
+        'line 30 get client contact Dropdownitems: ${listOfContacts!.length}');
     dropDownMenuEntries = [];
     menuContacts = [];
+
+      listOfContacts = [];
+
     try {
-      if (listOfContacts!.length == 0) {
-        listOfContacts = await hcpServices.getHCPContacts(arguments!['hcpId']);
-      }
+
+        listOfContacts = await hcpServices.getHCPContacts(hcpId!);
       debugPrint('line 35: ${listOfContacts!.length}');
       if (listOfContacts!.length > 0) {
+        dropDownMenuEntries = [];
         for (int i = 0; i < listOfContacts!.length; i++) {
           Map<String, dynamic> con = listOfContacts![i];
           if (con['contactTypeCodeDescription'] == null) {
@@ -69,6 +72,7 @@ class _ProcessHCPProfileContactDataState
       } else {
         return [];
       }
+
     } catch (e) {
       debugPrint('line 66: error: ${e.toString()}');
       throw Exception('line 67 error getting dropdown menu items');
@@ -103,7 +107,7 @@ class _ProcessHCPProfileContactDataState
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
-    debugPrint('line 38 gethcpuser address: $hcpServices');
+    debugPrint('line 38 gethcpuser contact: $hcpServices');
     Map<String, dynamic> lm = await hcpServices.getHCPUser(hcpId!);
     if (lm.isEmpty) {
       return lm;
@@ -120,6 +124,7 @@ class _ProcessHCPProfileContactDataState
     super.initState();
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
+    debugPrint('line 126: $hcpId');
   }
 
   void initializeContactControllers() {
@@ -221,7 +226,7 @@ class _ProcessHCPProfileContactDataState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    debugPrint('line 51 ADDRESS  didchange');
+    debugPrint('line 227 CONTACT  didchange');
     getHCPUserX();
   }
 

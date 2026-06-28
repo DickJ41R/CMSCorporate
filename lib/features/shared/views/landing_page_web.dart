@@ -3,6 +3,7 @@ import 'package:cms_web/features/shared/views/taskview.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
 import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LandingPageWeb extends StatefulWidget {
   const LandingPageWeb({super.key});
@@ -18,14 +19,52 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   AuthService authServices = AuthService();
 
   List<Map<String, dynamic>>? listOfCurrentUserBranches;
-  @override
-  void initState() {
-    super.initState();
 
-    debugPrint('line 26 landingpage web');
-    localTitle = 'CMS Primary Menu';
+void resetDataElements() {
+    print('line 24 in resetdataelements');
+    isCheckedWorkSchedule = false;
+    isCheckedHCP = false;
+    isCheckedClient = false;
+    authServices.isCheckedClient=false;
+    authServices.isCheckedWorkSchedule=false;
+    authServices.isCheckedHCP=false;
+    flagHasTopLevelBranch = false;
+    flagHaveQueryData = false;
+    currentArgument = authServices.currentArgument;
+    selectedSearchCriteria = null;
+    selectedSearchField = null;
+    _setBranches();
+    selectedBranchIndex -=1;
+    selectedBranch = null;
+    selectedBranchNumber = -1;
+    currentTermsValue = '';
+    searchClientController.text = '';
+    searchCriteriaController.text = '';
+    searchHCPController.text = '';
+    searchWorkOrderController.text = '';
+    searchTermsController.text = '';
+    branchController.text = '';
+    menuOptionController.text = '';
+    searchFieldsController.text = '';
+   _setSearchCriteria();
+    _setClientFields();
+    _setHCPFields();
+    _setWorkOrderFields();
+    currentArgument = {
+      'searchCollection': 'Unknown',
+      'searchField': 'Unknown',
+      'searchCriteria': 'Unknown',
+      'searchValue': 'Unknown',
+      'branchValue': 'Unknown'
+    };
+    setState ( () {
+
+    });
+}
+  void initialSetOfDataElements() {
+
     if (authServices.isCheckedHCP != false || authServices.isCheckedClient != false
-    || authServices.isCheckedWorkSchedule != false) {
+        || authServices.isCheckedWorkSchedule != false) {
       isCheckedWorkSchedule = authServices.isCheckedWorkSchedule;
       isCheckedHCP = authServices.isCheckedHCP;
       isCheckedClient = authServices.isCheckedClient;
@@ -51,6 +90,15 @@ class _LandingPageWebState extends State<LandingPageWeb> {
         'branchValue': 'Unknown'
       };
     }
+
+  }
+  @override
+  void initState() {
+    super.initState();
+
+    debugPrint('line 26 landingpage web $selectedSearchCriteria $selectedSearchCriteriaMenuOption');
+    localTitle = 'CMS Primary Menu';
+    initialSetOfDataElements();
   }
 
   @override
@@ -183,6 +231,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
   Map<String, String>? currentArgument;
 
   void _setSearchCriteria() {
+    dropDownSearchCriteriaEntries = [];
     searchCriteria = [
       "All",
       'Is Equal To',
@@ -208,6 +257,7 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     debugPrint('line 50 in _setBranches');
     userBranches = dropDownCodes.getUserBranches();
     bool flagHaveCorporate = false;
+    dropDownBranchEntries = [];
     debugPrint(
         'line 60: ${userBranches!.length} ${listOfCurrentUserBranches!.length}');
     if (authServices.corporateOrBranch == 'Corporate') {
@@ -324,7 +374,19 @@ class _LandingPageWebState extends State<LandingPageWeb> {
     }
     return bl;
   }
+  Future<void> _logout(BuildContext context) async {
+      try {
+        await FirebaseAuth.instance.signOut();
 
+        // Navigate to login screen and remove all previous routes
+        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+      } catch (e) {
+        // Handle logout errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Logout failed: $e')),
+        );
+      }
+    }
   void setDataElements() {
     debugPrint("line 295 edit ${searchTermsController.text}");
     currentArgument!['searchValue'] = currentTermsValue.toString();
@@ -387,6 +449,18 @@ class _LandingPageWebState extends State<LandingPageWeb> {
           localTitle!,
           style: TextStyle(color: Colors.black),
         ),
+          leading: GestureDetector(
+                   child: IconButton(
+                       icon: Icon(
+                         Icons.arrow_back_ios_new_outlined,
+                         size:
+                             Theme.of(context).textTheme.headlineLarge!.fontSize! / h!,
+                         color: Colors.black,
+                       ),
+                      onPressed: () => _logout(context)
+
+                      ),
+                 ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -780,20 +854,40 @@ class _LandingPageWebState extends State<LandingPageWeb> {
                   ),
                 ),
                 Container(
-                    height: 50,
-                    width: 100,
-                    child: Center(
+                    height: 40,
+                    width:  250,
+                    child: Row(
+                      children: [
+                      Container(
+                        width: 120,
                       child: ElevatedButton(
                           onPressed: () {
                             setDataElements();
                           },
                           child: Center(
-                            child: Text('Done',
+                            child: Text('Query',
                                 style: TextStyle(
                                   fontSize: 18,
                                 )),
                           )),
-                    ))
+                    ),
+                        SizedBox(width: 10),
+                        Container(
+                          height:40,
+                          width: 120,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                resetDataElements();
+                              },
+                                child: Text('Reset',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                    )),
+                              ),
+                        )
+                     ],
+                    ),
+                ),
               ],
             ),
           ),

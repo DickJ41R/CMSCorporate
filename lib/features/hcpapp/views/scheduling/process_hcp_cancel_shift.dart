@@ -40,7 +40,7 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
     debugPrint('line 122 in getAvailable shiftgs');
     try {
       List<Map<String, dynamic>>? lm =
-          await clw.getWorkOrderCampaignsConfirmed(hcpId!);
+          await clw.getWorkOrderCampaignsApprovedConfirmed(hcpId!);
       debugPrint('line 58 in get all confirmed');
       if (lm == null) {
         return [];

@@ -36,7 +36,7 @@ class _ProcessHCPShowConfirmedShiftsState
     debugPrint('line 38 getAll approved shiftgs $hcpId');
     try {
       List<Map<String, dynamic>>? lm =
-          await clw.getWorkOrderCampaignsConfirmed(hcpId!);
+          await clw.getWorkOrderCampaignsApprovedConfirmed(hcpId!);
       debugPrint('line 41in get all confirmed');
       if (lm == null) {
         return [];

@@ -39,7 +39,7 @@ class _ClientConfirmShiftsSchedulingPagesState
   }
 
   Future<List<Map<String, dynamic>>> getAllItems() async {
-    allItemsTemp = await clw.getWorkOrderCampaignsConfirmed(clientId!);
+    allItemsTemp = await clw.getWorkOrderCampaignsApprovedConfirmed(clientId!);
     return allItemsTemp!;
   }
 

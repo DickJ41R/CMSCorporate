@@ -45,7 +45,8 @@ class LoginState extends State<Login> {
     myEmailFocusNode = FocusNode();
     myPasswordFocusNode.addListener(_handlePasswordFocusChange);
     myEmailFocusNode.addListener(_handleEmailFocusChange);
-
+    _passwordController.text = '';
+    _emailController.text = '';
     flagGetAPNS = widget.flagGetAPNS;
     showLogOutButton = false;
     debugPrint('line login 45: ${FirebaseAuth.instance.currentUser}');
@@ -575,6 +576,7 @@ class LoginState extends State<Login> {
                 height: 64,
                 child: TextField(
                   autofocus: true,
+                  enabled: true,
                   focusNode: myPasswordFocusNode,
                   keyboardType: TextInputType.text,
                   // onChanged: (value) {

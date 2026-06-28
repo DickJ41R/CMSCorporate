@@ -59,7 +59,7 @@ class _HCPMenuState extends State<HCPMenu> {
   List<Map<String, dynamic>> hcpSchedulingMenus = [
     {
       "menuId": 1,
-      "menuName": "Available Shifts",
+      "menuName": "Available/Approved Shifts",
       "menuRouteName": "/hcpAvailableShiftsSchedulingPage",
       "index": 0
     },
@@ -101,7 +101,7 @@ class _HCPMenuState extends State<HCPMenu> {
     },
     {
       "menuId": 7,
-      "menuName": "HCP DNU List",
+      "menuName": "HCP Client DNS List",
       "menuRouteName": "/hcpDNUListSchedulingPage",
       "index": 6
     },

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:cms_web/features/hcpapp/models/users.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
 import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
-import 'package:cms_web/features/hcpapp/views/hcp_menu.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ProcessHCPProfileAddressData extends StatefulWidget {
@@ -27,6 +25,7 @@ class _ProcessHCPProfileAddressDataState
     try {
       List<Map<String, dynamic>>? lm =
           await hcpServices.getHCPAddresses(hcpId!);
+
       return lm!;
     } catch (e) {
       debugPrint('line 69 _getClientInvoice error: $e');
@@ -187,7 +186,7 @@ class _ProcessHCPProfileAddressDataState
                               padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
                               color: Colors.grey[200],
                               child: Text(
-                                'Adr1: ' + item['1'] != "" ? item['1'] : item['address1'],
+                                'Adr1: ${item['address1']}',
                                 style: TextStyle(
                                   fontSize: fontSize,
                                   color: Colors.black87,

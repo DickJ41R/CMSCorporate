@@ -1132,7 +1132,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
 
     _ratio = widget.ratio;
     _ratio = .25;
-    debugPrint('line 99: $_ratio');
+    debugPrint('line 99 initstate: $_ratio');
   }
 
   @override

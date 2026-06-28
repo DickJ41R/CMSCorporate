@@ -122,7 +122,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
       //    Map<String,dynamic>?hcp = await hst.getSingleHCProfessional(hcpId!);
       //  String disciplineName = hcp!['disciplineName'];
       List<Map<String, dynamic>>? lm = [];
-      lm = await clw.getWorkOrderCampaignsAllNotAccepted(hcpId!);
+      lm = await clw.getWorkOrderCampaignsAllOpenAccepted(hcpId!);
       debugPrint('line 127 $lm');
       if (lm == null) {
         return [];

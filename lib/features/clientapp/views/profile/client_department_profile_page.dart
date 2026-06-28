@@ -24,7 +24,7 @@ class _ClientDepartmentProfilePageState
   List<DropdownMenuEntry<dynamic>> dropDownMenuOptionEntries = [];
   UtilitiesServices utilityServices = UtilitiesServices();
   Future<List<dynamic>> _getDropDownMenuItems() async {
-    debugPrint('line 30 get client contact Dropdownitems: $arguments');
+    debugPrint('line 30 get client department Dropdownitems: $arguments');
     dropDownMenuEntries = [];
     menuDepartments = [];
     try {
@@ -161,7 +161,7 @@ class _ClientDepartmentProfilePageState
   TextEditingController menuController = TextEditingController();
 
   int getSelectedMenuIndex(value) {
-    debugPrint('line 57 getselected contact index : $value');
+    debugPrint('line 57 getselected department index : $value');
     int index = -1;
 
     for (int i = 0; i < dropDownMenuEntries.length; i++) {
@@ -448,7 +448,7 @@ class _ClientDepartmentProfilePageState
   void initState() {
     super.initState();
     arguments = widget.args;
-    localTitle = 'Client Contacts for: ' + arguments!['clientName'];
+    localTitle = 'Client Departments for: ' + arguments!['clientName'];
     listOfDepartments = [];
     debugPrint('line 72 arguments $arguments');
   }
@@ -472,7 +472,7 @@ class _ClientDepartmentProfilePageState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const title = 'Client Contact Form';
+    const title = 'Client Department Form';
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     debugPrint('line 115: $screenWidth $screenHeight');

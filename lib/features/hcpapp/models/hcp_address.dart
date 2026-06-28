@@ -6,7 +6,7 @@ class HCPAddress {
         // required this.mongodbId,  //from hcpprofessional
         required this.addressId,
         required this.addressTypeCodeId,
-        required this.addressType,
+        required this.addressTypeDescription,
         required this.addressLine1,
         required this.addressLine2,
         required this.city,
@@ -24,7 +24,7 @@ class HCPAddress {
   // final ObjectId mongodbId; //0
   final int addressId; //2
   final int addressTypeCodeId; //3
-  final String addressType; //4
+  final String addressTypeDescription; //4
   final String? addressLine1; //5
   final String? addressLine2; //6
   final String city; //7
@@ -44,7 +44,7 @@ class HCPAddress {
     // col['mongodbId'] = mongodbId;
     col['addressId'] = addressId;
     col['addressTypeCodeId'] = addressTypeCodeId;
-    col['addressType'] = addressType;
+    col['addressType'] = addressTypeDescription;
     if (addressLine1 != '') {
       col['addressLine1'] = addressLine1;
     }

@@ -1372,8 +1372,8 @@ class ClientServices {
       int? cClientUserId = clientUserId;
       String? cClientName = clientMap['clientName'];
       int? cBranchId = clientMap['branchId'];
-      String currentEmail = authServices.currentUser!['email'];
-      String currentFcmToken = authServices.currentUser!['fcmToken'];
+      String currentEmail = authServices.clientUser!['email'];
+      String currentFcmToken = authServices.clientUser!['fcmToken'];
       String? cBranchName = clientMap['branchName'];
       // int? cDepartmentId = departmentId;
       //  String? cDDepartmentName = selectedDepartmentValue;

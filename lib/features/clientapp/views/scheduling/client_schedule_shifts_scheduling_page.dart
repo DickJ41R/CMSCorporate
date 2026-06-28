@@ -165,23 +165,29 @@ class ProcessClientRequestScheduleState
   }
   Map<String,dynamic>?clientMap;
   Map<String, dynamic>? arguments;
-  Future<void>getClientX() async {
-    await getClient();
-    return;
-    }
+
   Future<void> getClient() async {
+  debugPrint('line 170 get client: ${clientId!}');
     try {
       Map<String,dynamic>? clm = await  clientServices.getClientMapData(clientId!);
+       if (clm == null || clm!.containsKey('clientId') == false) {
+              debugPrint('line 173 no client record found');
+              clientMap = null;
+              return;
+            }
       clientMap = clm!;
+      debugPrint('line 179 check');
       Map<String,dynamic>? clu = await clientServices.getASingleClientUser(clientId!);
-      if (clu!.containsKey('clientId') == false) {
-        print('line 174 no client user record found');
-        throw Exception('No client user record found');
+      if (clu == null || clu!.containsKey('clientId') == false) {
+        debugPrint('line 179 no client user record found');
+        authService.clientUser = null;
+        return;
       }
       authService.clientUser = clu!;
+      debugPrint('line 186 on return: $clu');
       return;
      } catch(e) {
-       debugPrint('line 180 error: ${e.toString()}');
+       debugPrint('line 185 error: ${e.toString()}');
        return;
    }
 }
@@ -195,52 +201,17 @@ class ProcessClientRequestScheduleState
     debugPrint('line 174 initstate: $arguments');
     clientId = arguments!['clientId'];
 
-    getClientX();
-    print('line 195 check');
-    if (authService.clientUser == null) {
-    debugPrint('line 196 no client user record.  get out');
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-              Navigator.of(context).pop();
-              // Or navigate to another page:
-              // Navigator.of(context).pushReplacement(
-              //   MaterialPageRoute(builder: (_) => const AnotherPage()),
-              // );
-            }
-      });
-    }
-  clientUser = authService.clientUser;
-    clientUserId = clientUser!['clientUserId'];
-    debugPrint('line 176 in init schedule shifts');
-    listOfClientTokens = [];
-    if (clientUser!['iosFcmToken'] != null &&
-        clientUser!['iosFcmToken'] != 'Placeholder') {
-      listOfClientTokens!.add(currentUser!['iosFcmToken']);
-    }
-    if (clientUser!['iosFcmTabletToken'] != null &&
-        clientUser!['iosFcmTabletToken'] != 'Placeholder') {
-      listOfClientTokens!.add(clientUser!['iosFcmTabletToken']);
-    }
-    if (clientUser!['androidFcmToken'] != null &&
-        clientUser!['androidFcmToken'] != 'Placeholder') {
-      listOfClientTokens!.add(clientUser!['androidFcmToken']);
-    }
-    if (clientUser!['androidFcmTabletToken'] != null &&
-        clientUser!['androidFcmTabletToken'] != 'Placeholder') {
-      listOfClientTokens!.add(clientUser!['androidFcmTabletToken']);
-    }
-     debugPrint('line 246: $clientId');
+      debugPrint('line 246: $clientId');
 
     flagAllData = false;
     checkAllData = [false, false, false, false, false];
-    // clientId = ref
+    // clientId = refinitState
     //     .read(clientUserNotifierProvider.notifier)
     //      .fromClientId;
 
 
     debugPrint('line 194 in didchange');
-    setPNRates();
+    //setPNRates();
     _getListOfHolidays(clientId!);
     debugPrint('line 208 end of initstate');
   }
@@ -779,13 +750,7 @@ class ProcessClientRequestScheduleState
       if (selectedPNRateValue == 'All') {
         checkAllData![0] = true;
       }
-      if (selectedPNRateValue == null) {
-        debugPrint('line 524 error');
-        title = 'Push Notification Error';
-        description = 'You have not selected a push notification frequency.';
-        await _showDialog(context, title, description);
-        return false;
-      }
+
       // if (checkAllData!.contains(false) == true) {
       //   debugPrint('line 528 error" $checkAllData');
       //   title = 'Data Error Error';
@@ -841,7 +806,7 @@ class ProcessClientRequestScheduleState
         debugPrint('line 700 error No Shift counts for one of your shifts.');
         throw Exception(('line 701 No shift counts'));
       }
-
+ selectedPNRateValue = 'All';
       debugPrint('line 806 $scheduleNotes, $clientId');
       debugPrint('line 810: $listOfDatesWithShifts');
       debugPrint('line 811: $selectedPNRateValue');
@@ -1059,9 +1024,41 @@ class ProcessClientRequestScheduleState
   List<String>? listStringDisciplines;
 
   Future<List<String>> getDisciplinesForDropDown() async {
-    debugPrint('line 1030 in get disciplines for dropdonw');
+    debugPrint('line 1033` in get disciplines for dropdonw');
 
     try {
+       await getClient();
+
+        print('line 1038 check ${authService.clientUser}');
+        if (authService.clientUser == null) {
+        debugPrint('line 1040 no client user record.  get out');
+            return [];
+        }
+      clientUser = authService.clientUser;
+        clientUserId = clientUser!['clientUserId'];
+        debugPrint('line 1045 in init schedule shifts: $clientUser');
+        listOfClientTokens = [];
+        if (clientUser!['iosFcmToken'] != null &&
+            clientUser!['iosFcmToken'] != 'Placeholder') {
+          listOfClientTokens!.add(clientUser!['iosFcmToken']);
+        }
+        debugPrint('line 1051');
+        if (clientUser!['iosFcmTabletToken'] != null &&
+            clientUser!['iosFcmTabletToken'] != 'Placeholder') {
+          listOfClientTokens!.add(clientUser!['iosFcmTabletToken']);
+        }
+        debugPrint('line 1056');
+        if (clientUser!['androidFcmToken'] != null &&
+            clientUser!['androidFcmToken'] != 'Placeholder') {
+          listOfClientTokens!.add(clientUser!['androidFcmToken']);
+        }
+        debugPrint('ine 1061');
+        if (clientUser!['androidFcmTabletToken'] != null &&
+            clientUser!['androidFcmTabletToken'] != 'Placeholder') {
+          listOfClientTokens!.add(clientUser!['androidFcmTabletToken']);
+        }
+         debugPrint('line 1063: $clientId');
+
       List<Map<String, dynamic>>? lst;
       if (listStsHold == null) {
         lst = await clientServices.getDisciplinesFromClientRates(clientId!);
@@ -1083,9 +1080,10 @@ class ProcessClientRequestScheduleState
         //    selectedDisciplineIndex = 0;
       }
       checkAllData![0] = false;
+      debugPrint('line 1086 before return');
       return listStringDisciplines!;
     } catch (e) {
-      debugPrint('line 858 error getting disciplines: $e');
+      debugPrint('line 1089 error getting disciplines: $e');
       return [];
     }
   }
@@ -1151,7 +1149,11 @@ class ProcessClientRequestScheduleState
                     .pushNamed(clientSchedulingMenu, arguments: arguments!);
               }),
         ),
-        title: Text('Publish Shift - ${clientId!} ${clientMap!['clientName']}',
+        title: clientMap == null ? Text('Publish Shifts for Client: ${clientId!}',
+        style:TextStyle(                                             fontSize: fontSize < 18 ? 18 : fontSize,
+              fontWeight: FontWeight.bold,
+              ))
+              : Text('Publish Shifts for Client: ${clientId!} ${clientMap!['clientName']}',
             style: TextStyle(
               fontSize: fontSize < 18 ? 18 : fontSize,
               fontWeight: FontWeight.bold,
@@ -1375,11 +1377,13 @@ class ProcessClientRequestScheduleState
                 Container(
                   height: 32,
                   width: screenWidth! - 10,
-                  child: Text('Select Schedule Dates',
+                  child: Center(
+                     child: Text('Select Schedule Dates',
                       style: TextStyle(
                         fontSize: fontSize,
                         fontWeight: FontWeight.bold,
                       )),
+                      ),
                 ),
                 (selectedDepartmentIndex != -1 && selectedDisciplineIndex != -1)
                     ? SafeArea(
@@ -1527,81 +1531,81 @@ class ProcessClientRequestScheduleState
                 )
                     : Container(),
                 //end of datepicker
-                SizedBox(height: 10),
-                (selectedDepartmentIndex != -1 && selectedDisciplineIndex != -1)
-                    ? SizedBox(
-                  height: 40,
-                  width: screenWidth! -10,
-                  child: Container(
-                    // child: Column(
-                    //   children: [
-                    //     Container(
-                    //       height: 32,
-                    //       width: screenWidth! - 10,
-                    //       child: Text('Select Push Notification Frequency',
-                    //           style: TextStyle(
-                    //             fontSize: fontSize,
-                    //             fontWeight: FontWeight.bold,
-                    //           )),
-                    //     ),
-                    //     Expanded(
-
-                      height: height,
-                      width: screenWidth! - 10,
-                      decoration: BoxDecoration(
-                        color: color1,
-                        border:
-                        Border.all(width: 3, color: Colors.black87),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton2<dynamic>(
-                          isExpanded: true,
-                          hint: Container(
-                            height: height,
-                            width: screenWidth! - 10,
-                            child: Text(
-                              'Select Push Notification Frequency',
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).hintColor,
-                              ),
-                            ),
-                          ),
-                          items: listOfPnRates
-                              .map((String item) => DropdownItem<String>(
-                            value: item,
-                            height: height,
-                            child: Text(
-                              item,
-                              style: TextStyle(
-                                fontSize: fontSize,
-                              ),
-                            ),
-                          ))
-                              .toList(),
-                          valueListenable: valueListenablePNRate,
-                          onChanged: (value) {
-                            debugPrint('line 455: $selectedPNRateValue $value');
-                            selectedPNRateIndex = _getPNRateIndex(value);
-                            pushNotificationFrequencyRate.text = value;
-                            setState(() {
-                              valueListenablePNRate.value = value;
-
-                              selectedPNRateValue = value;
-                              checkAllData![4] = true;
-                            });
-                          },
-                        ),
-                      )
-
-                    //     ],
-                    //   ),
-                  ),
-                )
-                    : Container(),
-                Container(
+//                 SizedBox(height: 10),
+//                 (selectedDepartmentIndex != -1 && selectedDisciplineIndex != -1)
+//                     ? SizedBox(
+//                   height: 40,
+//                   width: screenWidth! -10,
+//                   child: Container(
+//                     // child: Column(
+//                     //   children: [
+//                     //     Container(
+//                     //       height: 32,
+//                     //       width: screenWidth! - 10,
+//                     //       child: Text('Select Push Notification Frequency',
+//                     //           style: TextStyle(
+//                     //             fontSize: fontSize,
+//                     //             fontWeight: FontWeight.bold,
+//                     //           )),
+//                     //     ),
+//                     //     Expanded(
+//
+//                       height: height,
+//                       width: screenWidth! - 10,
+//                       decoration: BoxDecoration(
+//                         color: color1,
+//                         border:
+//                         Border.all(width: 3, color: Colors.black87),
+//                         borderRadius: BorderRadius.circular(12),
+//                       ),
+//                       child: DropdownButtonHideUnderline(
+//                         child: DropdownButton2<dynamic>(
+//                           isExpanded: true,
+//                           hint: Container(
+//                             height: height,
+//                             width: screenWidth! - 10,
+//                             child: Text(
+//                               'Select Push Notification Frequency',
+//                               style: TextStyle(
+//                                 fontSize: fontSize,
+//                                 fontWeight: FontWeight.bold,
+//                                 color: Theme.of(context).hintColor,
+//                               ),
+//                             ),
+//                           ),
+//                           items: listOfPnRates
+//                               .map((String item) => DropdownItem<String>(
+//                             value: item,
+//                             height: height,
+//                             child: Text(
+//                               item,
+//                               style: TextStyle(
+//                                 fontSize: fontSize,
+//                               ),
+//                             ),
+//                           ))
+//                               .toList(),
+//                           valueListenable: valueListenablePNRate,
+//                           onChanged: (value) {
+//                             debugPrint('line 455: $selectedPNRateValue $value');
+//                             selectedPNRateIndex = _getPNRateIndex(value);
+//                             pushNotificationFrequencyRate.text = value;
+//                             setState(() {
+//                               valueListenablePNRate.value = value;
+//
+//                               selectedPNRateValue = value;
+//                               checkAllData![4] = true;
+//                             });
+//                           },
+//                         ),
+//                       )
+//
+//                     //     ],
+//                     //   ),
+//                   ),
+//                 )
+//                     : Container(),
+                 Container(
                   height: 1,
                   child: SizedBox(height: 10),
                 ),

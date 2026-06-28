@@ -188,7 +188,7 @@ class ClientWorkOrderCampaignService {
     return listOfCWOMap;
   }
 
-  Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsAllNotAccepted(
+  Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsAllOpenAccepted(
       int hcpId) async {
     debugPrint('line 74 get all not accepted; $hcpId');
     //  return realm.all<ClientWorkOrderCampaign>();
@@ -208,7 +208,7 @@ class ClientWorkOrderCampaignService {
         .collection('ClientWorkOrderCampaign')
         .where('hcpId', isEqualTo: hcpId)
         .where('shiftDate', isGreaterThanOrEqualTo: myTimeStamp)
-        .where('shiftAccepted', isEqualTo: false)
+        .where('shiftStatus', whereIn: ['Open','Accepted'])
         .orderBy("shiftDate", descending: false)
         .orderBy("shiftCode", descending: false)
         .get()
@@ -225,48 +225,48 @@ class ClientWorkOrderCampaignService {
     return listOfCWOMap;
   }
 
-  Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsAccepted(
-      int hcpId) async {
-    debugPrint('line 99 accept shift $hcpId');
-    //  return realm.all<ClientWorkOrderCampaign>();
-    DateTime currentDate = DateTime.now(); //DateTime
-    DateTime newDate = currentDate.subtract(Duration(
-        hours: currentDate.hour + 24,
-        minutes: currentDate.minute,
-        seconds: currentDate.second,
-        milliseconds: currentDate.millisecond,
-        microseconds: currentDate.microsecond));
-    Timestamp myTimeStamp = Timestamp.fromDate(newDate);
+  // Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsAccepted(
+  //     int hcpId) async {
+  //   debugPrint('line 99 accept shift $hcpId');
+  //   //  return realm.all<ClientWorkOrderCampaign>();
+  //   DateTime currentDate = DateTime.now(); //DateTime
+  //   DateTime newDate = currentDate.subtract(Duration(
+  //       hours: currentDate.hour + 24,
+  //       minutes: currentDate.minute,
+  //       seconds: currentDate.second,
+  //       milliseconds: currentDate.millisecond,
+  //       microseconds: currentDate.microsecond));
+  //   Timestamp myTimeStamp = Timestamp.fromDate(newDate);
+  //
+  //   List<Map<String, dynamic>> listOfCWOMap = [];
+  //   await FirebaseFirestore.instance
+  //       .collection('ClientWorkOrderCampaign')
+  //       .where('hcpId', isEqualTo: hcpId)
+  //       .where('shiftDate', isGreaterThanOrEqualTo: myTimeStamp)
+  //       .where('shiftStatus', isEqualTo: 'Accepted')
+  //       .orderBy("shiftDate", descending: false)
+  //       .orderBy("hcpId", descending: false)
+  //       .orderBy("shiftCode", descending: false)
+  //       .get()
+  //       .then((querySnapshot) {
+  //     for (var docSnapshot in querySnapshot.docs) {
+  //       var doc_id = docSnapshot.id;
+  //       debugPrint('line 249: doc_id: $doc_id');
+  //       var obj = docSnapshot.data();
+  //       obj['id'] = doc_id;
+  //       listOfCWOMap.add(obj);
+  //     }
+  //     return listOfCWOMap;
+  //   });
+  //   debugPrint('line 255: ${listOfCWOMap.length}');
+  //   if (listOfCWOMap.length > 0) {
+  //     Map<String, dynamic> mp = listOfCWOMap[0];
+  //     debugPrint('line 258: ${mp['id']}');
+  //   }
+  //   return listOfCWOMap;
+  // }
 
-    List<Map<String, dynamic>> listOfCWOMap = [];
-    await FirebaseFirestore.instance
-        .collection('ClientWorkOrderCampaign')
-        .where('hcpId', isEqualTo: hcpId)
-        .where('shiftDate', isGreaterThanOrEqualTo: myTimeStamp)
-        .where('shiftStatus', isEqualTo: 'Accepted')
-        .orderBy("shiftDate", descending: false)
-        .orderBy("hcpId", descending: false)
-        .orderBy("shiftCode", descending: false)
-        .get()
-        .then((querySnapshot) {
-      for (var docSnapshot in querySnapshot.docs) {
-        var doc_id = docSnapshot.id;
-        debugPrint('line 249: doc_id: $doc_id');
-        var obj = docSnapshot.data();
-        obj['id'] = doc_id;
-        listOfCWOMap.add(obj);
-      }
-      return listOfCWOMap;
-    });
-    debugPrint('line 255: ${listOfCWOMap.length}');
-    if (listOfCWOMap.length > 0) {
-      Map<String, dynamic> mp = listOfCWOMap[0];
-      debugPrint('line 258: ${mp['id']}');
-    }
-    return listOfCWOMap;
-  }
-
-  Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsConfirmed(
+  Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsApprovedConfirmed(
       int clientId) async {
     debugPrint('line 623 in getworkordersconfirmed $clientId');
     DateTime currentDate = DateTime.now(); //DateTime
@@ -308,7 +308,7 @@ class ClientWorkOrderCampaignService {
       await FirebaseFirestore.instance
           .collection('ClientWorkOrderCampaign')
           .where('clientId', isEqualTo: clientId)
-          .where('shiftStatus', whereIn: ['Confirmed', 'SignedIn', 'SignedOut'])
+          .where('shiftStatus', whereIn: ['Approved','Confirmed'])
           .where('shiftDate', isGreaterThanOrEqualTo: fds)
           .where('shiftDate', isLessThan: eds)
           .orderBy('shiftStatus', descending: false)
@@ -341,7 +341,7 @@ class ClientWorkOrderCampaignService {
           .collection('ClientWorkOrderCampaign')
           .where('clientId', isNotEqualTo: clientId)
           .where('hcpId', whereIn: listOfHcps)
-          .where('shiftStatus', whereIn: ['Confirmed', 'SignedIn', 'SignedOut'])
+          .where('shiftStatus', whereIn: ['Approved','Confirmed'])
           .where('shiftDate', isGreaterThanOrEqualTo: fds)
           .where('shiftDate', isLessThan: eds)
           .orderBy('shiftStatus', descending: false)
@@ -381,11 +381,7 @@ class ClientWorkOrderCampaignService {
         listOfCWOMap = listOfCWOs[h];
         for (int i = 0; i < listOfCWOMap.length; i++) {
           var obj = listOfCWOMap[i];
-          if (listOfCWOMap[i]['shiftStatus'] == 'SignedOut') {
-            sDiff = int.parse(
-                (60 * listOfCWOMap[i]['signedOutHours']).round().toString());
-            totalWeeklyMinutes += sDiff;
-          } else {
+
             sMin = utilitiesServices.getMinutes(obj['startTime']);
             eMin = utilitiesServices.getMinutes(obj['endTime']);
             sDiff = utilitiesServices.calculateShiftHours(
@@ -395,7 +391,6 @@ class ClientWorkOrderCampaignService {
               continue;
             }
             totalWeeklyMinutes += sDiff;
-          }
         }
         debugPrint('line 716 $totalWeeklyMinutes');
         int overtimeMinutes = 0;
@@ -409,6 +404,197 @@ class ClientWorkOrderCampaignService {
         debugPrint('line 369: $totalWeeklyMinutes $overtimeMinutes $regularMinutes');
         listOfCWOMap.sort(
             (a, b) => b['shiftCreatedDate'].compareTo(a['shiftCreatedDate']));
+        for (int i = 0; i < listOfCWOMap.length; i++) {
+          var obj = listOfCWOMap[i];
+          sMin = utilitiesServices.getMinutes(obj['startTime']);
+          eMin = utilitiesServices.getMinutes(obj['endTime']);
+          sDiff = utilitiesServices.calculateShiftHours(
+              sMin, eMin, obj['startTime'], obj['endTime'], obj['meals']);
+          debugPrint('line 378: $i ${obj['clientId']} ${obj['shiftCreatedDate']}');
+          debugPrint('line 379: $sDiff $overtimeMinutes');
+          if (overtimeMinutes > 0) {
+            if (overtimeMinutes >= sDiff) {
+              listOfCWOMap[i]['otMinutes'] = sDiff;
+              listOfCWOMap[i]['regularMinutes'] = 0;
+              overtimeMinutes -= sDiff;
+              listOfCWOMap[i]['requireOvertime'] = true;
+              listOfCWOMap[i]['shiftOvertime'] = true;
+            } else {
+              listOfCWOMap[i]['otMinutes'] = overtimeMinutes;
+              listOfCWOMap[i]['regularMinutes'] = sDiff - overtimeMinutes;
+              listOfCWOMap[i]['requireOvertime'] = true;
+              listOfCWOMap[i]['shiftOvertime'] = true;
+              overtimeMinutes = 0;
+            }
+          } else {
+            listOfCWOMap[i]['otMinutes'] = 0;
+            listOfCWOMap[i]['regularMinutes'] = sDiff;
+            listOfCWOMap[i]['requireOvertime'] = false;
+            listOfCWOMap[i]['shiftOvertime'] = false;
+          }
+        }
+        int q = 0;
+        while (q < listOfCWOMap.length) {
+          if (listOfCWOMap[q]['clientId'] != clientId) {
+            listOfCWOMap.removeAt(q);
+            q = 0;
+            continue;
+          }
+          q += 1;
+        }
+        listOfCWOs[h] = listOfCWOMap;
+      }
+      List<Map<String, dynamic>> lmp = [];
+      for (int i = 0; i < listOfCWOs.length; i++) {
+        listOfCWOMap = listOfCWOs[i];
+        for (int j = 0; j < listOfCWOMap.length; j++) {
+          lmp.add(listOfCWOMap[j]);
+        }
+      }
+      return lmp;
+    } catch (e) {
+      debugPrint('line 779 error $e');
+      throw Exception(e.toString());
+    }
+  }
+  Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsSignedInSignedOut(
+      int clientId) async {
+    debugPrint('line 623 in getworkordersconfirmed $clientId');
+    DateTime currentDate = DateTime.now(); //DateTime
+    Timestamp curDateTime = Timestamp.fromDate(currentDate);
+    int weekDay = currentDate.weekday;
+    int sdays = weekDay - 1;
+    Map<String, dynamic>? tvs;
+    DateTime newDate = currentDate.subtract(Duration(
+        hours: currentDate.hour,
+        minutes: currentDate.minute,
+        seconds: currentDate.second,
+        milliseconds: currentDate.millisecond,
+        microseconds: currentDate.microsecond));
+    DateTime firstDate = newDate.subtract(Duration(days: sdays));
+    Timestamp fds = Timestamp.fromDate(firstDate);
+    DateTime lastDate = newDate.add(Duration(days: 8 - weekDay));
+    Timestamp eds = Timestamp.fromDate(lastDate);
+    Timestamp myTimeStamp = Timestamp.fromDate(newDate);
+    debugPrint('line 654: $firstDate $fds');
+    debugPrint('line 655 $lastDate $eds');
+    // String fmt = DateFormat.yMEd().add_jms().format(DateTime.now());
+    // int adv =0;
+    // debugPrint('line 647: $fmt');
+    // if (fmt.contains('PM') == true) {
+    //   adv = 12;
+    // }
+    int hours = currentDate.hour;
+    hours *= 60;
+    int minutes = currentDate.minute;
+    int hoursMinutes = hours + minutes;
+    hoursMinutes *= 60;
+    List<Map<String, dynamic>> clientOT = [];
+    bool flagHaveAnOvertime = false;
+    List<int> listOfHcps = [];
+    List<Map<String, dynamic>> listOfHCPCWOs = [];
+    List<List<Map<String, dynamic>>> listOfCWOs = [];
+    try {
+      List<Map<String, dynamic>> listOfCWOMap = [];
+      await FirebaseFirestore.instance
+          .collection('ClientWorkOrderCampaign')
+          .where('clientId', isEqualTo: clientId)
+          .where('shiftStatus', whereIn: ['SignedIn','SignedOut'])
+          .where('shiftDate', isGreaterThanOrEqualTo: fds)
+          .where('shiftDate', isLessThan: eds)
+          .orderBy('shiftStatus', descending: false)
+          .orderBy('shiftDate', descending: false)
+          .get()
+          .then((querySnapshot) async {
+        debugPrint('line 313: ${querySnapshot.docs.length}');
+        for (var docSnapshot in querySnapshot.docs) {
+          var doc_id = docSnapshot.id;
+          var obj = docSnapshot.data();
+          obj['id'] = doc_id;
+          int index = listOfHcps.indexOf(obj['hcpId']);
+          if (index == -1) {
+            listOfHcps.add(obj['hcpId']);
+            listOfHCPCWOs.add(obj);
+            listOfCWOs.add(listOfHCPCWOs);
+          } else {
+            List<Map<String, dynamic>> listh = listOfCWOs[index];
+            listh.add(obj);
+            listOfCWOs[index] = listh;
+          }
+        }
+      });
+      if (listOfHcps.length == 0) {
+        return [];
+        throw Exception('Error: no client selected hcps for  found');
+      }
+      //now get hcps for nonclient
+      await FirebaseFirestore.instance
+          .collection('ClientWorkOrderCampaign')
+          .where('clientId', isNotEqualTo: clientId)
+          .where('hcpId', whereIn: listOfHcps)
+          .where('shiftStatus', whereIn: ['SignedIn','SignedOut'])
+          .where('shiftDate', isGreaterThanOrEqualTo: fds)
+          .where('shiftDate', isLessThan: eds)
+          .orderBy('shiftStatus', descending: false)
+          .orderBy('shiftDate', descending: false)
+          .get()
+          .then((querySnapshot) async {
+        debugPrint('line 345: ${querySnapshot.docs.length}');
+        for (var docSnapshot in querySnapshot.docs) {
+          var doc_id = docSnapshot.id;
+          var obj = docSnapshot.data();
+          obj['shiftCreatedDate'] = obj['shiftCreatedDate'] == null
+              ? obj['createdDate']
+              : obj['shiftCreatedDate'];
+          obj['id'] = doc_id;
+          int z = 0;
+          int hcpId = obj['hcpId'];
+          int index = listOfHcps.indexOf(hcpId);
+          if (index == -1) {
+            throw Exception('Error: Index must always exist');
+          }
+          List<Map<String, dynamic>> listh = listOfCWOs[index];
+          listh.add(obj);
+          listOfCWOs[index] = listh;
+        }
+      });
+      debugPrint('line 361: ${listOfCWOs.length} ${listOfCWOs[0].length}');
+      int x = 0;
+
+      int totalWeeklyMinutes = 0;
+
+      int sDiff = 0;
+      int sMin = 0;
+      int eMin = 0;
+
+      debugPrint('line 697 debug check');
+      for (int h = 0; h < listOfCWOs.length; h++) {
+        listOfCWOMap = listOfCWOs[h];
+        for (int i = 0; i < listOfCWOMap.length; i++) {
+          var obj = listOfCWOMap[i];
+
+          sMin = utilitiesServices.getMinutes(obj['startTime']);
+          eMin = utilitiesServices.getMinutes(obj['endTime']);
+          sDiff = utilitiesServices.calculateShiftHours(
+              sMin, eMin, obj['startTime'], obj['endTime'], obj['meals']);
+          debugPrint('line 697 debug check: $sDiff');
+          if (sDiff == -1) {
+            continue;
+          }
+          totalWeeklyMinutes += sDiff;
+        }
+        debugPrint('line 716 $totalWeeklyMinutes');
+        int overtimeMinutes = 0;
+        int regularMinutes = 0;
+        if (totalWeeklyMinutes > 2400) {
+          overtimeMinutes = totalWeeklyMinutes - 2400;
+          regularMinutes = 2400;
+        } else {
+          regularMinutes = totalWeeklyMinutes;
+        }
+        debugPrint('line 369: $totalWeeklyMinutes $overtimeMinutes $regularMinutes');
+        listOfCWOMap.sort(
+                (a, b) => b['shiftCreatedDate'].compareTo(a['shiftCreatedDate']));
         for (int i = 0; i < listOfCWOMap.length; i++) {
           var obj = listOfCWOMap[i];
           sMin = utilitiesServices.getMinutes(obj['startTime']);

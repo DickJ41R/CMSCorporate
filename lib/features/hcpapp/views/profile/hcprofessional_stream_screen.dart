@@ -115,7 +115,7 @@ class _HCProfessionalStreamScreenState
   }
 
   double pageCount = 0.0;
-  double _rowsPerPage = 12;
+  double _rowsPerPage = 15;
   void _updatePageCount() {
     debugPrint(
         'line 116 updatepagecount: ${hcpClassDataSource.filterConditions.isNotEmpty}');
