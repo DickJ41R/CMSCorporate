@@ -43,7 +43,8 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
 
   void getHCPUserX() async {
     debugPrint('line 44 in get usrx');
-    await getHCPUser();
+    hcpUser =  await getHCPUser();
+    return;
   }
 
   Future<Map<String, dynamic>> getHCPUser() async {
@@ -122,12 +123,12 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
       //    Map<String,dynamic>?hcp = await hst.getSingleHCProfessional(hcpId!);
       //  String disciplineName = hcp!['disciplineName'];
       List<Map<String, dynamic>>? lm = [];
-      lm = await clw.getWorkOrderCampaignsAllOpenAccepted(hcpId!);
-      debugPrint('line 127 $lm');
+      lm = await clw.getWorkOrderCampaignsAllHCPOpenShifts(hcpId!);
+
       if (lm == null) {
         return [];
       }
-
+      debugPrint('line 127 ${lm.length}');
       return lm;
     } catch (e) {
       debugPrint('line 128 erro in gtavailable shifts: $e');
@@ -210,7 +211,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
         isMobileLandscape = true;
         gridAxisCount = 2;
       }
-    } else if (screenWidth! > 650 && screenWidth! < 1200) {
+    } else if (screenWidth! > 650 && screenWidth! <= 1200) {
       //tablet
       if (screenWidth! < screenHeight!) {
         fontSize = 18;
@@ -223,7 +224,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
         isTabletLandscape = true;
         gridAxisCount = 5;
       }
-    } else {
+    } else if (screenWidth! > 1200) {
       //desktop
       fontSize = 20;
       containerHeight = 60;
@@ -239,7 +240,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
       backgroundColor: color1,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text("Available Shifts",
+        title: Text("Open (Available) Shifts",
             style: TextStyle(
               fontSize:
                   Theme.of(context).textTheme.headlineMedium!.fontSize! / h,
@@ -262,7 +263,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
       ),
       body: //haveAllItems == false ?
           // CircularProgressIndicator() :
-          FutureBuilder<List<dynamic>>(
+          FutureBuilder<dynamic>(
               future: Future.wait([_getAllAvailableShifts()]),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -326,6 +327,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
                     );
                   } else {
                     List<dynamic> listH = snapshot.data![0];
+                    debugPrint('line 330: ${listH.length}');
                     return GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: gridAxisCount,
@@ -336,13 +338,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
                       itemCount: listH.length,
                       itemBuilder: (BuildContext context, int index) {
                         final item = listH[index];
-                        return item['shiftStatus'] == 'Open'
-                            ? ClientCampaignTile(
-                                itemm: item,
-                                fontSize: fontSize!,
-                                ctx: context,
-                                onButtonPressed: onButtonPressed)
-                            : ClientCampaignTile1(
+                         return ClientCampaignTile(
                                 itemm: item,
                                 fontSize: fontSize!,
                                 ctx: context,
@@ -381,6 +377,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
   @override
   initState() {
     super.initState();
+    debugPrint('line 380: in initstate campaigntile');
     item = widget.itemm;
     fontSize = widget.fontSize;
     ctx = widget.ctx;
@@ -469,7 +466,8 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     debugPrint('line 323 in tile building: ${item['shiftStatus']}');
     Size size = MediaQuery.of(context).size;
     double screenWidth = size.width;
-    double tileHeight = 380;
+    double tileHeight = 550;
+    debugPrint('line4 470: $screenWidth $size $tileHeight ');
     return SafeArea(
       child: Container(
         width: screenWidth - 10,
@@ -613,87 +611,113 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                   )),
             ),
             SizedBox(height: 5),
-            Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Container(
-                height: 20,
-                width: (screenWidth - 16) / 2,
-                child: Text('Start: ${item['startTime']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize,
-                    )),
-              ),
-              SizedBox(width: 4),
-              Container(
-                height: 20,
-                width: (screenWidth - 16) / 2,
-                child: Text('End: ${item['endTime']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize,
-                    )),
-              ),
-            ]),
+            Container(
+              height: 20,
+              width: screenWidth - 16,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                Expanded(
+                  child: Container(
+                    height: 20,
+                   width: (screenWidth - 16) / 2,
+                    child: Text('Start: ${item['startTime']}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: fontSize,
+                        )),
+                  ),
+                ),
+                SizedBox(width: 4),
+                Expanded(
+                  child: Container(
+                    height: 20,
+                    width: (screenWidth - 16) / 2,
+                    child: Text('End: ${item['endTime']}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: fontSize,
+                        )),
+                  ),
+                ),
+              ]),
+            ),
             SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: 20,
-                  width: (screenWidth - 16) / 2,
-                  child:
-                      Text('Hours: ${item['decimalHours'].toStringAsFixed(2)}',
+            Container(
+              height: 20,
+              width: screenWidth - 16,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      width: (screenWidth - 16) / 2,
+                      child:
+                          Text('Hours: ${item['decimalHours'].toStringAsFixed(2)}',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                                fontSize: fontSize,
+                              )),
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      width: (screenWidth - 16) / 2,
+                      child: Text('Meals: ${item['meals'].toString()}',
                           style: TextStyle(
                             color: Colors.black87,
                             fontWeight: FontWeight.bold,
                             fontSize: fontSize,
                           )),
-                ),
-                SizedBox(width: 4),
-                Container(
-                  height: 20,
-                  width: (screenWidth - 16) / 2,
-                  child: Text('Meals: ${item['meals'].toString()}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold,
-                        fontSize: fontSize,
-                      )),
-                ),
-              ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: 20,
-                  width: (screenWidth - 16) / 2,
-                  child: Text(
-                      'Prior Hours: ' +
-                          getShiftHoursAsString(item['shiftPriorHours']),
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold,
-                        fontSize: fontSize,
-                      )),
-                ),
-                SizedBox(width: 4),
-                Container(
-                  height: 20,
-                  width: (screenWidth - 16) / 2,
-                  child: Text('OT: ' + getOvertimeString(item['shiftOvertime']),
-                      style: TextStyle(
-                        color: item['shiftOvertime'] == false
-                            ? Colors.black87
-                            : Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: fontSize,
-                      )),
-                ),
-              ],
+            Container(
+              height: 20,
+              width: screenWidth - 16,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      width: (screenWidth - 16) / 2,
+                      child: Text(
+                          'Prior Hours: ' +
+                              getShiftHoursAsString(item['shiftPriorHours']),
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: fontSize,
+                          )),
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      width: (screenWidth - 16) / 2,
+                      child: Text('OT: ' + getOvertimeString(item['shiftOvertime']),
+                          style: TextStyle(
+                            color: item['shiftOvertime'] == false
+                                ? Colors.black87
+                                : Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: fontSize,
+                          )),
+                    ),
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 8),
             Container(

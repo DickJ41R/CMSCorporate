@@ -22,8 +22,6 @@ const String clientRepublishShiftsSchedulingPage =
     '/clientRepublishShiftsSchedulingPage';
 const String clientScheduleShiftsSchedulingPage =
     '/clientScheduleShiftsSchedulingPage';
-const String clientApproveShiftsSchedulingPage =
-    '/clientApproveShiftsSchedulingPage';
 const String clientConfirmShiftsSchedulingPage =
     '/clientConfirmShiftsSchedulingPage';
 const String clientListScheduleSchedulingPage =

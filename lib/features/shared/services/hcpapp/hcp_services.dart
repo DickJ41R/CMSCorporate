@@ -58,24 +58,31 @@ class HCPServices {
   }
 
   Future<List<Map<String, dynamic>>>? getHCPContacts(int hcpId) async {
+    debugPrint('line 61 in gethcontacts: $hcpId');
     try {
       List<Map<String, dynamic>> hcpContacts = [];
-      debugPrint('line 63: $hcpId');
+      debugPrint('line 64: $hcpId');
+      //next few lines for debugging
+      int fakeId = 20343;
       await FirebaseFirestore.instance
           .collection("HCPContact")
-          .where('hcpId', isEqualTo: hcpId)
+          .where('hcpId', isEqualTo: fakeId)
           .get()
           .then((querySnapshot) {
         for (var docSnapshot in querySnapshot.docs) {
           final obj = docSnapshot.data();
-          debugPrint('line 71: $obj');
+          debugPrint('line 74: $obj');
+          //debug
+          obj['hcpId'] == hcpId;
           hcpContacts.add(obj);
         }
+        debugPrint('line 79: ${hcpContacts.length}');
+        return;
       });
-      debugPrint('line 74: ${hcpContacts.length}');
+      debugPrint('line 80: ${hcpContacts.length}');
       return hcpContacts;
     } catch (e) {
-      debugPrint('line 78 error getting hcpuser: $e');
+      debugPrint('line 83 error getting hcpuser: $e');
       throw Exception(e);
     }
   }

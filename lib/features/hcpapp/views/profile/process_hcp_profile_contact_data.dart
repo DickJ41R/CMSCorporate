@@ -43,13 +43,13 @@ class _ProcessHCPProfileContactDataState
     try {
 
         listOfContacts = await hcpServices.getHCPContacts(hcpId!);
-      debugPrint('line 35: ${listOfContacts!.length}');
+      debugPrint('line 46: ${listOfContacts!.length}');
       if (listOfContacts!.length > 0) {
         dropDownMenuEntries = [];
         for (int i = 0; i < listOfContacts!.length; i++) {
           Map<String, dynamic> con = listOfContacts![i];
           if (con['contactTypeCodeDescription'] == null) {
-            if (con['contactTypeCodeId'] == 2367) {
+            if (con['contactTypeCodeId'] == 2367 || con['contactTypeCodeId'] == 2370) {
               con['contactTypeCodeDescription'] = 'Email Contact';
             } else if (con['contactTypeCodeId'] == 2371) {
               con['contactTypeCodeDescription'] = 'Mobile Phone Contact';
@@ -393,7 +393,12 @@ class _ProcessHCPProfileContactDataState
                                               DropdownMenu<dynamic>(
                                                 initialSelection: null,
                                                 controller: menuController,
+                                                scrollPadding: EdgeInsets.all(2),
+                                                width: 270,
                                                 requestFocusOnTap: true,
+                                                textStyle: TextStyle(
+                                                  fontSize: 18,
+                                                ),
                                                 label: const Text(
                                                     'HCP Contact Menu'),
                                                 onSelected: (dynamic value) {
@@ -516,6 +521,9 @@ class _ProcessHCPProfileContactDataState
                                         maxLength: 200,
                                         decoration: InputDecoration(
                                             label: Text('Contact Description')),
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                        ),
                                         validator: (value) {
                                           return null;
                                           //'some data' failed validation

@@ -1712,9 +1712,9 @@ class ClientWorkOrderCampaignService {
     }
   }
 
-  Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsAcceptedShifts(
-      int clientId, String startWeekDay) async {
-    debugPrint('line 1192 get accepted shifts; $clientId');
+  Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsAllHCPOpenShifts(
+      int hcpId) async {
+    debugPrint('line 1192 get accepted shifts; $hcpId');
     //  return realm.all<ClientWorkOrderCampaign>();
     List<Map<String, dynamic>> listOfCWOMap = [];
 
@@ -1733,8 +1733,8 @@ class ClientWorkOrderCampaignService {
       Timestamp dnows = Timestamp.fromDate(dnow);
       await FirebaseFirestore.instance
           .collection('ClientWorkOrderCampaign')
-          .where('clientId', isEqualTo: clientId)
-          .where('shiftStatus', whereIn: ['Accepted', 'Approved'])
+          .where('hcpId', isEqualTo: hcpId)
+          .where('shiftStatus', isEqualTo: 'Open')
           .where('shiftDate', isGreaterThanOrEqualTo: dnows)
           .orderBy("shiftDate", descending: false)
           .orderBy("hcpId", descending: false)

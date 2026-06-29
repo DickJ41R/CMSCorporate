@@ -258,8 +258,7 @@ void resetDataElements() {
     userBranches = dropDownCodes.getUserBranches();
     bool flagHaveCorporate = false;
     dropDownBranchEntries = [];
-    debugPrint(
-        'line 60: ${userBranches!.length} ${listOfCurrentUserBranches!.length}');
+
     if (authServices.corporateOrBranch == 'Corporate') {
       Map<String, dynamic> mp = {"branchId": 0, "branchName": "Corporate"};
       DropdownMenuEntry me = DropdownMenuEntry(

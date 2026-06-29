@@ -17,7 +17,6 @@ import 'package:cms_web/features/clientapp/views/profile/client_department_profi
 import 'package:cms_web/features/clientapp/views/profile/client_profile_page.dart';
 import 'package:cms_web/features/clientapp/views/profile/client_user_profile_page.dart';
 //scheduling
-import 'package:cms_web/features/clientapp/views/scheduling/client_approve_shifts_scheduling_page.dart';
 import 'package:cms_web/features/clientapp/views/scheduling/client_cancel_shifts_scheduling_page.dart';
 import 'package:cms_web/features/clientapp/views/scheduling/client_confirm_shifts_scheduling_page.dart';
 import 'package:cms_web/features/clientapp/views/scheduling/client_do_not_schedule_list_scheduling_page.dart';
@@ -136,10 +135,6 @@ class MyRoutes {
         print('line 136 $mp');
         return MaterialPageRoute(
             builder: (context) => ProcessClientRequestSchedule(args: mp));
-      case clientApproveShiftsSchedulingPage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
-        return MaterialPageRoute(
-            builder: (context) => ClientApproveShiftsSchedulingPage(args: mp));
       // case clientConfirmShiftsSchedulingPage:
       //   Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
       //   return MaterialPageRoute(
