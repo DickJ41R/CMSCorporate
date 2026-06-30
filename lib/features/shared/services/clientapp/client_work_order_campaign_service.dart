@@ -1734,7 +1734,7 @@ class ClientWorkOrderCampaignService {
       await FirebaseFirestore.instance
           .collection('ClientWorkOrderCampaign')
           .where('hcpId', isEqualTo: hcpId)
-          .where('shiftStatus', isEqualTo: 'Open')
+          .where('shiftStatus', whereIn: ['Open','Accepted'])
           .where('shiftDate', isGreaterThanOrEqualTo: dnows)
           .orderBy("shiftDate", descending: false)
           .orderBy("hcpId", descending: false)
@@ -1758,15 +1758,18 @@ class ClientWorkOrderCampaignService {
                     seconds: dts.second,
                     microseconds: dts.microsecond,
                     milliseconds: dts.millisecond));
-
+                int smin = utilitiesServices.getMinutes(obj['startTime']);
                 int min = utilitiesServices.getMinutes(obj['endTime']);
+                if (smin > min) {
+                   min = min + 1440;
+                }
                 debugPrint('line 1636: $min');
                 dts = dts.add(Duration(minutes: min));
                 Timestamp tsm = Timestamp.fromDate(dts);
                 //get current time
                 DateTime currentDate = DateTime.now(); //DateTime
                 Timestamp esm = Timestamp.fromDate(currentDate);
-
+                debugPrint('line 1769: $esm $tsm ${obj['shiftCode']}');
                 if (esm.millisecondsSinceEpoch > tsm.millisecondsSinceEpoch) {
                   continue;
                 }
