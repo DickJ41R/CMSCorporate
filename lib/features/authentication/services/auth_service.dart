@@ -1,6 +1,5 @@
 //import 'dart:convert';
 
-import 'package:cms_web/features/branchcorporateapp/services/cms_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -8,18 +7,15 @@ import 'package:cms_web/features/branchcorporateapp/models/cms_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cms_web/features/authentication/views/pages/login/login.dart';
 import 'dart:core';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cms_web/features/shared/utils/utilities.dart';
-import 'package:cms_web/features/shared/services/routes.dart';
 import 'package:cms_web/features/branchcorporateapp/models/cms_branch_users.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cms_web/features/shared/utils/encdec.dart';
-import 'package:cms_web/features/clientapp/models/client.dart';
-import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
-import 'package:cms_web/features/clientapp/views/client_menu.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 // Private constructor to prevent external instantiation.
 import 'package:cms_web/features/clientapp/models/client_class.dart';
+import 'package:cms_web/features/hcpapp/models/hcp_class.dart';
+
 //import 'package:cms_web/apps/client/screens/process_hcp_menu_tester.dart';
 class AuthService {
   static AuthService? _instance;
@@ -46,7 +42,9 @@ class AuthService {
   List<Map<String,dynamic>> holdHcp = [];
   List<Map<String,dynamic>> holdWrk = [];
   List<ClientClass>clients = [];
+  List<HCPClass>hcps = [];
   late List<ClientClass> clientClassData = [];
+  late List<HCPClass> hcpClassData = [];
   int rowsPerPage = 15;
   Map<String,String>? currentArgument;
   bool isCheckedClient = false;
@@ -439,7 +437,7 @@ class AuthService {
           "loginCounter": FieldValue.increment(1),
           "dateOfLastLogin": ts
         });
-      } else {
+      } else if (currentCredentialUser.displayName == 'CMSUser') {
         debugPrint('line 439 $email');
         await FirebaseFirestore.instance
             .collection('CMSUser')
@@ -485,6 +483,8 @@ class AuthService {
         debugPrint('line 363 ${obj!['roles']} ${obj!['Roles']}');
          });
 
+      } else {
+         throw Exception('Unable to process.  You are not authorized to used this application');
       }
       // List<Map<String, dynamic>> listOfUserBranches = [
       //   {'branchId': 0, 'branchName': 'CMS CORPORATE'},

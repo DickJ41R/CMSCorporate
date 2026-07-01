@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -767,6 +769,14 @@ class HCPServices {
       throw Exception('line 739  ${e.toString()}');
     }
   }
+  bool isValidFirestoreTimestamp(Timestamp timestamp) {
+    try {
+      timestamp.toDate();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
   Future<List<Map<String, dynamic>>>? getHCProfessionalsByArgument(
       Map<String, dynamic> arguments) async {
     debugPrint('line 376 get all hcps: $arguments');
@@ -787,16 +797,28 @@ class HCPServices {
         var formattedDate = 'No Value';
         if (obj['credsWillWarnDate'] != null) {
           ts = obj['credsWillWarnDate'];
-          date = ts.toDate();
-          formattedDate = DateFormat('MM/dd/yyyy').format(date);
+          bool bl = isValidFirestoreTimestamp(ts);
+          if (bl == true) {
+            date = ts.toDate();
+            formattedDate = DateFormat('MM/dd/yyyy').format(date);
+          } else {
+            DateTime dte = DateTime.parse('01/01/19070');
+            formattedDate =DateFormat('MM/dd/yyyy').format(dte);
+          }
         }
         formattedDate = "No Value";
         obj['credsWillWarnDate'] = formattedDate;
         if (obj['lastWorked'] != null) {
           ts = obj['lastWorked'];
-          date = ts.toDate();
-          formattedDate = DateFormat('MM/dd/yyyy').format(date);
-        }
+          bool bl = isValidFirestoreTimestamp(ts);
+          if (bl == true) {
+            date = ts.toDate();
+            formattedDate = DateFormat('MM/dd/yyyy').format(date);
+          } else {
+            DateTime dte = DateTime.parse('01/01/19070');
+            formattedDate =DateFormat('MM/dd/yyyy').format(dte);
+          }
+       }
 
         obj['lastWorked'] = formattedDate;
 

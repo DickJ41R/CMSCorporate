@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cms_web/features/shared/views/taskview.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
-
+import 'dart:ui';
 class HCPMenu extends StatefulWidget {
   final Map<String, dynamic> args;
   const HCPMenu({super.key, required this.args});
@@ -199,8 +199,9 @@ class _HCPMenuState extends State<HCPMenu> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+
     debugPrint(
-        'line build 184: $screenWidth $selectedMenu $showRightSide $flagHaveData $flagHaveCalled');
+        'line build 217: $screenWidth $selectedMenu $showRightSide $flagHaveData $flagHaveCalled');
     screenHeight = MediaQuery.of(context).size.height;
     double? h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
     if (h! < 1.0) {
@@ -209,12 +210,13 @@ class _HCPMenuState extends State<HCPMenu> {
     fontSize = 18 / h;
     debugPrint('line 406: $fontSize $h');
     bool flagHasSnackbar = false;
-    if (screenWidth < 1220) {
-      double dif = 1220 - screenWidth;
+    screenWidth = 1350;
+    if (screenWidth < 1300) {
+      double dif = 1300 - screenWidth;
       String title = 'Screen Width';
       String sdif = dif.toStringAsFixed(0);
       description =
-          'Extend the width of your screen until menu appears on left.';
+          'Extend the width of your screen on the right by dragging the right border until menu appears on left.';
       flagHasSnackbar = true;
     }
     return Scaffold(
@@ -249,10 +251,11 @@ class _HCPMenuState extends State<HCPMenu> {
                   decoration: BoxDecoration(
                     color: color1,
                     border: Border.all(color: Colors.black),
+
                   ),
                   child: Column(
                     children: [
-                      SizedBox(width: screenWidth - 10, height: 5),
+                      SizedBox(width: 295, height: 100),
                       Row(
                         children: [
                           Container(
@@ -368,8 +371,12 @@ class _HCPMenuState extends State<HCPMenu> {
                           ),
                         )
                       : Container(
-                          height: screenHeight! - 100,
-                          width: screenWidth - 295,
+                         constraints: BoxConstraints(
+                           minHeight: 900,
+                           minWidth: 1300
+                         ),
+                          height: 900,
+                          width: 1300 - 295,
                           child: Column(
                             children: [
                               Container(

@@ -108,20 +108,6 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
     }
   }
 
-  // Future<String> getBranchDocumentId(int branchId) async {
-  //   String? doc_id;
-  //   await FirebaseFirestore.instance
-  //       .collection('CMSBranch')
-  //       .where('branchId', isEqualTo: branchId)
-  //       .get()
-  //       .then((querySnapshot) {
-  //     for (var docSnapshot in querySnapshot.docs) {
-  //       doc_id = docSnapshot.id;
-  //       break;
-  //     }
-  //   });
-  //   return Future.value(doc_id);
-  // }
 
   @override
   void initState() {
@@ -129,22 +115,6 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
     arguments = widget.args;
     debugPrint('line 272: $arguments!');
 
-    // String? docId;
-//     if (branchId == 0) {
-//       _clientStream = FirebaseFirestore.instance
-//           .collection('Client')
-//           .orderBy('clientId', descending: false)
-//           .snapshots();
-//     } else {
-//       debugPrint('line 278');
-//       // docId = getBranchDocumentId(branchId!) as String;
-//       _clientStream = FirebaseFirestore.instance
-//           .collection('Client')
-//           .where('branchId', isEqualTo: branchId)
-//           .orderBy('clientId', descending: false)
-// //          .where(FieldPath.documentId, isEqualTo: docId)
-//           .snapshots();
-//     }
     fontSize = 18;
     // clientClasses = getClientData();
 
@@ -158,23 +128,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
   double? screenWidth;
   double? screenHeight;
   double count = 0;
-//   @override
-//   int get rowCount = 0;
-//
-//   @override
-//   Future<bool> handlePageChange(int oldPageIndex, int newPageIndex,
-//       int startRowIndex, int rowsPerPage) async {
-//     int endIndex = startRowIndex + rowsPerPage;
-//     if (endIndex > orders.length) {
-//       endIndex = orders.length - 1;
-//     }
-//
-//     paginatedDataSource = List.from(
-//         orders.getRange(startRowIndex, endIndex).toList(growable: false));
-//     notifyListeners();
-//     return true;
-//   }
-// }
+
   double _getPageCount(int len, int rowsPerPage) {
     debugPrint('line 168: $len $rowsPerPage');
     try {
