@@ -1,3 +1,4 @@
+import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -40,6 +41,7 @@ class _HCProfessionalStreamScreenState
 
   AuthService authServices = AuthService();
   HCPServices hcpServices = HCPServices();
+  UtilitiesServices util = UtilitiesServices();
   late String formatted;
   late double fontSize;
   late List<Map<String, dynamic>> listOfHCPClassData;
@@ -81,6 +83,18 @@ List<HCPClass> _paginatedHcps = [];
   List<Map<String, dynamic>> listOfHCPs = [];
   List<Map<String, dynamic>> holdHCPs = [];
   final double _dataPagerHeight = 60.0;
+  List<Map<String, dynamic>>? hcpm;
+  TextEditingController hcpIdController = TextEditingController();
+  TextEditingController statusIdController = TextEditingController();
+  TextEditingController SSNController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController branchNameController = TextEditingController();
+  TextEditingController genderCodeDescriptionController = TextEditingController();
+  TextEditingController disciplineNameController = TextEditingController();
+  TextEditingController workerTypeController = TextEditingController();
+  TextEditingController credsWillWarnDateController = TextEditingController();
+  TextEditingController lastWorkedController = TextEditingController();
+
   Future<List<Map<String, dynamic>>> _getAllHCPsData() async {
     try {
       debugPrint('line 85: ${authServices.holdHcp.length}');
@@ -96,33 +110,40 @@ List<HCPClass> _paginatedHcps = [];
         }
       }
       debugPrint('line 92: $arguments');
-      List<Map<String, dynamic>>? hcpm =
-          await hcpServices.getHCProfessionalsByArgument(arguments!);
+      _rowsPerPage = 15;
+      authServices.rowsPerPage = _rowsPerPage!;
+      _hcps = [];
+      authServices.holdClm = [];
+      authServices.clients = [];
+
+      Query query = util.buildDynamicQuery(arguments!);
+      hcpm = await hcpServices.getHCProfessionalsByArgument(arguments!);
       if (hcpm == null || hcpm!.length == 0 ) {
         return [];
       }
-      debugPrint('line 104');
-      listOfHCPs = hcpm;
-      holdHCPs = hcpm;
-      authServices.holdHcp = holdHCPs;
       _rowsPerPage = 15;
-      final rowsCount = (listOfHCPs.length).toDouble();
-      pageCount = (rowsCount / _rowsPerPage!.toDouble()).floorToDouble();
-      debugPrint('line 91: $rowCount $pageCount $_rowsPerPage');
 
-
-      authServices.rowsPerPage = _rowsPerPage!;
-      if (pageCount == 0) {
-        pageCount =1;
+      if (hcpm!.length < _rowsPerPage!) {
+        _rowsPerPage = hcpm!.length;
       }
-      return listOfHCPs;
+      debugPrint('line 80');
+      for (int i=0; i < hcpm!.length; i++) {
+        Map<String, dynamic>obj = hcpm![i];
+        _hcps.add(HCPClass.fromJson(obj));
+      }
+      authServices.hcps = _hcps;
+      authServices.holdHcp = hcpm!;
+      debugPrint('line 104');
+      listOfHCPs = hcpm!;
+      return hcpm!;
     } catch (e) {
-      debugPrint('line 116 ${e.toString()}');
-      throw Exception('line 116 Error getting hcp data');
+      debugPrint('line 130: ${e.toString()}');
+      throw Exception('line 131 Error getting hcp data');
     }
   }
+
   double _getPageCount(int len, int rowsPerPage) {
-    debugPrint('line 121: $len $rowsPerPage');
+    debugPrint('line 136: $len $rowsPerPage');
     try {
       int addOn = 0;
       if (len % rowsPerPage > 0) {
@@ -130,17 +151,17 @@ List<HCPClass> _paginatedHcps = [];
       }
       double lend =  len.toDouble();
       double rppd =  rowsPerPage.toDouble();
-      debugPrint('line 176 $lend $rppd');
+      debugPrint('line 144 page count: $lend $rppd');
       int pgc = (lend / rppd).toInt();
       pgc += addOn;
-      debugPrint('line 179 $pgc');
+      debugPrint('line 147 page count: $pgc');
       double pgd = pgc.toDouble();
-      debugPrint('line 181: $pgd');
+      debugPrint('line 149 page count: $pgd');
       return pgd;
 
     } catch(e) {
-      print('line 173 error ${e.toString()}');
-      throw Exception('line 174: ${e.toString()}');
+      print('line 153 page count error ${e.toString()}');
+      throw Exception('line 154 page count: ${e.toString()}');
     }
   }
   @override
@@ -152,6 +173,22 @@ List<HCPClass> _paginatedHcps = [];
 
   }
 
+
+  @override
+ void dispose() {
+     super.dispose();
+     hcpIdController.dispose();
+     statusIdController.dispose();
+     SSNController.dispose();
+     fullNameController.dispose();
+     branchNameController.dispose();
+     genderCodeDescriptionController.dispose();
+     disciplineNameController.dispose();
+     workerTypeController.dispose();
+     credsWillWarnDateController.dispose();
+     lastWorkedController.dispose();
+
+ }
   double pageCount = 0.0;
   void _updatePageCount() {
     debugPrint(
@@ -171,11 +208,8 @@ List<HCPClass> _paginatedHcps = [];
   double? screenWidth;
   double? screenHeight;
   double count = 0;
+  
 
-  TextEditingController fullNameController = TextEditingController();
-
-
-  TextEditingController hcpIdController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
@@ -293,8 +327,9 @@ List<HCPClass> _paginatedHcps = [];
                   hcpClassData.add(HCPClass.fromJson(doc));
                 });
                 //   debugPrint('line 311: ${clientClassData[0].clientId}');
-                hcpClassDataSource = HCPClassDataSource(
-                    hcpClassData, _rowsPerPage!, _hcps, _paginatedHcps);
+
+                hcpClassDataSource = HCPClassDataSource(hcpClassData,
+                     _rowsPerPage!, _hcps, _paginatedHcps);
                 authServices.hcpClassData = hcpClassData;
                 return LayoutBuilder(builder: (context, constraint) {
                   return Column(children: [
@@ -324,7 +359,7 @@ List<HCPClass> _paginatedHcps = [];
               source: hcpClassDataSource,
               columns: <GridColumn>[
               GridColumn(
-                columnName: 'HCP ID',
+                columnName: 'ID',
                 label: TextField(
                 controller: hcpIdController,
                 decoration: InputDecoration(
@@ -344,6 +379,22 @@ List<HCPClass> _paginatedHcps = [];
               ),
             ),
             GridColumn(
+                    allowFiltering: false,
+                    columnName: 'Sts',
+                    allowSorting: false,
+                    width: 50,
+                    maximumWidth: 50,
+                    allowEditing: false,
+                    label: Container(
+                        width: 50,
+                        height: 32,
+                        padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+                        alignment: Alignment.center,
+                        child: Text('Sts',
+                            style: TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                fontSize: fontSize)))),
+            GridColumn(
             allowFiltering: false,
             columnName: 'SSN',
             allowSorting: false,
@@ -360,26 +411,97 @@ List<HCPClass> _paginatedHcps = [];
             overflow: TextOverflow.ellipsis,
             fontSize: fontSize)))),
             GridColumn(
-             columnName: 'Full Name',
+             columnName: 'HCP Name',
             label: TextField(
-            controller: fullNameController,
             decoration: InputDecoration(
-            hintText: 'Full Name',
+            hintText: 'HCP Name',
             border: InputBorder.none,
             contentPadding: EdgeInsets.symmetric(
             horizontal: 8,
             vertical: 10,
             ),
-            suffixIcon: IconButton(
-            onPressed: () {
-            fullNameController.text = '';
-            },
-            icon: Icon(Icons.clear),
             ),
             ),
             ),
-            ),
-           ],
+                GridColumn(
+                  columnName: 'Branch Name',
+                  label: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Branch Name',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                    ),
+                  ),
+                ),
+                GridColumn(
+                  columnName: 'Gender',
+                  label: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Gender',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                    ),
+                  ),
+                ),
+                GridColumn(
+                  columnName: 'Disc',
+                  label: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Disc',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                    ),
+                  ),
+                ),
+                GridColumn(
+                  columnName: 'Worker Type',
+                  label: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Worker Type',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                    ),
+                  ),
+                ),
+                GridColumn(
+                  columnName: 'Will Warn',
+                  label: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Will Warn',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                    ),
+                  ),
+                ),
+                GridColumn(
+                  columnName: 'Worked',
+                  label: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Worked',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
 
           allowEditing: true,
           editingGestureType: EditingGestureType.doubleTap,
@@ -394,7 +516,7 @@ List<HCPClass> _paginatedHcps = [];
           'line 343: ${addedRows.length} ${addedRows[0].getCells()}');
           final List<DataGridCell> cells = addedRows[0].getCells();
           final int colIndex = cells
-          .indexWhere((cell) => cell.columnName == 'Client ID');
+          .indexWhere((cell) => cell.columnName == 'ID');
           debugPrint('line 347: $colIndex');
           int currentId = -1;
           if (colIndex != -1) {
@@ -403,7 +525,7 @@ List<HCPClass> _paginatedHcps = [];
           debugPrint('line 351: $currentId');
           }
             final int colIndex2 = cells
-          .indexWhere((cell) => cell.columnName == 'Full Name');
+          .indexWhere((cell) => cell.columnName == 'HCP Name');
           String hcpName = '';
           if (colIndex2 != -1) {
           // Get and increment the current ID value.
@@ -412,7 +534,7 @@ List<HCPClass> _paginatedHcps = [];
           }
           for (int i = 0; i < listOfHCPs.length; i++) {
           Map<String, dynamic> lc = listOfHCPs[i];
-          if (currentId == lc['hcpId']) {
+          if (currentId == int.parse(lc['hcpId'])) {
           authServices.hcpMap = lc;
           break;
           }

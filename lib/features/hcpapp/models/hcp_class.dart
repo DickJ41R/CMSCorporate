@@ -16,7 +16,7 @@ class HCPClass {
       this.lastWorked);
 
   /// Id of an order.
-  final int hcpId;
+  final String hcpId;
 
   /// status an order.
   final String statusId;
@@ -39,10 +39,10 @@ class HCPClass {
   final String lastWorked;
 
   HCPClass.fromJson(Map<String, dynamic> json)
-      : hcpId = json['hcpId'] as int,
+      : hcpId = json['hcpId'] as String,
         statusId = json['statusId'] as String,
         SSN = json['SSN'] as String,
-        fullName = json['registrantName'] as String,
+        fullName = json['fullName'] as String,
         branchName = json['branchName'] as String,
         genderCodeDescription = json['genderCodeDescription'] == null ? 'Female' :  json['genderCodeDescription'] == '' ? 'Female' : json['genderCodeDescription'] as String,
         disciplineName = json['disciplineName'] as String,
@@ -65,7 +65,7 @@ class HCPClass {
       };
 
   HCPClass copyWith(
-      {int? hcpId,
+      {String? hcpId,
       String? statusId,
       String? SSN,
       String? fullName,

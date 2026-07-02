@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:cms_web/features/hcpapp/models/hcp_class.dart';
-import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HCPClassDataSource extends DataGridSource {
   /// Creates the order data source class with required details.
   ///
-
+  List<HCPClass> _HCPClassInfo;
   int rowsPerPage;
-  List<HCPClass>clients;
-  List<HCPClass>paginatedClients;
-  HCPClassDataSource(this._clientClassInfo,this.rowsPerPage,this.clients,this.paginatedClients) {
+  List<HCPClass>hcps;
+  List<HCPClass>paginatedHcps;
+  HCPClassDataSource(this._HCPClassInfo,this.rowsPerPage,this.hcps,this.paginatedHcps) {
     //  debugPrint('line 11: ${this._clientClassInfo}');
 //    debugPrint('line 14: $rowsPerPage $clients $paginatedClients');
-    paginatedClients = clients.getRange(0,rowsPerPage).toList(growable: false);
+     debugPrint('line 21: $hcps');
+    paginatedHcps = hcps.getRange(0,rowsPerPage).toList(growable: false);
     //_addCityState();
+    debugPrint('line 24 $rowsPerPage $paginatedHcps');
     buildPaginatedDataGridRows();
     // _buildDataRow();
   }
@@ -26,12 +26,12 @@ class HCPClassDataSource extends DataGridSource {
   @override
   List<DataGridRow> get rows => dataGridRows;
 
-  List<HCPClass> _clientClassInfo;
+
   double fontSize = 18;
   String _fetchColumnName(String columnName) {
     switch (columnName) {
       case 'hcpId':
-        return 'HCP ID';
+        return 'ID';
       case 'statusId':
         return 'Sts';
       case 'SSN':
@@ -40,7 +40,7 @@ class HCPClassDataSource extends DataGridSource {
         return 'HCP Name';
       case 'branchName':
         return 'Branch Name';
-      case 'gender':
+      case 'genderCodeDescription':
         return 'Gender';
       case 'disciplineName':
         return 'Disc';
@@ -51,7 +51,7 @@ class HCPClassDataSource extends DataGridSource {
       case 'lastWorked':
         return 'Worked';
       default:
-        return columnName;
+        return "Bad Column Name";
     }
   }
 
@@ -168,25 +168,25 @@ class HCPClassDataSource extends DataGridSource {
   Future<bool> handlePageChange(int oldPageIndex, int newPageIndex) async {
     int startIndex = newPageIndex * rowsPerPage;
     int endIndex  = startIndex + rowsPerPage;
-    if (endIndex  > clients.length) {
-      endIndex = clients.length;
+    if (endIndex  > hcps.length) {
+      endIndex = hcps.length;
     }
 
-    debugPrint('line 191: $startIndex $endIndex $rowsPerPage ${clients.length}');
-    if (startIndex < clients.length && endIndex <= clients.length) {
+     if (startIndex < hcps.length && endIndex <= hcps.length) {
+       debugPrint('line 181: $startIndex $endIndex $rowsPerPage ${hcps.length}');
 
-      paginatedClients =
-          clients.getRange(startIndex, endIndex).toList(growable: false);
+       paginatedHcps = hcps.getRange(startIndex, endIndex).toList(growable: false);
+      debugPrint('line 186 $paginatedHcps');
       buildPaginatedDataGridRows();
-      notifyListeners();
+       notifyListeners();
     } else {
-      paginatedClients = [];
+      paginatedHcps = [];
     }
 
     return true;
   }
   void buildPaginatedDataGridRows() {
-    dataGridRows = paginatedClients.map<DataGridRow>((dataGridRow) {
+    dataGridRows = paginatedHcps.map<DataGridRow>((dataGridRow) {
       return DataGridRow(cells: [
         DataGridCell(columnName: 'ID', value: dataGridRow.hcpId),
         DataGridCell(columnName: 'Sts', value: dataGridRow.statusId),
