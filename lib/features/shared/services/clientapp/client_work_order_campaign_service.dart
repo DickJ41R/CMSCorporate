@@ -194,31 +194,44 @@ class ClientWorkOrderCampaignService {
     //  return realm.all<ClientWorkOrderCampaign>();
 
     DateTime currentDate = DateTime.now(); //DateTime
+
     DateTime newDate = currentDate.subtract(Duration(
-        hours: currentDate.hour + 24,
+        hours: currentDate.hour,
         minutes: currentDate.minute,
         seconds: currentDate.second,
         milliseconds: currentDate.millisecond,
         microseconds: currentDate.microsecond));
-    Timestamp myTimeStamp = Timestamp.fromDate(newDate);
-    debugPrint('line 81: ${newDate.timeZoneName} ${newDate.timeZoneOffset}');
-    debugPrint('line 82: $newDate $myTimeStamp');
+    Timestamp fds = Timestamp.fromDate(newDate);
+    newDate = newDate.add(Duration(days:1));
+    Timestamp eds = Timestamp.fromDate(newDate);
+
     List<Map<String, dynamic>> listOfCWOMap = [];
     await FirebaseFirestore.instance
         .collection('ClientWorkOrderCampaign')
         .where('hcpId', isEqualTo: hcpId)
-        .where('shiftDate', isGreaterThanOrEqualTo: myTimeStamp)
-        .where('shiftStatus', whereIn: ['Open','Accepted'])
-        .orderBy("shiftDate", descending: false)
-        .orderBy("shiftCode", descending: false)
+        .where('shiftStatus', whereIn: ['Open','Available'])
+        .where('shiftDate', isGreaterThanOrEqualTo:fds )
+        .where('shiftDate', isLessThan: eds)
+        .orderBy('shiftStatus', descending: false)
+        .orderBy('shiftDate', descending: false)
         .get()
         .then((querySnapshot) {
       for (var docSnapshot in querySnapshot.docs) {
         var doc_id = docSnapshot.id;
         var obj = docSnapshot.data();
+        DateTime dts = DateTime.now();
+        int minutes = utilitiesServices.getMinutes(obj['startTime']);
+
+        dts = dts.add(Duration(minutes:minutes));
+        Timestamp cds = Timestamp.fromDate(dts);
+
+        if (obj['shiftDate'] < dts  ) {
+          debugPrint('line 229 $minutes ${obj['shiftDate']} $dts');
+          continue;
+        }
         obj['id'] = doc_id;
         debugPrint(
-            'line 97: $doc_id ${obj['id']} ${obj['shiftCode']} ${obj['shiftDate']}');
+            'line 234: $doc_id ${obj['id']} ${obj['shiftCode']} ${obj['shiftDate']}');
         listOfCWOMap.add(obj);
       }
     });
@@ -267,49 +280,29 @@ class ClientWorkOrderCampaignService {
   // }
 
   Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsApprovedConfirmed(
-      int clientId) async {
-    debugPrint('line 623 in getworkordersconfirmed $clientId');
+      int hcpId) async {
+    debugPrint('line 271 in getworkorderscapprovedonfirmed $hcpId');
     DateTime currentDate = DateTime.now(); //DateTime
-    Timestamp curDateTime = Timestamp.fromDate(currentDate);
-    int weekDay = currentDate.weekday;
-    int sdays = weekDay - 1;
-    Map<String, dynamic>? tvs;
+
     DateTime newDate = currentDate.subtract(Duration(
         hours: currentDate.hour,
         minutes: currentDate.minute,
         seconds: currentDate.second,
         milliseconds: currentDate.millisecond,
         microseconds: currentDate.microsecond));
-    DateTime firstDate = newDate.subtract(Duration(days: sdays));
-    Timestamp fds = Timestamp.fromDate(firstDate);
-    DateTime lastDate = newDate.add(Duration(days: 8 - weekDay));
-    Timestamp eds = Timestamp.fromDate(lastDate);
-    Timestamp myTimeStamp = Timestamp.fromDate(newDate);
-    debugPrint('line 654: $firstDate $fds');
-    debugPrint('line 655 $lastDate $eds');
-    // String fmt = DateFormat.yMEd().add_jms().format(DateTime.now());
-    // int adv =0;
-    // debugPrint('line 647: $fmt');
-    // if (fmt.contains('PM') == true) {
-    //   adv = 12;
-    // }
-    int hours = currentDate.hour;
-    hours *= 60;
-    int minutes = currentDate.minute;
-    int hoursMinutes = hours + minutes;
-    hoursMinutes *= 60;
-    List<Map<String, dynamic>> clientOT = [];
-    bool flagHaveAnOvertime = false;
-    List<int> listOfHcps = [];
+    Timestamp fds = Timestamp.fromDate(newDate);
+    DateTime addDate = newDate.add(Duration(days:1));
+    Timestamp eds = Timestamp.fromDate(addDate);
+
     List<Map<String, dynamic>> listOfHCPCWOs = [];
-    List<List<Map<String, dynamic>>> listOfCWOs = [];
     try {
-      List<Map<String, dynamic>> listOfCWOMap = [];
+      debugPrint('line 285: $fds $eds');
+
       await FirebaseFirestore.instance
           .collection('ClientWorkOrderCampaign')
-          .where('clientId', isEqualTo: clientId)
+          .where('hcpId', isEqualTo: hcpId)
           .where('shiftStatus', whereIn: ['Approved','Confirmed'])
-          .where('shiftDate', isGreaterThanOrEqualTo: fds)
+          .where('shiftDate', isGreaterThanOrEqualTo:fds )
           .where('shiftDate', isLessThan: eds)
           .orderBy('shiftStatus', descending: false)
           .orderBy('shiftDate', descending: false)
@@ -319,147 +312,34 @@ class ClientWorkOrderCampaignService {
             for (var docSnapshot in querySnapshot.docs) {
               var doc_id = docSnapshot.id;
               var obj = docSnapshot.data();
+              DateTime dts = DateTime.now();
+              int minutes = utilitiesServices.getMinutes(obj['startTime']);
+              dts = dts.add(Duration(minutes:minutes));
+              Timestamp cds = Timestamp.fromDate(dts);
+              Timestamp ods= obj['shiftDate'];
+              int mods = ods.microsecondsSinceEpoch;
+              int mdts = dts.microsecondsSinceEpoch;
+              // if (mods < mdts  ) {
+              //   debugPrint('line 306: $minutes $mods $mdts');
+              //   continue;
+              // }
               obj['id'] = doc_id;
-              int index = listOfHcps.indexOf(obj['hcpId']);
-              if (index == -1) {
-                listOfHcps.add(obj['hcpId']);
                 listOfHCPCWOs.add(obj);
-                listOfCWOs.add(listOfHCPCWOs);
-              } else {
-                List<Map<String, dynamic>> listh = listOfCWOs[index];
-                listh.add(obj);
-                listOfCWOs[index] = listh;
-              }
             }
           });
-      if (listOfHcps.length == 0) {
+      if (listOfHCPCWOs.length == 0) {
         return [];
         throw Exception('Error: no client selected hcps for  found');
       }
-      //now get hcps for nonclient
-      await FirebaseFirestore.instance
-          .collection('ClientWorkOrderCampaign')
-          .where('clientId', isNotEqualTo: clientId)
-          .where('hcpId', whereIn: listOfHcps)
-          .where('shiftStatus', whereIn: ['Approved','Confirmed'])
-          .where('shiftDate', isGreaterThanOrEqualTo: fds)
-          .where('shiftDate', isLessThan: eds)
-          .orderBy('shiftStatus', descending: false)
-          .orderBy('shiftDate', descending: false)
-          .get()
-          .then((querySnapshot) async {
-            debugPrint('line 345: ${querySnapshot.docs.length}');
-            for (var docSnapshot in querySnapshot.docs) {
-              var doc_id = docSnapshot.id;
-              var obj = docSnapshot.data();
-              obj['shiftCreatedDate'] = obj['shiftCreatedDate'] == null
-                  ? obj['createdDate']
-                  : obj['shiftCreatedDate'];
-              obj['id'] = doc_id;
-              int z = 0;
-              int hcpId = obj['hcpId'];
-              int index = listOfHcps.indexOf(hcpId);
-              if (index == -1) {
-                throw Exception('Error: Index must always exist');
-              }
-              List<Map<String, dynamic>> listh = listOfCWOs[index];
-              listh.add(obj);
-              listOfCWOs[index] = listh;
-            }
-          });
-      debugPrint('line 361: ${listOfCWOs.length} ${listOfCWOs[0].length}');
-      int x = 0;
-
-      int totalWeeklyMinutes = 0;
-
-      int sDiff = 0;
-      int sMin = 0;
-      int eMin = 0;
-
-      debugPrint('line 697 debug check');
-      for (int h = 0; h < listOfCWOs.length; h++) {
-        listOfCWOMap = listOfCWOs[h];
-        for (int i = 0; i < listOfCWOMap.length; i++) {
-          var obj = listOfCWOMap[i];
-
-            sMin = utilitiesServices.getMinutes(obj['startTime']);
-            eMin = utilitiesServices.getMinutes(obj['endTime']);
-            sDiff = utilitiesServices.calculateShiftHours(
-                sMin, eMin, obj['startTime'], obj['endTime'], obj['meals']);
-            debugPrint('line 697 debug check: $sDiff');
-            if (sDiff == -1) {
-              continue;
-            }
-            totalWeeklyMinutes += sDiff;
-        }
-        debugPrint('line 716 $totalWeeklyMinutes');
-        int overtimeMinutes = 0;
-        int regularMinutes = 0;
-        if (totalWeeklyMinutes > 2400) {
-          overtimeMinutes = totalWeeklyMinutes - 2400;
-          regularMinutes = 2400;
-        } else {
-          regularMinutes = totalWeeklyMinutes;
-        }
-        debugPrint('line 369: $totalWeeklyMinutes $overtimeMinutes $regularMinutes');
-        listOfCWOMap.sort(
-            (a, b) => b['shiftCreatedDate'].compareTo(a['shiftCreatedDate']));
-        for (int i = 0; i < listOfCWOMap.length; i++) {
-          var obj = listOfCWOMap[i];
-          sMin = utilitiesServices.getMinutes(obj['startTime']);
-          eMin = utilitiesServices.getMinutes(obj['endTime']);
-          sDiff = utilitiesServices.calculateShiftHours(
-              sMin, eMin, obj['startTime'], obj['endTime'], obj['meals']);
-          debugPrint('line 378: $i ${obj['clientId']} ${obj['shiftCreatedDate']}');
-          debugPrint('line 379: $sDiff $overtimeMinutes');
-          if (overtimeMinutes > 0) {
-            if (overtimeMinutes >= sDiff) {
-              listOfCWOMap[i]['otMinutes'] = sDiff;
-              listOfCWOMap[i]['regularMinutes'] = 0;
-              overtimeMinutes -= sDiff;
-              listOfCWOMap[i]['requireOvertime'] = true;
-              listOfCWOMap[i]['shiftOvertime'] = true;
-            } else {
-              listOfCWOMap[i]['otMinutes'] = overtimeMinutes;
-              listOfCWOMap[i]['regularMinutes'] = sDiff - overtimeMinutes;
-              listOfCWOMap[i]['requireOvertime'] = true;
-              listOfCWOMap[i]['shiftOvertime'] = true;
-              overtimeMinutes = 0;
-            }
-          } else {
-            listOfCWOMap[i]['otMinutes'] = 0;
-            listOfCWOMap[i]['regularMinutes'] = sDiff;
-            listOfCWOMap[i]['requireOvertime'] = false;
-            listOfCWOMap[i]['shiftOvertime'] = false;
-          }
-        }
-        int q = 0;
-        while (q < listOfCWOMap.length) {
-          if (listOfCWOMap[q]['clientId'] != clientId) {
-            listOfCWOMap.removeAt(q);
-            q = 0;
-            continue;
-          }
-          q += 1;
-        }
-        listOfCWOs[h] = listOfCWOMap;
-      }
-      List<Map<String, dynamic>> lmp = [];
-      for (int i = 0; i < listOfCWOs.length; i++) {
-        listOfCWOMap = listOfCWOs[i];
-        for (int j = 0; j < listOfCWOMap.length; j++) {
-          lmp.add(listOfCWOMap[j]);
-        }
-      }
-      return lmp;
+            return listOfHCPCWOs;
     } catch (e) {
       debugPrint('line 779 error $e');
       throw Exception(e.toString());
     }
   }
   Future<List<Map<String, dynamic>>>? getWorkOrderCampaignsSignedInSignedOut(
-      int clientId) async {
-    debugPrint('line 623 in getworkordersconfirmed $clientId');
+      int hcpId) async {
+    debugPrint('line 623 in getworkordersconfirmed $hcpId');
     DateTime currentDate = DateTime.now(); //DateTime
     Timestamp curDateTime = Timestamp.fromDate(currentDate);
     int weekDay = currentDate.weekday;
@@ -490,15 +370,14 @@ class ClientWorkOrderCampaignService {
     int hoursMinutes = hours + minutes;
     hoursMinutes *= 60;
     List<Map<String, dynamic>> clientOT = [];
-    bool flagHaveAnOvertime = false;
-    List<int> listOfHcps = [];
+
     List<Map<String, dynamic>> listOfHCPCWOs = [];
     List<List<Map<String, dynamic>>> listOfCWOs = [];
     try {
       List<Map<String, dynamic>> listOfCWOMap = [];
       await FirebaseFirestore.instance
           .collection('ClientWorkOrderCampaign')
-          .where('clientId', isEqualTo: clientId)
+          .where('hcpId', isEqualTo: hcpId)
           .where('shiftStatus', whereIn: ['SignedIn','SignedOut'])
           .where('shiftDate', isGreaterThanOrEqualTo: fds)
           .where('shiftDate', isLessThan: eds)
@@ -511,138 +390,16 @@ class ClientWorkOrderCampaignService {
           var doc_id = docSnapshot.id;
           var obj = docSnapshot.data();
           obj['id'] = doc_id;
-          int index = listOfHcps.indexOf(obj['hcpId']);
-          if (index == -1) {
-            listOfHcps.add(obj['hcpId']);
+
             listOfHCPCWOs.add(obj);
-            listOfCWOs.add(listOfHCPCWOs);
-          } else {
-            List<Map<String, dynamic>> listh = listOfCWOs[index];
-            listh.add(obj);
-            listOfCWOs[index] = listh;
-          }
+
         }
       });
-      if (listOfHcps.length == 0) {
+      if (listOfHCPCWOs.length == 0) {
         return [];
         throw Exception('Error: no client selected hcps for  found');
       }
-      //now get hcps for nonclient
-      await FirebaseFirestore.instance
-          .collection('ClientWorkOrderCampaign')
-          .where('clientId', isNotEqualTo: clientId)
-          .where('hcpId', whereIn: listOfHcps)
-          .where('shiftStatus', whereIn: ['SignedIn','SignedOut'])
-          .where('shiftDate', isGreaterThanOrEqualTo: fds)
-          .where('shiftDate', isLessThan: eds)
-          .orderBy('shiftStatus', descending: false)
-          .orderBy('shiftDate', descending: false)
-          .get()
-          .then((querySnapshot) async {
-        debugPrint('line 345: ${querySnapshot.docs.length}');
-        for (var docSnapshot in querySnapshot.docs) {
-          var doc_id = docSnapshot.id;
-          var obj = docSnapshot.data();
-          obj['shiftCreatedDate'] = obj['shiftCreatedDate'] == null
-              ? obj['createdDate']
-              : obj['shiftCreatedDate'];
-          obj['id'] = doc_id;
-          int z = 0;
-          int hcpId = obj['hcpId'];
-          int index = listOfHcps.indexOf(hcpId);
-          if (index == -1) {
-            throw Exception('Error: Index must always exist');
-          }
-          List<Map<String, dynamic>> listh = listOfCWOs[index];
-          listh.add(obj);
-          listOfCWOs[index] = listh;
-        }
-      });
-      debugPrint('line 361: ${listOfCWOs.length} ${listOfCWOs[0].length}');
-      int x = 0;
-
-      int totalWeeklyMinutes = 0;
-
-      int sDiff = 0;
-      int sMin = 0;
-      int eMin = 0;
-
-      debugPrint('line 697 debug check');
-      for (int h = 0; h < listOfCWOs.length; h++) {
-        listOfCWOMap = listOfCWOs[h];
-        for (int i = 0; i < listOfCWOMap.length; i++) {
-          var obj = listOfCWOMap[i];
-
-          sMin = utilitiesServices.getMinutes(obj['startTime']);
-          eMin = utilitiesServices.getMinutes(obj['endTime']);
-          sDiff = utilitiesServices.calculateShiftHours(
-              sMin, eMin, obj['startTime'], obj['endTime'], obj['meals']);
-          debugPrint('line 697 debug check: $sDiff');
-          if (sDiff == -1) {
-            continue;
-          }
-          totalWeeklyMinutes += sDiff;
-        }
-        debugPrint('line 716 $totalWeeklyMinutes');
-        int overtimeMinutes = 0;
-        int regularMinutes = 0;
-        if (totalWeeklyMinutes > 2400) {
-          overtimeMinutes = totalWeeklyMinutes - 2400;
-          regularMinutes = 2400;
-        } else {
-          regularMinutes = totalWeeklyMinutes;
-        }
-        debugPrint('line 369: $totalWeeklyMinutes $overtimeMinutes $regularMinutes');
-        listOfCWOMap.sort(
-                (a, b) => b['shiftCreatedDate'].compareTo(a['shiftCreatedDate']));
-        for (int i = 0; i < listOfCWOMap.length; i++) {
-          var obj = listOfCWOMap[i];
-          sMin = utilitiesServices.getMinutes(obj['startTime']);
-          eMin = utilitiesServices.getMinutes(obj['endTime']);
-          sDiff = utilitiesServices.calculateShiftHours(
-              sMin, eMin, obj['startTime'], obj['endTime'], obj['meals']);
-          debugPrint('line 378: $i ${obj['clientId']} ${obj['shiftCreatedDate']}');
-          debugPrint('line 379: $sDiff $overtimeMinutes');
-          if (overtimeMinutes > 0) {
-            if (overtimeMinutes >= sDiff) {
-              listOfCWOMap[i]['otMinutes'] = sDiff;
-              listOfCWOMap[i]['regularMinutes'] = 0;
-              overtimeMinutes -= sDiff;
-              listOfCWOMap[i]['requireOvertime'] = true;
-              listOfCWOMap[i]['shiftOvertime'] = true;
-            } else {
-              listOfCWOMap[i]['otMinutes'] = overtimeMinutes;
-              listOfCWOMap[i]['regularMinutes'] = sDiff - overtimeMinutes;
-              listOfCWOMap[i]['requireOvertime'] = true;
-              listOfCWOMap[i]['shiftOvertime'] = true;
-              overtimeMinutes = 0;
-            }
-          } else {
-            listOfCWOMap[i]['otMinutes'] = 0;
-            listOfCWOMap[i]['regularMinutes'] = sDiff;
-            listOfCWOMap[i]['requireOvertime'] = false;
-            listOfCWOMap[i]['shiftOvertime'] = false;
-          }
-        }
-        int q = 0;
-        while (q < listOfCWOMap.length) {
-          if (listOfCWOMap[q]['clientId'] != clientId) {
-            listOfCWOMap.removeAt(q);
-            q = 0;
-            continue;
-          }
-          q += 1;
-        }
-        listOfCWOs[h] = listOfCWOMap;
-      }
-      List<Map<String, dynamic>> lmp = [];
-      for (int i = 0; i < listOfCWOs.length; i++) {
-        listOfCWOMap = listOfCWOs[i];
-        for (int j = 0; j < listOfCWOMap.length; j++) {
-          lmp.add(listOfCWOMap[j]);
-        }
-      }
-      return lmp;
+      return listOfHCPCWOs;
     } catch (e) {
       debugPrint('line 779 error $e');
       throw Exception(e.toString());

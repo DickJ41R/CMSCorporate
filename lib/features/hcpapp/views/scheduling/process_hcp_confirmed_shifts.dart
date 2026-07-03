@@ -32,21 +32,14 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
   int? clientId;
   bool haveAllItems = false;
 
-  Future<List<Map<String, dynamic>>> _getAllApprovedShifts() async {
+  Future<List<Map<String, dynamic>>> _getAllApprovedConfirmedShifts() async {
     debugPrint('line 38 getAll approved shifts $hcpId');
     try {
-      List<Map<String, dynamic>>? lm = await clw.getWorkOrderCampaignsApproved(
-          hcpId!, clientId!);
+      List<Map<String, dynamic>>? lm = await clw.getWorkOrderCampaignsApprovedConfirmed(
+          hcpId!);
       debugPrint('line 41 in get all confirmed');
-      if (lm.isEmpty) {
+      if (lm == null) {
         return [];
-      }
-      for (int i = 0; i < lm.length; i++) {
-        Map<String, dynamic> ob = lm[i];
-        ob['declinedStatus'] = null;
-        if (ob['shiftStatus'] == 'Declined') {
-          ob['declinedStatus'] = 'The client declined your shift request.';
-        }
       }
       return lm;
     } catch (e) {
@@ -55,10 +48,6 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
     }
   }
 
-  void getHCPUserX() async {
-    debugPrint('line 44 in get usrx');
-    await getHCPUser();
-  }
 
   Future<bool> _showDialog(
       BuildContext context, String title, String? description) async {
@@ -208,16 +197,21 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
           Navigator.of(context).pushNamed(hcpMenu, arguments: arguments!);
     }
   }
+  void getHCPUserX() async {
+    debugPrint('line 44 in get usrx');
+    await getHCPUser();
+  }
 
   Future<Map<String, dynamic>> getHCPUser() async {
     debugPrint('line 50 gethcpuser available shfts: $hcpServices');
     try {
       Map<String, dynamic>? lm = await hcpServices.getHCPUser(hcpId!);
-
       if (lm.isEmpty) {
         debugPrint('line 54 lm i septy');
         return lm;
       }
+      clientId = lm['clientId'];
+      authServices.currentHCPMap = lm;
       debugPrint('line 57 in available shifts gethcpuser $lm');
       fullName = lm['legalName'];
       return lm;
@@ -235,8 +229,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
     super.initState();
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
-    clientId = authServices.client!['clientId'];
-    currentHCPMap = authServices.currentHCPMap;
+    currentUser = authServices.currentUser;
   }
 
   void didChangeDependencies() {
@@ -274,7 +267,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
     return Scaffold(
       backgroundColor: color1,
       appBar: AppBar(
-        title: Text("Confirm Shifts",
+        title: Text("Approved Or Confirm Shifts",
             style: TextStyle(
               fontSize:
                   Theme.of(context).textTheme.headlineMedium!.fontSize! / h!,
@@ -295,7 +288,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
         ),
       ),
       body: FutureBuilder<List<dynamic>>(
-          future: Future.wait([_getAllApprovedShifts()]),
+          future: Future.wait([_getAllApprovedConfirmedShifts()]),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -328,7 +321,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
                 child: Container(
                   height: 100,
                   width: screenWidth! - 10,
-                  child: Text('There are no approved shifts to confirm.',
+                  child: Text('There are no approved or confirmed shifts.',
                       style: TextStyle(
                           fontSize: Theme.of(context)
                                   .textTheme
@@ -347,7 +340,7 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
                   child: Container(
                     height: 100,
                     width: 500,
-                    child: Text('There are no approved shifts to confirm.',
+                    child: Text('There are no approved or confirmed shifts.',
                         style: TextStyle(
                             fontSize: Theme.of(context)
                                     .textTheme
@@ -510,6 +503,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     // debugPrint('line 98 in tile building');
     // String hoursString = (item.decimalHours - (item.meals/60)).toStringAsFixed(2);
     // hoursString = '7.50';
+
     return Container(
       width: screenWidth - 10,
       height: 420,
@@ -645,29 +639,36 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                 )),
           ),
           SizedBox(height: 10),
-          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Container(
-              height: 24,
-              width: (screenWidth - 16) / 2,
-              child: Text('Start: ${item['startTime']}',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: fontSize,
-                  )),
-            ),
-            SizedBox(width: 4),
-            Container(
-              height: 24,
-              width: (screenWidth - 16) / 2,
-              child: Text('End: ${item['endTime']}',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: fontSize,
-                  )),
-            ),
-          ]),
+          SizedBox(
+            height: 24,
+            width: screenWidth -10,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+              Container(
+                height: 24,
+                width: (screenWidth - 16) / 2,
+                child: Text('Start: ${item['startTime']}',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      fontSize: fontSize,
+                    )),
+              ),
+              SizedBox(width: 4),
+              Container(
+                height: 24,
+                width: (screenWidth - 16) / 2,
+                child: Text('End: ${item['endTime']}',
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      fontSize: fontSize,
+                    )),
+              ),
+            ]),
+          ),
           SizedBox(height: 10),
           Row(mainAxisAlignment: MainAxisAlignment.start, children: [
             Container(

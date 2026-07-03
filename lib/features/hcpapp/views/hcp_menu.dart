@@ -59,14 +59,14 @@ class _HCPMenuState extends State<HCPMenu> {
   List<Map<String, dynamic>> hcpSchedulingMenus = [
     {
       "menuId": 1,
-      "menuName": "Open Shifts",
+      "menuName": "Open/Available Shifts",
       "menuRouteName": "/hcpAvailableShiftsSchedulingPage",
       "index": 0
     },
     {
       "menuId": 2,
       "menuName": "Approved/Confirm Shifts",
-      "menuRouteName": "/hcpConfirmShiftsSchedulingPage",
+      "menuRouteName": "/hcpConfirmViewSchedulingPage",
       "index": 1
     },
     {
@@ -211,8 +211,8 @@ class _HCPMenuState extends State<HCPMenu> {
     debugPrint('line 406: $fontSize $h');
     bool flagHasSnackbar = false;
     screenWidth = 1350;
-    if (screenWidth < 1300) {
-      double dif = 1300 - screenWidth;
+    if (screenWidth < 1350) {
+      double dif = 1350 - screenWidth;
       String title = 'Screen Width';
       String sdif = dif.toStringAsFixed(0);
       description =
@@ -255,12 +255,12 @@ class _HCPMenuState extends State<HCPMenu> {
                   ),
                   child: Column(
                     children: [
-                      SizedBox(width: 295, height: 100),
+                      SizedBox(width: 300, height: 5),
                       Row(
                         children: [
                           Container(
                             height: 100,
-                            width: 295,
+                            width: 300,
                             padding: EdgeInsets.only(top: 5),
                             child: Column(
                               children: <Widget>[
@@ -285,7 +285,7 @@ class _HCPMenuState extends State<HCPMenu> {
                                       debugPrint('line 262: $selectedMenuIndex');
                                       selectedMenuName =
                                           hcpMenus[selectedMenuIndex]
-                                              ['clientRouteName'];
+                                              ['HCPRouteName'];
                                       setState(() {
                                         if (selectedMenuIndex == 0) {
                                           //    dropDownMenuOptionEntries = [];
@@ -326,12 +326,12 @@ class _HCPMenuState extends State<HCPMenu> {
                   : showRightSide == 0
                       ? Container(
                           height: screenHeight! - 100,
-                          width: screenWidth - 295,
+                          width: 600,
                           child: Column(
                             children: [
                               Container(
                                 height: 40,
-                                width: 295,
+                                width: 600,
                                 child: Center(
                                   child: Text(
                                     '$genericTitle',
@@ -345,7 +345,7 @@ class _HCPMenuState extends State<HCPMenu> {
                               SizedBox(height: 10),
                               Center(
                                 child: Container(
-                                  width: screenWidth - 295,
+                                  width: 600,
                                   height: screenHeight! - 200,
                                   decoration: BoxDecoration(
                                     color: color1,
@@ -373,15 +373,15 @@ class _HCPMenuState extends State<HCPMenu> {
                       : Container(
                          constraints: BoxConstraints(
                            minHeight: 900,
-                           minWidth: 1300
+                           minWidth: 1350
                          ),
                           height: 900,
-                          width: 1300 - 295,
+                          width: 600,
                           child: Column(
                             children: [
                               Container(
                                 height: 40,
-                                width: 295,
+                                width: 600,
                                 child: Center(
                                   child: Text(
                                     '$genericTitle',
@@ -395,7 +395,7 @@ class _HCPMenuState extends State<HCPMenu> {
                               SizedBox(height: 10),
                               Center(
                                 child: Container(
-                                  width: screenWidth - 295,
+                                  width: screenWidth - 310,
                                   height: screenHeight! - 200,
                                   decoration: BoxDecoration(
                                     color: color1,

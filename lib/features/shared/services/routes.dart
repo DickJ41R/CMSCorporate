@@ -135,10 +135,10 @@ class MyRoutes {
         print('line 136 $mp');
         return MaterialPageRoute(
             builder: (context) => ProcessClientRequestSchedule(args: mp));
-      // case clientConfirmShiftsSchedulingPage:
-      //   Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
-      //   return MaterialPageRoute(
-      //       builder: (context) => ClientConfirmShiftsSchedulingPage(args: mp));
+       // case clientConfirmShiftsSchedulingPage:
+       //   Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+       //   return MaterialPageRoute(
+       //       builder: (context) => ClientConfirmShiftsSchedulingPage(args: mp));
       case clientListScheduleSchedulingPage:
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
@@ -226,6 +226,7 @@ class MyRoutes {
         return MaterialPageRoute(
             builder: (context) => ProcessHCPScheduleView(args: mp));
       case hcpConfirmedShifts:
+        debugPrint('line 229: ${settings.arguments}');
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPConfirmedShifts(args: mp));

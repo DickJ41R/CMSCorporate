@@ -198,6 +198,9 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
     if (h! < 1.0) {
       h = 1.0;
     }
+    if (screenWidth! < 1400) {
+      screenWidth = 1400;
+    }
     debugPrint('line 201: $h $screenWidth $screenHeight');
     if (screenWidth! <= 650 || screenHeight! <= 650) {
       //portrait mode
@@ -478,7 +481,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     double screenWidth = (size.width /gridAxisCount.toDouble());
     double tileHeight = 100;
     if (gridAxisCount > 1) {
-      fontSize = 12;
+      fontSize = 10;
     }
     debugPrint('line4 470: $screenWidth $size $tileHeight ');
 
@@ -498,14 +501,14 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
             SizedBox(height: 2),
             Container(
               height: 20,
-              width: screenWidth - 10,
+              width: screenWidth - 5,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
+                  SizedBox(
                     height: 20,
-                    width: 165,
+                    width: 170,
                     child: Text(
                         'Date: ${util.convertFromTimestamp(item['shiftDate'])}',
                         style: TextStyle(
@@ -515,9 +518,9 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                         )),
                   ),
                   SizedBox(width: 10),
-                  Container(
+                  SizedBox(
                     height: 20,
-                    width: 185,
+                    width: 170,
                     child: Text(
                         'Status: ${item['shiftStatus']}',
                         style: TextStyle(
@@ -563,26 +566,27 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                     ),
             ),
             SizedBox(height: 5),
-            Container(
+            SizedBox(
               height:20,
-              width: screenWidth -10,
+              width: screenWidth,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     height: 20,
-                    width: 115,
+                    width: 110,
                     child: Text('Shift: ${item['shiftCode']}',
                         style: TextStyle(
                           color: Colors.black87,
                           fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: 10,
                         )),
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(width: 5),
                   Container(
                     height: 20,
-                    width: 240,
+                    width: 230,
                     child: Text(
                         'Rate: ' +
                             getPayRate(item['payRate'], item['dayValue'],
@@ -590,7 +594,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                         style: TextStyle(
                           color: Colors.red,
                           fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: 10,
                         )),
                   ),
                 ],
