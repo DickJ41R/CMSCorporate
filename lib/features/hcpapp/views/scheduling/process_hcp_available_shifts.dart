@@ -332,7 +332,7 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
                     List<dynamic> listH = snapshot.data![0];
                     debugPrint('line 330: ${listH.length}');
                     return SizedBox(
-                      height: 375,
+                      height: 800,
                       child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: gridAxisCount,

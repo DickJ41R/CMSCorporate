@@ -6442,7 +6442,36 @@ class DropDownCodes {
     ];
     return lst;
   }
-
+  Future<List<Map<String, dynamic>>> getCoordinatorHCPCancelReasons() async {
+    List<Map<String, dynamic>> lst = [
+      {"codeId": 2512, "reason": "HCP: Family Emergency"},
+      {"codeId": 2513, "reason": "HCP: Sick"},
+      {"codeId": 2514, "reason": "HCP: Transportation Issues"},
+      {"codeId": 2680, "reason": "HCP: Fatigue"},
+    ];
+    return lst;
+  }
+  Future<List<Map<String, dynamic>>> getCoordinatorClientCancelReasons() async {
+    List<Map<String, dynamic>> lst = [
+      {"codeId": 2088, "reason": "Client: Census Low"},
+      {"codeId": 2089, "reason": "Client: Not Needed"},
+      {"codeId": 2090, "reason": "Client: Other Agency Filled"},
+      {"codeId": 2091, "reason": "Client: Staff Filled"},
+      {"codeId": 2730, "reason": "Client: Cancelled by Second Level Manager"},
+      {"codeId": 2731, "reason": "Client: Maintenance Repairs"},
+      {"codeId": 2732, "reason": "CLient: Closed Beds - Unit"},
+      // {
+      //   "codeId": 2733,
+      //   "reason": "Other Agency - Preferred Provider filled Shift"
+      // },
+      // {"codeId": 2754, "reason": "StafferLinkFSM Cancellation"},
+      // {"codeId": 2834, "reason": "VMS Cancellation"},
+      // {"codeId": 2843, "reason": "Not Confirmed - CLIENT"},
+      // {"codeId": 2844, "reason": "Not Confirmed - REGISTRANT"},
+      {"codeId": 2845, "reason": "Client: Shift no longer available"}
+    ];
+    return lst;
+  }
   List<Map<String, dynamic>> userBranches = [
     {"branchId": 0, "branchName": "Corporate", "index": 0},
     {"branchId": 615, "branchName": "RALEIGH CMS 101", "index": 1},

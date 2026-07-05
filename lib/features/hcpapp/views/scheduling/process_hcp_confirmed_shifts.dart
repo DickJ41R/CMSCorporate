@@ -253,21 +253,58 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
   double smallFontSize = 14;
   @override
   Widget build(BuildContext context) {
-    debugPrint('line 40 in show confirmed shifts');
-    screenWidth = MediaQuery.of(context).size.width;
-    screenHeight = MediaQuery.of(context).size.height;
-    double? h = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
+    final windowSize = MediaQuery.sizeOf(context);
+    screenWidth = windowSize.width;
+    screenHeight = windowSize.height;
+
+    double? h = windowSize.aspectRatio;
     if (h! < 1.0) {
       h = 1.0;
     }
-    fontSize = 16;
-    fontSize /= h;
-    smallFontSize = 14;
-    smallFontSize /= h;
+    if (screenWidth! < 1400) {
+      screenWidth = 1400;
+    }
+    debugPrint('line 201: $h $screenWidth $screenHeight');
+     int gridAxisCount = 1;
+     double containerHeight = 24;
+    if (screenWidth! <= 650 || screenHeight! <= 650) {
+      //portrait mode
+      if (screenWidth! < screenHeight!) {
+        fontSize = 14;
+        containerHeight = 42;
+      } else {
+        fontSize = 14;
+        containerHeight = 42;
+        gridAxisCount = 2;
+      }
+    } else if (screenWidth! > 650 && screenWidth! <= 1200) {
+      //tablet
+      if (screenWidth! < screenHeight!) {
+        fontSize = 18;
+        containerHeight = 50;
+        gridAxisCount = 2;
+      } else  {
+        fontSize = 16;
+        containerHeight = 40;
+
+        gridAxisCount = 3;
+      }
+    } else if (screenWidth! > 1200) {
+      //desktop
+      fontSize = 20;
+      containerHeight = 60;
+      gridAxisCount = 4;
+    }
+    double imageHeight = 50;
+    if (imageHeight > containerHeight!) {
+      imageHeight = containerHeight!;
+    }
+    debugPrint('line 240: $gridAxisCount');
+
     return Scaffold(
       backgroundColor: color1,
       appBar: AppBar(
-        title: Text("Approved Or Confirm Shifts",
+        title: Text("Approved/Confirmed Shifts",
             style: TextStyle(
               fontSize:
                   Theme.of(context).textTheme.headlineMedium!.fontSize! / h!,
@@ -353,36 +390,30 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
                 );
               } else {
                 List<dynamic> listH = snapshot.data![0];
-                return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4, // number of items in each row
-                    mainAxisSpacing: 2.0, // spacing between rows
-                    crossAxisSpacing: 8.0, // spacing between columns
+                return SizedBox(
+                  height: 800,
+                  width: screenWidth,
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4, // number of items in each row
+                      mainAxisSpacing: 2.0, // spacing between rows
+                      crossAxisSpacing: 8.0, // spacing between columns
+                    ),
+                    padding: EdgeInsets.all(8.0), // padding around the grid
+                    restorationId: 'ClientCampaignListView',
+                    itemCount: listH.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final item = listH[index];
+                      return ClientCampaignTile(
+                          itemm: item,
+                          fontSize: fontSize,
+                          gridAxisCount: gridAxisCount,
+                          ctx: context,
+                          onButtonPressed: onButtonPressed);
+                    },
                   ),
-                  padding: EdgeInsets.all(8.0), // padding around the grid
-                  restorationId: 'ClientCampaignListView',
-                  itemCount: listH.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final item = listH[index];
-                    return ClientCampaignTile(
-                        itemm: item,
-                        fontSize: fontSize,
-                        ctx: context,
-                        onButtonPressed: onButtonPressed);
-                  },
                 );
-                // return ListView.builder(
-                //   restorationId: 'ClientCampaignListView',
-                //   itemCount: listH.length,
-                //   itemBuilder: (BuildContext context, int index) {
-                //     final item = listH[index];
-                //     return ClientCampaignTile(
-                //         itemm: item,
-                //         fontSize: smallFontSize,
-                //         ctx: context,
-                //         onButtonPressed: onButtonPressed);
-                //   },
-                // );
+
               }
             }
           }),
@@ -393,14 +424,16 @@ class _ProcessHCPConfirmedShiftsState extends State<ProcessHCPConfirmedShifts> {
 class ClientCampaignTile extends StatefulWidget {
   final Map<String, dynamic> itemm;
   final double fontSize;
+  final int gridAxisCount;
   final BuildContext ctx;
   final void Function(Map<String, dynamic>, int, BuildContext) onButtonPressed;
 
   const ClientCampaignTile(
       {required this.itemm,
-      required this.fontSize,
-      required this.ctx,
-      required this.onButtonPressed});
+        required this.fontSize,
+        required this.gridAxisCount,
+        required this.ctx,
+        required this.onButtonPressed});
 
   @override
   State<ClientCampaignTile> createState() => _ClientCampaignTileState();
@@ -412,24 +445,38 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
   late Map<String, dynamic> item;
   late double fontSize;
   late BuildContext ctx;
-  bool flagPublishedButtonDisabled = false;
+  late int gridAxisCount;
   @override
   initState() {
     super.initState();
+    debugPrint('line 380: in initstate campaigntile');
     item = widget.itemm;
     fontSize = widget.fontSize;
+    gridAxisCount = widget.gridAxisCount;
     ctx = widget.ctx;
-    flagPublishedButtonDisabled = false;
   }
 
-  String convertFromTimestamp(Timestamp timestamp) {
-    DateTime date = timestamp.toDate();
-    int tms = date.millisecondsSinceEpoch;
+  UtilitiesServices util = UtilitiesServices();
+  String getSpecialRequirements(String? spm) {
+    if (spm == null || spm == '') {
+      return "None";
+    }
+    return spm;
+  }
 
-    DateTime dt = DateTime.fromMillisecondsSinceEpoch(tms + 18000);
-    String sdt = formatter.format(dt);
-    debugPrint('line 186: $sdt');
-    return sdt;
+
+
+  bool flagPublishedButtonDisabled = false;
+  DateFormat formatter = DateFormat('MM-dd-yyyy');
+  Color color1 = Color.fromARGB(255, 134, 219, 197); //green from website
+  Color color2 = Color.fromARGB(255, 19, 125, 103); //green from logo
+  Color disabledTextColor = Colors.white;
+  Color disabledColor = Colors.orange;
+  void localButtonPressed(int el, dynamic item) {
+    setState(() {
+      flagPublishedButtonDisabled = true;
+    });
+    widget.onButtonPressed(item, 1, context);
   }
 
   String getCityState(dynamic city, dynamic state) {
@@ -437,21 +484,24 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     return cty;
   }
 
-  DateFormat formatter = DateFormat('MM-dd-yyyy');
-  Color color1 = Color.fromARGB(255, 134, 219, 197); //green from website
-  Color color2 = Color.fromARGB(255, 19, 125, 103); //green from logo
-  Color color3 = Colors.grey.shade200;
-  Color disabledTextColor = Colors.white;
-  Color disabledColor = Colors.orange;
-  void localButtonPressed(int el, dynamic item) {
-    setState(() {
-      flagPublishedButtonDisabled = true;
-    });
-    if (el == 1) {
-      widget.onButtonPressed(item, 1, context);
-    } else {
-      widget.onButtonPressed(item, 2, context);
+  String getPayRate(dynamic pr, int dayValue, dynamic prwe) {
+    String? val;
+    try {
+      if (dayValue == 6 || dayValue == 7) {
+        val = '\$' + prwe.toStringAsFixed(2);
+      } else {
+        val = '\$' + pr.toStringAsFixed(2);
+      }
+    } catch (e) {
+      if (dayValue == 6 || dayValue == 7) {
+        double dbl = double.parse(prwe);
+        val = '\$' + dbl.toStringAsFixed(2);
+      } else {
+        double dbl = double.parse(pr);
+        val = '\$' + dbl.toStringAsFixed(2);
+      }
     }
+    return val!;
   }
 
   String getOvertimeString(bool? value) {
@@ -477,354 +527,349 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     return str;
   }
 
-  String getPayRate(dynamic pr, int dayValue, dynamic prwe) {
-    String? val;
-    try {
-      if (dayValue == 6 || dayValue == 7) {
-        val = '\$' + prwe.toStringAsFixed(2);
-      } else {
-        val = '\$' + pr.toStringAsFixed(2);
-      }
-    } catch (e) {
-      if (dayValue == 6 || dayValue == 7) {
-        double dbl = double.parse(prwe);
-        val = '\$' + dbl.toStringAsFixed(2);
-      } else {
-        double dbl = double.parse(pr);
-        val = '\$' + dbl.toStringAsFixed(2);
-      }
-    }
-    return val!;
-  }
-
-  @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.sizeOf(context).width;
-    // debugPrint('line 98 in tile building');
-    // String hoursString = (item.decimalHours - (item.meals/60)).toStringAsFixed(2);
-    // hoursString = '7.50';
+    debugPrint('line 323 in tile building: ${item['shiftStatus']}');
+    Size size = MediaQuery.of(context).size;
 
-    return Container(
-      width: screenWidth - 10,
-      height: 420,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: color2, width: 4),
-          borderRadius: BorderRadius.circular(12)),
-      padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(height: 2),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text('Date: ${convertFromTimestamp(item['shiftDate'])}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize,
-                    )),
-                // SizedBox(width:5),
-                // Text('${item['dayValue']}',
-                //     style: TextStyle(
-                //       color:Colors.black87,
-                //       fontWeight: FontWeight.bold,
-                //       fontSize: fontSize,
-                //     )
-                // ),
-              ],
-            ),
-          ),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: Text('Discipline: ${item['disciplineName']}',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
-                )),
-          ),
-          SizedBox(height: 5),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: Text('Employee: ${item['hcpName']}',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
-                )),
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                height: 24,
-                child: Text('Shift: ${item['shiftCode']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize,
-                    )),
-              ),
-              SizedBox(width: 20),
-              Container(
-                height: 24,
-                child: Text(
-                    'Rate: ' +
-                        getPayRate(item['payRate'], item['dayValue'],
-                            item['payRateWE']),
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize,
-                    )),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: Text('Name: ${item['clientName']} ',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
-                )),
-          ),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: item['addressLine1'] != ''
-                ? Text(
-                    'AddressLine: ${item['addressLine1']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize,
-                    ),
-                  )
-                : SizedBox(),
-          ),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: Text(
-                'City/State: ${getCityState(item['clientCity'], item['state'])}',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
-                )),
-          ),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: Text("Dept: ${item['departmentName']}",
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
-                )),
-          ),
-          SizedBox(height: 10),
-          SizedBox(
-            height: 24,
-            width: screenWidth -10,
-            child: Row(
+    double screenWidth = (size.width /gridAxisCount.toDouble());
+    double tileHeight = 100;
+    if (gridAxisCount > 1) {
+      fontSize = 10;
+    }
+    debugPrint('line4 470: $screenWidth $size $tileHeight ');
+
+    return SafeArea(
+      child: Container(
+        width: screenWidth - 10,
+        height: tileHeight,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: color2, width: 4),
+            borderRadius: BorderRadius.circular(12)),
+        padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 2),
+            Container(
+              height: 20,
+              width: screenWidth - 5,
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-              Container(
-                height: 24,
-                width: (screenWidth - 16) / 2,
-                child: Text('Start: ${item['startTime']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize,
-                    )),
-              ),
-              SizedBox(width: 4),
-              Container(
-                height: 24,
-                width: (screenWidth - 16) / 2,
-                child: Text('End: ${item['endTime']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize,
-                    )),
-              ),
-            ]),
-          ),
-          SizedBox(height: 10),
-          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Container(
-              height: 24,
-              width: (screenWidth - 16) / 2,
-              child: Text('Hours: ${item['decimalHours'].toStringAsFixed(2)}',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: fontSize,
-                  )),
-            ),
-            SizedBox(width: 4),
-            Container(
-              height: 24,
-              width: (screenWidth - 16) / 2,
-              child: Text('Meals: ${item['meals'].toString()}',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: fontSize,
-                  )),
-            ),
-          ]),
-          SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                height: 20,
-                width: (screenWidth - 16) / 2,
-                child: Text(
-                    'Prior Hours: ' +
-                        getShiftHoursAsString(item['shiftPriorHours']),
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize,
-                    )),
-              ),
-              SizedBox(width: 4),
-              Container(
-                height: 20,
-                width: (screenWidth - 16) / 2,
-                child: Text('OT: ' + getOvertimeString(item['shiftOvertime']),
-                    style: TextStyle(
-                      color: item['shiftOvertime'] == false
-                          ? Colors.black87
-                          : Colors.red,
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize,
-                    )),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          item['shiftStatus'] == 'Declined'
-              ? Container(
-                  height: 50,
-                  width: screenWidth - 10,
-                  decoration: BoxDecoration(
-                      color: flagPublishedButtonDisabled == false
-                          ? Colors.white
-                          : disabledColor,
-                      border: Border.all(color: color2),
-                      borderRadius: BorderRadius.circular(12)),
-                  child: TextButton(
-                    onPressed: () {
-                      localButtonPressed(2, item);
-                    },
+                  SizedBox(
+                    height: 20,
+                    width: 170,
                     child: Text(
-                      'Declined: Press to Remove from List',
-                      style: TextStyle(
-                        color: color2,
-                        fontSize: fontSize,
-                        fontWeight: FontWeight.bold,
+                        'Date: ${util.convertFromTimestamp(item['shiftDate'])}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        )),
+                  ),
+                  SizedBox(width: 10),
+                  SizedBox(
+                    height: 20,
+                    width: 170,
+                    child: Text(
+                        'Status: ${item['shiftStatus']}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        )),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 5),
+            Container(
+              height: 20,
+              width: screenWidth - 10,
+              child: Text('Discipline: ${item['disciplineName']}',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize,
+                  )),
+            ),
+            SizedBox(height: 5),
+            Container(
+              height: 20,
+              width: screenWidth - 10,
+              child: item['hcpId'] == 0
+                  ? Text(
+                'Open',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontSize,
+                ),
+              )
+                  : Text(
+                'Employee: ${item['hcpName']}',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontSize,
+                ),
+              ),
+            ),
+            SizedBox(height: 5),
+            SizedBox(
+              height:20,
+              width: screenWidth,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: 20,
+                    width: 110,
+                    child: Text('Shift: ${item['shiftCode']}',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        )),
+                  ),
+                  SizedBox(width: 5),
+                  Container(
+                    height: 20,
+                    width: 230,
+                    child: Text(
+                        'Rate: ' +
+                            getPayRate(item['payRate'], item['dayValue'],
+                                item['payRateWE']),
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        )),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 5),
+            Container(
+              height: 20,
+              width: screenWidth - 10,
+              child: Text('Name: ${item['clientName']} ',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize,
+                  )),
+            ),
+            SizedBox(height: 10),
+            Container(
+              height: 20,
+              width: screenWidth - 10,
+              child: item['addressLine1'] != ''
+                  ? Text(
+                'AddressLine: ${item['addressLine1']}',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontSize,
+                ),
+              )
+                  : SizedBox(),
+            ),
+            SizedBox(height: 10),
+            Container(
+              height: 20,
+              width: screenWidth - 10,
+              child: Text(
+                  'City/State: ${getCityState(item['clientCity'], item['state'])}',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize,
+                  )),
+            ),
+            SizedBox(height: 10),
+            Container(
+              height: 20,
+              width: screenWidth - 10,
+              child: Text("Dept: ${item['departmentName']}",
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 19, 125, 103),
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize,
+                  )),
+            ),
+            SizedBox(height: 5),
+            Container(
+              height: 20,
+              width: screenWidth - 10,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 20,
+                        width: (screenWidth - 10) / 2,
+                        child: Text('Start: ${item['startTime']}',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                              fontSize: fontSize,
+                            )),
                       ),
                     ),
+                    SizedBox(width: 4),
+                    Expanded(
+                      child: Container(
+                        height: 20,
+                        width: (screenWidth - 10) / 2,
+                        child: Text('End: ${item['endTime']}',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                              fontSize: fontSize,
+                            )),
+                      ),
+                    ),
+                  ]),
+            ),
+            SizedBox(height: 5),
+            Container(
+              height: 20,
+              width: screenWidth - 10,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      width: (screenWidth - 10) / 2,
+                      child:
+                      Text('Hours: ${item['decimalHours'].toStringAsFixed(2)}',
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: fontSize,
+                          )),
+                    ),
                   ),
-                )
-              : item['shiftStatus'] != 'Declined'
-                  ? Center(
-                      child: Container(
-                        height: 50,
-                        width: 240,
-                        decoration: BoxDecoration(
-                            color: flagPublishedButtonDisabled == false
-                                ? Colors.white
-                                : disabledColor,
-                            border: Border.all(color: color2),
-                            borderRadius: BorderRadius.circular(12)),
-                        child: TextButton(
-                          onPressed: () {
-                            if (flagPublishedButtonDisabled == true) {
-                              return;
-                            }
-                            localButtonPressed(1, item);
-                          },
-                          child: flagPublishedButtonDisabled == false
-                              ? Text(
-                                  'Press to Confirm Shift',
-                                  style: TextStyle(
-                                    color: color2,
-                                    fontSize: fontSize,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              : Text(
-                                  'Wait ...',
-                                  style: TextStyle(
-                                    color: disabledTextColor,
-                                    fontSize: fontSize,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    )
-                  : Center(
-                      child: Container(
-                        height: 50,
-                        width: 240,
-                        decoration: BoxDecoration(
-                            color: flagPublishedButtonDisabled == false
-                                ? Colors.white
-                                : disabledColor,
-                            border: Border.all(color: color2),
-                            borderRadius: BorderRadius.circular(12)),
-                        child: TextButton(
-                          onPressed: () {
-                            if (flagPublishedButtonDisabled == true) {
-                              return;
-                            }
-                            localButtonPressed(2, item);
-                          },
-                          child: flagPublishedButtonDisabled == false
-                              ? Text(
-                                  'Press to Dismiss Shift',
-                                  style: TextStyle(
-                                    color: color2,
-                                    fontSize: fontSize,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              : Text(
-                                  'Wait ...',
-                                  style: TextStyle(
-                                    color: disabledTextColor,
-                                    fontSize: fontSize,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    )
-        ],
+                  SizedBox(width: 4),
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      width: (screenWidth - 10) / 2,
+                      child: Text('Meals: ${item['meals'].toString()}',
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: fontSize,
+                          )),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 5),
+            Container(
+              height: 20,
+              width: screenWidth - 10,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      width: (screenWidth - 10) / 2,
+                      child: Text(
+                          'Prior Hours: ' +
+                              getShiftHoursAsString(item['shiftPriorHours']),
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: fontSize,
+                          )),
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Expanded(
+                    child: Container(
+                      height: 20,
+                      width: (screenWidth - 10) / 2,
+                      child: Text('OT: ' + getOvertimeString(item['shiftOvertime']),
+                          style: TextStyle(
+                            color: item['shiftOvertime'] == false
+                                ? Colors.black87
+                                : Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: fontSize,
+                          )),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 8),
+            Container(
+              height: 20,
+              width: screenWidth - 10,
+              child: Text(
+                'Spec Req: ${getSpecialRequirements(item['specialRequirements'])}',
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: fontSize,
+                ),
+              ),
+            ),
+            // SizedBox(height: 8),
+            // Center(
+            //   child: Container(
+            //     height: 50,
+            //     width: 240,
+            //     decoration: BoxDecoration(
+            //         color: flagPublishedButtonDisabled == false
+            //             ? Colors.white
+            //             : disabledColor,
+            //         border: Border.all(
+            //           color: color2,
+            //           width: 3,
+            //           style: BorderStyle.solid,
+            //         ),
+            //         borderRadius: BorderRadius.circular(12)),
+            //     child: TextButton(
+            //       onPressed: () {
+            //         if (flagPublishedButtonDisabled == true) {
+            //           return;
+            //         }
+            //         localButtonPressed(1, item);
+            //       },
+            //       child: flagPublishedButtonDisabled == false
+            //           ? Text(
+            //               'Press to Accept Shift',
+            //               style: TextStyle(
+            //                 color: color2,
+            //                 fontSize: fontSize,
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             )
+            //           : Text(
+            //               ''
+            //               'Wait ...',
+            //               style: TextStyle(
+            //                 color: disabledTextColor,
+            //                 fontSize: fontSize,
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //     ),
+            //   ),
+            // )
+          ],
+        ),
       ),
     );
   }

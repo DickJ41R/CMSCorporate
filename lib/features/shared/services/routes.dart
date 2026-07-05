@@ -121,8 +121,9 @@ class MyRoutes {
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(builder: (context) => ClientMenu(args: mp));
       case clientCancelShiftsSchedulingPage:
-        debugPrint('line 105: cancel shift');
+
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        debugPrint('line 105: cancel shift $mp');
         return MaterialPageRoute(
             builder: (context) => ClientCancelShiftsSchedulingPage(args: mp));
       case clientRepublishShiftsSchedulingPage:

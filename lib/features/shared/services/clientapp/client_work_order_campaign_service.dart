@@ -303,7 +303,7 @@ class ClientWorkOrderCampaignService {
           .where('hcpId', isEqualTo: hcpId)
           .where('shiftStatus', whereIn: ['Approved','Confirmed'])
           .where('shiftDate', isGreaterThanOrEqualTo:fds )
-          .where('shiftDate', isLessThan: eds)
+        //  .where('shiftDate', isLessThan: eds)
           .orderBy('shiftStatus', descending: false)
           .orderBy('shiftDate', descending: false)
           .get()
@@ -321,8 +321,8 @@ class ClientWorkOrderCampaignService {
               int mdts = dts.microsecondsSinceEpoch;
               // if (mods < mdts  ) {
               //   debugPrint('line 306: $minutes $mods $mdts');
-              //   continue;
-              // }
+              //    continue;
+              //  }
               obj['id'] = doc_id;
                 listOfHCPCWOs.add(obj);
             }

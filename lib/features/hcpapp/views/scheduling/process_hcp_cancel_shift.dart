@@ -83,6 +83,7 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
     super.initState();
     arguments = widget.args;
     hcpId = arguments!['hcpId'];
+    debugPrint('line 84 initstate cancel shifts $arguments');
     getRegistrantCancelReasons();
     debugPrint('line 39: $currentUser $clw');
     debugPrint('check');
@@ -268,17 +269,18 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
   List<Map<String, dynamic>> listOfRegistrantCancelReasons = [];
   void getRegistrantCancelReasons() async {
     List<Map<String, dynamic>> lstw =
-        await dropDownCodes.getRegistrantCancelReasons();
+        await dropDownCodes.getCoordinatorHCPCancelReasons();
     List<dynamic> lst = [];
     for (int i = 0; i < lstw.length; i++) {
       Map<String, dynamic> mp = lstw[i];
       dynamic st = mp['reason'];
       lst.add(st);
     }
-    setState(() {
+
       listOfReasons = lst;
       listOfRegistrantCancelReasons = lstw;
-    });
+      debugPrint('line 282: $lst');
+
   }
 
   Color color1 = Color.fromARGB(255, 134, 219, 197); //green from website
@@ -529,14 +531,14 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     }
     fontSize = 16;
     fontSize /= h;
-    double smallFontSize = 14;
+    double smallFontSize = 12;
     smallFontSize /= h;
     debugPrint('line 98 in tile building $selectedCancelReasonValue');
     String hoursString =
         (item['decimalHours'] - (item['meals'] / 60)).toStringAsFixed(2);
     return Container(
       width: screenWidth - 10,
-      height: 450,
+      height: screenHeight,
       decoration: BoxDecoration(
           color: Colors.white,
           border:
@@ -583,7 +585,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                           //  width: screenWidth! - 10,
                           child: Text(
                               overflow: TextOverflow.visible,
-                              'There are no cancellation reasons for this client.',
+                              'There are no cancellation reasons this action.',
                               style: TextStyle(
                                   fontSize: fontSize,
                                   color: color2,
@@ -603,7 +605,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
                             height: 100,
                             //    width: screenWidth! - 10,
                             child: Text(
-                                'There are no cancellations reasons for this client.',
+                                'There are no cancellations reasons for this action.',
                                 overflow: TextOverflow.visible,
                                 style: TextStyle(
                                     fontSize: fontSize,
@@ -691,81 +693,58 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
           Container(
             height: 24,
             width: screenWidth - 10,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text('Date: ${convertFromTimestamp(item['shiftDate'])}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: smallFontSize,
-                    )),
-                // SizedBox(width:5),
-                // Text('${item['dayValue']}',
-                //     style: TextStyle(
-                //       color:Colors.black87,
-                //       fontWeight: FontWeight.bold,
-                //       fontSize: smallFontSize,
-                //     )
-                // ),
-              ],
-            ),
+            child: Text('Date: ${convertFromTimestamp(item['shiftDate'])}',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: smallFontSize,
+                )),
           ),
-          SizedBox(width: 12),
+          SizedBox(height: 10),
           Container(
             height: 24,
             width: screenWidth - 10,
             alignment: Alignment.centerLeft,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text('Employee: ',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: smallFontSize,
-                    )),
-                SizedBox(width: 2),
-                Text('${item['hcpName']}',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: smallFontSize,
-                    )),
-              ],
-            ),
+            child: Text('Empl: ${item['hcpName']}',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: smallFontSize,
+                )),
           ),
-          SizedBox(width: 10),
+          SizedBox(height: 10),
           Container(
             height: 24,
             width: screenWidth - 10,
-            child: Row(children: [
-              Text('Discipline: ',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: smallFontSize,
-                  )),
-              Text('${item['disciplineName']}',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: smallFontSize,
-                  )),
+             child:Row(
+               mainAxisAlignment: MainAxisAlignment.start,
+               mainAxisSize: MainAxisSize.min,
+               children: [
+                 Expanded(
+                   child: SizedBox(
+                      height: 24,
+                      width: 150,
+                     child: Text('Disc: ${item['disciplineName']}',
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: smallFontSize,
+                          )),
+                   ),
+                 ),
               SizedBox(width: 12),
-              Text('Rate: ',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: smallFontSize,
-                  )),
-              SizedBox(width: 12),
-              Text('\$' + getPayrateAsString(item['payRate']),
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                    fontSize: smallFontSize,
-                  )),
+              Expanded(
+                child: SizedBox(
+                  height: 24,
+                  width: screenWidth - 150,
+                  child: Text('Rate: \$' + '${getPayrateAsString(item['payRate'])}',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: smallFontSize,
+                      )),
+                ),
+              ),
             ]),
           ),
           SizedBox(height: 5),

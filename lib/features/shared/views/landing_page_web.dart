@@ -33,6 +33,7 @@ void resetDataElements() {
     currentArgument = authServices.currentArgument;
     selectedSearchCriteria = null;
     selectedSearchField = null;
+    listOfCurrentUserBranches = authServices.listOfCMSUserBranches;
     _setBranches();
     selectedBranchIndex -=1;
     selectedBranch = null;
@@ -254,11 +255,11 @@ void resetDataElements() {
   List<Map<String, dynamic>>? userBranches;
 
   void _setBranches() {
-    debugPrint('line 50 in _setBranches');
+    debugPrint('line 258 in _setBranches');
     userBranches = dropDownCodes.getUserBranches();
-    bool flagHaveCorporate = false;
-    dropDownBranchEntries = [];
 
+    dropDownBranchEntries = [];
+     debugPrint('line 261 ${authServices.corporateOrBranch}');
     if (authServices.corporateOrBranch == 'Corporate') {
       Map<String, dynamic> mp = {"branchId": 0, "branchName": "Corporate"};
       DropdownMenuEntry me = DropdownMenuEntry(
@@ -268,12 +269,13 @@ void resetDataElements() {
               mp['branchName'].toString(),
           label: mp['branchName']);
       dropDownBranchEntries.add(me);
-      flagHaveCorporate = true;
+
     }
 
       // String st = userBranches[i]['branchName'];
       //  Text ts = Text('Index $i: $st', style: optionStyle);
       //  _widgetOptions.add(userBranches[i]);
+    debugPrint('line 277: ${listOfCurrentUserBranches!.length}');
       for (int j = 0; j < listOfCurrentUserBranches!.length; j++) {
       bool flagGotHit = false;
       Map<String, dynamic> tp = listOfCurrentUserBranches![j];
