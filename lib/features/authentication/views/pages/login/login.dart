@@ -745,7 +745,7 @@ class LoginState extends State<Login> {
                       fontSize: fontSize,
                     )),
                 content: Text(
-                  '${e.toString()} - Try again! USE  "<" TO CLOSE DIALOG.',
+                  '${e.toString()} - Try again! USE THE "ESC" KEY TO CLOSE DIALOG.',
                   style: TextStyle(
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,

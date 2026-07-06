@@ -22,7 +22,7 @@ class ProcessHCPCancelShifts extends StatefulWidget {
 }
 
 class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
-  dynamic hcpUser;
+  Map<String,dynamic>? hcpUser;
   Users? user;
   dynamic currentUser;
   ClientWorkOrderCampaignService clw = ClientWorkOrderCampaignService();
@@ -53,23 +53,21 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
     }
   }
 
-  void getHCPUserX() async {
-    debugPrint('line 44 in get usrx');
+  Future<void> getHCPUserX() async {
     await getHCPUser();
   }
-
-  Future<Map<String, dynamic>> getHCPUser() async {
-    debugPrint('line 50 gethcpuser available shfts: $hcpServices');
+  Future<void> getHCPUser() async {
+    debugPrint('line 50 gethcpuser available cancel: $hcpServices');
     try {
       Map<String, dynamic>? lm = await hcpServices.getHCPUser(hcpId!);
 
       if (lm.isEmpty) {
         debugPrint('line 54 lm i septy');
-        return lm;
+        return;
       }
-      debugPrint('line 57 in available shifts gethcpuser $lm');
+      debugPrint('line 57 in cancel shifts gethcpuser $lm');
       fullName = lm['legalName'];
-      return lm;
+      hcpUser = lm;
     } catch (e) {
       debugPrint('line 63 error: $e');
       throw Exception(e.toString());
@@ -85,16 +83,15 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
     hcpId = arguments!['hcpId'];
     debugPrint('line 84 initstate cancel shifts $arguments');
     getRegistrantCancelReasons();
-    debugPrint('line 39: $currentUser $clw');
-    debugPrint('check');
+    debugPrint('line 86: $currentUser $clw');
+    debugPrint('line 87 initstate');
+    getHCPUserX();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    debugPrint('line 63 didchange');
 
-    getHCPUserX();
   }
 
   @override
@@ -270,10 +267,10 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
   void getRegistrantCancelReasons() async {
     List<Map<String, dynamic>> lstw =
         await dropDownCodes.getCoordinatorHCPCancelReasons();
-    List<dynamic> lst = [];
+    List<String> lst = [];
     for (int i = 0; i < lstw.length; i++) {
       Map<String, dynamic> mp = lstw[i];
-      dynamic st = mp['reason'];
+      String st = mp['reason'];
       lst.add(st);
     }
 
@@ -289,17 +286,54 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
   bool flagPublishedButtonDisabled = false;
   double h = 1.0;
   double fontSize = 18;
+
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.sizeOf(context).width;
-    final double screenHeight = MediaQuery.sizeOf(context).height;
-    double? hh = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
-    h = hh!;
-    if (h < 1.0) {
+    final windowSize = MediaQuery.sizeOf(context);
+    double screenWidth = windowSize.width;
+    double screenHeight = windowSize.height;
+    double containerHeight = 32;
+    double? h = windowSize.aspectRatio;
+    int gridAxisCount = 1;
+    if (h! < 1.0) {
       h = 1.0;
     }
-    fontSize = 18;
-    fontSize /= h;
+    if (screenWidth! < 1400) {
+      screenWidth = 1400;
+    }
+    debugPrint('line 201: $h $screenWidth $screenHeight');
+    if (screenWidth! <= 650 || screenHeight! <= 650) {
+      //portrait mode
+      if (screenWidth! < screenHeight!) {
+        fontSize = 14;
+        containerHeight = 42;
+
+      } else {
+        fontSize = 14;
+        containerHeight = 42;
+
+        gridAxisCount = 2;
+      }
+    } else if (screenWidth! > 650 && screenWidth! <= 1200) {
+      //tablet
+      if (screenWidth! < screenHeight!) {
+        fontSize = 18;
+        containerHeight = 50;
+        gridAxisCount = 2;
+      } else  {
+        fontSize = 16;
+        containerHeight = 40;
+        gridAxisCount = 3;
+      }
+    } else if (screenWidth! > 1200) {
+      //desktop
+      fontSize = 20;
+      containerHeight = 60;
+      gridAxisCount = 4;
+    }
+    double listTileScreenWidth = 350;
+    debugPrint('line 336:  $gridAxisCount $fontSize $listTileScreenWidth ' );
+
     double smallFontSize = 14;
     smallFontSize /= h;
     debugPrint('line 40 in show cancel shifts');
@@ -327,10 +361,11 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
           ),
         ),
       ),
-      body: FutureBuilder<List<dynamic>>(
+      body: FutureBuilder<dynamic>(
           future: Future.wait([_getAllConfirmedShifts()]),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
+              debugPrint('line 364: ${snapshot.connectionState}');
               return Center(
                 child: Container(
                   height: 50,
@@ -363,7 +398,7 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
               );
             } else {
               List<dynamic> data = snapshot.data![0];
-              debugPrint('line 328 $data ${data.length} ${snapshot.data![0]}');
+              debugPrint('line 328 $data ${data.length}');
               if (data.length == 0) {
                 return Center(
                   child: Container(
@@ -376,25 +411,54 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
                   ),
                 );
               } else {
-                List<dynamic> listH = snapshot.data![0];
-                return ListView.builder(
-                  restorationId: 'ClientCampaignListView',
-                  itemCount: listH.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final item = listH[index];
-                    return ClientCampaignTile(
-                        itemm: item,
-                        onButtonPressed: onButtonPressed,
-                        showDialog: _showDialog,
-                        flagPublishedButtonDisabled:
-                            flagPublishedButtonDisabled,
-                        ctx: context,
-                        reasons: listOfReasons,
-                        title: 'Cancellation Dialog',
-                        description:
-                            'Notify both the client and your CMS representative!');
-                  },
+                List<dynamic> listH = snapshot.data[0];
+                debugPrint('line 411: $listH');
+                return SizedBox(
+                  height: 900,
+                  width: listTileScreenWidth,
+                  child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: gridAxisCount,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            ),
+
+            restorationId: 'ClientCampaignListView',
+            itemCount: listH.length,
+            itemBuilder: (BuildContext context, int index) {
+              final item = listH[index];
+              debugPrint('line 430: $item');
+              return ClientCampaignTile(
+                  itemm: item,
+                  onButtonPressed: onButtonPressed,
+                  showDialog: _showDialog,
+                  ctx: context,
+                  reasons: listOfReasons,
+                  title: 'Cancellation Dialog',
+                  description: 'Notify both the client and your CMS representative!',
+                  fontSize: fontSize!,
+                  gridAxisCount: gridAxisCount);
+            }
+            ),
                 );
+                //   ListView.builder(
+                //   restorationId: 'ClientCampaignListView',
+                //   itemCount: listH.length,
+                //   itemBuilder: (BuildContext context, int index) {
+                //     final item = listH[index];
+                //     return ClientCampaignTile(
+                //         itemm: item,
+                //         onButtonPressed: onButtonPressed,
+                //         showDialog: _showDialog,
+                //         flagPublishedButtonDisabled:
+                //             flagPublishedButtonDisabled,
+                //         ctx: context,
+                //         reasons: listOfReasons,
+                //         title: 'Cancellation Dialog',
+                //         description:
+                //             'Notify both the client and your CMS representative!');
+                //   },
+                // );
               }
             }
           }),
@@ -405,10 +469,11 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
 class ClientCampaignTile extends StatefulWidget {
   final Map<String, dynamic> itemm;
   final BuildContext ctx;
-  final bool flagPublishedButtonDisabled;
   final List<dynamic> reasons;
   final String title;
   final String description;
+  final double fontSize;
+  final int gridAxisCount;
 
   final void Function(Map<String, dynamic>, bool, BuildContext) onButtonPressed;
   final Future<bool> Function(BuildContext, String, String?) showDialog;
@@ -417,11 +482,12 @@ class ClientCampaignTile extends StatefulWidget {
       {required this.itemm,
       required this.onButtonPressed,
       required this.showDialog,
-      required this.flagPublishedButtonDisabled,
       required this.ctx,
       required this.reasons,
       required this.title,
-      required this.description});
+      required this.description,
+      required this.fontSize,
+      required this.gridAxisCount});
 
   @override
   State<ClientCampaignTile> createState() => _ClientCampaignTileState();
@@ -436,7 +502,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
   DropDownCodes dropDownCodes = DropDownCodes();
   List<dynamic> listOfReasons = [];
 
-  Future<List<dynamic>> getListOfReasons() async {
+  Future<dynamic> getListOfReasons() async {
     try {
       listOfReasons = widget.reasons;
 
@@ -447,12 +513,18 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
       return [];
     }
   }
-
+  late int gridAxisCount;
+  late String description;
+  late String title;
+  late double fontSize;
   @override
   initState() {
     super.initState();
     item = widget.itemm;
-    flagPublishedButtonDisabled = widget.flagPublishedButtonDisabled;
+    gridAxisCount = widget.gridAxisCount;
+    fontSize = widget.fontSize;
+    title = widget.title;
+
     debugPrint('line 409: ${widget.reasons[0]}');
   }
 
@@ -508,8 +580,7 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
 
   bool flagShowRed = false;
   double h = 1.0;
-  double fontSize = 16;
-  String _getReason = 'Family Emergency';
+  String _getReason = 'HCP: Family Emergency';
 
   String getPayrateAsString(dynamic pr) {
     String prs = pr.toString();
@@ -522,23 +593,17 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
   final valueListenableCancelReason = ValueNotifier<String?>(null);
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.sizeOf(context).width;
-    final double screenHeight = MediaQuery.sizeOf(context).height;
-    double? hh = MediaQuery.maybeOf(context)?.textScaler.scale(1.0);
-    h = hh!;
-    if (h < 1.0) {
-      h = 1.0;
-    }
-    fontSize = 16;
-    fontSize /= h;
-    double smallFontSize = 12;
+
+    double smallFontSize = 16;
     smallFontSize /= h;
+    double listTileScreenWidth = 350;
+
     debugPrint('line 98 in tile building $selectedCancelReasonValue');
     String hoursString =
         (item['decimalHours'] - (item['meals'] / 60)).toStringAsFixed(2);
     return Container(
-      width: screenWidth - 10,
-      height: screenHeight,
+      width: listTileScreenWidth,
+      height: 500,
       decoration: BoxDecoration(
           color: Colors.white,
           border:
@@ -547,357 +612,20 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
       padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: 10),
-          Container(
-              height: 36,
-              width: screenWidth! - 10,
-              child: FutureBuilder(
-                future: Future.wait([
-                  getListOfReasons(),
-                ]),
-                builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-                  debugPrint(
-                      'line 417 building FB ${snapshot.connectionState}');
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 30),
-                        child: Container(
-                          height: 110,
-                          child: Text('Error: ${snapshot.error}',
-                              style: TextStyle(
-                                  fontSize: fontSize,
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                    );
-                  } else if (snapshot.data == [[]] &&
-                      snapshot.connectionState == ConnectionState.done) {
-                    return Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 30),
-                        child: Container(
-                          height: 100,
-                          //  width: screenWidth! - 10,
-                          child: Text(
-                              overflow: TextOverflow.visible,
-                              'There are no cancellation reasons this action.',
-                              style: TextStyle(
-                                  fontSize: fontSize,
-                                  color: color2,
-                                  fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                    );
-                  } else {
-                    debugPrint('line 544: ${snapshot.data![0]} ');
-                    List<dynamic> listH = snapshot.data![0];
-                    if (listH.length == 0) {
-                      debugPrint('line 548 check');
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 30),
-                          child: Container(
-                            height: 100,
-                            //    width: screenWidth! - 10,
-                            child: Text(
-                                'There are no cancellations reasons for this action.',
-                                overflow: TextOverflow.visible,
-                                style: TextStyle(
-                                    fontSize: fontSize,
-                                    color: color2,
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                      );
-                    } else {
-                      List<dynamic> listH = snapshot.data![0]!;
-                      debugPrint('line 591: ${listH[0]}');
-                      return Container(
-                        height: 80,
-                        width: screenWidth - 10,
-                        child: DropdownButtonHideUnderline(
-                          child: Container(
-                            height: 36,
-                            width: screenWidth - 4,
-                            decoration: BoxDecoration(
-                                color:
-                                    flagShowRed == false ? color1 : Colors.red,
-                                border: Border.all(color: Colors.black87),
-                                borderRadius: BorderRadius.circular(12)),
-                            child: DropdownButton2<dynamic>(
-                              isExpanded: true,
-                              hint: Container(
-                                height: 36,
-                                width: screenWidth - 10,
-                                child: Text(
-                                  'Select A Cancellation Reason',
-                                  style: TextStyle(
-                                    fontSize: fontSize,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-                              items: listH
-                                  .map((dynamic item) =>
-                                      DropdownItem<dynamic>(
-                                        value: item,
-                                        child: Container(
-                                          height: 32,
-                                          width: screenWidth - 10,
-                                          child: Text(
-                                            item,
-                                            style: TextStyle(
-                                              fontSize: fontSize,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              valueListenable: valueListenableCancelReason,
-                              onChanged: (dynamic value) async {
-                                selectedCancelReasonValue = value;
-                                debugPrint('line 609: $value');
-                                selectedCancelReasonIndex =
-                                    await getReasonIndex(value);
-                                debugPrint(
-                                    'line 1128: $selectedCancelReasonValue $value $selectedCancelReasonIndex ');
-                                setState(() {
-                                  flagShowRed = false;
-                                  selectedCancelReasonValue;
-                                });
-                              },
-                            ),
-                          ),
-                          //    )
-                        ),
-                      );
-                    }
-                    ;
-                  }
-                  ;
-
-                  return Container(
-                    height: 40,
-                    child: Text('line 620'),
-                  );
-                },
-              )),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: Text('Date: ${convertFromTimestamp(item['shiftDate'])}',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: smallFontSize,
-                )),
-          ),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            alignment: Alignment.centerLeft,
-            child: Text('Empl: ${item['hcpName']}',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: smallFontSize,
-                )),
-          ),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-             child:Row(
-               mainAxisAlignment: MainAxisAlignment.start,
-               mainAxisSize: MainAxisSize.min,
-               children: [
-                 Expanded(
-                   child: SizedBox(
-                      height: 24,
-                      width: 150,
-                     child: Text('Disc: ${item['disciplineName']}',
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.bold,
-                            fontSize: smallFontSize,
-                          )),
-                   ),
-                 ),
-              SizedBox(width: 12),
-              Expanded(
-                child: SizedBox(
-                  height: 24,
-                  width: screenWidth - 150,
-                  child: Text('Rate: \$' + '${getPayrateAsString(item['payRate'])}',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold,
-                        fontSize: smallFontSize,
-                      )),
-                ),
-              ),
-            ]),
-          ),
-          SizedBox(height: 5),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Text('Client: ${item['clientName']}',
-                  maxLines: 2,
-                  style: TextStyle(
-                    color: color2,
-                    fontWeight: FontWeight.bold,
-                    fontSize: smallFontSize,
-                  )),
-            ]),
-          ),
-          SizedBox(height: 10),
-          item['addressLine1'] != ''
-              ? Container(
-                  alignment: Alignment.centerLeft,
-                  height: 24,
-                  child: Text('Address: ${item['addressLine1']}',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: fontSize,
-                      )),
-                )
-              : SizedBox(),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            alignment: Alignment.centerLeft,
-            child: Text(
-                'City/State: ${getCityState(item['clientCity'], item['state'])}',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: fontSize,
-                )),
-          ),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: Text(
-              'Department: ${item['departmentName']}',
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.bold,
-                fontSize: fontSize,
-              ),
-            ),
-          ),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Text('Shift: ${item['shiftCode']}',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: smallFontSize,
-                  )),
-              SizedBox(width: 12),
-              Text('Start: ${item['startTime']}',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: smallFontSize,
-                  )),
-              SizedBox(width: 4),
-              Text('End: ${item['endTime']}',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: smallFontSize,
-                  )),
-            ]),
-          ),
-          SizedBox(height: 10),
-          Container(
-            height: 24,
-            width: screenWidth - 10,
-            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Text(
-                  'Hours: ${utilitiesServices.getHours(item['startTime'], item['endTime'], item['meals'])}',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: smallFontSize,
-                  )),
-              SizedBox(width: 12),
-              Text('Meals: ${item['meals'].toString()}',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: smallFontSize,
-                  )),
-            ]),
-          ),
-          SizedBox(height: 5),
-          Center(
+          Expanded(
             child: Container(
-              height: 40,
-              width: screenWidth - 10,
-              decoration: BoxDecoration(
-                  color: flagPublishedButtonDisabled == false
-                      ? Colors.white
-                      : disabledColor,
-                  border: Border.all(color: Color.fromARGB(255, 19, 125, 103)),
-                  borderRadius: BorderRadius.circular(12)),
-              child: TextButton(
-                onPressed: () async {
-                  if (selectedCancelReasonValue == null) {
-                    setState(() {
-                      flagShowRed = true;
-                    });
-                    return;
+                height: 120,
+                width: listTileScreenWidth,
+                child: FutureBuilder<dynamic>(
+                  future: Future.wait([
+                    getListOfReasons(),
+                  ]),
+                  builder: (context, AsyncSnapshot<dynamic> snapshot) {
+
+
+
+
                   }
-                  item['shiftCancellationNote'] = selectedCancelReasonValue;
-                  item['shiftCanceledActionDate'] =
-                      Timestamp.fromDate(DateTime.now());
-                  localButtonPressed(item, widget.ctx);
-                  setState(() {
-                    flagPublishedButtonDisabled = false;
-                  });
-                },
-                child: flagPublishedButtonDisabled == false
-                    ? Text(
-                        'Press to Cancel Shift',
-                        style: TextStyle(
-                          color: color2,
-                          fontSize: fontSize,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    : Text(
-                        'Wait ...',
-                        style: TextStyle(
-                          color: disabledTextColor,
-                          fontSize: fontSize,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
