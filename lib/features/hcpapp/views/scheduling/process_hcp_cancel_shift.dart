@@ -601,31 +601,501 @@ class _ClientCampaignTileState extends State<ClientCampaignTile> {
     debugPrint('line 98 in tile building $selectedCancelReasonValue');
     String hoursString =
         (item['decimalHours'] - (item['meals'] / 60)).toStringAsFixed(2);
-    return Container(
-      width: listTileScreenWidth,
-      height: 500,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          border:
-              Border.all(color: Color.fromARGB(255, 19, 125, 103), width: 4),
-          borderRadius: BorderRadius.circular(12)),
-      padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(height: 10),
-          Expanded(
-            child: Container(
-                height: 120,
-                width: listTileScreenWidth,
-                child: FutureBuilder<dynamic>(
-                  future: Future.wait([
-                    getListOfReasons(),
-                  ]),
-                  builder: (context, AsyncSnapshot<dynamic> snapshot) {
+return Container(
+width: listTileScreenWidth,
+height: 500,
+decoration: BoxDecoration(
+color: Colors.white,
+border:
+Border.all(color: Color.fromARGB(255, 19, 125, 103), width: 4),
+borderRadius: BorderRadius.circular(12)),
+padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+child: Column(
+mainAxisAlignment: MainAxisAlignment.start,
+mainAxisSize: MainAxisSize.min,
+children: [
+SizedBox(height: 10),
+Expanded(
+child: Container(
+height: 120,
+width: listTileScreenWidth,
+child: FutureBuilder<dynamic>(
+future: Future.wait([
+getListOfReasons(),
+]),
+builder: (context, AsyncSnapshot<dynamic> snapshot) {
+  if (snapshot.connectionState == ConnectionState.waiting) {
+    return Center(
+      child: Container(
+        height: 50,
+        width: 50,
+        child: CircularProgressIndicator(),
+      ),
+    );
+  } else if (snapshot.hasError) {
+    return Center(
+      child: Container(
+        height: 100,
+        width: listTileScreenWidth,
+        child: Text('Error: ${snapshot.error}',
+            overflow: TextOverflow.visible,
+            style: TextStyle(
+                fontSize: fontSize,
+                color: Colors.red,
+                fontWeight: FontWeight.bold)),
+      ),
+    );
+  } else if (snapshot.data == [[]] &&
+      snapshot.connectionState == ConnectionState.done) {
+    return Center(
+      child: Container(
+        height: 100,
+        width: listTileScreenWidth,
+        child: Text('There are no shifts to cancel.',
+            overflow: TextOverflow.visible,
+            style: TextStyle(
+                fontSize: fontSize,
+                color: color2,
+                fontWeight: FontWeight.bold)),
+      ),
+    );
+  } else {
+    List<Map<String, dynamic>>data =snapshot.data![0];
+    debugPrint('line 670 ${data.length}');
+    if(data.length == 0) {
+      return Center(
+                    child:Container(height:100,
+                          width:listTileScreenWidth,
+                          child:Text('There are no shifts to cancel.',
+                                  overflow:TextOverflow.visible,
+                                   style:TextStyle(
+                                      fontSize: fontSize,
+                                      color: color2,
+                                      fontWeight:FontWeight.bold),
+                                     ),
+                                  ),
+                            );
+          } else {
+              List<dynamic>listH = snapshot.data![0];
+              debugPrint('line 679: ${listH.length}');
+      return Container(
+        width: listTileScreenWidth,
+        height: 500,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border:
+            Border.all(color: Color.fromARGB(255, 19, 125, 103), width: 4),
+            borderRadius: BorderRadius.circular(12)),
+        padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 10),
+              Expanded(
+                  child: Container(
+                      height: 120,
+                      width: listTileScreenWidth,
+                      child: FutureBuilder<dynamic>(
+                          future: Future.wait([
+                            getListOfReasons(),
+                          ]),
+                          builder: (context, AsyncSnapshot<dynamic> snapshot) {
 
 
+                            debugPrint('line 417 building FB ${snapshot.connectionState}');
+                            if(snapshot.connectionState == ConnectionState.waiting) {
+                              return Center(
+                                child: Container(
+                                  height : 50,
+                                  width:  50,
+                                  child : CircularProgressIndicator(),),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Expanded(
+                                child: Center(
+                                  child:  Padding(
+                                    padding : const EdgeInsets.only(
+                                        bottom: 30),
+                                    child: Container (
+                                      height :110,
+                                      child: Text('Error: ${snapshot.error}',
+                                          style: TextStyle(
+                                              fontSize: fontSize,
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold)
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            } else if(snapshot.data == [[]] && snapshot.connectionState == ConnectionState.done){
+                              return Expanded(
+                                child:	Center(
+                                  child: Padding(
+                                    padding:EdgeInsets.only(bottom:30),
+                                    child :Container(
+                                      height: 100,
+                                      //  width: screenWidth! - 10,
+                                      child:Text(
+                                        overflow: TextOverflow.visible,
+                                        'There are no cancellation reasons for this action.',
+                                        style: TextStyle(
+                                            fontSize:fontSize,
+                                            color:color2,
+                                            fontWeight:FontWeight.bold
+                                        ),
+                                      ),
+                                    ),
+                                  ),),
+                              );
+                            } else{
+                              debugPrint('line 544: ${snapshot.data!}');
+                              List<dynamic> listH = snapshot.data![0];
+                              if( listH.length == 0){
+                                debugPrint('line 548 check');
+                                return	Expanded(
+                                  child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom:30),
+                                      child: Container(
+                                        height: 100,
+                                        child:Text('There are not cancellation reasons for this action;',
+                                            overflow:TextOverflow.visible,
+                                            style: TextStyle(
+                                                fontSize: fontSize,
+                                                color: color2,
+                                                fontWeight: FontWeight.bold)
+                                        ),
+                                      ),),
+                                  ),);
+                              } else {
+                                List<dynamic>listH = snapshot.data[0];
+                                debugPrint('line 591 : $listTileScreenWidth, ${listH[0]}');
+                                return Container(
+                                  height:500,
+                                  width: listTileScreenWidth,
+                                  child: Form(
+                                    child:Column(
+                                      children: [
+                                        Container(
+                                          height: 40,
+                                          width: listTileScreenWidth,
+                                          alignment:Alignment.centerLeft,
+                                          child: DropdownButtonHideUnderline(
+                                            child: Container(
+                                              height: 32,
+                                              width: listTileScreenWidth,
+                                              decoration: BoxDecoration(
+                                                  color: flagShowRed == false ? color1 : Colors.red,
+                                                  border: Border.all(color :Colors.black87),
+                                                  borderRadius:BorderRadius.circular(12)),
+                                              child:DropdownButton2<dynamic>(
+                                                isExpanded: true,
+                                                dropdownStyleData: DropdownStyleData(
+                                                  maxHeight: 300,
+                                                  width:listTileScreenWidth,
+                                                  decoration:BoxDecoration(
+                                                    borderRadius:BorderRadius.circular(8),),),
+                                                hint: Container(
+                                                  height:32,
+                                                  width:listTileScreenWidth,
+                                                  child:Text('Select a cancellation reason',
+                                                    style: TextStyle(
+                                                        fontSize:fontSize,
+                                                        fontWeight: FontWeight.bold,
+                                                        color:Colors.black87),),),
+                                                items: listH.map((dynamic item)=>
+                                                    DropdownItem<dynamic>(
+                                                      value: item,
+                                                      child:Container(
+                                                        height:32,
+                                                        width: listTileScreenWidth,
+                                                        child:Text(item,
+                                                          style:TextStyle(
+                                                            fontSize: fontSize,),
+                                                          overflow: TextOverflow.ellipsis,),),
+                                                    )
+                                                ).toList(),
+                                                valueListenable:valueListenableCancelReason,
+                                                onChanged:(dynamic value) async {
+                                                  selectedCancelReasonValue=value;
+                                                  debugPrint('line 609; $value');
+                                                  selectedCancelReasonIndex = await getReasonIndex(value);
+                                                  debugPrint('line 1128: $selectedCancelReasonValue $value $selectedCancelReasonIndex');
+                                                  setState( () {
+                                                    flagShowRed = false;
+                                                  }
+                                                  );
+                                                },),),
+                                          ),),
+                                        SizedBox(
+                                            height:5
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            height: 24,
+                                            width: listTileScreenWidth,
+                                            child: Row(
+                                              children:[
+                                                Flexible(
+                                                  flex:2,
+                                                  child:Text('Date: ${convertFromTimestamp(item['shiftDate'])}',
+                                                    style: TextStyle(
+                                                      color:Colors.black87,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: smallFontSize,
+                                                    ),),
+                                                ),
+                                                SizedBox(width:4),
+                                                Flexible(
+                                                  flex:1,
+                                                  child: Text('Shift: ${item['shiftCode']}',
+                                                      style: TextStyle(color:Colors.black87,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize:smallFontSize,)),),
+                                              ],),
+                                          ),),
+                                        SizedBox(height: 5),
+                                        Expanded(
+                                          child:Container(
+                                            height: 24,
+                                            width: listTileScreenWidth,
+                                            alignment: Alignment.centerLeft,
+                                            child:Text('Empl: ${item['hcpName']}',
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  color:Colors.black87,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize:smallFontSize,)),),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Expanded(
+                                          child:Container(
+                                            height: 24,
+                                            width: listTileScreenWidth,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children:[
+                                                Flexible(
+                                                  flex:1,
+                                                  child: SizedBox(
+                                                    height:24,
+                                                    child:	Text('Disc: ${item['disciplineName']}',
+                                                      style: TextStyle(
+                                                        color:Colors.black87,
+                                                        fontWeight:FontWeight.bold,
+                                                        fontSize:smallFontSize,),),
+                                                  ),),
+                                                SizedBox(width :5),
+                                                Flexible(
+                                                  flex:1,
+                                                  child:
+                                                  SizedBox(
+                                                    height:24,
+                                                    child: Text('Rate: \$' + '${getPayrateAsString(item['payRate'])}',
+                                                      style: TextStyle(
+                                                        color:Colors.black87,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: smallFontSize,),),
+                                                  ),
+                                                ),
+                                              ],),
+                                          ),
+                                        ),
 
+                                        SizedBox(height:5),
+                                        Expanded(
+                                          child: Container(
+                                            height: 24,
+                                            width:listTileScreenWidth,
+                                            child: Text('Client: ${item['clientName']}',
+                                              maxLines:1,
+                                              overflow:TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                color:Colors.black,
+                                                fontWeight:FontWeight.bold,
+                                                fontSize:smallFontSize,
+                                              ),),),
+                                        ),
 
-                  }
+                                        SizedBox( height:5),
+                                        item['addressLine1'] != '' ?
+                                        Expanded(
+                                          child: Container(
+                                            alignment: Alignment.centerLeft,
+                                            height:24,
+                                            width:listTileScreenWidth,
+                                            child: Text('Address: ${item['addressLine1']}',
+                                              textAlign:TextAlign.start,
+                                              style: TextStyle(
+                                                color:Colors.black,
+                                                fontWeight:FontWeight.bold,
+                                                fontSize: smallFontSize,
+                                              ),),
+                                          ),
+                                        ) :
+                                        SizedBox(),
+                                        SizedBox(height:5),
+                                        Expanded(
+                                          child: Container(
+                                            height:24,
+                                            alignment:Alignment.centerLeft,
+                                            width:listTileScreenWidth,
+                                            child: Text('City/State: ${getCityState(item['clientCity'],item['state'])}',
+                                              textAlign:TextAlign.start,
+                                              style: TextStyle (
+                                                color:Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize:smallFontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height:5),
+                                        Expanded(
+                                          child: Container(
+                                            height:24,
+                                            width:listTileScreenWidth,
+                                            child: Text('Department: ${item['departmentName']}',
+                                              style:TextStyle(
+                                                color:Colors.black87,
+                                                fontWeight:FontWeight.bold,
+                                                fontSize:smallFontSize,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height:5),
+                                        Expanded(
+                                          child: Container(
+                                            height:24,
+                                            width:listTileScreenWidth,
+                                            child:Row(
+                                              mainAxisAlignment:MainAxisAlignment.start,
+                                              children:[
+                                                Flexible(
+                                                  flex:1,
+                                                  child: Text('Start: ${item['startTime']}',
+                                                    style:TextStyle(
+                                                      color:Colors.black87,
+                                                      fontWeight:FontWeight.bold,
+                                                      fontSize:smallFontSize,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(width:4),
+                                                Flexible(
+                                                  flex:1,
+                                                  child: Text('End: ${item['endTime']}',
+                                                    style: TextStyle(
+                                                      color:Colors.black87,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize:smallFontSize,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height:5),
+                                        Expanded(
+                                          child:Container(
+                                            height:24,
+                                            width:listTileScreenWidth,
+                                            child:Row(
+                                                mainAxisAlignment:MainAxisAlignment.start,
+                                                children: [
+                                                  Flexible(
+                                                    flex:1,
+                                                    child: Text('Hours: ${utilitiesServices.getHours(item['startTime'],item['endTime'],item['meal'])}',
+                                                      style:TextStyle(
+                                                        color:Colors.black87,
+                                                        fontWeight:FontWeight.bold,
+                                                        fontSize:smallFontSize,),
+                                                    ),
+
+                                                  ),
+                                                  SizedBox(width:4),
+                                                  Flexible(
+                                                    flex:1,
+                                                    child: Text('Meals: ${item['meals'].toString()}',
+                                                      style:TextStyle(
+                                                        color:Colors.black87,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize:smallFontSize,),
+                                                    ),
+                                                  ),
+                                                ]
+                                            ),),
+                                        ),
+                                        SizedBox(height:5),
+                                        Expanded(
+                                          child: Center(
+                                            child: Container(
+                                              height: 40,
+                                              width: listTileScreenWidth,
+                                              decoration: BoxDecoration(
+                                                  color:flagPublishedButtonDisabled == false ? Colors.white : disabledColor,
+                                                  border:Border.all(
+                                                    color:Color.fromARGB(255,19,125,103),),
+                                                  borderRadius:BorderRadius.circular(12)),
+                                              child:TextButton(
+                                                onPressed:() async {
+                                                  if(selectedCancelReasonValue == null) {
+                                                    setState(() {
+                                                      flagShowRed =true;
+                                                    }
+
+                                                    );
+                                                    return;
+                                                  }
+                                                  item['shiftCancellationNote'] = selectedCancelReasonValue;
+                                                  item['shiftCanceledActionDate'] = Timestamp.fromDate(DateTime.now());
+                                                  localButtonPressed(item,widget.ctx);
+                                                  setState(() {
+                                                    flagPublishedButtonDisabled=false;
+                                                  });
+                                                },
+                                                child: flagPublishedButtonDisabled == false ? Text('Press to Cancel Shift',
+                                                  style:TextStyle(
+                                                    color:color2,
+                                                    fontSize:smallFontSize,
+                                                    fontWeight:FontWeight.bold,),
+                                                ) : Text('Wait...',
+                                                  style:TextStyle(
+                                                    color: disabledTextColor,
+                                                    fontSize:fontSize,
+                                                    fontWeight:FontWeight.bold,),),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                  , //form
+                                );
+                              }
+                            }
+                          }
+                      ) //container
+                  ) //expanded
+              )
+            ]
+        ), //column
+      );
+    }
+  }
+}
+),
+)
+)
+]
+)
+);
+  }
+}
