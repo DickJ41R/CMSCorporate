@@ -4,7 +4,7 @@ import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
 import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'dart:ui';
 class LandingPageWeb extends StatefulWidget {
   const LandingPageWeb({super.key});
 
@@ -414,12 +414,15 @@ void resetDataElements() {
     }
     authServices.currentArgument = currentArgument;
     setState(() {
+      debugPrint('line 417 in set state');
       flagHaveQueryData = true;
       if (selectedBranchNumber != null) {
         flagHasTopLevelBranch = true;
       }
       flagHaveData = true;
     });
+    debugPrint('line 424 returning from setdataelements');
+    return;
   }
 
   bool showLoadingIndicator = true;
@@ -465,7 +468,15 @@ void resetDataElements() {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Padding(
+      body: ScrollConfiguration(
+        // 1. Target the specific area containing your split view
+        behavior: ScrollConfiguration.of(context).copyWith(
+      dragDevices: {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse, // Ensures mouse-drag resizing still works flawlessly
+        PointerDeviceKind.stylus,
+      }),
+      child: Padding(
         padding: const EdgeInsets.all(4.0),
         child: VerticalSplitView(
           left: SingleChildScrollView(
@@ -475,7 +486,7 @@ void resetDataElements() {
                 Row(
                   children: [
                     Container(
-                      height: 200,
+                      height: 120,
                       width: 295,
                       padding: EdgeInsets.only(left: 10, top: 5),
                       child: Column(
@@ -486,6 +497,7 @@ void resetDataElements() {
                               initialSelection: null,
                               //    "Corporate",
                               controller: branchController,
+                              menuHeight: 200,
                               //  requestFocusOnTap is enabled/disabled by platforms when it is null.
                               //  On mobile platforms, this is false by default. Setting this to true will
                               // trigger focus request on the text field and virtual keyboard will appear
@@ -567,65 +579,7 @@ void resetDataElements() {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    Container(
-                      height: 200,
-                      width: 295,
-                      padding: EdgeInsets.only(left: 10, top: 5),
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2),
-                            child: DropdownMenu<dynamic>(
-                              initialSelection: null,
-                              //    "Corporate",
-                              controller: searchCriteriaController,
-                              //  requestFocusOnTap is enabled/disabled by platforms when it is null.
-                              //  On mobile platforms, this is false by default. Setting this to true will
-                              // trigger focus request on the text field and virtual keyboard will appear
-                              //   afterward. On desktop platforms however, this defaults to true.
-                              requestFocusOnTap: true,
-                              label: Container(
-                                  height: 50,
-                                  width: 290,
-                                  child: Text('Search Criteria')),
-                              onSelected: (dynamic value) {
-                                setState(() {
-                                  selectedSearchCriteria = value;
-                                  currentArgument!['searchCriteria'] = value;
 
-                                  debugPrint(
-                                      'line 165: $currentArgument ${selectedSearchCriteria}');
-                                });
-                              },
-
-                              dropdownMenuEntries:
-                              dropDownSearchCriteriaEntries,
-                            ),
-                          ),
-                          selectedSearchCriteria != null
-                              ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                  height: 50,
-                                  width: 2,
-                                  child: Text(
-                                      'Selected: ${selectedSearchCriteria}')),
-                            ],
-                          )
-                              : Container(
-                            height: 50,
-                            width: 285,
-                            child: Text('Please select search criteria.'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
                 SizedBox(height: 10),
                 Container(
                   padding: EdgeInsets.only(left: 10),
@@ -770,7 +724,67 @@ void resetDataElements() {
                 Row(
                   children: [
                     Container(
-                      height: 150,
+                      height: 120,
+                      width: 295,
+                      padding: EdgeInsets.only(left: 10, top: 5),
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: DropdownMenu<dynamic>(
+                              initialSelection: null,
+                              menuHeight: 200,
+                              //    "Corporate",
+                              controller: searchCriteriaController,
+                              //  requestFocusOnTap is enabled/disabled by platforms when it is null.
+                              //  On mobile platforms, this is false by default. Setting this to true will
+                              // trigger focus request on the text field and virtual keyboard will appear
+                              //   afterward. On desktop platforms however, this defaults to true.
+                              requestFocusOnTap: true,
+                              label: Container(
+                                  height: 50,
+                                  width: 290,
+                                  child: Text('Search Criteria')),
+                              onSelected: (dynamic value) {
+                                setState(() {
+                                  selectedSearchCriteria = value;
+                                  currentArgument!['searchCriteria'] = value;
+
+                                  debugPrint(
+                                      'line 165: $currentArgument ${selectedSearchCriteria}');
+                                });
+                              },
+
+                              dropdownMenuEntries:
+                              dropDownSearchCriteriaEntries,
+                            ),
+                          ),
+                          selectedSearchCriteria != null
+                              ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                  height: 50,
+                                  width: 2,
+                                  child: Text(
+                                      'Selected: ${selectedSearchCriteria}')),
+                            ],
+                          )
+                              : Container(
+                            height: 50,
+                            width: 285,
+                            child: Text('Please select search criteria.'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Container(
+                      height: 130,
                       width: 295,
                       padding: EdgeInsets.only(left: 10, top: 20),
                       child: Column(
@@ -781,6 +795,7 @@ void resetDataElements() {
                               initialSelection: null,
                               //    "Corporate",
                               controller: searchFieldsController,
+                              menuHeight: 200,
                               //  requestFocusOnTap is enabled/disabled by platforms when it is null.
                               //  On mobile platforms, this is false by default. Setting this to true will
                               // trigger focus request on the text field and virtual keyboard will appear
@@ -836,7 +851,7 @@ void resetDataElements() {
                 SizedBox(height: 10),
                 Container(
                   padding: EdgeInsets.only(left: 10),
-                  height: 150,
+                  height:120,
                   width: 285,
                   child: TextFormField(
                     autofocus: false,
@@ -950,6 +965,7 @@ void resetDataElements() {
               : SizedBox.shrink(),
         ),
       ),
+    )
     );
   }
 }

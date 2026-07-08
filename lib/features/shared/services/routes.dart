@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cms_web/features/shared/views/landing_page_web.dart';
 import 'package:cms_web/features/authentication/views/pages/login/login.dart';
-import 'package:cms_web/features/workorder/views/workorder_stream_screen.dart';
+import 'package:cms_web/features/workorderapp/views/workorder_stream_screen.dart';
 import 'package:cms_web/features/clientapp/views/profile/client_stream_screen.dart';
 import 'package:cms_web/features/hcpapp/views/profile/hcprofessional_stream_screen.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';

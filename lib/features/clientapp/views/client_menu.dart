@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cms_web/features/shared/views/taskview.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
+import 'dart:ui';
 
 class ClientMenu extends StatefulWidget {
   final Map<String, dynamic> args;
@@ -320,7 +321,15 @@ class _ClientMenuState extends State<ClientMenu> {
               }),
         ),
       ),
-      body: flagHasSnackbar == true
+      body: ScrollConfiguration(
+        // 1. Target the specific area containing your split view
+        behavior: ScrollConfiguration.of(context).copyWith(
+        dragDevices: {
+          PointerDeviceKind.touch,
+          PointerDeviceKind.mouse, // Ensures mouse-drag resizing still works flawlessly
+          PointerDeviceKind.stylus,
+        }),
+    child: flagHasSnackbar == true
           ? Center(
               heightFactor: 50,
               widthFactor: 50,
@@ -498,6 +507,7 @@ class _ClientMenuState extends State<ClientMenu> {
                           ),
                         ),
             ),
+    ),
     );
   }
 }

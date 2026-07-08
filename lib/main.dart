@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart'; //show defaultTargetPlatform, kIsWeb;
 import 'package:cms_web/features/shared/services/routes.dart';
 import 'package:cms_web/features/authentication//services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'dart:ui';
 
 //import 'package:window_manager/window_manager.dart';
 
@@ -70,7 +70,16 @@ void main() async {
   debugPrint('line 53');
   runApp(MyApp());
 }
-
+// 1. Define a strict scroll behavior that explicitly omits the trackpad
+class SafeWebScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse, // Retains desktop click-and-drag functionality
+    PointerDeviceKind.stylus,
+    PointerDeviceKind.unknown,
+  };
+}
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
@@ -78,6 +87,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     const String appTitle = 'CMS Web App';
     return MaterialApp(
+      scrollBehavior: SafeWebScrollBehavior(),
       title: appTitle,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: MyRoutes.generateRoute,

@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:cms_web/features/shared/views/taskview.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'dart:ui';
-class HCPMenu extends StatefulWidget {
+class WorkOrderMenu extends StatefulWidget {
   final Map<String, dynamic> args;
-  const HCPMenu({super.key, required this.args});
+  const WorkOrderMenu({super.key, required this.args});
 
   @override
-  State<HCPMenu> createState() => _HCPMenuState();
+  State<WorkOrderMenu> createState() => _HCPMenuState();
 }
 
-class _HCPMenuState extends State<HCPMenu> {
+class _HCPMenuState extends State<WorkOrderMenu> {
   String? localTitle;
   @override
   void initState() {
     super.initState();
-    debugPrint('line 19 in hcp menu ${widget.args}');
-    localTitle = 'HCP Menu';
+    debugPrint('line 19 in  workorder menu ${widget.args}');
+    localTitle = 'WorkOrder Menu';
     arguments = widget.args;
     _setMenus();
   }
@@ -41,138 +40,28 @@ class _HCPMenuState extends State<HCPMenu> {
     fontWeight: FontWeight.bold,
   );
   bool flagHaveCalled = false;
-  List<Map<String, dynamic>> hcpMenus = [
-    {
-      "menuId": 1,
-      "menuName": "HCP Profile Menu",
-      "menuRouteName": "/hcpProfileMenu",
-      "index": 0
-    },
-    {
-      "menuId": 2,
-      "menuName": "HCP Scheduling Menu",
-      "menuRouteName": "/hcpSchedulingMenu",
-      "index": 1
-    }
-  ];
+
   List<Map<String, dynamic>> genericMenu = [];
-  List<Map<String, dynamic>> hcpSchedulingMenus = [
+  List<Map<String, dynamic>> workOrderMenus = [
     {
       "menuId": 1,
-      "menuName": "Open/Available Shifts",
-      "menuRouteName": "/hcpAvailableShiftsSchedulingPage",
+      "menuName": "List Edit Work Order",
+      "menuRouteName": "/editWorkOrderPage",
       "index": 0
     },
-    {
-      "menuId": 2,
-      "menuName": "Approved/Confirm Shifts",
-      "menuRouteName": "/hcpConfirmViewSchedulingPage",
-      "index": 1
-    },
-    {
-      "menuId": 3,
-      "menuName": "Cancel Shifts",
-      "menuRouteName": "/hcpCancelShiftsSchedulingPage",
-      "index": 2
-    },
-    {
-      "menuId": 4,
-      "menuName": "Scheduled List",
-      "menuRouteName": "/hcpScheduledListSchedulingPage",
-      "index": 3
-    },
-    // {
-    //   "menuId": 5,
-    //   "menuName": "Confirm Shifts",
-    //   "menuRouteName": "/clientConfirmShiftsSchedulingPage",
-    //   "index": 4
-    // },
-    // {
-    //   "menuId": 5,
-    //   "menuName": "Schedule View",
-    //   "menuRouteName": "/hcpScheduleViewSchedulingPage",
-    //   "index": 4
-    // },
-    {
-      "menuId": 5,
-      "menuName": "Payment Records",
-      "menuRouteName": "/hcpPaymentRecordsSchedulingPage",
-      "index": 4
-    },
-    {
-      "menuId": 6,
-      "menuName": "HCP Client DNS List",
-      "menuRouteName": "/hcpDNUListSchedulingPage",
-      "index": 5
-    },
-    // {
-    //   "menuId": 9,
-    //   "menuName": "Set a DNS",
-    //   "menuRouteName": "/clientSetDNSSchedulingPage",
-    //   "index": 8
-    // },
-    // {
-    //   "menuId": 10,
-    //   "menuName": "Timecard Approval",
-    //   "menuRouteName": "/clientTimecardApprovalSchedulingPage",
-    //   "index": 8
-    // },
-    // {
-    //   "menuId": 11,
-    //   "menuName": "Cannot Be Scheduled",
-    //   "menuRouteName": "/clientTimecardApprovalSchedulingPage",
-    //   "index": 8
-    // },
+
   ];
   String genericTitle = '';
-  List<Map<String, dynamic>> hcpProfileMenus = [
-    {
-      "menuId": 1,
-      "menuName": "HCP Profile",
-      "menuRouteName": "/hcpProfileData",
-      "index": 0
-    },
-    {
-      "menuId": 2,
-      "menuName": "HCP Credential Data",
-      "menuRouteName": "/hcpCredentialDataProfilePage",
-      "index": 1
-    },
-    {
-      "menuId": 3,
-      "menuName": "HCP Addresses",
-      "menuRouteName": "/hcpAddressProfilePage",
-      "index": 2
-    },
-    {
-      "menuId": 4,
-      "menuName": "HCP Contacts",
-      "menuRouteName": "/hcpContactProfilePage",
-      "index": 3,
-    },
-    {
-      "menuId": 5,
-      "menuName": "HCP Special Rate",
-      "menuRouteName": "/hcpSpecialRateProfilePage",
-      "index": 4
-    },
-    // {
-    //   "menuId": 6,
-    //   "menuName": "HCP HR Data",
-    //   "menuRouteName": "/hcpHRDataProfilePage",
-    //   "index": 5
-    // },
-  ];
 
   int showRightSide = -1;
   List<Map<String, dynamic>> genericMenu1 = [];
   Map<String, dynamic>? arguments;
   void _setMenus() {
-    for (int i = 0; i < hcpMenus.length; i++) {
+    for (int i = 0; i < workOrderMenus.length; i++) {
       // String st = userBranches[i]['branchName'];
       //  Text ts = Text('Index $i: $st', style: optionStyle);
       //  _widgetOptions.add(userBranches[i]);
-      Map<String, dynamic> mp = hcpMenus[i];
+      Map<String, dynamic> mp = workOrderMenus[i];
       DropdownMenuEntry me = DropdownMenuEntry(
           value: mp['menuName'].toString(), label: mp['menuName']);
       dropDownMenuEntries.add(me);
@@ -284,7 +173,7 @@ class _HCPMenuState extends State<HCPMenu> {
                                     // trigger focus request on the text field and virtual keyboard will appear
                                     //   afterward. On desktop platforms however, this defaults to true.
                                     requestFocusOnTap: true,
-                                    label: const Text('HCP Menu'),
+                                    label: const Text('Work Order Menu'),
                                     onSelected: (dynamic value) {
                                       debugPrint('line 258 on selected $value');
                                       selectedMenu = value;
@@ -292,21 +181,15 @@ class _HCPMenuState extends State<HCPMenu> {
                                           getSelectedMenuIndex(value);
                                       debugPrint('line 262: $selectedMenuIndex');
                                       selectedMenuName =
-                                          hcpMenus[selectedMenuIndex]
-                                              ['HCPRouteName'];
+                                          workOrderMenus[selectedMenuIndex]
+                                              ['WorkOrderRouteName'];
                                       setState(() {
                                         if (selectedMenuIndex == 0) {
                                           //    dropDownMenuOptionEntries = [];
                                           showRightSide = 0;
 
                                           // genericMenu = clientProfileMenus;
-                                          genericTitle = 'HCP Profile Menu';
-                                        } else {
-                                          // dropDownMenuOptionEntries = [];
-                                          showRightSide = 1;
-
-                                          //genericMenu = clientSchedulingMenus;
-                                          genericTitle = 'HCP Scheduling Menu';
+                                          genericTitle = 'Work Order Menu';
                                         }
                                       });
                                     },
@@ -321,7 +204,7 @@ class _HCPMenuState extends State<HCPMenu> {
                                     ],
                                   )
                                 else
-                                  const Text('Please select an HCP Menu.'),
+                                  const Text('Please select a Work Order Menu.'),
                               ],
                             ),
                           ),
@@ -361,14 +244,14 @@ class _HCPMenuState extends State<HCPMenu> {
                                   ),
                                   child: ListView.builder(
                                     scrollDirection: Axis.vertical,
-                                    restorationId: 'HCPListView',
-                                    itemCount: hcpProfileMenus.length,
+                                    restorationId: 'WorkOrderListView',
+                                    itemCount: workOrderMenus.length,
                                     itemBuilder:
                                         (BuildContext context, int index) {
-                                      final item = hcpProfileMenus[index];
+                                      final item = workOrderMenus[index];
                                       debugPrint('line 243: $index ${item}');
                                       return VerticalTile(
-                                        menuItem: hcpProfileMenus[index],
+                                        menuItem: workOrderMenus[index],
                                         arguments: arguments!,
                                       );
                                     },
@@ -378,59 +261,11 @@ class _HCPMenuState extends State<HCPMenu> {
                             ],
                           ),
                         )
-                      : Container(
-                         constraints: BoxConstraints(
-                           minHeight: 900,
-                           minWidth: 1350
-                         ),
-                          height: 900,
-                          width: 600,
-                          child: Column(
-                            children: [
-                              Container(
-                                height: 40,
-                                width: 600,
-                                child: Center(
-                                  child: Text(
-                                    '$genericTitle',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Center(
-                                child: Container(
-                                  width: screenWidth - 310,
-                                  height: screenHeight! - 200,
-                                  decoration: BoxDecoration(
-                                    color: color1,
-                                    border: Border.all(color: Colors.black),
-                                  ),
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.vertical,
-                                    restorationId: 'HcpListView1',
-                                    itemCount: hcpSchedulingMenus.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      final item = hcpSchedulingMenus[index];
-                                      debugPrint('line 402: $index ${item}');
-
-                                      return VerticalTile1(
-                                        menuItem: hcpSchedulingMenus[index],
-                                        arguments: arguments!,
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )),
-    )
+                      : SizedBox.shrink(),
+          )
+    ),
     );
+
   }
 }
 
