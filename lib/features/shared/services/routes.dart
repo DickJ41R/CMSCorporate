@@ -47,6 +47,8 @@ import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_payments.da
 import 'package:cms_web/features/hcpapp/views/scheduling/show_hcp_payment_details_screen.dart';
 import 'package:cms_web/features/shared/widgets/hcp_show_payment_pdf.dart';
 import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_schedule_view.dart';
+import 'package:cms_web/features/workorderapp/views/workorder_menu.dart';
+
 import 'package:cms_web/features/shared/views/landing_page_web.dart';
 
 import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_show_confirmed_shifts.dart';
@@ -65,10 +67,9 @@ class MyRoutes {
         return MaterialPageRoute(
             builder: (context) => Login(flagGetAPNS: false));
       case landingPage:
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => LandingPageWeb());
-      case workOrderPage:
-        return MaterialPageRoute(builder: (context) => WorkOrderStreamScreen());
       case clientPage:
         Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
@@ -234,6 +235,14 @@ class MyRoutes {
       case hcpListDNUs:
         Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(builder: (context) => ProcessHCPDNU(args: mp));
+        //workorder
+      case workOrderMenu:
+        debugPrint('line 6241client menu');
+        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(builder: (context) => WorkOrderMenu(args: mp));
+      case workOrderPage:
+        Map<String, String> mp = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(builder: (context) => WorkOrderStreamScreen(args:mp));
       default:
         return MaterialPageRoute(
             builder: (context) => Login(flagGetAPNS: false));

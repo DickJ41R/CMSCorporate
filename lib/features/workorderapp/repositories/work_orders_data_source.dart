@@ -9,22 +9,51 @@ import 'package:collection/collection.dart';
 import 'package:cms_web/features/workorderapp/models/work_order_class.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class WorkOrderClassDataSource extends DataGridSource {
+class WorkOrdersClassDataSource extends DataGridSource {
   /// Creates the order data source class with required details.
-  final int? workOrderClassDataCount;
-  final List<WorkOrderClass>? workOrderClassCollection;
-  WorkOrderClassDataSource({
-    this.workOrderClassDataCount,
-    this.workOrderClassCollection,
-  }) {
-    workOrderClasses = workOrderClassCollection ??
-        _fetchWorkOrderClasses(
-            workOrderClasses, workOrderClassDataCount ?? 100);
-    dataGridRows = buildDataGridRows();
+  ///
+
+  List<WorkOrderClass> _workOrderClassInfo;
+  int rowsPerPage;
+  List<WorkOrderClass>workOrders;
+  List<WorkOrderClass>paginatedWorkOrders;
+  WorkOrdersClassDataSource( this._workOrderClassInfo,this.rowsPerPage,this.workOrders,this.paginatedWorkOrders) {
+    //  debugPrint('line 11: ${this._clientClassInfo}');
+//    debugPrint('line 14: $rowsPerPage $clients $paginatedClients');
+
+    paginatedWorkOrders = workOrders.getRange(0,rowsPerPage).toList(growable: false);
+    //_addCityState();
+    buildPaginatedDataGridRows();
+    // _buildDataRow();
   }
 
-  static List<WorkOrderClass> workOrderClasses = <WorkOrderClass>[];
+  // void _addCityState() {
+  //   debugPrint('line 17 addcitystate');
+  //   List<dynamic> ld =
+  //       _clientClassInfo.map<dynamic>((e) => <dynamic>[e.clientId]).toList();
+  //   debugPrint('line 21: $ld');
+  //   for (int i = 0; i < ld.length; i++) {
+  //     List<int> li = ld[i];
+  //     int cli = li[0];
+  //     FirebaseFirestore.instance
+  //         .collection('ClientAddress')
+  //         .where('clientId', isEqualTo: cli)
+  //         .where('addressType', isEqualTo: 'Physical')
+  //         .get()
+  //         .then((QuerySnapshot) {
+  //       for (var docSnapshot in QuerySnapshot.docs) {
+  //         var obj = docSnapshot.data();
+  //       }
+  //     });
+  //   }
+  // }
+  List<DataGridRow> dataGridRows = [];
 
+  @override
+  List<DataGridRow> get rows => dataGridRows;
+
+
+  double fontSize = 18;
   String _fetchColumnName(String columnName) {
     switch (columnName) {
       case 'orderId':
@@ -42,482 +71,162 @@ class WorkOrderClassDataSource extends DataGridSource {
       case 'shiftDate':
         return 'Date';
       case 'shiftDateTime':
-        return 'Shift & Time';
+        return 'Date & Time';
       case 'disciplineName':
         return 'Disc';
       case 'grossMargin':
         return 'Margin';
       default:
-        return columnName;
+        return "Bad Column Name";
     }
   }
 
-  List<DataGridRow> buildDataGridRows() {
-    List<DataGridRow> dgr =
-        workOrderClasses.map<DataGridRow>((WorkOrderClass workOrderClass) {
-      return DataGridRow(cells: <DataGridCell>[
-        DataGridCell(
-          columnName: _fetchColumnName('orderId'),
-          value: workOrderClass.orderId,
-        ),
-        DataGridCell(
-          columnName: _fetchColumnName('statusId'),
-          value: workOrderClass.statusId,
-        ),
-        DataGridCell(
-          columnName: _fetchColumnName('clientName'),
-          value: workOrderClass.clientName,
-        ),
-        DataGridCell(
-          columnName: _fetchColumnName('departmentName'),
-          value: workOrderClass.departmentName,
-        ),
-        DataGridCell(
-          columnName: _fetchColumnName('state'),
-          value: workOrderClass.state,
-        ),
-        DataGridCell(
-          columnName: _fetchColumnName('hcpName'),
-          value: workOrderClass.hcpName,
-        ),
-        DataGridCell(
-          columnName: _fetchColumnName('shiftDate'),
-          value: workOrderClass.shiftDate,
-        ),
-        DataGridCell(
-          columnName: _fetchColumnName('shiftDateTime'),
-          value: workOrderClass.shiftDateTime,
-        ),
-        DataGridCell(
-          columnName: _fetchColumnName('disciplineName'),
-          value: workOrderClass.disciplineName,
-        ),
-        DataGridCell(
-          columnName: _fetchColumnName('grossMargin'),
-          value: workOrderClass.grossMargin,
-        )
-      ]);
-    }).toList();
-    return dgr;
-  }
-
-  /// Provides the column name.
-  List<DataGridRow> dataGridRows = <DataGridRow>[];
-
-//@Overrides
   @override
-  List<DataGridRow> get rows {
-    return dataGridRows;
-  }
-
-  List<WorkOrderClass> get classData {
-    return workOrderClasses;
-  }
-
-  Color getRowBackgroundColor(DataGridRow row) {
-    final String st = row.getCells()[1].value;
-    if (st == 'S') {
-      return Colors.blueAccent;
-    } else if (st == 'O') {
-      return Colors.yellow;
-    } else if (st == 'C' || st == 'E' || st == '*') {
-      return Colors.redAccent;
-    }
-    return Colors.transparent;
-  }
-
-  @override
-  DataGridRowAdapter buildRow(DataGridRow row) {
-    final int rowIndex = dataGridRows.indexOf(row);
-    Color backgroundColor = getRowBackgroundColor(row);
+  DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(
-      color: backgroundColor,
-      cells: <Widget>[
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerRight,
-          child: Text(
-            row.getCells()[0].value.toString(),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerRight,
-          child: Text(
-            row.getCells()[1].value.toString(),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(row.getCells()[2].value.toString()),
-        ),
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            row.getCells()[3].value.toString(),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            row.getCells()[4].value.toString(),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            row.getCells()[5].value.toString(),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            row.getCells()[6].value.toString(),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            row.getCells()[7].value.toString(),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            row.getCells()[8].value.toString(),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(8),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            row.getCells()[9].value.toString(),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// Currency symbol
-  @override
-  Future<void> handleLoadMoreRows() async {
-    await Future<void>.delayed(const Duration(seconds: 5));
-    workOrderClasses = _fetchWorkOrderClasses(workOrderClasses, 20);
-    buildDataGridRows();
-    notifyListeners();
-  }
-
-  @override
-  Future<void> handleRefresh() async {
-    await Future<void>.delayed(const Duration(seconds: 5));
-    workOrderClasses = _fetchWorkOrderClasses(workOrderClasses, 20);
-    buildDataGridRows();
-    notifyListeners();
-  }
-
-  @override
-  Widget? buildTableSummaryCellWidget(
-    GridTableSummaryRow summaryRow,
-    GridSummaryColumn? summaryColumn,
-    RowColumnIndex rowColumnIndex,
-    String summaryValue,
-  ) {
-    Widget? widget;
-    Widget buildCell(String value, EdgeInsets padding, Alignment alignment) {
-      return Container(
-        padding: padding,
-        alignment: alignment,
-        child: Text(
-          value,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-      );
-    }
-
-    if (summaryRow.showSummaryInRow) {
-      widget = buildCell(
-        summaryValue,
-        const EdgeInsets.all(16.0),
-        Alignment.centerLeft,
-      );
-    } else if (summaryValue.isNotEmpty) {
-      if (summaryColumn!.columnName == 'freight') {
-        summaryValue = double.parse(summaryValue).toStringAsFixed(2);
-      }
-
-      summaryValue = 'Sum: ' +
-          NumberFormat.currency(
-            locale: 'en_US',
-            decimalDigits: 0,
-            symbol: r'$',
-          ).format(double.parse(summaryValue));
-
-      widget = buildCell(
-        summaryValue,
-        const EdgeInsets.all(8.0),
-        Alignment.centerRight,
-      );
-    }
-    return widget;
-  }
-
-  @override
-  Widget? buildGroupCaptionCellWidget(
-    RowColumnIndex rowColumnIndex,
-    String summaryValue,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-      child: Text(summaryValue),
-    );
-  }
-
-  /// Provides the column name.
-
-  /// Update DataSource
-  void updateDataSource() {
-    notifyListeners();
-  }
-
-  List<WorkOrderClass> _fetchWorkOrderClasses(
-      List<WorkOrderClass> workOrderClasses, int count) {
-    final int startIndex =
-            workOrderClasses.isNotEmpty ? workOrderClasses.length : 0,
-        endIndex = startIndex + count;
-    for (int i = startIndex; i < endIndex; i++) {
-      WorkOrderClass wrk = workOrderClasses[i];
-      workOrderClasses.add(
-        WorkOrderClass(
-            wrk.orderId,
-            wrk.statusId,
-            wrk.clientName,
-            wrk.departmentName,
-            wrk.state,
-            wrk.hcpName,
-            wrk.shiftDate,
-            wrk.shiftDateTime,
-            wrk.disciplineName,
-            wrk.grossMargin),
-      );
-    }
-    return workOrderClasses;
-  }
-
-  List<GridColumn> getColumns(double fontSize) {
-    return <GridColumn>[
-      GridColumn(
-          columnName: 'orderId',
-          allowEditing: false,
-          allowFiltering: true,
-          allowSorting: false,
-          maximumWidth: 70,
-          width: 70,
-          label: Container(
-              width: 70,
-              height: 32,
-              //  padding: EdgeInsets.all(16.0),
-              alignment: Alignment.center,
-              child: Text('ID',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          allowSorting: false,
-          allowFiltering: false,
-          columnName: 'statusId',
-          allowEditing: false,
-          maximumWidth: 40,
-          width: 40,
-          label: Container(
-              width: 40,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Sts',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          allowFiltering: true,
-          columnName: 'clientName',
-          allowSorting: false,
-          width: 180,
-          maximumWidth: 180,
-          allowEditing: false,
-          label: Container(
-              width: 180,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Client Name',
-                  style: TextStyle(
-                      overflow: TextOverflow.ellipsis, fontSize: fontSize)))),
-      GridColumn(
-          columnName: 'departmentName',
-          allowEditing: true,
-          allowFiltering: false,
-          allowSorting: false,
-          width: 180,
-          maximumWidth: 180,
-          label: Container(
-              width: 180,
-              height: 32,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Department Name',
-                  style: TextStyle(
-                      overflow: TextOverflow.ellipsis, fontSize: fontSize)))),
-      GridColumn(
-          columnName: 'state',
-          allowEditing: false,
-          allowSorting: false,
-          allowFiltering: false,
-          width: 60,
-          maximumWidth: 60,
-          label: Container(
-              width: 60,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('State',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          allowFiltering: true,
-          allowSorting: false,
-          columnName: 'hcpName',
-          allowEditing: false,
-          width: 120,
-          maximumWidth: 120,
-          label: Container(
-              width: 120,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('HCP Name',
-                  style: TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          columnName: 'shiftDate',
-          allowEditing: false,
-          allowSorting: true,
-          allowFiltering: false,
-          width: 120,
-          maximumWidth: 120,
-          label: Container(
-              width: 120,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Shift Date',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          columnName: 'shiftDateTime',
-          allowEditing: false,
-          allowFiltering: false,
-          allowSorting: true,
-          width: 150,
-          maximumWidth: 150,
-          label: Container(
-              width: 150,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-              alignment: Alignment.center,
-              child: Text('Shift Time',
-                  style: TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          columnName: 'disciplineName',
-          allowEditing: false,
-          allowSorting: true,
-          allowFiltering: false,
-          width: 80,
-          maximumWidth: 80,
-          label: Container(
+        cells: row.getCells().map<Widget>((dataGridCell) {
+          if (dataGridCell.columnName == _fetchColumnName('orderId')) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
               width: 80,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+              height: 32,
               alignment: Alignment.center,
-              child: Text('Disc',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                  )))),
-      GridColumn(
-          columnName: 'grossMargin',
-          allowEditing: false,
-          allowSorting: false,
-          allowFiltering: false,
-          width: 120,
-          maximumWidth: 120,
-          label: Container(
-              width: 120,
-              padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
+              child: Text(
+                dataGridCell.value.toString(),
+                overflow: TextOverflow.ellipsis,
+
+              ),
+            );
+          } else if (dataGridCell.columnName == _fetchColumnName('statusId')) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              alignment: Alignment.centerRight,
+              child: Text(
+                dataGridCell.value.toString(),
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          } else if (dataGridCell.columnName == _fetchColumnName('clientName')) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                dataGridCell.value.toString(),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: fontSize,
+                ),
+              ),
+            );
+          } else if (dataGridCell.columnName == _fetchColumnName('departmentName')) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                dataGridCell.value.toString(),
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          } else if (dataGridCell.columnName == _fetchColumnName('state')) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                dataGridCell.value.toString(),
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          } else if (dataGridCell.columnName == _fetchColumnName('hcpName')) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                dataGridCell.value.toString(),
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          } else if (dataGridCell.columnName == _fetchColumnName('shiftDate')) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                dataGridCell.value.toString(),
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          } else if (dataGridCell.columnName == _fetchColumnName('shiftDateTime')) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                dataGridCell.value.toString(),
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          } else if (dataGridCell.columnName == _fetchColumnName('disciplineName')) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              alignment: Alignment.centerRight,
+              child: Text(
+                dataGridCell.value.toString(),
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          } else if (dataGridCell.columnName == _fetchColumnName('grossMargin')) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
               alignment: Alignment.center,
-              child: Text('Margin',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                  )))),
-    ];
+              child: Text(
+                dataGridCell.value.toString(),
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          } else {
+            return SizedBox.shrink();
+          }
+        })
+            .toList());
   }
 
-  static List<WorkOrderClass> convertToWorkOrderClasses(List<dynamic> listD) {
-    try {
-      for (int i = 0; i < listD.length; i++) {
-        Map<String, dynamic> ld = listD[i];
-        Timestamp ts = ld['shiftDate'];
-        DateTime dte = ts.toDate();
-        String tss = dte.toString();
-        int idx = tss.indexOf(' ');
-        tss = tss.substring(0, idx);
-        List<String> tsss = tss.split('-');
-        tss = tsss[1] + '-' + tsss[2] + '-' + tsss[0];
-        debugPrint('line 216 $ts $tss');
-        //shiftdatetime
-        String srt = ld['startTime'].substring(0, ld['startTime'].length - 1);
-        srt = srt.replaceAll(' ', '');
-        String ent = ld['endTime'].substring(0, ld['endTime'].length - 1);
-        ent = ent.replaceAll(' ', '');
-        String sdt = ld['shiftCode'] + '[H]' + srt + '-' + ent;
-        if (ld['meals'] > 0) {
-          sdt += '(' + ld['meals'].toString() + ')';
-        }
-        WorkOrderClass wkc = WorkOrderClass(
-            ld['orderId'],
-            ld['statusId'],
-            ld['clientName'],
-            ld['departmentName'],
-            ld['state'],
-            ld['hcpName'],
-            tss,
-            sdt,
-            ld['disciplineName'],
-            ld['grossMargin'].toString());
-        workOrderClasses.add(wkc);
-      }
-      debugPrint('line 299: ${workOrderClasses.length}');
-      return workOrderClasses;
-    } catch (e) {
-      debugPrint('line 231: ${e.toString()}');
-      throw Exception('line 230 error on converting work orders');
+
+
+  @override
+  Future<bool> handlePageChange(int oldPageIndex, int newPageIndex) async {
+    int startIndex = newPageIndex * rowsPerPage;
+    int endIndex  = startIndex + rowsPerPage;
+    if (endIndex  > workOrders.length) {
+      endIndex = workOrders.length;
     }
+
+    debugPrint('line 191: $startIndex $endIndex $rowsPerPage ${workOrders.length}');
+    if (startIndex < workOrders.length && endIndex <= workOrders.length) {
+
+      paginatedWorkOrders =
+          workOrders.getRange(startIndex, endIndex).toList(growable: false);
+      buildPaginatedDataGridRows();
+      notifyListeners();
+    } else {
+      paginatedWorkOrders = [];
+    }
+
+    return true;
   }
+  void buildPaginatedDataGridRows() {
+    dataGridRows = paginatedWorkOrders.map<DataGridRow>((dataGridRow) {
+      return DataGridRow(cells: [
+        DataGridCell(columnName: 'Order ID', value: dataGridRow.orderId),
+        DataGridCell(columnName: 'Sts', value: dataGridRow.statusId),
+        DataGridCell(columnName: 'Client Name', value: dataGridRow.clientName),
+        DataGridCell(columnName: 'Department Name', value: dataGridRow.departmentName),
+        DataGridCell(columnName: 'Ste', value: dataGridRow.state),
+        DataGridCell(columnName: 'Employee', value: dataGridRow.hcpName),
+        DataGridCell(columnName: 'Date', value: dataGridRow.shiftDate),
+        DataGridCell(columnName: 'Date & Time', value: dataGridRow.shiftDateTime),
+        DataGridCell(columnName: 'Disc', value: dataGridRow.disciplineName),
+        DataGridCell(columnName: 'Margin', value: dataGridRow.grossMargin),
+
+      ]);
+    }).toList(growable: false);
+  }
+
 }

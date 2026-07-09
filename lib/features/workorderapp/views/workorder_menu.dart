@@ -45,7 +45,7 @@ class _HCPMenuState extends State<WorkOrderMenu> {
   List<Map<String, dynamic>> workOrderMenus = [
     {
       "menuId": 1,
-      "menuName": "List Edit Work Order",
+      "menuName": "Edit Work Order",
       "menuRouteName": "/editWorkOrderPage",
       "index": 0
     },

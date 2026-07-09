@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import "package:flutter/foundation.dart";
 import 'package:cms_web/features/authentication/services/auth_service.dart';
+import 'dart:ui';
 
 //ignore: must_be_immutable
 class Login extends StatefulWidget {
@@ -244,7 +245,15 @@ class LoginState extends State<Login> {
         //   ),
         // ),
       ),
-      body: SafeArea(
+        body: ScrollConfiguration(
+          // 1. Target the specific area containing your split view
+          behavior: ScrollConfiguration.of(context).copyWith(
+              dragDevices: {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse, // Ensures mouse-drag resizing still works flawlessly
+                PointerDeviceKind.stylus,
+              }),
+          child: SafeArea(
         child: Center(
           //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
 
@@ -316,6 +325,7 @@ class LoginState extends State<Login> {
           ),
         ),
       ),
+    )
     );
   }
 

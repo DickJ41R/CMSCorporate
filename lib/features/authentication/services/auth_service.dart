@@ -15,6 +15,7 @@ import 'package:cms_web/features/shared/utils/routerconstants.dart';
 // Private constructor to prevent external instantiation.
 import 'package:cms_web/features/clientapp/models/client_class.dart';
 import 'package:cms_web/features/hcpapp/models/hcp_class.dart';
+import 'package:cms_web/features/workorderapp/models/work_order_class.dart';
 
 //import 'package:cms_web/apps/client/screens/process_hcp_menu_tester.dart';
 class AuthService {
@@ -42,8 +43,10 @@ class AuthService {
   List<Map<String,dynamic>> holdHcp = [];
   List<Map<String,dynamic>> holdWrk = [];
   List<ClientClass>clients = [];
+  List<WorkOrderClass>workOrders = [];
   List<HCPClass>hcps = [];
   late List<ClientClass> clientClassData = [];
+  late List<WorkOrderClass>workOrderClassData = [];
   late List<HCPClass> hcpClassData = [];
   int rowsPerPage = 15;
   Map<String,String>? currentArgument;

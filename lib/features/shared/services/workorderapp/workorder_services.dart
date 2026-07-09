@@ -1,9 +1,66 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 //workorder services
 import 'package:flutter/material.dart';
-
+import 'package:intl/intl.dart';
 
 class WorkOrderServices {
-Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
+
+  String getFormattedDate(DateTime dte) {
+    DateFormat formatter = DateFormat('MM-dd-yyyy');
+    final String formatted = formatter.format(dte);
+    return formatted;
+  }
+  String  deriveShiftTime(String shiftCode,String calcType,String startTime,String endTime,int meals) {
+  String shiftTime = shiftCode;
+  shiftTime += '[' + calcType + ']';
+  int sidx = startTime.indexOf('AM');
+  String sampm = 'A';
+  String  ampm='P';
+  if (sidx == -1) {
+  sampm = 'P';
+
+  sidx = startTime.indexOf('PM');
+  }
+  int idx = endTime.indexOf('PM');
+  if (idx == -1) {
+  ampm = 'A';
+  idx = endTime.indexOf('AM');
+  }
+
+  String st = startTime.substring(0,sidx);
+  st = st.trim();
+  List<String>lst = st.split(':');
+  if (lst.length == 1) {
+  shiftTime += lst[0];
+  shiftTime += sampm;
+  } else {
+  if (lst[1] == '00') {
+  shiftTime += lst[0];
+  shiftTime += sampm;
+  } else {
+  shiftTime += (lst[0]+':' + lst[1]+ sampm);
+  }
+  }
+  shiftTime += '-';
+  String et = endTime.substring(0,idx);
+  et = et.trim();
+  List<String> etl = et.split(':');
+  if (etl.length == 1) {
+  shiftTime += etl[0];
+  shiftTime += ampm;
+  } else {
+  if (etl[1] == '00') {
+  shiftTime += etl[0];
+  shiftTime += ampm;
+  } else {
+  shiftTime += (etl[0]+':' + etl[1]+ ampm);
+  }
+  }
+  shiftTime += '(' + meals.toString() + ')';
+  return shiftTime;
+  }
+
+  Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
     List<Map<String,dynamic>>? listOfWorkOrders;
     try {
 
@@ -15,7 +72,23 @@ Future<List<Map<String,dynamic>>>? getQueryData(Query query) async {
         Map<String, dynamic> obj = docSnapShot.data() as Map<String, dynamic>;
         obj['id'] = docSnapShot.id;
       //  debugPrint('line 3044 in querysnapshot: $obj');
+        Timestamp sdts = obj['dates']['rates']['rateDetails']['shiftDate'];
+        DateTime dts = sdts.toDate();
+        String fdts = getFormattedDate(dts);
+        obj['shiftDate'] = fdts;
+        if (obj['dates']['rates']['rateDetails']['isAHoliday']) {
 
+          obj['grossMargin'] = obj['dates']['rates']['rateDetails']['marginWE'];
+        } else {
+          obj['grossMargin'] = obj['dates']['rates']['rateDetails']['margin'];
+        }
+        String shiftDateTime = deriveShiftTime(obj['dates']['rates']['rateDetails']['shiftCode'],
+           obj['dates']['rates']['rateDetails']['calcType'],
+           obj['dates']['rates']['rateDetails']['startTime'],
+            obj['dates']['rates']['rateDetails']['endTime'],
+            obj['dates']['rates']['rateDetails']['meals']);
+        obj['shiftDateTime'] = shiftDateTime;
+        debugPrint('line 91: wrko: $fdts $shiftDateTime ${obj['grossMargin']}');
         listOfWorkOrders.add(obj);
        debugPrint('line 3110: $obj');
       }
