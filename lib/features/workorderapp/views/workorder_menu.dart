@@ -99,9 +99,9 @@ class _HCPMenuState extends State<WorkOrderMenu> {
     fontSize = 18 / h;
     debugPrint('line 406: $fontSize $h');
     bool flagHasSnackbar = false;
-    screenWidth = 1350;
-    if (screenWidth < 1350) {
-      double dif = 1350 - screenWidth;
+    screenWidth = 1500;
+    if (screenWidth < 1500) {
+      double dif = 1500 - screenWidth;
       String title = 'Screen Width';
       String sdif = dif.toStringAsFixed(0);
       description =

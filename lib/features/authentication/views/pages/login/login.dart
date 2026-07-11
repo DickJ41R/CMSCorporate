@@ -251,7 +251,9 @@ class LoginState extends State<Login> {
               dragDevices: {
                 PointerDeviceKind.touch,
                 PointerDeviceKind.mouse, // Ensures mouse-drag resizing still works flawlessly
+                PointerDeviceKind.trackpad,
                 PointerDeviceKind.stylus,
+
               }),
           child: SafeArea(
         child: Center(

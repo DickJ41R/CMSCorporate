@@ -43,10 +43,10 @@ class WorkOrderClass {
         clientName = json['clientName'] as String,
         departmentName = json['departmentName'] as String,
         state = json['state'] as String,
-        hcpName = json['hcpName'] as String,
+        hcpName = json['hcpName'] == null ? "Shift is Open" : json['hcpName'] as String,
         shiftDate = json['shiftDate'] as String,
         shiftDateTime = json['shiftDateTime'] as String,
-        disciplineName = json['disciplineName'],
+        disciplineName = json['disciplineName'] as String,
         grossMargin = json['grossMargin'] as String;
 
   Map<String, dynamic> toJson() => {

@@ -92,10 +92,33 @@ class _WorkOrderStreamScreenState extends State<WorkOrderStreamScreen> {
        if (wrk!.length < _rowsPerPage!) {
          _rowsPerPage = wrk!.length;
        }
-       debugPrint('line 80');
+     //  debugPrint('line 80 ${wrk!.length}' );
+       List<String>listOfShiftStatus = ['Open','Canceled','Closed','Scheduled'];
+       List<String>listOfShiftStatusIds = ['O','C','S','S'];
        for (int i=0; i < wrk!.length; i++) {
          Map<String, dynamic>obj = wrk![i];
-         _workOrders.add(WorkOrderClass.fromJson(obj));
+           if (obj['statusId'] == null) {
+              int index = listOfShiftStatus.indexOf(obj['shiftStatus']);
+              if (index == -1) {
+                  obj['statusId'] = 'O';
+              } else {
+                obj['statusId'] = listOfShiftStatusIds[index];
+              }
+            }
+         Map<String,dynamic> tbj = {
+           'orderId': obj['orderId'],
+           'statusId': obj['statusId'] == null ? 'O' : obj['statusId'],
+           'clientName': obj['clientName'],
+           'departmentName': obj['departmentName'],
+           'state': obj['state'],
+           'hcpName': obj['hcpName'],
+           'shiftDate': obj['shiftDate'],
+           'shiftDateTime': obj['shiftDateTime'],
+           'disciplineName': obj['disciplineName'],
+           'grossMargin' : obj['grossMargin'],
+         };
+         debugPrint('line 98: $tbj');
+         _workOrders.add(WorkOrderClass.fromJson(tbj));
        }
        authServices.workOrders = _workOrders;
        authServices.holdClm = wrk!;
@@ -103,8 +126,8 @@ class _WorkOrderStreamScreenState extends State<WorkOrderStreamScreen> {
       // debugPrint('line 85: $wrk');
       return wrk!;
     } catch (e) {
-      debugPrint('line 87: ${e.toString()}');
-      throw Exception('line 124 Error getting workOrder data');
+      debugPrint('line 106: ${e.toString()}');
+      throw Exception('line 107 Error getting workOrder data');
     }
   }
 
@@ -317,14 +340,14 @@ class _WorkOrderStreamScreenState extends State<WorkOrderStreamScreen> {
                         allowEditing: false,
                         allowFiltering: true,
                         allowSorting: true,
-                        maximumWidth: 80,
-                        width: 80,
+                        maximumWidth: 130,
+                        width: 130,
                         label: Container(
-                            width: 80,
+                            width: 130,
                             height: 32,
-                            padding: EdgeInsets.all(16.0),
+                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
                             alignment: Alignment.center,
-                            child: Text('ID',
+                            child: Text('Order ID',
                                 style: TextStyle(
                                   fontSize: fontSize,
                                 )))),
@@ -338,7 +361,6 @@ class _WorkOrderStreamScreenState extends State<WorkOrderStreamScreen> {
                         label: Container(
                             width: 30,
                             height: 32,
-                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
                             alignment: Alignment.center,
                             child: Text('Sts',
                                 style: TextStyle(
@@ -348,11 +370,11 @@ class _WorkOrderStreamScreenState extends State<WorkOrderStreamScreen> {
                         allowFiltering: true,
                         columnName: 'clientName',
                         allowSorting: true,
-                        width: 300,
-                        maximumWidth: 300,
+                        width: 200,
+                        maximumWidth: 200,
                         allowEditing: false,
                         label: Container(
-                            width: 300,
+                            width: 200,
                             height: 32,
                             padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
                             alignment: Alignment.center,
@@ -379,44 +401,42 @@ class _WorkOrderStreamScreenState extends State<WorkOrderStreamScreen> {
                         allowEditing: false,
                         allowSorting: false,
                         allowFiltering: false,
-                        width: 130,
-                        maximumWidth: 130,
+                        width: 60,
+                        maximumWidth: 60,
                         label: Container(
-                            width: 130,
+                            width: 60,
                             height: 32,
-                            padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
-                            alignment: Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: Text('Ste',
                                 style: TextStyle(
                                   fontSize: fontSize,
-                                  overflow: TextOverflow.ellipsis,
                                 )))),
                     GridColumn(
                         columnName: 'hcpName',
                         allowEditing: false,
                         allowSorting: false,
                         allowFiltering: false,
-                        width: 80,
-                        maximumWidth: 80,
+                        width: 200,
+                        maximumWidth: 200,
                         label: Container(
-                            width: 80,
+                            width: 200,
                             height: 32,
                             padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
                             alignment: Alignment.center,
-                            child: Text('HCP Name',
+                            child: Text('Employee',
                                 style: TextStyle(
                                   overflow: TextOverflow.ellipsis,
-                                  fontSize: fontSize,
+                                  fontSize: fontSize
                                 )))),
                     GridColumn(
                         allowFiltering: false,
                         allowSorting: false,
                         columnName: 'shiftDate',
                         allowEditing: false,
-                        width: 100,
-                        maximumWidth: 100,
+                        width: 130,
+                        maximumWidth: 130,
                         label: Container(
-                            width: 100,
+                            width: 130,
                             height: 32,
                             padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
                             alignment: Alignment.center,
@@ -426,18 +446,18 @@ class _WorkOrderStreamScreenState extends State<WorkOrderStreamScreen> {
                                   fontSize: fontSize,
                                 )))),
                     GridColumn(
-                        columnName: 'shiftDateTIme',
+                        columnName: 'shiftDateTime',
                         allowEditing: false,
                         allowSorting: false,
                         allowFiltering: false,
-                        width: 40,
-                        maximumWidth: 40,
+                        width: 200,
+                        maximumWidth: 200,
                         label: Container(
-                            width: 40,
+                            width: 200,
                             height: 32,
                             padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
                             alignment: Alignment.center,
-                            child: Text('Shift & Time',
+                            child: Text('Date & Time',
                                 style: TextStyle(
                                   fontSize: fontSize,
                                 )))),
@@ -446,10 +466,10 @@ class _WorkOrderStreamScreenState extends State<WorkOrderStreamScreen> {
                         allowEditing: false,
                         allowFiltering: false,
                         allowSorting: false,
-                        width: 130,
-                        maximumWidth: 130,
+                        width: 60,
+                        maximumWidth: 60,
                         label: Container(
-                            width: 130,
+                            width: 60,
                             height: 32,
                             padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
                             alignment: Alignment.center,
@@ -463,10 +483,10 @@ class _WorkOrderStreamScreenState extends State<WorkOrderStreamScreen> {
                         allowEditing: false,
                         allowSorting: false,
                         allowFiltering: false,
-                        width: 130,
-                        maximumWidth: 130,
+                        width: 100,
+                        maximumWidth: 100,
                         label: Container(
-                            width: 130,
+                            width: 100,
                             height: 32,
                             padding: EdgeInsets.fromLTRB(2, 0, 0, 2),
                             alignment: Alignment.center,
@@ -494,7 +514,7 @@ class _WorkOrderStreamScreenState extends State<WorkOrderStreamScreen> {
                     int currentId = -1;
                     if (colIndex != -1) {
                       // Get and increment the current ID value.
-                      currentId = int.parse(cells[colIndex].value);
+                      currentId = int.parse(cells[colIndex].value.toString());
                       debugPrint('line 351: $currentId');
                     }
                     final int colIndex2 = cells

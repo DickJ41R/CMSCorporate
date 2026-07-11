@@ -474,7 +474,8 @@ void resetDataElements() {
       dragDevices: {
         PointerDeviceKind.touch,
         PointerDeviceKind.mouse, // Ensures mouse-drag resizing still works flawlessly
-        PointerDeviceKind.stylus,
+        PointerDeviceKind.trackpad,
+
       }),
       child: Padding(
         padding: const EdgeInsets.all(4.0),
@@ -849,7 +850,16 @@ void resetDataElements() {
                 ),
 
                 SizedBox(height: 10),
-                Container(
+                ScrollConfiguration(
+// 1. Target the specific area containing your split view
+                  behavior: ScrollConfiguration.of(context).copyWith(
+                  dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse,
+                    // Ensures mouse-drag resizing still works flawlessly
+                    PointerDeviceKind.trackpad,
+                  }),
+                  child: Container(
                   padding: EdgeInsets.only(left: 10),
                   height:120,
                   width: 285,
@@ -869,6 +879,7 @@ void resetDataElements() {
                     decoration: InputDecoration(label: Text('Search Term(s)')),
                   ),
                 ),
+              ),
                 Container(
                     height: 40,
                     width:  250,

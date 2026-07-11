@@ -287,11 +287,11 @@ class WorkOrder {
 
   final String addressLine1;
   final String? addressLine2;
-  final bool agencyCancelCredit;
+  final String? agencyCancelCredit;
   final double agencyCancelLimit;
   final int asmWorkOrderId;
   final double billDblPlusRate;
-  final double billDblRate;
+  final double? billDblRate;
   final double billHolidayPlusRate;
   final double billHolidayRate;
   final double billMaxPlusRate;
@@ -301,7 +301,7 @@ class WorkOrder {
   final bool bookShift;
   final int branchId;
   final String branchName;
-  final bool burden;
+  final String? burden;
   final String? canceledBy;
   final bool charge;
   final String clientCity;
@@ -313,7 +313,7 @@ class WorkOrder {
   final String clientState;
   final String? clientUserEmail;
   final int clientUserId;
-  final bool contract;
+  final String? contract;
   final String? contractTemplateName;
   final Timestamp createdDate;
   final List<Date>dates;
@@ -326,7 +326,7 @@ class WorkOrder {
   final List<String>disciplineNames;
   final String email;
   final double? facilityCancelCharge;
-  final List<double>?facilityCancelLimit;
+  final List<String>?facilityCancelLimit;
   final bool flagShowPushNotifications;
   final List<String>hcpFcmTokens;
   final int? hcpId;

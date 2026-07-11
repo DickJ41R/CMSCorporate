@@ -76,8 +76,8 @@ class SafeWebScrollBehavior extends MaterialScrollBehavior {
   Set<PointerDeviceKind> get dragDevices => {
     PointerDeviceKind.touch,
     PointerDeviceKind.mouse, // Retains desktop click-and-drag functionality
-    PointerDeviceKind.stylus,
-    PointerDeviceKind.unknown,
+    PointerDeviceKind.trackpad,
+    PointerDeviceKind.stylus
   };
 }
 class MyApp extends StatelessWidget {
