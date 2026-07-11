@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:async';
-import 'package:open_filex/open_filex.dart';
+import 'package:open_app_file/open_app_file.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 // ignore: depend_on_referenced_packages
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
@@ -30,7 +30,7 @@ class SaveFile {
     await file.writeAsBytes(bytes, flush: true);
     if (Platform.isAndroid || Platform.isIOS) {
       //Launch the file (used open_file package)
-      await OpenFilex.open('$path/$fileName');
+      await OpenAppFile.open('$path/$fileName');
     } else if (Platform.isWindows) {
       await Process.run('start', <String>['$path\\$fileName'],
           runInShell: true);

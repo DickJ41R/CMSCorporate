@@ -130,7 +130,7 @@ class ClientPayWorkOrder {
   final int totalHours;
   final double totalPayAmount;
   final double totalBillAmount;
-  final double grossMargin;
+  final String grossMargin;
   final List<String?> registrantSpecialties;
   final String registrantBranchName;
   final String clientFacilityAddressLine1;

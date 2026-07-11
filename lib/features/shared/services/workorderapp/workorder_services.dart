@@ -78,9 +78,9 @@ class WorkOrderServices {
         obj['shiftDate'] = fdts;
         if (obj['dates']['rates']['rateDetails']['isAHoliday']) {
 
-          obj['grossMargin'] = obj['dates']['rates']['rateDetails']['marginWE'];
+          obj['grossMargin'] = (obj['dates']['rates']['rateDetails']['marginWE']).toStringAsFixed(2);
         } else {
-          obj['grossMargin'] = obj['dates']['rates']['rateDetails']['margin'];
+          obj['grossMargin'] = (obj['dates']['rates']['rateDetails']['margin']).toStringAsFixed(2);
         }
         String shiftDateTime = deriveShiftTime(obj['dates']['rates']['rateDetails']['shiftCode'],
            obj['dates']['rates']['rateDetails']['calcType'],
