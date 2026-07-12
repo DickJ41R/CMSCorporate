@@ -231,7 +231,7 @@ class _AnimatedCardState extends State<AnimatedCard>
 
 class VerticalTile extends StatefulWidget {
   final Map<String, dynamic> menuItem;
-  final Map<String, dynamic> arguments;
+  final Map<String, String> arguments;
   const VerticalTile(
       {Key? key, required this.menuItem, required this.arguments})
       : super(key: key);
@@ -243,7 +243,7 @@ class VerticalTile extends StatefulWidget {
 class _VerticalTileState extends State<VerticalTile> {
   bool isSelected = false;
   Map<String, dynamic>? menuItem;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   String routeName = '';
   @override
   void initState() {
@@ -301,7 +301,7 @@ class _VerticalTileState extends State<VerticalTile> {
 
 class VerticalTile1 extends StatefulWidget {
   final Map<String, dynamic> menuItem;
-  final Map<String, dynamic> arguments;
+  final Map<String, String> arguments;
   const VerticalTile1(
       {Key? key, required this.menuItem, required this.arguments})
       : super(key: key);
@@ -313,7 +313,7 @@ class VerticalTile1 extends StatefulWidget {
 class _VerticalTile1State extends State<VerticalTile1> {
   bool isSelected = false;
   Map<String, dynamic>? menuItem;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   String routeName = '';
   @override
   void initState() {

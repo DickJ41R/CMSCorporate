@@ -12,7 +12,7 @@ class LandingPageWeb extends StatefulWidget {
   State<LandingPageWeb> createState() => _LandingPageWebState();
 }
 
-Map<String, dynamic>? csmBranchUserMap;
+Map<String, String>? csmBranchUserMap;
 
 class _LandingPageWebState extends State<LandingPageWeb> {
   String? localTitle;
@@ -261,13 +261,13 @@ void resetDataElements() {
     dropDownBranchEntries = [];
      debugPrint('line 261 ${authServices.corporateOrBranch}');
     if (authServices.corporateOrBranch == 'Corporate') {
-      Map<String, dynamic> mp = {"branchId": 0, "branchName": "Corporate"};
+      Map<String, String> mp = {"branchId": '0', "branchName": "Corporate"};
       DropdownMenuEntry me = DropdownMenuEntry(
           value: '(' +
               mp['branchId'].toString() +
               ') ' +
               mp['branchName'].toString(),
-          label: mp['branchName']);
+          label: mp['branchName']!);
       dropDownBranchEntries.add(me);
 
     }

@@ -5,18 +5,18 @@ import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import "package:cloud_firestore/cloud_firestore.dart";
 
-class WorkOrderProfilePage extends StatefulWidget {
+class WorkOrderDateDataPage extends StatefulWidget {
   final Map<String, String> args;
-  const WorkOrderProfilePage({super.key, required this.args});
+  const WorkOrderDateDataPage({super.key, required this.args});
 
   @override
-  State<WorkOrderProfilePage> createState() => _WorkOrderProfilePageState();
+  State<WorkOrderDateDataPage> createState() => _WorkOrderDateDataPageState();
 }
 
-class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
+class _WorkOrderDateDataPageState extends State<WorkOrderDateDataPage> {
   final formKey = GlobalKey<FormState>();
   WorkOrderServices workOrderServices = WorkOrderServices();
-  Map<String, String>? arguments;
+  Map<String, dynamic>? arguments;
   Map<String, dynamic> clientMap = {};
   UtilitiesServices utilityServices = UtilitiesServices();
 
@@ -25,24 +25,30 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
 //section 1
   TextEditingController orderIdController = TextEditingController();
   TextEditingController clientNameController = TextEditingController();
-  TextEditingController branchNameController = TextEditingController();
   TextEditingController departmentNameController = TextEditingController();
-  TextEditingController hcpNameController =  TextEditingController();
-  TextEditingController disciplineNameController = TextEditingController();
-  TextEditingController statusIdController = TextEditingController();
-  TextEditingController orientationController = TextEditingController();
-  TextEditingController schedulerNameController = TextEditingController();
+  TextEditingController departmentNumberController = TextEditingController();
+  TextEditingController disciplineCodesController =  TextEditingController();
+  TextEditingController createdDateController = TextEditingController();
+  TextEditingController dayValueController = TextEditingController();
+  TextEditingController endTimeController = TextEditingController();
+  TextEditingController holidayController = TextEditingController();
+  TextEditingController marginController = TextEditingController();
+  TextEditingController marginWEController = TextEditingController();
+  TextEditingController overrideBillModifiersController = TextEditingController();
+  TextEditingController overridePayModifiersController = TextEditingController();
+  TextEditingController payOTRateController = TextEditingController();
   TextEditingController rateTypeController = TextEditingController();
-  TextEditingController shiftCanceledController = TextEditingController();
-  TextEditingController shiftCanceledActionDateController = TextEditingController();
-  TextEditingController shiftCanceledByNameController = TextEditingController();
+  TextEditingController shiftCodeController = TextEditingController();
+  TextEditingController shiftCountController = TextEditingController();
   TextEditingController shiftDateController = TextEditingController();
-  TextEditingController shiftDateTimeController = TextEditingController();
-
+  TextEditingController shiftSequenceController = TextEditingController();
+  TextEditingController startTimeController = TextEditingController();
+  TextEditingController statusIdController = TextEditingController();
+  TextEditingController weekEndController = TextEditingController();
 
   int? orderId;
   Future<void> getWorkOrderMapX() async {
-      await getWorkOrderMap();
+    await getWorkOrderMap();
 
   }
 
@@ -51,43 +57,33 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
 
     Map<String, dynamic>? wrk = await workOrderServices.getWorkOrder(orderId!);
     //   debugPrint('line 177: ${cli!}');
+    debugPrint('line 60: ${wrk!['dates']}');
     orderIdController.text = wrk!['orderId'].toString();
     clientNameController.text = wrk['clientName'];
-    branchNameController.text = wrk['branchName'];
+    departmentNumberController.text = wrk['departmentNumber'];
     departmentNameController.text =wrk['departmentName'];
-    disciplineNameController.text = wrk['disciplineName'];
-    hcpNameController.text = wrk['hcpName'];
-    statusIdController.text = wrk['statusId'];
-    orientationController.text = wrk['orientation'] == false ? 'false' : 'true';
-    rateTypeController.text = wrk['rateType'];
-    schedulerNameController.text =
-    wrk['schedulerName'] == null ? "" : wrk['schedulerName'];
-    statusIdController.text = wrk['statusId'];
-    shiftCanceledController.text = wrk['canceledBy']  == false ? 'false' : 'true';
-    shiftCanceledByNameController.text = wrk['shiftCanceledByName'].toString();
-    shiftDateController.text = workOrderServices.getFormattedDate(wrk['shiftDate']);
-    // Timestamp sdts = wrk['dates']['rates']['rateDetails']['shiftDate'];
-    // DateTime dts = sdts.toDate();
-    // String fdts = workOrderServices.getFormattedDate(dts);
-    // String shiftDateTime = workOrderServices.deriveShiftTime(wrk['dates']['rates']['rateDetails']['shiftCode'],
-    //     wrk['dates']['rates']['rateDetails']['calcType'],
-    //     wrk['dates']['rates']['rateDetails']['startTime'],
-    //     wrk['dates']['rates']['rateDetails']['endTime'],
-    //     wrk['dates']['rates']['rateDetails']['meals']);
-    shiftDateTimeController.text = wrk['shiftDate'];
-        // if (wrk['shitCanceledActionDate'] == null) {
-        //   shiftCanceledActionDateController.text = '01/01/1970';
-        // } else {
-        //   sdts = wrk['shitCanceledActionDate'];
-        //   dts = sdts.toDate();
-        //   fdts = workOrderServices.getFormattedDate(dts);
-        //   shiftCanceledActionDateController.text = fdts;
-        // }
-       debugPrint('line 87: exiting get workorder map $wrk');
-        int x = 0;
-        if (x == 0) {
-          throw Exception('line 89 debug');
-        }
+    shiftCodeController.text = wrk['dates']['shiftDateInfo']['shiftCode'];
+    shiftDateController.text =wrk['shiftDate'];
+    startTimeController.text = wrk['dates']['shiftDateInfo']['startTime'];
+    endTimeController.text = wrk['dates']['shiftDateInfo']['endTime'];
+    rateTypeController.text = wrk['dates']['shiftDateInfo']['rateType'];
+    statusIdController.text = wrk['dates']['shiftDateInfo']['statusId'];
+    marginController.text = wrk['dates']['shiftDateInfo']['margin'].toStringAsFixed(2);
+    marginWEController.text = wrk['dates']['shiftDateInfo']['marginWE'].toStringAsFixed(2);
+    overrideBillModifiersController.text = wrk['dates']['shiftDateInfo']['overrideBillModifiers'] == null ? 'false' :
+      wrk['dates']['shiftDateInfo']['overrideBillModifiers'].toString();
+    overrideBillModifiersController.text = wrk['dates']['shiftDateInfo']['overridePayModifiers'] == null ? 'false' :
+    wrk['dates']['shiftDateInfo']['overridePayModifiers'].toString();
+    payOTRateController.text = wrk['dates']['shiftDateInfo']['payOTRate'] == null ? '1.5' :
+      wrk['dates']['shiftDateInfo']['payOTRate'].toString();
+    shiftCountController.text = wrk['dates']['shiftDateInfo']['shiftCount'].toString();
+    shiftSequenceController.text = wrk['dates']['shiftDateInfo']['shiftSequence'].toString();
+    holidayController.text = wrk['dates']['shiftDateInfo']['holiday'] == null ? 'false' :
+    wrk['dates']['shiftDateInfo']['holiday'].toString();
+    overrideBillModifiersController.text = wrk['dates']['shiftDateInfo']['weekEnd'] == null ? 'false' :
+    wrk['dates']['shiftDateInfo']['weekEnd'].toString();
+
+    debugPrint('line 87: exiting get workorder map $wrk');
   }
 
   @override
@@ -96,19 +92,27 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
     //section 1
     orderIdController.dispose();
     clientNameController.dispose();
-    branchNameController.dispose();
     departmentNameController.dispose();
-    hcpNameController.dispose();
-    disciplineNameController.dispose();
-    statusIdController.dispose();
-    orientationController.dispose;
-    schedulerNameController.dispose();
+    departmentNumberController.dispose();
+    disciplineCodesController.dispose();
+    createdDateController.dispose();
+    dayValueController.dispose();
+    endTimeController.dispose();
+    holidayController.dispose();
+    marginController.dispose();
+    marginWEController.dispose();
+    overrideBillModifiersController.dispose();
+    overridePayModifiersController.dispose();
+    payOTRateController.dispose();
     rateTypeController.dispose();
-    shiftCanceledController.dispose();
-    shiftCanceledByNameController.dispose();
+    shiftCodeController.dispose();
+    shiftCountController.dispose();
     shiftDateController.dispose();
-    shiftDateTimeController.dispose();
-    shiftCanceledActionDateController.dispose();
+    shiftSequenceController.dispose();
+    startTimeController.dispose();
+    statusIdController.dispose();
+    weekEndController.dispose();
+
   }
 
   @override
@@ -116,8 +120,8 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
     super.initState();
     arguments = widget.args;
     debugPrint('line 113 ${arguments!}');
-    orderId = int.parse(arguments!['workOrderId']!);
-    localTitle = 'WorkOrder Profile';
+    orderId = int.parse(arguments!['workOrderId'].toString());
+    localTitle = 'WorkOrder Date Data';
     debugPrint('line 118 arguments $arguments');
     getWorkOrderMapX();
   }
@@ -141,7 +145,7 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title = 'WorkOrder Profile Form ';
+    final title = 'WorkOrder Date Data Form ';
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     debugPrint('line 115: $screenWidth $screenHeight');
@@ -174,11 +178,11 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
-                            controller: orderIdController,
-                            maxLength: 10,
-                            decoration:
-                            InputDecoration(label: Text('Order Id')),
-                            ),
+                          controller: orderIdController,
+                          maxLength: 10,
+                          decoration:
+                          InputDecoration(label: Text('Order Id')),
+                        ),
                       ),
                       VerticalDivider(
                         thickness: 2,
@@ -206,10 +210,10 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
-                            controller: branchNameController,
+                            controller: departmentNameController,
                             maxLength: 5,
                             decoration:
-                            InputDecoration(label: Text('Branch Name')),
+                            InputDecoration(label: Text('Department Name')),
                             validator: (value) {
                               return null;
                             }),
@@ -223,10 +227,10 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
-                            controller: disciplineNameController,
+                            controller: departmentNumberController,
                             maxLength: 10,
                             decoration: InputDecoration(
-                                label: Text('Discipline')),
+                                label: Text('Dept Number')),
                             validator: (value) {
                               return null;
                             }),
@@ -244,13 +248,10 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
-                            style: TextStyle(
-                              fontSize: smallFontSize,
-                            ),
-                            controller: departmentNameController,
-                            maxLength: 200,
+                            controller: shiftCodeController,
+                            maxLength: 80,
                             decoration:
-                            InputDecoration(label: Text('Department Name')),
+                            InputDecoration(label: Text('Shift')),
                             validator: (value) {
                               return null;
                             }),
@@ -264,10 +265,10 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
-                            controller: hcpNameController,
+                            controller: shiftDateController,
                             maxLength: 100,
                             decoration: InputDecoration(
-                                label: Text('HCP Name')),
+                                label: Text('Shift Date')),
                             validator: (value) {
                               return null;
                             }),
@@ -281,10 +282,10 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
-                            controller: orientationController,
+                            controller: startTimeController,
                             maxLength: 40,
                             decoration: InputDecoration(
-                                label: Text('Orientation')),
+                                label: Text('Start Time')),
                             validator: (value) {
                               return null;
                             }),
@@ -298,10 +299,10 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
-                            controller: rateTypeController,
+                            controller: endTimeController,
                             maxLength: 10,
                             decoration: InputDecoration(
-                                label: Text('Rate Type')),
+                                label: Text('End Time')),
                             validator: (value) {
                               return null;
                             }),
@@ -335,10 +336,10 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
-                            controller: schedulerNameController,
+                            controller: rateTypeController,
                             maxLength: 20,
                             decoration:
-                            InputDecoration(label: Text('Scheduler Name')),
+                            InputDecoration(label: Text('Rate Type')),
                             validator: (value) {
                               return null;
                             }),
@@ -352,27 +353,27 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
                         height: 50,
                         width: 300,
                         child: TextFormField(
-                            controller: shiftCanceledController,
-                            maxLength: 20,
-                            decoration:
-                            InputDecoration(label: Text('Shift Canceled')),
-                            validator: (value) {
-                              return null;
-                            }),
-                      ),
-                      VerticalDivider(
-                        thickness: 2,
-                        color: Colors.black87,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(left: 10),
-                        height: 50,
-                        width: 300,
-                        child: TextFormField(
-                            controller: shiftCanceledActionDateController,
+                            controller: marginController,
                             maxLength: 10,
                             decoration:
-                            InputDecoration(label: Text('Shift Canceled Date')),
+                            InputDecoration(label: Text('Margin')),
+                            validator: (value) {
+                              return null;
+                            }),
+                      ),
+                      VerticalDivider(
+                        thickness: 2,
+                        color: Colors.black87,
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        height: 50,
+                        width: 300,
+                        child: TextFormField(
+                            controller: marginWEController,
+                            maxLength: 10,
+                            decoration:
+                            InputDecoration(label: Text('Margin WE')),
                             validator: (value) {
                               return null;
                             }),
@@ -380,8 +381,132 @@ class _WorkOrderProfilePageState extends State<WorkOrderProfilePage> {
                     ],
                   ),
                 ),
-                //row 31
-                SizedBox(width: 10),
+                //row 4
+                IntrinsicHeight(
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        height: 50,
+                        width: 300,
+                        child: TextFormField(
+                            controller: overrideBillModifiersController,
+                            maxLength: 20,
+                            decoration:
+                            InputDecoration(label: Text('Bill Override')),
+                            validator: (value) {
+                              return null;
+                            }),
+                      ),
+                      VerticalDivider(
+                        thickness: 2,
+                        color: Colors.black87,
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        height: 50,
+                        width: 300,
+                        child: TextFormField(
+                            controller: overridePayModifiersController,
+                            maxLength: 20,
+                            decoration:
+                            InputDecoration(label: Text('Override Pay')),
+                            validator: (value) {
+                              return null;
+                            }),
+                      ),
+                      VerticalDivider(
+                        thickness: 2,
+                        color: Colors.black87,
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        height: 50,
+                        width: 300,
+                        child: TextFormField(
+                            controller: payOTRateController,
+                            maxLength: 10,
+                            decoration:
+                            InputDecoration(label: Text('Pay OT Rate')),
+                            validator: (value) {
+                              return null;
+                            }),
+                      ),
+                      VerticalDivider(
+                        thickness: 2,
+                        color: Colors.black87,
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        height: 50,
+                        width: 300,
+                        child: TextFormField(
+                            controller: shiftCountController,
+                            maxLength: 10,
+                            decoration:
+                            InputDecoration(label: Text('Shift Count')),
+                            validator: (value) {
+                              return null;
+                            }),
+                      ),
+                    ],
+                  ),
+                ),
+                //row 5
+                IntrinsicHeight(
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        height: 50,
+                        width: 300,
+                        child: TextFormField(
+                            controller: shiftSequenceController,
+                            maxLength: 20,
+                            decoration:
+                            InputDecoration(label: Text('Sequence')),
+                            validator: (value) {
+                              return null;
+                            }),
+                      ),
+                      VerticalDivider(
+                        thickness: 2,
+                        color: Colors.black87,
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        height: 50,
+                        width: 300,
+                        child: TextFormField(
+                            controller: holidayController,
+                            maxLength: 20,
+                            decoration:
+                            InputDecoration(label: Text('Holiday')),
+                            validator: (value) {
+                              return null;
+                            }),
+                      ),
+                      VerticalDivider(
+                        thickness: 2,
+                        color: Colors.black87,
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        height: 50,
+                        width: 300,
+                        child: TextFormField(
+                            controller: weekEndController,
+                            maxLength: 10,
+                            decoration:
+                            InputDecoration(label: Text('Pay OT Rate')),
+                            validator: (value) {
+                              return null;
+                            }),
+                      ),
+                    ],
+                  ),
+                ),
+
                 SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {

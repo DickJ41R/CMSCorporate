@@ -6,7 +6,7 @@ import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'dart:ui';
 
 class ClientMenu extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientMenu({super.key, required this.args});
 
   @override
@@ -190,7 +190,7 @@ class _ClientMenuState extends State<ClientMenu> {
 
   int showRightSide = -1;
   List<Map<String, dynamic>> genericMenu1 = [];
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   void _setMenus() {
     for (int i = 0; i < clientMenus.length; i++) {
       // String st = userBranches[i]['branchName'];
@@ -316,7 +316,7 @@ class _ClientMenuState extends State<ClientMenu> {
                 color: Colors.black,
               ),
               onPressed: () {
-                final navigator = Navigator.of(context)
+                Navigator.of(context)
                     .pushNamed(landingPageWeb, arguments: arguments!);
               }),
         ),

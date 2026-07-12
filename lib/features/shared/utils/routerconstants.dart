@@ -65,3 +65,8 @@ const String hcpScheduledList = '/hcpScheduledListSchedulingPage';
 //workorder
 const String workOrderPage = '/workOrderstreamscreen';
 const String workOrderMenu = '/workOrderMenu';
+const String workOrderProfilePage = '/workOrderProfilePage';
+const String workOrderDateDataPage = '/workOrderDateDataPage';
+const String workOrderRateDataPage = '/workOrderRateDataPage';
+const String workOrderRateDetailsDataPage = '/workOrderRateDetailsDataPage';
+

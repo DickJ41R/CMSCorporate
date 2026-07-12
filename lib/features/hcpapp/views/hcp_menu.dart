@@ -4,7 +4,7 @@ import 'package:cms_web/features/shared/views/taskview.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'dart:ui';
 class HCPMenu extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const HCPMenu({super.key, required this.args});
 
   @override
@@ -166,7 +166,7 @@ class _HCPMenuState extends State<HCPMenu> {
 
   int showRightSide = -1;
   List<Map<String, dynamic>> genericMenu1 = [];
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   void _setMenus() {
     for (int i = 0; i < hcpMenus.length; i++) {
       // String st = userBranches[i]['branchName'];

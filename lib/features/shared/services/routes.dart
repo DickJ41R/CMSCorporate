@@ -48,10 +48,12 @@ import 'package:cms_web/features/hcpapp/views/scheduling/show_hcp_payment_detail
 import 'package:cms_web/features/shared/widgets/hcp_show_payment_pdf.dart';
 import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_schedule_view.dart';
 import 'package:cms_web/features/workorderapp/views/workorder_menu.dart';
+import 'package:cms_web/features/workorderapp/views/workorder_profile_page.dart';
+import 'package:cms_web/features/workorderapp/views/workorder_date_data_page.dart';
+import 'package:cms_web/features/workorderapp/views/workorder_rate_data_page.dart';
+import 'package:cms_web/features/workorderapp/views/workorder_rate_details_data_page.dart';
 
-import 'package:cms_web/features/shared/views/landing_page_web.dart';
 
-import 'package:cms_web/features/hcpapp/views/scheduling/process_hcp_show_confirmed_shifts.dart';
 import 'package:cms_web/features/shared/widgets/show_hcp_document_pdf.dart';
 class MyRoutes {
   //AuthService authService = AuthService();
@@ -75,96 +77,96 @@ class MyRoutes {
         return MaterialPageRoute(
             builder: (context) => ClientStreamScreen(args: mp));
       case hcprofessionalPage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => HCProfessionalStreamScreen(args: mp));
       case clientMenu:
         debugPrint('line 67 client menu');
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(builder: (context) => ClientMenu(args: mp));
       case clientProfilePage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientProfilePage(args: mp));
       case clientUserProfilePage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientUserProfilePage(args: mp));
       case clientAddressProfilePage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientAddressProfilePage(args: mp));
       case clientContactProfilePage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientContactProfilePage(args: mp));
       case clientCreditProfilePage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientCreditProfilePage(args: mp));
       case clientDepartmentProfilePage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientDepartmentProfilePage(args: mp));
       case clientCredentialsProfilePage:
         debugPrint('line 83 clientcredentialsprofilepage');
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ProcessClientRequestSchedule(args: mp));
       case clientCannotBeScheduledProfilePage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientCannotBeScheduledProfilePage(args: mp));
 
       //scheduling
       case clientSchedulingMenu:
         debugPrint('line 105: cancel shift');
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(builder: (context) => ClientMenu(args: mp));
       case clientCancelShiftsSchedulingPage:
 
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         debugPrint('line 105: cancel shift $mp');
         return MaterialPageRoute(
             builder: (context) => ClientCancelShiftsSchedulingPage(args: mp));
       case clientRepublishShiftsSchedulingPage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) =>
                 ClientRepublishShiftsSchedulingPage(args: mp));
       case clientScheduleShiftsSchedulingPage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         print('line 136 $mp');
         return MaterialPageRoute(
             builder: (context) => ProcessClientRequestSchedule(args: mp));
        // case clientConfirmShiftsSchedulingPage:
-       //   Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+       //   Map<String, String> mp = settings.arguments as Map<String, String>;
        //   return MaterialPageRoute(
        //       builder: (context) => ClientConfirmShiftsSchedulingPage(args: mp));
       case clientListScheduleSchedulingPage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientListScheduleSchedulingPage(args: mp));
       case clientScheduleViewSchedulingPage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientScheduleViewSchedulingPage(args: mp));
       case clientDoNotScheduleListSchedulingPage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) =>
                 ClientDoNotScheduleListSchedulingPage(args: mp));
       case clientSetDNSSchedulingPage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientSetDNSSchedulingPage(args: mp));
       case clientTimecardApprovalSchedulingPage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) =>
                 ClientTimecardApprovalSchedulingPage(args: mp));
       case clientMitigateOTSchedulingPage:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ClientMitigateOTSchedulingPage(args: mp));
 
@@ -173,76 +175,92 @@ class MyRoutes {
       //hcp
       case hcpMenu:
         debugPrint('line 67 client menu');
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(builder: (context) => HCPMenu(args: mp));
 
       //ncpprofile
       case hcpProfileData:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPProfileData(args: mp));
       case hcpCredentialData:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPCredential(args: mp));
       case hcpProfileAddressData:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPProfileAddressData(args: mp));
       case hcpProfileContactData:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPProfileContactData(args: mp));
       case hcpProfileSpecialRateData:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPProfileSpecialRateData(args: mp));
       // case hcpProfileHRData:
-      //   Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+      //   Map<String, String> mp = settings.arguments as Map<String, String>;
       //   return MaterialPageRoute(
       //       builder: (context) => ProcessHCPProfileHRData(args: mp));
       // //hcpscheduling
       case hcpProcessAvailableShifts:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPAvailableShifts(args: mp));
       case hcpProcessCancelShifts:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPCancelShifts(args: mp));
       case hcpPaymentData:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPPayments(args: mp));
       case hcpPaymentDetailsData:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ShowHCPPaymentDetailsScreen(args: mp));
       case showPaymentPDF:
         debugPrint('line 219: ${settings.arguments}');
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => HCPShowPaymentPDF (args: mp));
       case hcpScheduledView:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPScheduleView(args: mp));
       case hcpConfirmedShifts:
         debugPrint('line 229: ${settings.arguments}');
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
             builder: (context) => ProcessHCPConfirmedShifts(args: mp));
       case hcpListDNUs:
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(builder: (context) => ProcessHCPDNU(args: mp));
         //workorder
       case workOrderMenu:
-        debugPrint('line 6241client menu');
-        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
+        debugPrint('line 238 workorder menu ${settings.arguments}');
+        Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(builder: (context) => WorkOrderMenu(args: mp));
       case workOrderPage:
         Map<String, String> mp = settings.arguments as Map<String, String>;
         return MaterialPageRoute(builder: (context) => WorkOrderStreamScreen(args:mp));
+      case workOrderProfilePage:
+        debugPrint('line 245 workorderprofilepage ${settings.arguments}');
+        Map<String, String> mp = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(builder: (context) =>  WorkOrderProfilePage(args:mp));
+      case workOrderDateDataPage:
+        debugPrint('line 253 workorderprofilepage');
+        Map<String, String> mp = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(builder: (context) =>  WorkOrderDateDataPage(args:mp));
+      case workOrderRateDataPage:
+        debugPrint('line 257 workorderprofilepage');
+        Map<String, String> mp = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(builder: (context) =>  WorkOrderRateDataPage(args:mp));
+      case workOrderRateDetailsDataPage:
+        debugPrint('line 261 workorderprofilepage');
+        Map<String, String> mp = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(builder: (context) =>  WorkOrderRateDetailsDataPage(args:mp));
       default:
         return MaterialPageRoute(
             builder: (context) => Login(flagGetAPNS: false));

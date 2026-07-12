@@ -3,7 +3,7 @@ import 'package:cms_web/features/shared/views/taskview.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'dart:ui';
 class WorkOrderMenu extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const WorkOrderMenu({super.key, required this.args});
 
   @override
@@ -45,17 +45,42 @@ class _HCPMenuState extends State<WorkOrderMenu> {
   List<Map<String, dynamic>> workOrderMenus = [
     {
       "menuId": 1,
-      "menuName": "Edit Work Order",
-      "menuRouteName": "/editWorkOrderPage",
+      "menuName": "Work Order Profile Menu",
+      "menuRouteName": "/workOrderProfileMenu",
       "index": 0
     },
-
   ];
+  List<Map<String, dynamic>> workOrderProfileMenus = [
+  {
+  "menuId": 1,
+  "menuName": "Work Order Profile Data",
+  "menuRouteName": "/workOrderProfilePage",
+  "index": 0
+},
+ {
+      "menuId": 2,
+      "menuName": "Work Order Date Data",
+      "menuRouteName": "/workOrderDateDataPage",
+      "index": 1
+    },
+    {
+      "menuId": 3,
+      "menuName": "Work Order Rate Data",
+      "menuRouteName": "/workOrderRateDataPage",
+      "index": 2
+    },
+    {
+      "menuId": 4,
+      "menuName": "Work Order Rate Details",
+      "menuRouteName": "/workOrderRateDetailsDataPage",
+      "index": 3
+    },
+];
   String genericTitle = '';
 
   int showRightSide = -1;
   List<Map<String, dynamic>> genericMenu1 = [];
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   void _setMenus() {
     for (int i = 0; i < workOrderMenus.length; i++) {
       // String st = userBranches[i]['branchName'];
@@ -173,7 +198,7 @@ class _HCPMenuState extends State<WorkOrderMenu> {
                                     // trigger focus request on the text field and virtual keyboard will appear
                                     //   afterward. On desktop platforms however, this defaults to true.
                                     requestFocusOnTap: true,
-                                    label: const Text('Work Order Menu'),
+                                    label: const Text('Work Order Profile Menu'),
                                     onSelected: (dynamic value) {
                                       debugPrint('line 258 on selected $value');
                                       selectedMenu = value;
@@ -188,7 +213,7 @@ class _HCPMenuState extends State<WorkOrderMenu> {
                                           //    dropDownMenuOptionEntries = [];
                                           showRightSide = 0;
 
-                                          // genericMenu = clientProfileMenus;
+                                          // genericMenu  work order Menus;
                                           genericTitle = 'Work Order Menu';
                                         }
                                       });
@@ -245,13 +270,13 @@ class _HCPMenuState extends State<WorkOrderMenu> {
                                   child: ListView.builder(
                                     scrollDirection: Axis.vertical,
                                     restorationId: 'WorkOrderListView',
-                                    itemCount: workOrderMenus.length,
+                                    itemCount: workOrderProfileMenus.length,
                                     itemBuilder:
                                         (BuildContext context, int index) {
-                                      final item = workOrderMenus[index];
+                                      final item = workOrderProfileMenus[index];
                                       debugPrint('line 243: $index ${item}');
                                       return VerticalTile(
-                                        menuItem: workOrderMenus[index],
+                                        menuItem: workOrderProfileMenus[index],
                                         arguments: arguments!,
                                       );
                                     },

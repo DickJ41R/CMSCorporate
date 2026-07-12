@@ -540,8 +540,8 @@ class _WorkOrderStreamScreenState extends State<WorkOrderStreamScreen> {
                     // if (smp!.containsKey('workOrderId') == true) {
                     //   authServices.workOrderUserMap = smp;
                     // }
-                    Map<String, dynamic> args = {
-                      'workOrderId': currentId,
+                    Map<String, String> args = {
+                      'workOrderId': currentId.toString(),
                       'workOrderName': workOrderName
                     };
                     Navigator.of(context)

@@ -405,7 +405,7 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
     groupCodeDescriptionController.text =
         cli['groupCodeDescription'] == null ? "" : cli['groupCodeDescription'];
     groupCodeIdController.text =
-        cli['groupCodeId'] == null ? "" : cli['groupCodeId'];
+        cli['groupCodeId'] == null ? "" : cli['groupCodeId'].toString();
     orientationController.text = cli['orientation'] == false ? 'false' : 'true';
     agencyCancelCreditController.text = cli['agencyCancelCredit'] == null
         ? "0.0"

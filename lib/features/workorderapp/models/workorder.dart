@@ -17,8 +17,8 @@ class Date {
   final String departmentName;
   final String departmentNumber;
   final int disciplineCodes;
-  final List<Rate>rates;
-  List<ShiftDateInfo>shiftDateInfo;
+  final Rate rates;
+  ShiftDateInfo shiftDateInfo;
 
 
 }
@@ -85,7 +85,7 @@ class Rate {
   final int rateGroupId;
   final int rateId;
   final String? scheduledRateDetails;
-  List<RateDetail>rateDetails;
+  RateDetail rateDetails;
 
 }
 
@@ -316,7 +316,7 @@ class WorkOrder {
   final String? contract;
   final String? contractTemplateName;
   final Timestamp createdDate;
-  final List<Date>dates;
+  final Date dates;
   final int departmentId;
   final String departmentName;
   final String departmentNumber;

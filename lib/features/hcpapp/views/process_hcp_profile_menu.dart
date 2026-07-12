@@ -15,7 +15,7 @@ import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'package:cms_web/features/shared/views/taskview.dart';
 
 class ProcessHCPProfileMenu extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ProcessHCPProfileMenu({super.key, required this.args});
 
   @override
@@ -191,7 +191,7 @@ class _ProcessHCPProfileMenuState extends State<ProcessHCPProfileMenu> {
 
   int showRightSide = -1;
   List<Map<String, dynamic>> genericMenu1 = [];
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   void _setMenus() {
     for (int i = 0; i < clientMenus.length; i++) {
       // String st = userBranches[i]['branchName'];

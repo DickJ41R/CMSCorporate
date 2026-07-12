@@ -143,16 +143,15 @@ class WorkOrderServices {
                obj!['dates']['rates']['rateDetails']['meals']);
            obj!['shiftDateTime'] = shiftDateTime;
            debugPrint(
-               'line 91: wrko: $fdts $shiftDateTime ${obj!['grossMargin']}');
-           debugPrint('line 3110: $obj');
+               'line 191: wrko: $fdts $shiftDateTime ${obj!['grossMargin']}');
          }
        });
-      debugPrint('line 3123 $obj');
+      debugPrint('line 195 $obj');
       return obj!;
 
     } catch(e) {
-      debugPrint('line 3116 error: ${e.toString()}');
-      throw Exception('line 155 error getting workorder');
+      debugPrint('line 199 error: ${e.toString()}');
+      throw Exception('line 200 error getting workorder');
 
     }
 

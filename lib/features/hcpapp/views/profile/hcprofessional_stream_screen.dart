@@ -521,7 +521,7 @@ List<HCPClass> _paginatedHcps = [];
           int currentId = -1;
           if (colIndex != -1) {
           // Get and increment the current ID value.
-          currentId = int.parse(cells[colIndex].value);
+          currentId = int.parse(cells[colIndex].value.toString());
           debugPrint('line 351: $currentId');
           }
             final int colIndex2 = cells
@@ -534,7 +534,7 @@ List<HCPClass> _paginatedHcps = [];
           }
           for (int i = 0; i < listOfHCPs.length; i++) {
           Map<String, dynamic> lc = listOfHCPs[i];
-          if (currentId == int.parse(lc['hcpId'])) {
+          if (currentId == int.parse(lc['hcpId'].toString())) {
           authServices.hcpMap = lc;
           break;
           }
@@ -547,8 +547,8 @@ List<HCPClass> _paginatedHcps = [];
           // if (smp!.containsKey('clientId') == true) {
           //   authServices.clientUserMap = smp;
           // }
-          Map<String, dynamic> args = {
-          'hcpId': currentId,
+          Map<String, String> args = {
+          'hcpId': currentId.toString(),
           'fullName': hcpName
           };
           Navigator.of(context)

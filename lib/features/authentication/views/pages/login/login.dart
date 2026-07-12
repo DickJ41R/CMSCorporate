@@ -251,7 +251,6 @@ class LoginState extends State<Login> {
               dragDevices: {
                 PointerDeviceKind.touch,
                 PointerDeviceKind.mouse, // Ensures mouse-drag resizing still works flawlessly
-                PointerDeviceKind.trackpad,
                 PointerDeviceKind.stylus,
 
               }),
@@ -713,7 +712,18 @@ class LoginState extends State<Login> {
 
   Widget _signin(BuildContext context, double fontSize) {
     try {
-      return ElevatedButton(
+      return  ScrollConfiguration(
+    // 1. Target the specific area containing your split view
+    behavior: ScrollConfiguration.of(context).copyWith(
+    dragDevices: {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse, // Ensures mouse-drag resizing still works flawlessly
+   // PointerDeviceKind.trackpad,
+    PointerDeviceKind.stylus,
+
+    }),
+     child:
+        ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.blue[100], // const Color(0xff0D6EFD),
             shape: RoundedRectangleBorder(
@@ -779,7 +789,7 @@ class LoginState extends State<Login> {
                 fontWeight: FontWeight.bold,
                 backgroundColor: Colors.blue[100],
                 color: color2,
-              )));
+              ))));
       // ElevatedButton(
       // style: ElevatedButton.styleFrom(
       // backgroundColor:  color1, // const Color(0xff0D6EFD),

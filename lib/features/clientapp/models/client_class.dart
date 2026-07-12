@@ -15,7 +15,7 @@ class ClientClass {
       this.openCredit);
 
   /// Id of an order.
-  final String clientId;
+  final int clientId;
 
   /// status an order.
   final String statusId;
@@ -73,7 +73,7 @@ class ClientClass {
 
   factory ClientClass.fromJson(Map<String, dynamic> json) {
     return ClientClass(
-        json['clientId'] as String,
+        json['clientId'] as int,
         json['statusId'] as String,
         json['clientName'] as String,
         json['branchName'] as String,
@@ -102,7 +102,7 @@ class ClientClass {
       };
 
   ClientClass copyWith(
-      {String? clientId,
+      {int? clientId,
       String? statusId,
       String? clientName,
       String? branchName,

@@ -95,6 +95,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
        debugPrint('line 80');
        for (int i=0; i < clm!.length; i++) {
          Map<String, dynamic>obj = clm![i];
+         obj['clientId'] = int.parse(obj['clientId']);
          _clients.add(ClientClass.fromJson(obj));
        }
        authServices.clients = _clients;
@@ -494,7 +495,7 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                     int currentId = -1;
                     if (colIndex != -1) {
                       // Get and increment the current ID value.
-                      currentId = int.parse(cells[colIndex].value);
+                      currentId = int.parse(cells[colIndex].value.toString());
                       debugPrint('line 351: $currentId');
                     }
                     final int colIndex2 = cells
@@ -520,8 +521,8 @@ class _ClientStreamScreenState extends State<ClientStreamScreen> {
                     // if (smp!.containsKey('clientId') == true) {
                     //   authServices.clientUserMap = smp;
                     // }
-                    Map<String, dynamic> args = {
-                      'clientId': currentId,
+                    Map<String, String> args = {
+                      'clientId': currentId.toString(),
                       'clientName': clientName
                     };
                     Navigator.of(context)
