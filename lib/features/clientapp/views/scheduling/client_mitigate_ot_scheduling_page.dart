@@ -9,9 +9,10 @@ import 'package:cms_web/features/clientapp/models/client_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
+import 'package:cms_web/features/shared/services/clientApp/client_services.dart';
 
 class ClientMitigateOTSchedulingPage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientMitigateOTSchedulingPage({super.key, required this.args});
 
   @override
@@ -22,7 +23,7 @@ class ClientMitigateOTSchedulingPage extends StatefulWidget {
 class _ClientMitigateOTSchedulingPageState
     extends State<ClientMitigateOTSchedulingPage> {
   AuthService authService = AuthService();
-
+  ClientServices clientServices = ClientServices();
   late dynamic currentUser;
 
   late int? clientId;
@@ -107,9 +108,21 @@ class _ClientMitigateOTSchedulingPageState
 
   List<Map<String, dynamic>>? otDates;
   Future<List<Map<String, dynamic>>> getAllItems() async {
-    List<Map<String, dynamic>>? allItemsTemp =
-        await clw.getWorkOrderCampaignsShiftsWithRequiredOT(clientId!);
-    return allItemsTemp!;
+    try {
+      clientMap = await clientServices.getASingleClientById(clientId!);
+      if (clientMap!.containsKey('clientId') == false) {
+        clientId = -1;
+        return [];
+      }
+      startWorkDay = clientMap!['startWeekDay'];
+      userEmail = clientMap!['email'];
+      List<Map<String, dynamic>>? allItemsTemp =
+      await clw.getWorkOrderCampaignsShiftsWithRequiredOT(clientId!);
+      return allItemsTemp!;
+    } catch(e) {
+      clientId = -1;
+      return [];
+    }
   }
 
   void setUpAsyncVariables(int clientId, BuildContext context,
@@ -128,7 +141,7 @@ class _ClientMitigateOTSchedulingPageState
   }
 
   bool? isShiftApproved = false;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   Map<String, dynamic>? clientMap;
   String? userEmail;
   @override
@@ -136,11 +149,8 @@ class _ClientMitigateOTSchedulingPageState
     super.initState();
 
     arguments = widget.args;
-    arguments = widget.args;
-    clientId = arguments!['clientId'];
-    clientMap = authService.clientMap!;
-    startWorkDay = clientMap!['startWeekDay'];
-    userEmail = clientMap!['email'];
+    clientId = int.parse(arguments!['clientId'].toString());
+
     clw = ClientWorkOrderCampaignService();
     htc = HCPTimeCardService();
 

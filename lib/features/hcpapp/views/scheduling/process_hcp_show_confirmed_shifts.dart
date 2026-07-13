@@ -9,7 +9,7 @@ import 'package:cms_web/features/shared/services/hcpapp/hcp_services.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ProcessHCPShowConfirmedShifts extends StatefulWidget {
-  final Map<String,dynamic>args;
+  final Map<String,String>args;
   const ProcessHCPShowConfirmedShifts({super.key,required this.args});
 
   @override
@@ -73,12 +73,12 @@ class _ProcessHCPShowConfirmedShiftsState
   }
   Map<String,dynamic>? currentHCPMap;
   String? fullName;
-  Map<String,dynamic>?arguments;
+  Map<String,String>?arguments;
   @override
   void initState() {
     super.initState();
      arguments = widget.args;
-     hcpId = arguments!['hcpId'];
+     hcpId = int.parse(arguments!['hcpId'].toString());
     currentHCPMap = authService.currentHCPMap;
     gEmail = currentHCPMap!['email'];
   }

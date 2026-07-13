@@ -13,7 +13,7 @@ import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/shared/utils/routerConstants.dart';
 
 class ProcessHCPAvailableShifts extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String,String> args;
   const ProcessHCPAvailableShifts({super.key, required this.args});
 
   @override
@@ -66,13 +66,13 @@ class _ProcessHCPAvailableShiftsState extends State<ProcessHCPAvailableShifts> {
   }
 
   String? fullName;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   @override
   void initState() {
     super.initState();
     // currentUser = ref.read(appServicesNotifierProvider.notifier).fromCurrentUser!;
     arguments = widget.args;
-    hcpId = arguments!['hcpId'];
+    hcpId = int.parse(arguments!['hcpId'].toString());
     getHCPUserX();
     debugPrint('line 80 check');
   }

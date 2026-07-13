@@ -6,7 +6,7 @@ import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'package:flutter/services.dart';
 
 class ClientProfilePage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientProfilePage({super.key, required this.args});
 
   @override
@@ -16,7 +16,7 @@ class ClientProfilePage extends StatefulWidget {
 class _ClientProfilePageState extends State<ClientProfilePage> {
   final formKey = GlobalKey<FormState>();
   ClientServices clientServices = ClientServices();
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   Map<String, dynamic> clientMap = {};
   UtilitiesServices utilityServices = UtilitiesServices();
 
@@ -586,8 +586,8 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
     super.initState();
     arguments = widget.args;
     debugPrint('line 588: ${arguments!}');
-    clientId = arguments!['clientId'];
-    localTitle = 'Client Profile for: ' + arguments!['clientName'];
+    clientId = int.parse(arguments!['clientId'].toString());
+    localTitle = 'Client Profile for: ' + arguments!['clientName'].toString();
     debugPrint('line 72 arguments $arguments');
     getClientMap();
   }
@@ -611,7 +611,7 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title = 'Client Profile Form ' + arguments!['clientName'];
+    final title = 'Client Profile Form ' + arguments!['clientName'].toString();
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     debugPrint('line 115: $screenWidth $screenHeight');

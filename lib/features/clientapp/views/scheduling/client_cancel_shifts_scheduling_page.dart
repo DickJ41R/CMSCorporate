@@ -58,7 +58,7 @@ class ShiftCancel {
 }
 
 class ClientCancelShiftsSchedulingPage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientCancelShiftsSchedulingPage({super.key, required this.args});
 
   @override
@@ -199,12 +199,12 @@ class _ClientCancelShiftsSchedulingPageState
   }
 
   double fts = 14;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
-    clientId = arguments!['clientId'];
+    clientId = int.parse(arguments!['clientId'].toString());
     debugPrint('line 98: ${clientId} ');
   }
 

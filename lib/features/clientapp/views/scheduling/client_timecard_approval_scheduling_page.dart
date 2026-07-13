@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 class ClientTimecardApprovalSchedulingPage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientTimecardApprovalSchedulingPage({super.key, required this.args});
 
   @override

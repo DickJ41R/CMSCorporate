@@ -5,7 +5,7 @@ import 'package:cms_web/features/clientapp//models/client_user.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ClientCreditProfilePage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientCreditProfilePage({super.key, required this.args});
 
   @override
@@ -43,19 +43,19 @@ class _ClientCreditProfilePageState extends State<ClientCreditProfilePage> {
       return clientCredit!;
     } catch (e) {
       debugPrint('line 52 error: $e');
-      throw Exception('line 53 error: $e');
+      return {};
     }
   }
 
   List<Map<String, dynamic>>? agingData;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
 
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
     // clientUser = ref.read(clientUserNotifierProvider.notifier).fromClientUser;
-    clientId = arguments!['clientId'];
+    clientId = int.parse(arguments!['clientId'].toString());
     // try {
     //   setUpAsyncVariables(clientId!,context,clw,htc);
     //   debugPrint('ine 49: $clientId');
@@ -133,8 +133,9 @@ class _ClientCreditProfilePageState extends State<ClientCreditProfilePage> {
                           fontWeight: FontWeight.bold)),
                 ),
               );
-            } else if (snapshot.data == [[]] &&
-                snapshot.connectionState == ConnectionState.done) {
+            } else if ((snapshot.data == [{}] &&
+                snapshot.connectionState == ConnectionState.done) || ( snapshot.connectionState == ConnectionState.done
+               && snapshot.hasData == false)) {
               return Center(
                 child: Container(
                   height: 100,
@@ -149,7 +150,7 @@ class _ClientCreditProfilePageState extends State<ClientCreditProfilePage> {
             } else {
               dynamic ccl = snapshot.data[0]; // cast to List<Marker>
               debugPrint('line 147: $ccl');
-              if (ccl == null) {
+              if (ccl.containsKey('clientId') == false || snapshot.hasData == false) {
                 return Center(
                   child: Container(
                     height: 100,

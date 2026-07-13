@@ -13,7 +13,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../../shared/utils/routerconstants.dart';
 
 class ProcessHCPPayments extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ProcessHCPPayments({super.key, required this.args});
 
   @override
@@ -138,7 +138,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
   double fontSize = 18;
   bool hasData = false;
 
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   DateTime getLastDayOfMonth(DateTime date) {
     // Create a DateTime object for the first day of the *next* month.
     // Dart's DateTime constructor handles month overflow automatically,
@@ -156,7 +156,7 @@ class _ProcessHCPPaymentsState extends State<ProcessHCPPayments> {
     super.initState();
     paymentService = HCPPaymentDataService();
     arguments = widget.args;
-    hcpId = arguments!['hcpId'];
+    hcpId = int.parse(arguments!['hcpId'].toString());
     orgId = dotenv.env['ASM_DB1'];
     if (orgId == null) {
       throw Exception('line 162 orgid is null');

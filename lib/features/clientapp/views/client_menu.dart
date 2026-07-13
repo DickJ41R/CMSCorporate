@@ -81,12 +81,6 @@ class _ClientMenuState extends State<ClientMenu> {
       "menuRouteName": "/clientScheduleShiftsSchedulingPage",
       "index": 2
     },
-    {
-      "menuId": 4,
-      "menuName": "Approve Shifts",
-      "menuRouteName": "/clientApproveShiftsSchedulingPage",
-      "index": 3
-    },
     // {
     //   "menuId": 5,
     //   "menuName": "Confirm Shifts",
@@ -94,28 +88,28 @@ class _ClientMenuState extends State<ClientMenu> {
     //   "index": 4
     // },
     {
-      "menuId": 5,
+      "menuId": 4,
       "menuName": "List Schedule",
       "menuRouteName": "/clientListScheduleSchedulingPage",
+      "index": 3
+    },
+    // {
+    //   "menuId": 5,
+    //   "menuName": "Schedule View",
+    //   "menuRouteName": "/clientScheduleViewSchedulingPage",
+    //   "index": 4
+    // },
+    {
+      "menuId": 5,
+      "menuName": "Do Not Schedule List",
+      "menuRouteName": "/clientDoNotScheduleListSchedulingPage",
       "index": 4
     },
     {
       "menuId": 6,
-      "menuName": "Schedule View",
-      "menuRouteName": "/clientScheduleViewSchedulingPage",
-      "index": 5
-    },
-    {
-      "menuId": 7,
-      "menuName": "Do Not Schedule List",
-      "menuRouteName": "/clientDoNotScheduleListSchedulingPage",
-      "index": 6
-    },
-    {
-      "menuId": 8,
       "menuName": "Mitigate Shift OT",
       "menuRouteName": "/clientMitigateOTSchedulingPage",
-      "index": 7
+      "index": 5
     },
     // {
     //   "menuId": 9,

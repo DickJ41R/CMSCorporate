@@ -13,7 +13,8 @@ final DropDownCodes dropDownCodes = DropDownCodes();
 String globalBranchName = '';
 
 class ProcessClientHCPDocumentation extends StatefulWidget {
-  const ProcessClientHCPDocumentation({super.key});
+  final Map<String, String> args;
+  const ProcessClientHCPDocumentation({super.key,required this.args});
 
   @override
   ProcessClientHCPDocumentationState createState() =>
@@ -113,7 +114,9 @@ class ProcessClientHCPDocumentationState
 
   Future<List<dynamic>> _getHCPs(context) async {
     debugPrint('line 104 ethcps: $clientId');
+
     try {
+
       List<Map<String, dynamic>>? lst =
       await hcpTimecardService.getHCPs(clientId!);
       //  selectedValueHCP = lst[0]['id'];
@@ -206,11 +209,12 @@ class ProcessClientHCPDocumentationState
         ));
     return;
   }
-
+  Map<String,String>? arguments;
   @override
   void initState() {
     super.initState();
-    clientId = authService.currentUser!['clientId'];
+    arguments = widget.args;
+    clientId = int.parse(arguments!['clientId'].toString());
     //  clientId = ref.read(clientUserNotifierProvider.notifier).fromClientId;
     currentUser = authService.currentUser;
     clientUser = currentUser;

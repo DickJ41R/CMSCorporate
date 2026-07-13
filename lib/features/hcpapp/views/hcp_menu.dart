@@ -77,8 +77,8 @@ class _HCPMenuState extends State<HCPMenu> {
     },
     {
       "menuId": 4,
-      "menuName": "Scheduled List",
-      "menuRouteName": "/hcpScheduledListSchedulingPage",
+      "menuName": "Scheduled View",
+      "menuRouteName": "/hcpScheduleViewSchedulingPage",
       "index": 3
     },
     // {

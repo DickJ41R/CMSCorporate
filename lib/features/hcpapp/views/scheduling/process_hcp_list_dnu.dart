@@ -14,7 +14,7 @@ final DropDownCodes dropDownCodes = DropDownCodes();
 String globalBranchName = '';
 
 class ProcessHCPDNU extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ProcessHCPDNU({super.key, required this.args});
 
   @override
@@ -66,14 +66,14 @@ class ProcessClientDNUState extends State<ProcessHCPDNU> {
     }
   }
 
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   @override
   void initState() {
     // _loggedInUser = ref.read(globalUserModel.notifier).state;
     // debugPrint('line 54: $_loggedInUser ${ref.read(globalUserModel.notifier).state}');
     super.initState();
     arguments = widget.args;
-    hcpId = arguments!['hcpId'];
+    hcpId = int.parse(arguments!['hcpId'].toString());
     getHCPUserX();
   }
 

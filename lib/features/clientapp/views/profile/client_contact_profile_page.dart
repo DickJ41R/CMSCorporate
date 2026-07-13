@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
 
 class ClientContactProfilePage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientContactProfilePage({super.key, required this.args});
 
   @override
@@ -20,15 +20,17 @@ class _ClientContactProfilePageState extends State<ClientContactProfilePage> {
   List<Map<String, dynamic>>? menuContacts;
   List<DropdownMenuEntry<dynamic>> dropDownMenuEntries = [];
   List<DropdownMenuEntry<dynamic>> dropDownMenuOptionEntries = [];
-
+  int? clientId;
   Future<List<dynamic>> _getDropDownMenuItems() async {
     debugPrint('line 30 get client contact Dropdownitems: $arguments');
     dropDownMenuEntries = [];
     menuContacts = [];
     try {
+      clientId = int.parse(arguments!['clientId']);
+
       if (listOfContacts.length == 0) {
         listOfContacts = await clientServices
-            .getClientContactDataClass(arguments!['clientId']);
+            .getClientContactDataClass(clientId!);
       }
       debugPrint('line 35: ${listOfContacts!.length}');
 

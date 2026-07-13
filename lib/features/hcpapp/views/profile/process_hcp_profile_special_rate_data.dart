@@ -9,7 +9,7 @@ import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ProcessHCPProfileSpecialRateData extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ProcessHCPProfileSpecialRateData({super.key, required this.args});
 
   @override
@@ -39,9 +39,10 @@ class _ProcessHCPProfileSpecialRateDataState
     dropDownMenuEntries = [];
     menuSpecialRates = [];
     try {
+
       if (listOfSpecialRates!.length == 0) {
         listOfSpecialRates =
-            await hcpServices.getHCPSpecialRates(arguments!['hcpId']);
+            await hcpServices.getHCPSpecialRates(hcpId!);
       }
       debugPrint('line 35: ${listOfSpecialRates!.length}');
       if (listOfSpecialRates!.length > 0) {
@@ -103,13 +104,13 @@ class _ProcessHCPProfileSpecialRateDataState
   }
 
   String? fullName;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
 
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
-    hcpId = arguments!['hcpId'];
+    hcpId = int.parse(arguments!['hcpId'].toString());
   }
 
   void initializeSpecialRateControllers() {

@@ -57,7 +57,7 @@ class RepublishShift {
 }
 
 class ClientRepublishShiftsSchedulingPage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientRepublishShiftsSchedulingPage({super.key, required this.args});
 
   @override
@@ -232,13 +232,13 @@ class _ClientRepublishShiftsSchedulingPageState
   }
 
   double fts = 14;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
 
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
-    clientId = arguments!['clientId'];
+    clientId = int.parse(arguments!['clientId'].toString());
   }
 
   @override

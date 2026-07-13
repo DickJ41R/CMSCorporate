@@ -14,7 +14,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ProcessHCPCancelShifts extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ProcessHCPCancelShifts({super.key, required this.args});
 
   @override
@@ -75,12 +75,12 @@ class _ProcessHCPCancelShiftsState extends State<ProcessHCPCancelShifts> {
   }
   String? cancelReason;
   String? fullName;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
-    hcpId = arguments!['hcpId'];
+    hcpId = int.parse(arguments!['hcpId'].toString());
     debugPrint('line 84 initstate cancel shifts $arguments');
     getRegistrantCancelReasons();
     debugPrint('line 86: $currentUser $clw');

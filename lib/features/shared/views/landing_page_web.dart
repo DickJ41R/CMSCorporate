@@ -873,9 +873,9 @@ void resetDataElements() {
                       fontSize: 18,
                     ),
                     controller: searchTermsController,
-                    maxLength: 280,
+                    maxLength: 200,
                     minLines: 1,
-                    maxLines: 3,
+                    maxLines: 2,
                     decoration: InputDecoration(label: Text('Search Term(s)')),
                   ),
                 ),
@@ -926,7 +926,15 @@ void resetDataElements() {
               color: color1,
               border: Border.all(color: Colors.black),
             ),
-            child: Column(
+            child: ScrollConfiguration(
+              behavior: ScrollConfiguration.of(context).copyWith(
+                dragDevices: {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                },
+              ),
+             child:
+            Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(padding: EdgeInsets.only(top: 10.0)),
@@ -971,6 +979,7 @@ void resetDataElements() {
                       )),
                 ),
               ],
+            ),
             ),
           )
               : SizedBox.shrink(),

@@ -126,9 +126,11 @@ List<HCPClass> _paginatedHcps = [];
       if (hcpm!.length < _rowsPerPage!) {
         _rowsPerPage = hcpm!.length;
       }
-      debugPrint('line 80');
+      debugPrint('line 129');
       for (int i=0; i < hcpm!.length; i++) {
+
         Map<String, dynamic>obj = hcpm![i];
+        obj['hcpId'] = int.parse(obj['hcpId']);
         _hcps.add(HCPClass.fromJson(obj));
       }
       authServices.hcps = _hcps;

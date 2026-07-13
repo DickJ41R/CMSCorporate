@@ -13,7 +13,7 @@ import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/authentication/services/auth_service.dart';
 
 class ProcessHCPScheduleView extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   ProcessHCPScheduleView({super.key, required this.args});
 
   @override
@@ -72,14 +72,14 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
   }
   int? hcpId;
   Map<String,dynamic>? currentHCPMap;
-  Map<String,dynamic>?arguments;
+  Map<String,String>?arguments;
   UtilitiesServices utilitiesServices = UtilitiesServices();
   @override
   void initState() {
     // TODO: implement initState
 
     arguments = widget.args;
-    hcpId = arguments!['hcpId'];
+    hcpId = int.parse(arguments!['hcpId'].toString());
 
     setOrientationPreference(1);
     super.initState();
@@ -149,8 +149,8 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
         body: FutureBuilder<List<dynamic>>(
           future: Future.wait([getRawDataForDataSource(context)]),
           builder: (context, snapshot) {
-// debugPrint(
-//     'line 211: ${snapshot.hasError} ${snapshot.hasData} ${ConnectionState} ');
+ debugPrint(
+     'line 211:  ${snapshot.hasData} ${snapshot.connectionState} ${snapshot.data}');
             if ( snapshot.connectionState  == ConnectionState.waiting) {
               return  Center (
                   child : Container(
@@ -175,7 +175,8 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
                     ),
                   ),
                 );
-            } else if (snapshot.data == [[]] && snapshot.connectionState == ConnectionState.done) {
+            } else if ((snapshot.data == [[]] && snapshot.connectionState == ConnectionState.done) ||
+                (snapshot.connectionState == ConnectionState.done && snapshot.hasError == true)) {
               return Center(
                   child:Container(
                     height: 100,
@@ -191,7 +192,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
                 );
             }else {
               List<dynamic>data = snapshot.data![0];
-//  debugPrint('line 292 ${data.length}');
+            debugPrint('line 292 ${data.length}');
               if(data.length == 0) {
                 return Center(
                     child:Container(

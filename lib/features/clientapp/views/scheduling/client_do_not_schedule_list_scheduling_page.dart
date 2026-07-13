@@ -10,7 +10,7 @@ import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'package:intl/intl.dart';
 
 class ClientDoNotScheduleListSchedulingPage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientDoNotScheduleListSchedulingPage({super.key, required this.args});
 
   @override
@@ -69,17 +69,14 @@ class _ClientDoNotScheduleListSchedulingPageState
     super.dispose();
   }
 
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
-    clientId = arguments!['clientId'];
-    if (authService.clientMap == null) {
-      _getClient();
-    }
-    debugPrint('line 39:  $clw');
-    debugPrint('lint 55: $clientId');
+    clientId = int.parse(arguments!['clientId'].toString());
+
+    debugPrint('lint 84: $clientId');
 
     foundShifts = true;
   }

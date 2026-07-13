@@ -11,7 +11,7 @@ import 'package:cms_web/features/shared/services/clientapp/client_services.dart'
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ClientCannotBeScheduledProfilePage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientCannotBeScheduledProfilePage({super.key, required this.args});
 
   @override
@@ -46,7 +46,7 @@ class _ClientCannotBeScheduledProfilePageState
   void initState() {
     super.initState();
     arguments = widget.args;
-    clientId = arguments!['clientId'];
+    clientId = int.parse(arguments!['clientId']);
   }
 
   double? screenWidth;

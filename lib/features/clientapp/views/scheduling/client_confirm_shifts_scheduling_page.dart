@@ -8,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ClientConfirmShiftsSchedulingPages extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   ClientConfirmShiftsSchedulingPages({super.key, required this.args});
 
   @override
@@ -37,10 +37,17 @@ class _ClientConfirmShiftsSchedulingPagesState
   void dispose() {
     super.dispose();
   }
-
+ Map<String,dynamic>? client;
   Future<List<Map<String, dynamic>>> getAllItems() async {
-    allItemsTemp = await clw.getWorkOrderCampaignsApprovedConfirmed(clientId!);
-    return allItemsTemp!;
+    try {
+
+      allItemsTemp =
+      await clw.getWorkOrderCampaignsApprovedConfirmed(clientId!);
+      return allItemsTemp!;
+    } catch(e) {
+      debugPrint('line 47 error: ${e.toString()}');
+      return [];
+    }
   }
 
   void setUpAsyncVariables(int clientId, BuildContext context,
@@ -58,14 +65,14 @@ class _ClientConfirmShiftsSchedulingPagesState
     }
   }
 
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
     clw = ClientWorkOrderCampaignService();
     htc = HCPTimeCardService();
-    clientId = arguments!['clientId'];
+    clientId = int.parse(arguments!['clientId'].toString());
     debugPrint('line 39: $currentUser $clw');
     // clientUser = ref.read(clientUserNotifierProvider.notifier).fromClientUser;
     // try {

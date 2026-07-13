@@ -12,7 +12,7 @@ import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ClientScheduleViewSchedulingPage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientScheduleViewSchedulingPage({super.key, required this.args});
 
   @override
@@ -126,13 +126,13 @@ class _ClientScheduleViewSchedulingPageState
 
   UtilitiesServices utilitiesServices = UtilitiesServices();
 
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   int? clientId;
   @override
   void initState() {
     // TODO: implement initState
     arguments = widget.args;
-    clientId = arguments!['clientId'];
+    clientId = int.parse(arguments!['clientId'].toString());
     getRawDataForDataSource(clientId!, context);
 
     setOrientationPreference(1);

@@ -15,7 +15,7 @@ final DropDownCodes dropDownCodes = DropDownCodes();
 String globalBranchName = '';
 
 class ClientListScheduleSchedulingPage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientListScheduleSchedulingPage({super.key, required this.args});
 
   @override
@@ -37,21 +37,37 @@ class _ClientListScheduleSchedulingPageState
 
   Future<List<Map<String, dynamic>>> _getAllScheduledShifts() async {
     debugPrint('line 40 in getallscheduleshifts asm and mobile');
+    await getClientMapX();
     List<Map<String, dynamic>>? lm =
         await clw.getClientWorkOrdersAll(clientId!);
     listLength = lm!.length;
     return lm;
   }
 
-  Map<String, dynamic>? arguments;
+  Future<void>getClientMapX() async {
+     try {
+       client = await clientServices.getASingleClientById(clientId!);
+        debugPrint('line 52 got a client ');
+        if (client!.containsKey('clientId') == false) {
+          clientId = -1;
+          return;
+        }
+        return;
+     } catch(e) {
+       debugPrint('line 53 error getting client map');
+       clientId = -1;
+       return;
+     }
+
+  }
+  Map<String, String>? arguments;
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
-    debugPrint('line 51: $arguments');
-    clientId = arguments!['clientId'];
-    client = authService.clientMap!;
-    userEmail = client!['email'];
+    debugPrint('line 51: $arguments ${authService.clientMap}');
+    clientId = int.parse(arguments!['clientId'].toString());
+
   }
 
   double? screenWidth;

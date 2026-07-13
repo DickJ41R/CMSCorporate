@@ -21,7 +21,7 @@ final dio = Dio();
 String globalBranchName = '';
 
 class ProcessClientRequestSchedule extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ProcessClientRequestSchedule({super.key,required this.args});
 
   @override
@@ -164,7 +164,7 @@ class ProcessClientRequestScheduleState
     }
   }
   Map<String,dynamic>?clientMap;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
 
   Future<void> getClient() async {
   debugPrint('line 170 get client: ${clientId!}');
@@ -199,7 +199,7 @@ class ProcessClientRequestScheduleState
     debugPrint('line 172 initstate: ');
     arguments = widget.args;
     debugPrint('line 174 initstate: $arguments');
-    clientId = arguments!['clientId'];
+    clientId = int.parse(arguments!['clientId'].toString());
 
       debugPrint('line 246: $clientId');
 

@@ -223,10 +223,13 @@ class LoginState extends State<Login> {
                       ? BoxShape.rectangle
                       : BoxShape.circle),
           child: Image.asset(defaultTargetPlatform == TargetPlatform.iOS
-              ? "images/apple/logo.png"
+              ? "assets/icon/logo.png"
               : defaultTargetPlatform == TargetPlatform.android
-                  ? "images/apple/logo.png"
-                  : "assets/logo.png"),
+                  ? "assets/icon/logo.png"
+                  : "assets/icon/logo.png",
+               width: 50,
+               height: 50
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -718,7 +721,7 @@ class LoginState extends State<Login> {
     dragDevices: {
     PointerDeviceKind.touch,
     PointerDeviceKind.mouse, // Ensures mouse-drag resizing still works flawlessly
-   // PointerDeviceKind.trackpad,
+   PointerDeviceKind.trackpad,
     PointerDeviceKind.stylus,
 
     }),

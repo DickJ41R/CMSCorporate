@@ -17,7 +17,6 @@ import 'package:cms_web/features/clientapp/views/profile/client_department_profi
 import 'package:cms_web/features/clientapp/views/profile/client_profile_page.dart';
 import 'package:cms_web/features/clientapp/views/profile/client_user_profile_page.dart';
 //scheduling
-import 'package:cms_web/features/clientapp/views/scheduling/client_cancel_shifts_scheduling_page.dart';
 import 'package:cms_web/features/clientapp/views/scheduling/client_confirm_shifts_scheduling_page.dart';
 import 'package:cms_web/features/clientapp/views/scheduling/client_do_not_schedule_list_scheduling_page.dart';
 import 'package:cms_web/features/clientapp/views/scheduling/client_list_schedule_scheduling_page.dart';
@@ -27,7 +26,7 @@ import 'package:cms_web/features/clientapp/views/scheduling/client_schedule_view
 import 'package:cms_web/features/clientapp/views/scheduling/client_set_dns_scheduling_page.dart';
 import 'package:cms_web/features/clientapp/views/scheduling/client_timecard_approval_scheduling_page.dart';
 import 'package:cms_web/features/clientapp/views/scheduling/client_mitigate_ot_scheduling_page.dart';
-
+import 'package:cms_web/features/clientapp/views/scheduling/client_cancel_shifts_scheduling_page.dart';
 //import 'package:cms_web/web/services/cms_auth_service.dart';
 //hcp
 import 'package:cms_web/features/hcpapp/views/hcp_menu.dart';
@@ -217,7 +216,7 @@ class MyRoutes {
         return MaterialPageRoute(
             builder: (context) => ProcessHCPPayments(args: mp));
       case hcpPaymentDetailsData:
-        Map<String, String> mp = settings.arguments as Map<String, String>;
+        Map<String, dynamic> mp = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (context) => ShowHCPPaymentDetailsScreen(args: mp));
       case showPaymentPDF:

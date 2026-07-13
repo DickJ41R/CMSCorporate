@@ -17,7 +17,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ProcessFunctionsApp extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ProcessFunctionsApp({super.key, required this.args});
 
   @override
@@ -82,13 +82,13 @@ class _ProcessFunctionsAppState extends State<ProcessFunctionsApp> {
     });
   }
 
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   @override
   void initState() {
     super.initState();
 
     arguments = widget.args;
-    hcpId = arguments!['hcpId'];
+    hcpId = int.parse(arguments!['hcpId'].toString());
     debugPrint('line 39: ${hcpId!} $clw');
   }
 

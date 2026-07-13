@@ -8,7 +8,7 @@ import 'package:cms_web/features/shared/utils/dropdown_codes.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ProcessHCPProfileContactData extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ProcessHCPProfileContactData({super.key, required this.args});
 
   @override
@@ -117,13 +117,13 @@ class _ProcessHCPProfileContactDataState
   }
 
   String? fullName;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
 
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
-    hcpId = arguments!['hcpId'];
+    hcpId = int.parse(arguments!['hcpId'].toString());
     debugPrint('line 126: $hcpId');
   }
 

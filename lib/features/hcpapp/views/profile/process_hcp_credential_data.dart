@@ -14,10 +14,12 @@ import 'package:cms_web/features/shared/utils/utilities.dart';
 final dio = Dio();
 
 class ProcessHCPCredential extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ProcessHCPCredential({super.key, required this.args});
 
-  void initState() {}
+  void initState() {
+
+  }
 
   dynamic getCredentiald() {
     dynamic credentialId;
@@ -43,14 +45,14 @@ class _ProcessHCPCredentialState extends State<ProcessHCPCredential> {
   HCPServices hcpServices = HCPServices();
   UtilitiesServices utilityServices = UtilitiesServices();
   String? gEmail;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   @override
   void initState() {
     // _loggedInUser = ref.read(globalUserModel.notifier).state;
     // debugPrint('line 54: $_loggedInUser ${ref.read(globalUserModel.notifier).state}');
     super.initState();
     arguments = widget.args;
-    hcpId = arguments!['hcpId'];
+    hcpId = int.parse(arguments!['hcpId'].toString());
   }
 
   String? fullName;

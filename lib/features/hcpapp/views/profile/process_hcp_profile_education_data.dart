@@ -8,7 +8,7 @@ import 'package:cms_web/features/hcpapp/views/hcp_menu.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ProcessHCPProfileEducationData extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ProcessHCPProfileEducationData({super.key, required this.args});
 
   @override
@@ -63,12 +63,12 @@ class _ProcessHCPProfileEducationDataState
     return lm;
   }
 
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
-    hcpId = arguments!['hcpId'];
+    hcpId = int.parse(arguments!['hcpId'].toString());
     debugPrint('line 66 initstate: $hcpId');
   }
 

@@ -9,7 +9,7 @@ import 'package:cms_web/features/shared/services/clientapp/client_services.dart'
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ClientCannotBeScheduledPage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientCannotBeScheduledPage({super.key, required this.args});
 
   @override
@@ -38,13 +38,13 @@ class _ClientCannotBeScheduledPageState
     }
   }
 
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   int? selectedId;
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
-    clientId = arguments!['clientId'];
+    clientId = int.parse(arguments!['clientId'].toString());
     debugPrint('line 75 in initstate $clientId');
   }
 

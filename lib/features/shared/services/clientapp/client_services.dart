@@ -904,7 +904,7 @@ class ClientServices {
       }
     } catch (e) {
       debugPrint('line 1166 error: $e');
-      return {};
+       throw Exception('line 907 No Client Credit Records');
     }
   }
 

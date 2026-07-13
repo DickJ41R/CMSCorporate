@@ -20,6 +20,8 @@ const String clientCancelShiftsSchedulingPage =
     '/clientCancelShiftsSchedulingPage';
 const String clientRepublishShiftsSchedulingPage =
     '/clientRepublishShiftsSchedulingPage';
+const String clientApproveShiftsSchedulingPage =
+    '/clientApproveShiftsSchedulingPage';
 const String clientScheduleShiftsSchedulingPage =
     '/clientScheduleShiftsSchedulingPage';
 const String clientConfirmShiftsSchedulingPage =
@@ -58,7 +60,7 @@ const String showPaymentPDF = '/showPaymentPDF';
 const String hcpScheduledView = '/hcpScheduleViewSchedulingPage';
 const String hcpConfirmedShifts = '/hcpConfirmViewSchedulingPage';
 const String hcpListDNUs = '/hcpDNUListSchedulingPage';
-const String hcpScheduledList = '/hcpScheduledListSchedulingPage';
+//const String hcpScheduledList = '/hcpScheduledListSchedulingPage';
 
 //branchcorporate
 

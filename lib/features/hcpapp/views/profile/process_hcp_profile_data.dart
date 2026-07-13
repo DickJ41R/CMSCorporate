@@ -9,7 +9,7 @@ import 'package:cms_web/features/shared/utils/routerconstants.dart';
 import 'package:cms_web/features/shared/utils/utilities.dart';
 
 class ProcessHCPProfileData extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ProcessHCPProfileData({super.key, required this.args});
 
   @override
@@ -57,12 +57,12 @@ class _ProcessHCPProfileDataState extends State<ProcessHCPProfileData> {
   }
 
   String? fullName;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   @override
   void initState() {
     super.initState();
     arguments = widget.args;
-    hcpId = arguments!['hcpId'];
+    hcpId = int.parse(arguments!['hcpId'].toString());
     _getHCProfessional();
   }
 

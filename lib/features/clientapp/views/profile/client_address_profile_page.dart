@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cms_web/features/shared/services/clientapp/client_services.dart';
 
 class ClientAddressProfilePage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientAddressProfilePage({super.key, required this.args});
 
   @override
@@ -16,21 +16,22 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
 
   ClientServices clientServices = ClientServices();
 
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   List<Map<String, dynamic>> listOfAddresses = [];
   List<Map<String, dynamic>>? menuAddresses;
   List<DropdownMenuEntry<dynamic>> dropDownMenuEntries = [];
   List<DropdownMenuEntry<dynamic>> dropDownMenuOptionEntries = [];
-
+  int? clientId;
   Future<List<dynamic>> _getDropDownMenuItems() async {
     debugPrint(
         'line 30 get client address Dropdownitems: ${listOfAddresses.length}');
     dropDownMenuEntries = [];
     menuAddresses = [];
     try {
+      clientId = int.parse(arguments!['clientId'].toString());
       if (listOfAddresses.length == 0) {
         listOfAddresses =
-            await clientServices.getClientAddressData(arguments!['clientId']);
+            await clientServices.getClientAddressData(clientId!);
       }
       debugPrint('line 35: ${listOfAddresses!.length}');
       if (listOfAddresses.length > 0) {
@@ -151,7 +152,7 @@ class _ClientAddressProfilePageState extends State<ClientAddressProfilePage> {
     }
     debugPrint('line 62: $isPrimary $index $arguments');
     if (index != -1) {
-      clientNameController.text = arguments!['clientName'];
+      clientNameController.text = arguments!['clientName'].toString();
 
       Map<String, dynamic> adr = listOfAddresses![index];
       debugPrint('line 104: $adr');

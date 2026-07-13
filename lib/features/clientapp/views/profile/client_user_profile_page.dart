@@ -33,7 +33,7 @@ GlobalKey<FormState> formKey = GlobalKey();
 GlobalKey<FormState> formKey1 = GlobalKey();
 
 class ClientUserProfilePage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientUserProfilePage({super.key, required this.args});
 
   @override
@@ -46,7 +46,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
 
   UtilitiesServices utilityServices = UtilitiesServices();
   Map<String, dynamic>? gclu;
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   List<Map<String, dynamic>> listOfClientUsers = [];
   List<Map<String, dynamic>>? menuClientUsers;
   List<DropdownMenuEntry<dynamic>> dropDownMenuEntries = [];
@@ -65,9 +65,10 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     menuClientUsers = [];
     listOfClientUserItems = [];
     try {
+      clientId = int.parse(arguments!['clientId'].toString());
       if (listOfClientUsers.length == 0) {
        // client = await clientServices.getClient(arguments!['clientId']);
-        listOfClientUsers = await clientServices.getClientUsers(arguments!['clientId']);
+        listOfClientUsers = await clientServices.getClientUsers(clientId!);
       }
       int largestId = -1;
       listOfClientUserItems.add('Add New Client User');
@@ -625,7 +626,7 @@ class _ClientUserProfilePageState extends State<ClientUserProfilePage> {
     super.initState();
 
     arguments = widget.args;
-    clientId = arguments!['clientId'];
+    clientId = int.parse(arguments!['clientId'].toString());
     clientName = arguments!['clientName'];
     getClient();
     debugPrint('line 72 arguments $arguments');

@@ -5,7 +5,7 @@ import 'package:cms_web/features/shared/utils/utilities.dart';
 import 'package:cms_web/features/shared/utils/routerconstants.dart';
 
 class ClientDepartmentProfilePage extends StatefulWidget {
-  final Map<String, dynamic> args;
+  final Map<String, String> args;
   const ClientDepartmentProfilePage({super.key, required this.args});
 
   @override
@@ -17,20 +17,22 @@ class _ClientDepartmentProfilePageState
     extends State<ClientDepartmentProfilePage> {
   final formKey = GlobalKey<FormState>();
   ClientServices clientServices = ClientServices();
-  Map<String, dynamic>? arguments;
+  Map<String, String>? arguments;
   List<Map<String, dynamic>>? listOfDepartments;
   List<Map<String, dynamic>>? menuDepartments;
   List<DropdownMenuEntry<dynamic>> dropDownMenuEntries = [];
   List<DropdownMenuEntry<dynamic>> dropDownMenuOptionEntries = [];
   UtilitiesServices utilityServices = UtilitiesServices();
+  int? clientId;
   Future<List<dynamic>> _getDropDownMenuItems() async {
     debugPrint('line 30 get client department Dropdownitems: $arguments');
     dropDownMenuEntries = [];
     menuDepartments = [];
     try {
+      clientId = int.parse(arguments!['clientId'].toString());
       if (listOfDepartments!.length == 0) {
         listOfDepartments = await clientServices
-            .getClientDepartmentDataClass(arguments!['clientId']);
+            .getClientDepartmentDataClass(clientId!);
       }
       debugPrint('line 35: ${listOfDepartments!.length}');
 
@@ -448,7 +450,7 @@ class _ClientDepartmentProfilePageState
   void initState() {
     super.initState();
     arguments = widget.args;
-    localTitle = 'Client Departments for: ' + arguments!['clientName'];
+    localTitle = 'Client Departments for: ' + arguments!['clientName'].toString();
     listOfDepartments = [];
     debugPrint('line 72 arguments $arguments');
   }
