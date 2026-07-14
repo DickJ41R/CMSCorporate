@@ -1,6 +1,7 @@
 //process_hcp_schedule_view
 /// Dart import.
 import 'dart:ui';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -35,7 +36,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
   //   await getRawDataForDataSource(hcpId, ctx);
   // }
 
-  Future<void> getRawDataForDataSource(BuildContext context) async {
+  Future<dynamic> getRawDataForDataSource(BuildContext context) async {
     debugPrint('line 37 in getrawdatasource');
     try {
       bool working = false;
@@ -58,16 +59,17 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
       } else if (lstApts!.isNotEmpty) {
         working = true;
         debugPrint('line 36: ${lstApts![0]}');
-        setState(() {
-          flagHaveData = true;
-          dataSource = getCalendarDataSource();
-        });
+        // dataSource = getCalendarDataSource();
+        // setState(() {
+
+
+        // });
       }
-      debugPrint('line 47 just before return');
-      return;
+      debugPrint('line 47 just before return: ${lstApts!.length}');
+      return lstApts!;
     } catch (e) {
       debugPrint('line 46 error: ${e.toString()}');
-      return null;
+      return [];
     }
   }
   int? hcpId;
@@ -146,8 +148,9 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
           //   ),
           // ],
         ),
-        body: FutureBuilder<List<dynamic>>(
-          future: Future.wait([getRawDataForDataSource(context)]),
+        body: FutureBuilder<dynamic>(
+          future: Future.wait([getRawDataForDataSource(context),
+            getCalendarDataSource()]),
           builder: (context, snapshot) {
  debugPrint(
      'line 211:  ${snapshot.hasData} ${snapshot.connectionState} ${snapshot.data}');
@@ -443,7 +446,7 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
     }
   }
 
-  _DataSource getCalendarDataSource() {
+  Future<dynamic> getCalendarDataSource() async {
     final List<Appointment> appointments = <Appointment>[];
     debugPrint('line 313 in getCalendarDataSource');
     try {
@@ -453,6 +456,8 @@ class ProcessHCPScheduleViewState extends State<ProcessHCPScheduleView> {
         Appointment apt = buildAppointment(obj);
         appointments.add(apt);
       }
+      flagHaveData = true;
+      await Future.delayed(const Duration(seconds: 2));
       return _DataSource(appointments);
     } catch (e) {
       debugPrint('line 405 error: ${e.toString()}');

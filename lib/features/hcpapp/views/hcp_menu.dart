@@ -75,12 +75,12 @@ class _HCPMenuState extends State<HCPMenu> {
       "menuRouteName": "/hcpCancelShiftsSchedulingPage",
       "index": 2
     },
-    {
-      "menuId": 4,
-      "menuName": "Scheduled View",
-      "menuRouteName": "/hcpScheduleViewSchedulingPage",
-      "index": 3
-    },
+    // {
+    //   "menuId": 4,
+    //   "menuName": "Scheduled View",
+    //   "menuRouteName": "/hcpScheduleViewSchedulingPage",
+    //   "index": 3
+    // },
     // {
     //   "menuId": 5,
     //   "menuName": "Confirm Shifts",
@@ -94,16 +94,16 @@ class _HCPMenuState extends State<HCPMenu> {
     //   "index": 4
     // },
     {
-      "menuId": 5,
+      "menuId": 4,
       "menuName": "Payment Records",
       "menuRouteName": "/hcpPaymentRecordsSchedulingPage",
-      "index": 4
+      "index": 3
     },
     {
-      "menuId": 6,
+      "menuId": 5,
       "menuName": "HCP Client DNS List",
       "menuRouteName": "/hcpDNUListSchedulingPage",
-      "index": 5
+      "index": 4
     },
     // {
     //   "menuId": 9,

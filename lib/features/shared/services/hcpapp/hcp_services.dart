@@ -728,7 +728,7 @@ class HCPServices {
     debugPrint('line 34: $hcpId');
     try {
       HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
-        'retrievehcpworkordercampaigns04',
+        'retrievehcpworkordercampaigns01',
         options: HttpsCallableOptions(
           timeout: const Duration(seconds: 300),
         ),
@@ -740,10 +740,10 @@ class HCPServices {
         return result;
       }
       if (result[0]['ERROR'] != null) {
-        debugPrint('line 46: Error getting htc id to asm');
+        debugPrint('line 46: Error getting htc id to asm" $result');
         return result;
       }
-      debugPrint('line 494 successfully retrieved htc');
+      debugPrint('line 494 successfully retrieved htc: #result');
 
       return result;
     } catch (e) {
